@@ -28,7 +28,7 @@ const AdminPanel = ({ user }) => {
     const [newSection, setNewSection] = useState('');
     const [editContentId, setEditContentId] = useState(null);
     const [newContent, setNewContent] = useState({
-        title: '', description: '', code: '', language: 'javascript', section: 'DSA', rating: 5, icon: ''
+        title: '', description: '', code: '', language: 'Code', section: 'JAVA', rating: 5, icon: ''
     });
     const [newGlobalNote, setNewGlobalNote] = useState({ title: '', content: '' });
 

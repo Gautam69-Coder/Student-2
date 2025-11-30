@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import Card from '../components/Card';
 import Modal from '../components/Modal';
 import Notes from '../components/Notes';
+import link from  "../assets/link.jpg"
 import { fetchContent, fetchSections } from '../api';
 
 const Home = ({ user, logout }) => {
@@ -104,6 +105,10 @@ const Home = ({ user, logout }) => {
                 onClose={() => setIsModalOpen(false)}
                 item={selectedItem}
             />
+
+            <div>
+                <img src={link} alt="" />
+            </div>
         </div>
     );
 };

@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import Card from '../components/Card';
 import Modal from '../components/Modal';
 import Notes from '../components/Notes';
-import link from  "../assets/link.jpg"
+import link from "../assets/link.jpg"
 import { fetchContent, fetchSections } from '../api';
 
 const Home = ({ user, logout }) => {
@@ -106,8 +106,12 @@ const Home = ({ user, logout }) => {
                 item={selectedItem}
             />
 
-            <div>
-                <img src={link} alt="" />
+            <div style={{ display: "flex", justifyContent: "center" }}>
+                <img src={link} alt="" width={300} />
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "center", marginBottom:"50px" }}>
+                <p style={{ fontSize:"20px", fontWeight:"600" }}>Scan and come to my website</p>
             </div>
         </div>
     );

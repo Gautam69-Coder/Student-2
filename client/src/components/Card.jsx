@@ -8,7 +8,7 @@ const Card = ({ item, onShowCode }) => {
     };
 
     return (
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginRight:"10px" , marginLeft:"10px" }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                     <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#888', letterSpacing: '1px', fontWeight: '600' }}>{item.section}</span>

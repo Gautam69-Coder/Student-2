@@ -63,7 +63,7 @@ const Notes = ({ user }) => {
     );
 
     return (
-        <div style={{ marginTop: '40px' }}>
+        <div style={{ marginTop: '40px', marginRight:"10px" , marginLeft:"10px" }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>My Notes</h2>
                 <button className="btn btn-primary" onClick={() => setIsAdding(!isAdding)}>

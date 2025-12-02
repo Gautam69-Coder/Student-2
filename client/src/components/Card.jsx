@@ -37,13 +37,13 @@ const Card = ({ item, onShowCode }) => {
                 <button className="btn btn-outline" title="Copy Code" onClick={handleCopy}>
                     <Copy size={16} />
                 </button>
-                {item.downloads && (
+                {/* {item.downloads && (
                     <button className="btn btn-outline" title="Download">
                         <a href={item.downloads} download style={{ display: 'flex', alignItems: 'center' }}>
                             <Download size={16} />
                         </a>
                     </button>
-                )}
+                )} */}
             </div>
         </div>
     );

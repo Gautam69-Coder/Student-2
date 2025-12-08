@@ -5,11 +5,13 @@ import Modal from '../components/Modal';
 import Notes from '../components/Notes';
 import link from "../assets/link.jpg"
 import { fetchContent, fetchSections } from '../api';
+import { Search } from 'lucide-react';
 
 const Home = ({ user, logout }) => {
     const [content, setContent] = useState([]);
     const [sections, setSections] = useState(['All']);
     const [activeSection, setActiveSection] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -42,9 +44,12 @@ const Home = ({ user, logout }) => {
         }
     };
 
-    const filteredContent = activeSection === 'All'
-        ? content
-        : content.filter(item => item.section === activeSection);
+    const filteredContent = content.filter(item => {
+        const matchesSection = activeSection === 'All' || item.section === activeSection;
+        const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.description.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesSection && matchesSearch;
+    });
 
     const handleShowCode = (item) => {
         setSelectedItem(item);
@@ -61,6 +66,28 @@ const Home = ({ user, logout }) => {
                     <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '24px', letterSpacing: '-1px' }}>
                         Master Your Code
                     </h1>
+
+                    {/* Search Bar */}
+                    <div style={{ maxWidth: '500px', margin: '0 auto 32px auto', position: 'relative' }}>
+                        <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
+                        <input
+                            type="text"
+                            placeholder="Search snippets..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '12px 16px 12px 48px',
+                                borderRadius: '30px',
+                                border: '1px solid var(--border)',
+                                backgroundColor: 'var(--bg-secondary)',
+                                color: 'var(--text-primary)',
+                                fontSize: '1rem',
+                                outline: 'none'
+                            }}
+                        />
+                    </div>
+
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
                         {sections.map(section => (
                             <button
@@ -110,8 +137,8 @@ const Home = ({ user, logout }) => {
                 <img src={link} alt="" width={300} />
             </div>
 
-            <div style={{ display: "flex", justifyContent: "center", marginBottom:"50px" }}>
-                <p style={{ fontSize:"20px", fontWeight:"600" }}>Scan and come to my website</p>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "50px" }}>
+                <p style={{ fontSize: "20px", fontWeight: "600" }}>Scan and come to my website</p>
             </div>
         </div>
     );

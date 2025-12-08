@@ -163,6 +163,16 @@ const AdminPanel = ({ user }) => {
         }
     };
 
+    const handleDeleteUser = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this user?')) return;
+        try {
+            await deleteUser(id);
+            loadUsers();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     const loadAllNotes = async () => {
         try {
             const res = await fetchAllNotes();

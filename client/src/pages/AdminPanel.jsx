@@ -14,23 +14,34 @@ import {
     deleteUser,
     fetchAllNotes,
     createNote,
-    deleteNote
+    deleteNote,
+    fetchPracticals,
+    createPractical,
+    updatePractical,
+    deletePractical
 } from '../api';
 
 const AdminPanel = ({ user }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
-    const [activeTab, setActiveTab] = useState('content'); // content, users, sections, notes
+    const [activeTab, setActiveTab] = useState('content'); // content, users, sections, notes, practicals
     const [content, setContent] = useState([]);
     const [users, setUsers] = useState([]);
     const [sections, setSections] = useState([]);
     const [allNotes, setAllNotes] = useState([]);
+    const [practicals, setPracticals] = useState([]);
     const [newSection, setNewSection] = useState('');
     const [editContentId, setEditContentId] = useState(null);
+    const [editPracticalId, setEditPracticalId] = useState(null);
     const [newContent, setNewContent] = useState({
         title: '', description: '', code: '', language: 'Code', section: 'JAVA', rating: 5, icon: ''
     });
     const [newGlobalNote, setNewGlobalNote] = useState({ title: '', content: '' });
+    const [newPractical, setNewPractical] = useState({
+        practicalNumber: '',
+        section: 'DSA',
+        questions: [{ question: '', code: '' }]
+    });
 
     const navigate = useNavigate();
 
@@ -49,6 +60,7 @@ const AdminPanel = ({ user }) => {
             loadSections();
             loadUsers();
             loadAllNotes();
+            loadPracticals();
         }
     }, [isAuthenticated]);
 
@@ -77,12 +89,22 @@ const AdminPanel = ({ user }) => {
         try {
             const res = await fetchSections();
             setSections(res.data);
-            // If we have sections and the current section is 'DSA' (default) but 'DSA' is not in the list,
-            // update it to the first available section.
+
             if (res.data.length > 0) {
+                // Sync newContent section
                 const currentSectionExists = res.data.some(s => s.name === newContent.section);
                 if (!currentSectionExists) {
                     setNewContent(prev => ({ ...prev, section: res.data[0].name }));
+                }
+
+                // Sync newPractical section
+                // We use the functional update to ensure we're checking against the latest state if needed, 
+                // but here we just want to ensure the default is valid.
+                // Since we can't easily check the *current* state inside this async function without refs or dependencies,
+                // we'll assume if the default 'DSA' isn't in the list, we switch to the first one.
+                const defaultPracticalSectionExists = res.data.some(s => s.name === 'DSA');
+                if (!defaultPracticalSectionExists) {
+                    setNewPractical(prev => ({ ...prev, section: res.data[0].name }));
                 }
             }
         } catch (err) {
@@ -204,6 +226,96 @@ const AdminPanel = ({ user }) => {
         }
     };
 
+    const loadPracticals = async () => {
+        try {
+            const res = await fetchPracticals();
+            setPracticals(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleAddQuestion = () => {
+        setNewPractical({
+            ...newPractical,
+            questions: [...newPractical.questions, { question: '', code: '' }]
+        });
+    };
+
+    const handleRemoveQuestion = (index) => {
+        const updatedQuestions = newPractical.questions.filter((_, i) => i !== index);
+        setNewPractical({
+            ...newPractical,
+            questions: updatedQuestions
+        });
+    };
+
+    const handleQuestionChange = (index, field, value) => {
+        const updatedQuestions = newPractical.questions.map((q, i) => {
+            if (i === index) {
+                return { ...q, [field]: value };
+            }
+            return q;
+        });
+        setNewPractical({ ...newPractical, questions: updatedQuestions });
+    };
+
+    const handleCreatePractical = async (e) => {
+        e.preventDefault();
+        try {
+            const validQuestions = newPractical.questions.filter(q => q.question.trim() !== '' && q.code.trim() !== '');
+
+            if (validQuestions.length === 0) {
+                alert('Please add at least one question with code.');
+                return;
+            }
+
+            const payload = {
+                practicalNumber: newPractical.practicalNumber,
+                section: newPractical.section,
+                questions: validQuestions
+            };
+
+            if (editPracticalId) {
+                await updatePractical(editPracticalId, payload);
+                alert('Practical Updated');
+                setEditPracticalId(null);
+            } else {
+                await createPractical(payload);
+                alert('Practical Added');
+            }
+
+            loadPracticals();
+            setNewPractical({
+                practicalNumber: '',
+                section: sections.length > 0 ? sections[0].name : 'DSA',
+                questions: [{ question: '', code: '' }]
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleEditPractical = (practical) => {
+        setEditPracticalId(practical._id);
+        setNewPractical({
+            practicalNumber: practical.practicalNumber,
+            section: practical.section,
+            questions: practical.questions.length > 0 ? practical.questions : [{ question: '', code: '' }]
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleDeletePractical = async (id) => {
+        if (!window.confirm('Are you sure?')) return;
+        try {
+            await deletePractical(id);
+            loadPracticals();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     if (!isAuthenticated) {
         return (
             <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000' }}>
@@ -270,6 +382,16 @@ const AdminPanel = ({ user }) => {
                         }}
                     >
                         <FileText size={20} /> Notes
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('practicals')}
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: '12px',
+                            color: activeTab === 'practicals' ? '#fff' : '#888',
+                            fontWeight: activeTab === 'practicals' ? '600' : '400'
+                        }}
+                    >
+                        <Code size={20} /> Practicals
                     </button>
                 </nav>
                 <div style={{ marginTop: 'auto' }}>
@@ -507,6 +629,123 @@ const AdminPanel = ({ user }) => {
                                                 <button onClick={() => handleDeleteNote(note._id)} style={{ color: '#ef4444' }}>
                                                     <Trash2 size={18} />
                                                 </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'practicals' && (
+                    <div>
+                        <div className="card" style={{ marginBottom: '40px' }}>
+                            <h3 style={{ marginBottom: '24px' }}>{editPracticalId ? 'Edit Practical' : 'Add Practical'}</h3>
+                            <form onSubmit={handleCreatePractical} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <input
+                                        className="input"
+                                        placeholder="Practical Number"
+                                        value={newPractical.practicalNumber}
+                                        onChange={e => setNewPractical({ ...newPractical, practicalNumber: e.target.value })}
+                                        required
+                                    />
+                                    <select
+                                        className="input"
+                                        value={newPractical.section}
+                                        onChange={e => setNewPractical({ ...newPractical, section: e.target.value })}
+                                    >
+                                        {sections.map(s => <option key={s._id} value={s.name}>{s.name}</option>)}
+                                        {sections.length === 0 && <option value="DSA">DSA</option>}
+                                    </select>
+                                </div>
+
+                                {newPractical.questions.map((q, index) => (
+                                    <div key={index} style={{ border: '1px solid #eee', padding: '16px', borderRadius: '8px', position: 'relative' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                            <h4 style={{ margin: 0 }}>Question {index + 1}</h4>
+                                            {newPractical.questions.length > 1 && (
+                                                <button type="button" onClick={() => handleRemoveQuestion(index)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            )}
+                                        </div>
+                                        <input
+                                            className="input"
+                                            placeholder="Question Text"
+                                            value={q.question}
+                                            onChange={e => handleQuestionChange(index, 'question', e.target.value)}
+                                            style={{ marginBottom: '8px' }}
+                                            required
+                                        />
+                                        <textarea
+                                            className="input"
+                                            placeholder="Code Solution"
+                                            rows={4}
+                                            value={q.code}
+                                            onChange={e => handleQuestionChange(index, 'code', e.target.value)}
+                                            style={{ fontFamily: 'monospace' }}
+                                            required
+                                        />
+                                    </div>
+                                ))}
+
+                                <button type="button" onClick={handleAddQuestion} className="btn" style={{ backgroundColor: '#e0e7ff', color: '#4338ca', border: '1px dashed #4338ca' }}>
+                                    <Plus size={16} style={{ marginRight: '8px' }} /> Add Another Question
+                                </button>
+
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
+                                        {editPracticalId ? 'Update Practical' : 'Add Practical'}
+                                    </button>
+                                    {editPracticalId && (
+                                        <button
+                                            type="button"
+                                            className="btn"
+                                            onClick={() => {
+                                                setEditPracticalId(null);
+                                                setNewPractical({
+                                                    practicalNumber: '',
+                                                    section: sections.length > 0 ? sections[0].name : 'DSA',
+                                                    questions: [{ question: '', code: '' }]
+                                                });
+                                            }}
+                                            style={{ backgroundColor: '#eee', color: '#333' }}
+                                        >
+                                            Cancel
+                                        </button>
+                                    )}
+                                </div>
+                            </form>
+                        </div>
+
+                        <div className="card">
+                            <h3 style={{ marginBottom: '24px' }}>Existing Practicals</h3>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '1px solid #eee', textAlign: 'left' }}>
+                                        <th style={{ padding: '12px' }}>No.</th>
+                                        <th style={{ padding: '12px' }}>Section</th>
+                                        <th style={{ padding: '12px' }}>Questions</th>
+                                        <th style={{ padding: '12px' }}>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {practicals.map(p => (
+                                        <tr key={p._id} style={{ borderBottom: '1px solid #eee' }}>
+                                            <td style={{ padding: '12px' }}>{p.practicalNumber}</td>
+                                            <td style={{ padding: '12px' }}><span style={{ padding: '4px 8px', backgroundColor: '#f5f5f5', borderRadius: '4px', fontSize: '0.8rem' }}>{p.section}</span></td>
+                                            <td style={{ padding: '12px' }}>{p.questions.length}</td>
+                                            <td style={{ padding: '12px' }}>
+                                                <div style={{ display: 'flex', gap: '8px' }}>
+                                                    <button onClick={() => handleEditPractical(p)} style={{ color: 'var(--accent)' }}>
+                                                        <Edit size={18} />
+                                                    </button>
+                                                    <button onClick={() => handleDeletePractical(p._id)} style={{ color: '#ef4444' }}>
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

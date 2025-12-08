@@ -4,13 +4,15 @@ import Card from '../components/Card';
 import Modal from '../components/Modal';
 import Notes from '../components/Notes';
 import link from "../assets/link.jpg"
-import { fetchContent, fetchSections } from '../api';
+import { fetchContent, fetchSections, fetchPracticals } from '../api';
 import { Search } from 'lucide-react';
+import PracticalCard from '../components/PracticalCard';
 
 const Home = ({ user, logout }) => {
     const [content, setContent] = useState([]);
-    const [sections, setSections] = useState(['All']);
-    const [activeSection, setActiveSection] = useState('All');
+    const [practicals, setPracticals] = useState([]);
+    const [sections, setSections] = useState([]);
+    const [activeSection, setActiveSection] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,6 +20,7 @@ const Home = ({ user, logout }) => {
     useEffect(() => {
         loadContent();
         loadSections();
+        loadPracticals();
     }, []);
 
     const loadContent = async () => {
@@ -33,23 +36,46 @@ const Home = ({ user, logout }) => {
         try {
             const res = await fetchSections();
             if (res.data.length > 0) {
-                setSections(['All', ...res.data.map(s => s.name)]);
+                const sectionNames = res.data.map(s => s.name);
+                setSections(sectionNames);
+                setActiveSection(sectionNames[0]);
             } else {
                 // Default fallback if no sections in DB
-                setSections(['All', 'DSA', 'JAVA', 'Scratch']);
+                const defaults = ['DSA', 'JAVA', 'Scratch'];
+                setSections(defaults);
+                setActiveSection(defaults[0]);
             }
         } catch (err) {
             console.error(err);
-            setSections(['All', 'DSA', 'JAVA', 'Scratch']);
+            const defaults = ['DSA', 'JAVA', 'Scratch'];
+            setSections(defaults);
+            setActiveSection(defaults[0]);
+        }
+    };
+
+    const loadPracticals = async () => {
+        try {
+            const res = await fetchPracticals();
+            setPracticals(res.data);
+        } catch (err) {
+            console.error(err);
         }
     };
 
     const filteredContent = content.filter(item => {
-        const matchesSection = activeSection === 'All' || item.section === activeSection;
+        const matchesSection = item.section === activeSection;
         const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.description.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesSection && matchesSearch;
     });
+
+    const filteredPracticals = practicals.filter(item => {
+        return item.section && activeSection && item.section.toLowerCase() === activeSection.toLowerCase();
+    });
+
+    // Debugging: Check if data is loaded
+    // console.log('Practicals:', practicals);
+    // console.log('Active Section:', activeSection);
 
     const handleShowCode = (item) => {
         setSelectedItem(item);
@@ -110,6 +136,18 @@ const Home = ({ user, logout }) => {
                     </div>
                 </div>
 
+                {/* Practicals Section */}
+                {filteredPracticals.length > 0 && (
+                    <div style={{ marginBottom: '40px' }}>
+                        <h2 style={{ marginBottom: '24px', fontSize: '1.5rem' }}>Practicals</h2>
+                        <div>
+                            {filteredPracticals.map(practical => (
+                                <PracticalCard key={practical._id} practical={practical} onShowCode={handleShowCode} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Content Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '32px' }}>
                     {filteredContent.map(item => (
@@ -140,6 +178,8 @@ const Home = ({ user, logout }) => {
             <div style={{ display: "flex", justifyContent: "center", marginBottom: "50px" }}>
                 <p style={{ fontSize: "20px", fontWeight: "600" }}>Scan and come to my website</p>
             </div>
+
+
         </div>
     );
 };

@@ -21,10 +21,12 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/content', require('./routes/content'));
 app.use('/api/notes', require('./routes/notes'));
 app.use('/api/sections', require('./routes/sections'));
+app.use('/api/practicals', require('./routes/practicals'));
 
 app.get('/', (req, res) => {
     res.send('API is running...');
 });
 
+// Trigger restart
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

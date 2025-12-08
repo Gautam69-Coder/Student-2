@@ -50,4 +50,10 @@ export const fetchSections = () => api.get('/sections');
 export const createSection = (sectionData) => api.post('/sections', sectionData);
 export const deleteSection = (id) => api.delete(`/sections/${id}`);
 
+// Practical Services
+export const fetchPracticals = () => api.get('/practicals');
+export const createPractical = (practicalData) => api.post('/practicals', practicalData);
+export const updatePractical = (id, practicalData) => api.put(`/practicals/${id}`, practicalData);
+export const deletePractical = (id) => api.delete(`/practicals/${id}`);
+
 export default api;

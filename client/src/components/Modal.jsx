@@ -12,16 +12,13 @@ const Modal = ({ isOpen, onClose, item }) => {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>{item.title}</h2>
-                    <button onClick={onClose} style={{ padding: '8px', borderRadius: '50%', backgroundColor: 'var(--bg-secondary)' }}>
-                        <X size={20} />
-                    </button>
-                </div>
+                <button onClick={onClose} style={{ padding: '8px', borderRadius: '50%', backgroundColor: 'var(--bg-secondary)', position : "absolute", right : "10px", top : "25px" }}>
+                    <X size={20} />
+                </button>
 
                 <div style={{ marginBottom: '24px' }}>
                     <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', color: '#888', letterSpacing: '1px', marginBottom: '8px' }}>Question / Context</h4>
-                    <p style={{ lineHeight: '1.6' }}>{item.description}</p>
+                    <p style={{ lineHeight: '1.6' }}>{item.question}</p>
                 </div>
 
                 <div>

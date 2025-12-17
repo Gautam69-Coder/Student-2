@@ -8,15 +8,17 @@ const Card = ({ item, onShowCode }) => {
     };
 
     return (
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginRight:"10px" , marginLeft:"10px" }}>
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginRight: "10px", marginLeft: "10px" }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                     <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#888', letterSpacing: '1px', fontWeight: '600' }}>{item.section}</span>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginTop: '4px' }}>{item.title}</h3>
+                   
                 </div>
                 <button style={{ padding: '8px', borderRadius: '50%', backgroundColor: 'var(--bg-secondary)' }}>
                     <Heart size={18} />
                 </button>
+                
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#fbbf24' }}>

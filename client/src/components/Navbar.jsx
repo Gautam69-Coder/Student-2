@@ -15,12 +15,12 @@ const Navbar = ({ user, logout }) => {
             backgroundColor: 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(10px)',
             zIndex: 100
-            , marginRight:"10px" , marginLeft:"10px"
+            , marginRight: "10px", marginLeft: "10px"
         }}>
             <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{  alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Link to="/" style={{display:'flex', alignItems:'center'}}>
-                    <img src="StudentHubLogo.png" style={{height: '40px', width: '40px'}} alt="" />
+                <div style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+                        <img src="StudentHubLogo.png" style={{ height: '40px', width: '40px' }} alt="" />
                     </Link>
 
                     <button className="mobile-menu-btn" onClick={() => setIsMenuOpen(!isMenuOpen)} style={{ display: 'none' }}>

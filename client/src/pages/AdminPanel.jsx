@@ -21,6 +21,14 @@ import {
     deletePractical
 } from '../api';
 
+import { dotSpinner } from 'ldrs'
+dotSpinner.register()
+
+import { message,Popconfirm  } from 'antd';
+
+// Default values shown
+
+
 const AdminPanel = ({ user }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
@@ -33,6 +41,7 @@ const AdminPanel = ({ user }) => {
     const [newSection, setNewSection] = useState('');
     const [editContentId, setEditContentId] = useState(null);
     const [editPracticalId, setEditPracticalId] = useState(null);
+    const [loading, setloading] = useState(false);
     const [newContent, setNewContent] = useState({
         title: '', description: '', code: '', language: 'Code', section: 'JAVA', rating: 5, icon: ''
     });
@@ -53,6 +62,28 @@ const AdminPanel = ({ user }) => {
             setIsAuthenticated(true);
         }
     }, [user, navigate]);
+
+
+    //Notification Config
+    const [messageApi, contextHolder] = message.useMessage()
+    const success = (data) => {
+        messageApi.open({
+            type: 'success',
+            content: `${data || "message problem"}`,
+        });
+    };
+    const error = (data) => {
+        messageApi.open({
+            type: 'error',
+            content: `${data || "message problem"}`,
+        });
+    };
+    const warning = (data) => {
+        messageApi.open({
+            type: 'warning',
+            content: `${data || "message problem"}`,
+        });
+    };
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -115,13 +146,16 @@ const AdminPanel = ({ user }) => {
     const handleCreateContent = async (e) => {
         e.preventDefault();
         try {
+            setloading(true);
             if (editContentId) {
                 await updateContent(editContentId, newContent);
                 setEditContentId(null);
-                alert('Content Updated');
+                success('Content Updated Successfully');
+                setloading(false);
             } else {
                 await createContent(newContent);
-                alert('Content Added');
+                setloading(false);
+                success('Content Created Successfully');
             }
             loadContent();
             setNewContent({
@@ -339,6 +373,7 @@ const AdminPanel = ({ user }) => {
 
     return (
         <div className="admin-layout" style={{ display: 'flex', minHeight: '100vh' }}>
+            {contextHolder}
             {/* Sidebar */}
             <div className="admin-sidebar" style={{ width: '250px', backgroundColor: '#111', color: '#fff', padding: '24px', display: 'flex', flexDirection: 'column' }}>
                 <h2 style={{ marginBottom: '40px', letterSpacing: '-1px' }}>Admin Panel</h2>
@@ -440,7 +475,13 @@ const AdminPanel = ({ user }) => {
                                 />
                                 <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '16px' }}>
                                     <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
-                                        {editContentId ? 'Update Content' : 'Upload Content'}
+                                        {loading ?
+                                            <l-dot-spinner
+                                                size="16"
+                                                speed="0.9"
+                                                color="white"
+                                            ></l-dot-spinner> :
+                                            (editContentId ? 'Update Content' : 'Add Content')}
                                     </button>
                                     {editContentId && (
                                         <button

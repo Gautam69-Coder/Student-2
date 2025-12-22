@@ -4,6 +4,11 @@ import { getMe, trackVisit } from './api';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import AdminPanel from './pages/AdminPanel';
+import { Helix } from 'ldrs/react'
+import 'ldrs/react/Helix.css'
+
+// Default values shown
+
 
 import LandingPage from './pages/LandingPage';
 
@@ -34,7 +39,11 @@ function App() {
     setUser(null);
   };
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>Loading...</div>;
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', height: "70vh", alignItems: "center" }}><Helix
+    size="60"
+    speed="2.5"
+    color="black"
+  /></div>;
 
   return (
     <Routes>

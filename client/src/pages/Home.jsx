@@ -7,6 +7,9 @@ import link from "../assets/link.jpg"
 import { fetchContent, fetchSections, fetchPracticals } from '../api';
 import { Search } from 'lucide-react';
 import PracticalCard from '../components/PracticalCard';
+import { Cardio } from 'ldrs/react'
+import 'ldrs/react/Cardio.css'
+
 
 const Home = ({ user, logout }) => {
     const [content, setContent] = useState([]);
@@ -157,7 +160,13 @@ const Home = ({ user, logout }) => {
 
                 {filteredContent.length === 0 && (
                     <div style={{ textAlign: 'center', padding: '60px', color: '#888' }}>
-                        <p>No content found for this section.</p>
+                        <p>
+                            <Cardio
+                                size="50"
+                                stroke="4"
+                                speed="2"
+                                color="black"
+                            /></p>
                     </div>
                 )}
 

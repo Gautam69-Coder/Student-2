@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser, registerUser } from '../api';
 import { ArrowLeft } from 'lucide-react';
+import { TailChase } from 'ldrs/react'
+import 'ldrs/react/TailChase.css'
 
 const Login = ({ setUser }) => {
     const [isRegister, setIsRegister] = useState(false);
@@ -12,6 +14,7 @@ const Login = ({ setUser }) => {
         role: 'user' // Default role
     });
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -23,10 +26,12 @@ const Login = ({ setUser }) => {
         setError('');
 
         try {
+            setLoading(true);
             const res = isRegister ? await registerUser(formData) : await loginUser(formData);
             localStorage.setItem('token', res.data.token);
             setUser(res.data.user);
             navigate(res.data.user.role === 'admin' ? '/admin' : '/');
+            setLoading(false);
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.msg || 'An error occurred');
@@ -110,17 +115,21 @@ const Login = ({ setUser }) => {
                     )}
 
                     <button type="submit" className="btn btn-primary" style={{ marginTop: '8px', width: '100%' }}>
-                        {isRegister ? 'Sign Up' : 'Login'}
+                        {loading ? <TailChase
+                            size="16"
+                            speed="1.75"
+                            color="white"
+                        />  : (isRegister ? 'Sign Up' : 'Login')}
                     </button>
                 </form>
 
                 <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                     {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
                     <button
-                        onClick={() => setIsRegister(!isRegister)}
+                        onClick={() => { setIsRegister(!isRegister) }}
                         style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'underline' }}
                     >
-                        {isRegister ? 'Login' : 'Sign Up'}
+                        {(isRegister ? 'Login' : 'Sign Up')}
                     </button>
                 </div>
             </div>

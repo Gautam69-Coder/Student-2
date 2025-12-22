@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { fetchNotes, createNote, updateNote, deleteNote } from '../api';
 import { Plus, Trash2, Save, Edit } from 'lucide-react';
+import { Cardio } from 'ldrs/react'
+import 'ldrs/react/Cardio.css'
+
 
 const Notes = ({ user }) => {
     const [notes, setNotes] = useState([]);
@@ -128,7 +131,12 @@ const Notes = ({ user }) => {
             </div>
 
             {notes.length === 0 && !isAdding && (
-                <p style={{ textAlign: 'center', color: '#888', padding: '40px' }}>No notes yet. Create one!</p>
+                <p style={{ textAlign: 'center', color: '#888', padding: '40px', height: '100%' }}><Cardio
+                    size="50"
+                    stroke="4"
+                    speed="2"
+                    color="black"
+                /></p>
             )}
         </div>
     );

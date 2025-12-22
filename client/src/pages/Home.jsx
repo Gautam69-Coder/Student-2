@@ -142,7 +142,7 @@ const Home = ({ user, logout }) => {
                 {/* Practicals Section */}
                 {filteredPracticals.length > 0 && (
                     <div style={{ marginBottom: '40px' }}>
-                        <h2 style={{ marginBottom: '24px', fontSize: '1.5rem' }}>Practicals</h2>
+                        <h2 style={{ marginBottom: '24px', marginLeft: '20px', fontSize: '1.5rem' }}>Practicals</h2>
                         <div>
                             {filteredPracticals.map(practical => (
                                 <PracticalCard key={practical._id} practical={practical} onShowCode={handleShowCode} />

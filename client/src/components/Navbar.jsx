@@ -9,15 +9,15 @@ const Navbar = ({ user, logout }) => {
     return (
         <nav style={{
             borderBottom: '1px solid var(--border)',
-            padding: '16px 0',
+            padding: '14px ',
             position: 'sticky',
             top: 0,
             backgroundColor: 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(10px)',
-            zIndex: 100
-            , marginRight: "10px", marginLeft: "10px"
+            zIndex: 100,
+            //  paddingRight: "20px", paddingLeft: "20px"
         }}>
-            <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', }}>
                 <div style={{ alignItems: 'center', justifyContent: 'space-between' }}>
                     <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
                         <img src="StudentHubLogo.png" style={{ height: '40px', width: '40px' }} alt="" />

@@ -114,7 +114,7 @@ const Login = ({ setUser }) => {
                         />
                     )}
 
-                    <button type="submit" className="btn btn-primary" style={{ marginTop: '8px', width: '100%' }}>
+                    <button type="submit" className="btn btn-primary" disabled={loading} style={{ marginTop: '8px', width: '100%' }}>
                         {loading ? <TailChase
                             size="16"
                             speed="1.75"

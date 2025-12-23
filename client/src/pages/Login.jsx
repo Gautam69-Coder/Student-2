@@ -119,7 +119,7 @@ const Login = ({ setUser }) => {
                             size="16"
                             speed="1.75"
                             color="white"
-                        />  : (isRegister ? 'Sign Up' : 'Login')}
+                        /> : (isRegister ? 'Sign Up' : 'Login')}
                     </button>
                 </form>
 

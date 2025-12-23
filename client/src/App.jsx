@@ -40,7 +40,7 @@ function App() {
   };
 
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', height: "70vh", alignItems: "center" }}><Helix
-    size="60"
+    size="80"
     speed="2.5"
     color="black"
   /></div>;

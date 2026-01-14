@@ -62,7 +62,7 @@ const Navbar = ({ user, logout }) => {
                         <Link to="/" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }}>Home</Link>
                         <Link to="/about" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }}>About</Link>
                         <Link to="/contact" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }}>Contact</Link>
-                        {user?.role === 'admin' && (
+                        {['admin', 'superadmin'].includes(user?.role) && (
                             <Link to="/admin" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }}>Admin</Link>
                         )}
 

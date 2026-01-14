@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // const API_URL = 'https://student-54b8.onrender.com/api';
-const API_URL = 'https://student-2-production.up.railway.app/api';
-// const API_URL = 'http://localhost:5001/api';
+// const API_URL = 'https://student-2-production.up.railway.app/api';
+const API_URL = 'http://localhost:5001/api';
 
 const api = axios.create({
     baseURL: API_URL,
@@ -31,6 +31,7 @@ export const verifyAdminAccess = (password) => api.post('/auth/admin-access', { 
 export const trackVisit = () => api.post('/auth/track-visit');
 export const fetchUsers = () => api.get('/auth/users');
 export const deleteUser = (id) => api.delete(`/auth/users/${id}`);
+export const updateUserRole = (id, role) => api.put(`/auth/users/${id}/role`, { role });
 
 // Content Services
 export const fetchContent = () => api.get('/content');

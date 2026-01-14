@@ -18,13 +18,14 @@ import {
     fetchPracticals,
     createPractical,
     updatePractical,
-    deletePractical
+    deletePractical,
+    updateUserRole
 } from '../api';
 
 import { dotSpinner } from 'ldrs'
 dotSpinner.register()
 
-import { message,Popconfirm  } from 'antd';
+import { message, Popconfirm } from 'antd';
 
 // Default values shown
 
@@ -55,10 +56,10 @@ const AdminPanel = ({ user }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!user || user.role !== 'admin') {
+        if (!user || !['admin', 'superadmin'].includes(user.role)) {
             navigate('/');
         } else {
-            // If user is admin, auto-authenticate
+            // If user is admin/superadmin, auto-authenticate
             setIsAuthenticated(true);
         }
     }, [user, navigate]);
@@ -226,6 +227,18 @@ const AdminPanel = ({ user }) => {
             loadUsers();
         } catch (err) {
             console.error(err);
+        }
+    };
+
+    const handleRoleUpdate = async (id, newRole) => {
+        if (!window.confirm('Are you sure you want to update this user role?')) return;
+        try {
+            await updateUserRole(id, newRole);
+            message.success('User role updated successfully');
+            loadUsers();
+        } catch (err) {
+            console.error(err);
+            message.error('Failed to update role');
         }
     };
 
@@ -546,25 +559,60 @@ const AdminPanel = ({ user }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map(user => (
-                                    <tr key={user._id} style={{ borderBottom: '1px solid #eee' }}>
-                                        <td style={{ padding: '12px' }}>{user.username}</td>
-                                        <td style={{ padding: '12px' }}>{user.email}</td>
+                                {users.map(u => (
+                                    <tr key={u._id} style={{ borderBottom: '1px solid #eee' }}>
+                                        <td style={{ padding: '12px' }}>{u.username}</td>
+                                        <td style={{ padding: '12px' }}>{u.email}</td>
                                         <td style={{ padding: '12px' }}>
-                                            <span style={{
-                                                padding: '4px 8px',
-                                                backgroundColor: user.role === 'admin' ? '#e0e7ff' : '#f5f5f5',
-                                                color: user.role === 'admin' ? '#4338ca' : '#000',
-                                                borderRadius: '4px',
-                                                fontSize: '0.8rem'
-                                            }}>
-                                                {user.role}
-                                            </span>
+                                            {u.role === 'superadmin' ? (
+                                                <span style={{
+                                                    padding: '4px 8px',
+                                                    backgroundColor: '#fce7f3',
+                                                    color: '#9d174d',
+                                                    borderRadius: '4px',
+                                                    fontSize: '0.8rem',
+                                                    fontWeight: 'bold'
+                                                }}>
+                                                    Super Admin
+                                                </span>
+                                            ) : (
+                                                user.role === 'superadmin' ? (
+                                                    <select
+                                                        value={u.role}
+                                                        onChange={(e) => handleRoleUpdate(u._id, e.target.value)}
+                                                        style={{
+                                                            padding: '4px 8px',
+                                                            borderRadius: '4px',
+                                                            border: '1px solid #ddd',
+                                                            fontSize: '0.8rem'
+                                                        }}
+                                                    >
+                                                        <option value="user">user</option>
+                                                        <option value="admin">admin</option>
+                                                    </select>
+                                                ) : (
+                                                    <span style={{
+                                                        padding: '4px 8px',
+                                                        backgroundColor: u.role === 'admin' ? '#e0e7ff' : '#f5f5f5',
+                                                        color: u.role === 'admin' ? '#4338ca' : '#000',
+                                                        borderRadius: '4px',
+                                                        fontSize: '0.8rem'
+                                                    }}>
+                                                        {u.role}
+                                                    </span>
+                                                )
+                                            )}
                                         </td>
-                                        <td style={{ padding: '12px' }}>{user.visitCount || 0}</td>
+                                        <td style={{ padding: '12px' }}>{u.visitCount || 0}</td>
                                         <td style={{ padding: '12px' }}>
-                                            {user.role !== 'admin' && (
-                                                <button onClick={() => handleDeleteUser(user._id)} style={{ color: '#ef4444' }}>
+                                            {/* {u.role !== 'admin' && u.role !== 'superadmin' && (
+                                                <button onClick={() => handleDeleteUser(u._id)} style={{ color: '#ef4444' }}>
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            )} */}
+                                            {/* Allow superadmin to delete regular admins if needed (optional based on rules) */}
+                                            {user.role === 'superadmin' && u.role !== 'superadmin' && (
+                                                <button onClick={() => handleDeleteUser(u._id)} style={{ color: '#ef4444', marginLeft: '8px' }}>
                                                     <Trash2 size={18} />
                                                 </button>
                                             )}

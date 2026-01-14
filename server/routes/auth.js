@@ -24,7 +24,7 @@ router.post('/register', async (req, res) => {
         await user.save();
 
         const payload = { id: user.id, role: user.role };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600*24 }, (err, token) => {
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 * 24 }, (err, token) => {
             if (err) throw err;
             res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
         });
@@ -98,7 +98,7 @@ router.get('/users', auth, async (req, res) => {
     try {
         // Optional: Check if requesting user is admin
         const requestingUser = await User.findById(req.user.id);
-        if (requestingUser.role !== 'admin') {
+        if (!['admin', 'superadmin'].includes(requestingUser.role)) {
             return res.status(403).json({ msg: 'Access denied' });
         }
 
@@ -114,13 +114,57 @@ router.delete('/users/:id', auth, async (req, res) => {
     try {
         // Optional: Check if requesting user is admin
         const requestingUser = await User.findById(req.user.id);
-        if (requestingUser.role !== 'admin') {
-            return res.status(403).json({ msg: 'Access denied' });
+        const userToDelete = await User.findById(req.params.id);
+
+        if (!userToDelete) {
+            return res.status(404).json({ msg: 'User not found' });
         }
 
-        await User.findByIdAndDelete(req.params.id);
-        res.json({ msg: 'User deleted' });
+        if (requestingUser.role === 'superadmin') {
+            // Superadmin can delete anyone
+            await User.findByIdAndDelete(req.params.id);
+            return res.json({ msg: 'User deleted' });
+        }
+
+        if (requestingUser.role === 'admin') {
+            if (userToDelete.role === 'user') {
+                await User.findByIdAndDelete(req.params.id);
+                return res.json({ msg: 'User deleted' });
+            } else {
+                return res.status(403).json({ msg: 'Admins can only delete regular users' });
+            }
+        }
+
+        return res.status(403).json({ msg: 'Access denied' });
     } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+
+// Update User Role (Superadmin only)
+router.put('/users/:id/role', auth, async (req, res) => {
+    try {
+        const requestingUser = await User.findById(req.user.id);
+        if (requestingUser.role !== 'superadmin') {
+            return res.status(403).json({ msg: 'Access denied. Only Superadmin can change roles.' });
+        }
+
+        const { role } = req.body;
+        if (!['user', 'admin', 'superadmin'].includes(role)) {
+            return res.status(400).json({ msg: 'Invalid role' });
+        }
+
+        const userToUpdate = await User.findById(req.params.id);
+        if (!userToUpdate) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        userToUpdate.role = role;
+        await userToUpdate.save();
+
+        res.json({ msg: 'User role updated', user: { id: userToUpdate.id, username: userToUpdate.username, role: userToUpdate.role } });
+    } catch (err) {
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });

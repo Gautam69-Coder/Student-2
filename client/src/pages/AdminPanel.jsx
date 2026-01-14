@@ -13,6 +13,7 @@ import {
     fetchUsers,
     deleteUser,
     fetchAllNotes,
+    fetchNotes,
     createNote,
     deleteNote,
     fetchPracticals,
@@ -244,8 +245,9 @@ const AdminPanel = ({ user }) => {
 
     const loadAllNotes = async () => {
         try {
-            const res = await fetchAllNotes();
+            const res = await fetchNotes();
             setAllNotes(res.data);
+            console.log(res.data);
         } catch (err) {
             console.error(err);
         }

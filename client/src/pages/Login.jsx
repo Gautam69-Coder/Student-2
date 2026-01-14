@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser, registerUser } from '../api';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { TailChase } from 'ldrs/react'
 import 'ldrs/react/TailChase.css'
 
@@ -16,6 +16,7 @@ const Login = ({ setUser }) => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -80,15 +81,24 @@ const Login = ({ setUser }) => {
                         onChange={handleChange}
                         required
                     />
-                    <input
-                        className="input"
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
+                    <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
+                        <input
+                            className="input"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            // onClick={() => setShowPassword(!showPassword)}
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            maxLength={10}
+                            required
+
+
+                        />
+                        <div onClick={()=>setShowPassword(!showPassword)}>
+                            {showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+                        </div>
+                    </div>
 
                     {/* Simple Role Selection for Demo Purposes */}
                     {isRegister && (
@@ -99,6 +109,9 @@ const Login = ({ setUser }) => {
                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <input type="radio" name="role" value="admin" checked={formData.role === 'admin'} onChange={handleChange} /> Admin
                             </label>
+                            <div>
+                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </div>
                         </div>
                     )}
 

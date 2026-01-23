@@ -22,7 +22,7 @@ function QuestionBlock({ question, index }) {
                         <span className="text-slate-400 font-mono mr-2">Q{index + 1}.</span>
                         {question.question}
                     </h3>
-                    <div className="flex items-center gap-4 shrink-0">
+                    <div className="flex items-center gap-3 shrink-0">
                         <button
                             className="flex items-center justify-center w-8 h-8 bg-white border border-gray-200 hover:bg-gray-50 rounded-md shadow-sm transition-all text-slate-500 hover:text-slate-900"
                             onClick={() => setShowModal(true)}

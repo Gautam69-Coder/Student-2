@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'https://student-54b8.onrender.com/api';
+// const API_URL = 'https://student-54b8.onrender.com/api';
 // const API_URL = 'https://student-2-production.up.railway.app/api';
 // const API_URL = 'http://localhost:5001/api';
 // const API_URL = 'https://student-hub-portal-pi.vercel.app/api';
-// const API_URL = 'https://studenthubportal-q7cjfugh.b4a.run/api';
+const API_URL = 'https://studenthubportal-q7cjfugh.b4a.run/api';
 
 const api = axios.create({
     baseURL: API_URL,

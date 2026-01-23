@@ -14,6 +14,7 @@ app.use(cors(
         origin : 'https://studenthubportal-q7cjfugh.b4a.run/api',
         origin : 'https://student-2-u0dx.onrender.com/api',
         origin : 'https://student-54b8.onrender.com/api',
+        origin : 'https://student-2.pages.dev/',
     }
 ));
 app.use(express.json());

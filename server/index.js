@@ -9,7 +9,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://student-2-3ow8.onrender.com'],
+    origin: ['http://localhost:5173', 'https://student-2-3ow8.onrender.com', 'https://student-2.pages.dev'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization'],
     credentials: true

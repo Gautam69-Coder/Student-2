@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://student-54b8.onrender.com/api';
+const API_URL = 'https://student-2-u0dx.onrender.com/api';
 // const API_URL = 'https://student-2-production.up.railway.app/api';
 // const API_URL = 'http://localhost:5001/api';
 

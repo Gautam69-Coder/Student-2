@@ -11,10 +11,10 @@ const app = express();
 app.use(cors(
     {
         origin: 'http://localhost:5173',
-        origin : 'https://studenthubportal-q7cjfugh.b4a.run/api',
-        origin : 'https://student-2-u0dx.onrender.com/api',
-        origin : 'https://student-54b8.onrender.com/api',
-        origin : 'https://student-2.pages.dev/',
+        origin : 'https://studenthubportal-q7cjfugh.b4a.run',
+        origin : 'https://student-2-u0dx.onrender.com',
+        origin : 'https://student-54b8.onrender.com',
+        origin : 'https://student-2.pages.dev',
     }
 ));
 app.use(express.json());

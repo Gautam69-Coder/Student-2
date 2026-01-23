@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+
+Sitemap: https://student-2.pages.dev/sitemap.xml

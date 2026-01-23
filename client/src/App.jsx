@@ -1,58 +1,152 @@
+
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { getMe, trackVisit } from './api';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import AdminPanel from './pages/AdminPanel';
-import { Helix } from 'ldrs/react'
-import 'ldrs/react/Helix.css'
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { AuthSection } from '@/components/common/auth-section';
+import { StudentDashboard } from '@/pages/user/Dashboard';
+import { AdminPanel } from '@/pages/admin/Dashboard';
+import { AIAssistant } from '@/components/common/ai-assistant';
+import { userDetail } from '@/lib/user';
+import { TimeLine } from '@/Utils/loaders';
+import { NotFoundPage } from './Utils/Error';
 
-// Default values shown
+function AppContent() {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userRole, setUserRole] = useState("user");
+    const [currentUser, setCurrentUser] = useState(null);
+    const [authViewState, setAuthViewState] = useState("login"); // login or signup
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
+    const navigate = useNavigate();
 
-import LandingPage from './pages/LandingPage';
-
-function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadUser = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const res = await getMe();
-          setUser(res.data);
-          trackVisit();
-        } catch (err) {
-          console.error(err);
-          localStorage.removeItem('token');
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setLoading(true);
+            setIsAuthenticated(true);
+            userDetail().then((user) => {
+                setUserRole(user.role);
+                setCurrentUser(user.username);
+                if (user.role === 'admin') {
+                    navigate('/admin');
+                } else {
+                    navigate('/dashboard');
+                }
+                setLoading(false);
+            }).catch((error) => {
+                console.log(error.message);
+                setError(error);
+                setLoading(false);
+            })
         }
-      }
-      setLoading(false);
+        else {
+            setIsAuthenticated(false);
+            setLoading(false);
+        }
+    }, []);
+
+    const handleAuth = (role, name) => {
+        setIsAuthenticated(true);
+        setUserRole(role);
+        setCurrentUser(name);
+        if (role === 'admin') {
+            navigate('/admin');
+        } else {
+            navigate('/dashboard');
+        }
     };
-    loadUser();
-  }, []);
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-  };
+    const handleLogout = () => {
+        setIsAuthenticated(false);
+        localStorage.removeItem('token');
+        setCurrentUser(null);
+        setAuthViewState("login");
+        navigate('/');
+    };
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', height: "70vh", alignItems: "center" }}><Helix
-    size="80"
-    speed="2.5"
-    color="black"
-  /></div>;
+    const handleSwitchToAdmin = () => {
+        setUserRole('admin');
+        navigate('/admin');
+    }
 
-  return (
-    <Routes>
-      <Route path="/" element={user ? <Home user={user} logout={logout} /> : <LandingPage />} />
-      <Route path="/login" element={<Login setUser={setUser} />} />
-      <Route path="/admin" element={<AdminPanel user={user} />} />
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
-  );
+    const handleSwitchToStudent = () => {
+        setUserRole('student');
+        navigate('/dashboard');
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <TimeLine size={50} color="#14253e" />
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="h-screen">
+                <NotFoundPage status={500} message="Server Down" />
+            </div>
+        )
+    }
+
+    return (
+        <div className="min-h-screen bg-background">
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        !isAuthenticated ? (
+                            <AuthSection
+                                authState={authViewState}
+                                setAuthState={setAuthViewState}
+                                onAuth={handleAuth}
+                            />
+                        ) : (
+                            <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} />
+                        )
+                    }
+                />
+
+                <Route
+                    path="/dashboard/*"
+                    element={
+                        isAuthenticated ? (
+                            <StudentDashboard
+                                userName={currentUser || "Student"}
+                                onLogout={handleLogout}
+                                onSwitchToAdmin={handleSwitchToAdmin}
+                            />
+                        ) : (
+                            <Navigate to="/" />
+                        )
+                    }
+                />
+
+                <Route
+                    path="/admin/*"
+                    element={
+                        isAuthenticated ? (
+                            <AdminPanel
+                                userName={currentUser || "Admin"}
+                                onLogout={handleLogout}
+                                onSwitchToStudent={handleSwitchToStudent}
+                            />
+                        ) : (
+                            <Navigate to="/" />
+                        )
+                    }
+                />
+            </Routes>
+            {isAuthenticated && <AIAssistant />}
+        </div>
+    );
 }
 
-export default App;
+export default function App() {
+    return (
+        <Router>
+            <AppContent />
+        </Router>
+    );
+}

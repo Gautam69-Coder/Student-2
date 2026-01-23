@@ -57,4 +57,9 @@ export const createPractical = (practicalData) => api.post('/practicals', practi
 export const updatePractical = (id, practicalData) => api.put(`/practicals/${id}`, practicalData);
 export const deletePractical = (id) => api.delete(`/practicals/${id}`);
 
+// Feedback Services
+export const submitFeedback = (feedbackData) => api.post('/feedback', feedbackData);
+export const fetchAllFeedback = () => api.get('/feedback');
+export const updateFeedbackStatus = (id, status) => api.patch(`/feedback/${id}`, { status });
+
 export default api;

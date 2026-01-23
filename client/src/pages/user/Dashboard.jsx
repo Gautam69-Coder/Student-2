@@ -15,6 +15,7 @@ import { Home } from "./Home";
 import { Notes } from "./Notes";
 import { Practicals } from "./Practicals";
 import { PYQs } from "./PYQs";
+import { Feedback } from "./Feedback";
 import { notes, pyqSubjects } from "@/data/student-data";
 import { PracticalCard } from "@/components/user/practical-card";
 
@@ -218,6 +219,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             <Route path="notes" element={<Notes />} />
                             <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} />} />
                             <Route path="pyqs" element={<PYQs />} />
+                            <Route path="feedback" element={<Feedback />} />
                             <Route path="*" element={<Navigate to="" replace />} />
                         </Routes>
                     )}

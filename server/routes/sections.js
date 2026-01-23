@@ -15,10 +15,15 @@ router.get('/', async (req, res) => {
 
 // Create Section (Admin only)
 router.post('/', auth, async (req, res) => {
+    console.log("req.body");
     if (req.user.role !== 'admin') return res.status(403).json({ msg: 'Access denied' });
-
     const { name } = req.body;
+    console.log("name", name)
     try {
+        const existingSection = await Section.findOne({ name });
+        if (existingSection) {
+            return res.status(400).json({ msg: 'Section already exists' });
+        }
         const newSection = new Section({ name });
         const section = await newSection.save();
         res.json(section);

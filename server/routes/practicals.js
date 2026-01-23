@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
 // Create a practical
 router.post('/', auth, async (req, res) => {
     const { practicalNumber, section, questions } = req.body;
+    console.log(practicalNumber, section, questions);
     try {
         const newPractical = new Practical({
             practicalNumber,

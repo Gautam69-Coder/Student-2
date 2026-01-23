@@ -30,6 +30,7 @@ router.post('/register', async (req, res) => {
         });
     } catch (err) {
         res.status(500).send('Server Error');
+        console.log(err)
     }
 });
 
@@ -37,6 +38,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
+
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
 
@@ -48,7 +50,7 @@ router.post('/login', async (req, res) => {
         await user.save();
 
         const payload = { id: user.id, role: user.role };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24d" }, (err, token) => {
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "30d" }, (err, token) => {
             if (err) throw err;
             res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
         });
@@ -70,7 +72,7 @@ router.post('/admin-access', (req, res) => {
 });
 
 // Get User Data
-router.get('/me', auth, async (req, res) => {
+router.get('/verify', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
         res.json(user);
@@ -164,7 +166,7 @@ router.put('/users/:id/role', auth, async (req, res) => {
 
         res.json({ msg: 'User role updated', user: { id: userToUpdate.id, username: userToUpdate.username, role: userToUpdate.role } });
     } catch (err) {
-        console.error(err.message);
+            le.error(err.message);
         res.status(500).send('Server Error');
     }
 });

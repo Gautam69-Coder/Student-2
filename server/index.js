@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-
+const bodyParser = require('body-parser');
 dotenv.config();
 
 const app = express();
@@ -10,7 +10,8 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.text());
 // Database Connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
@@ -22,6 +23,7 @@ app.use('/api/content', require('./routes/content'));
 app.use('/api/notes', require('./routes/notes'));
 app.use('/api/sections', require('./routes/sections'));
 app.use('/api/practicals', require('./routes/practicals'));
+app.use('/api/feedback', require('./routes/feedback'));
 
 app.get('/', (req, res) => {
     res.send('API is running...');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Trash2, Edit, Plus, Users, Code, Layout, Lock, FileText } from 'lucide-react';
+import { Trash2, Edit, Plus, Users, Code, Layout, Lock, FileText, MessageSquare } from 'lucide-react';
 import {
     verifyAdminAccess,
     fetchContent,
@@ -20,8 +20,12 @@ import {
     createPractical,
     updatePractical,
     deletePractical,
-    updateUserRole
+    updateUserRole,
+    fetchAllFeedback,
+    updateFeedbackStatus
 } from '../api';
+
+import { ManageFeedback } from './admin/ManageFeedback';
 
 import { dotSpinner } from 'ldrs'
 dotSpinner.register()
@@ -443,6 +447,16 @@ const AdminPanel = ({ user }) => {
                     >
                         <Code size={20} /> Practicals
                     </button>
+                    <button
+                        onClick={() => setActiveTab('feedback')}
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: '12px',
+                            color: activeTab === 'feedback' ? '#fff' : '#888',
+                            fontWeight: activeTab === 'feedback' ? '600' : '400'
+                        }}
+                    >
+                        <MessageSquare size={20} /> Feedback
+                    </button>
                 </nav>
                 <div style={{ marginTop: 'auto' }}>
                     <Link to="/" style={{ color: '#888', fontSize: '0.9rem' }}>Exit Panel</Link>
@@ -844,6 +858,10 @@ const AdminPanel = ({ user }) => {
                             </table>
                         </div>
                     </div>
+                )}
+
+                {activeTab === 'feedback' && (
+                    <ManageFeedback />
                 )}
             </div>
         </div>

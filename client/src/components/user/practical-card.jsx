@@ -16,9 +16,9 @@ function QuestionBlock({ question, index }) {
 
     return (
         <div className="border-b last:border-b-0 border-gray-100">
-            <div className="p-6">
+            <div className="sm:p-6 p-2">
                 <div className="flex items-start justify-between">
-                    <h3 className="font-semibold text-slate-900 tracking-tight pr-4 line-clamp-1">
+                    <h3 className="font-semibold text-slate-900 tracking-tight sm:pr-4 pr-2 line-clamp-1">
                         <span className="text-slate-400 font-mono mr-2">Q{index + 1}.</span>
                         {question.question}
                     </h3>

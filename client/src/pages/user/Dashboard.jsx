@@ -129,11 +129,11 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 </header>
 
                 {/* Content */}
-                <div className="p-4 sm:p-8 sm:max-w-7xl max-w-2xl mx-auto">
+                <div className="p-2 sm:p-8 sm:max-w-7xl max-w-2xl mx-auto">
                     {searchQuery ? (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+                                <h2 className="sm:text-2xl text-xl font-bold text-slate-900 tracking-tight">
                                     Search Results for "{searchQuery}"
                                 </h2>
                                 <button

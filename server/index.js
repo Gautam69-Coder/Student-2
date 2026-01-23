@@ -8,7 +8,14 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors(
+    {
+        origin: 'http://localhost:5173',
+        origin : 'https://studenthubportal-q7cjfugh.b4a.run/api',
+        origin : 'https://student-2-u0dx.onrender.com/api',
+        origin : 'https://student-54b8.onrender.com/api',
+    }
+));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.text());

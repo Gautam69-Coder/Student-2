@@ -166,7 +166,7 @@ router.put('/users/:id/role', auth, async (req, res) => {
 
         res.json({ msg: 'User role updated', user: { id: userToUpdate.id, username: userToUpdate.username, role: userToUpdate.role } });
     } catch (err) {
-            le.error(err.message);
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });

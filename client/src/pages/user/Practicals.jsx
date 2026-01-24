@@ -50,16 +50,16 @@ export function Practicals({ practicals, subjects }) {
     }
 
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-            <div className="flex flex-col gap-4">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="sm:space-y-6 space-y-3 p-4">
+            <div className="flex flex-col sm:gap-4 gap-2">
                 <div className="flex justify-between items-end">
-                    <h2 className="text-2xl font-bold text-slate-900 tracking-tight">All Practicals</h2>
+                    <h2 className="text-2xl font-bold text-slate-900 tracking-tight ">All Practicals</h2>
                 </div>
 
                 <div className="flex flex-col gap-3">
                     {/* Subject Filters */}
                     {subjects.length > 0 && (
-                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide border rounded-2xl p-2  ">
                             {subjects.map((subject, index) => {
                                 const subjectName = subject.name || subject;
                                 return (

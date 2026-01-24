@@ -43,7 +43,7 @@ export function UploadModal({ open, onOpenChange }) {
                         className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl border border-slate-100 overflow-hidden"
                     >
                         <div className="flex flex-col gap-1 mb-6">
-                            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Share Notes (P2P)</h2>
+                            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Not Working this will comming soon</h2>
                             <p className="text-sm text-slate-500">
                                 Upload your notes to help fellow students. Notes will be reviewed before publishing.
                             </p>

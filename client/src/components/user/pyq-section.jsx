@@ -3,6 +3,7 @@ import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { FileQuestion, Download, Eye, Calendar, ChevronRight } from "lucide-react"
 import { pyqSubjects } from "@/data/student-data";
+import ComingSoonPage from "../../Utils/ComingSoon";
 // UI imports removed
 
 
@@ -13,9 +14,9 @@ export function PYQSection() {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Previous Year Questions</h2>
+            {/* <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Previous Year Questions</h2> */}
 
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
                 {pyqSubjects.map((subject, index) => (
                     <motion.div
                         key={subject.name}
@@ -79,7 +80,8 @@ export function PYQSection() {
                         )}
                     </motion.div>
                 ))}
-            </div>
+            </div> */}
+            <ComingSoonPage />
         </motion.div>
     )
 }

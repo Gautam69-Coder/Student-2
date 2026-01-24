@@ -1,6 +1,7 @@
 
 import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import ComingSoonPage from "../../Utils/ComingSoon";
 // UI imports removed
 
 import { Sparkles, X, Send, Minimize2, PencilLine } from "lucide-react"
@@ -28,7 +29,7 @@ export function AIAssistant() {
   return (
     <>
       {/* Levitating Pencil Bubble */}
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {!isOpen && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
@@ -44,10 +45,10 @@ export function AIAssistant() {
             <PencilLine className="w-6 h-6 text-white" />
           </motion.button>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
       {/* Minimal Chat Window */}
-      <AnimatePresence>
+      {/* <AnimatePresence> */}
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -124,7 +125,7 @@ export function AIAssistant() {
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+      {/* </AnimatePresence> */}
     </>
   )
 }

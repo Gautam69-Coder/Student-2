@@ -115,7 +115,10 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                             <option value="admin">Admin</option>
                                         </select>
                                     ) : (
-                                        <span className="sm:w-28 w-20 h-6 sm:h-8 sm:px-5 px-2 text-[12px] text-center font-semibold rounded-md border-none bg-yellow-500 text-white">{user.role}</span>
+                                        <div>
+
+                                            <span className="sm:w-28 w-20 h-6 py-2  sm:px-5 px-2 text-[12px] text-center font-semibold rounded-md border-none bg-yellow-500 text-white">{user.role}</span>
+                                        </div>
                                     )}
                                 </td>
                                 <td className="sm:px-6 px-2 py-2 sm:py-4">
@@ -128,7 +131,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                 <td className="sm:px-6 py-4">
                                     <div className="flex sm:justify-end justify-center gap-2">
                                         <button onClick={() => handleDeleteUser(user._id)} className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors">
-                                            <Trash className="w-4 h-4" />
+                                            {user.role !== "superadmin" ? <Trash className="w-4 h-4" /> : "😂"}
                                         </button>
 
                                     </div>

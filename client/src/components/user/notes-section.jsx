@@ -3,6 +3,7 @@ import React from "react"
 import { motion } from "framer-motion"
 import { FileText, Download, Eye, Calendar, User } from "lucide-react"
 import { notes } from "@/data/student-data";
+import ComingSoonPage from "../../Utils/ComingSoon";
 // UI imports removed
 
 
@@ -11,7 +12,7 @@ import { notes } from "@/data/student-data";
 export function NotesSection() {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-            <div className="flex items-center justify-between">
+            {/* <div className="flex flex-wrap  items-center justify-between">
                 <h2 className="text-2xl font-bold text-slate-900 tracking-tight">My Notes</h2>
                 <div className="flex gap-2">
                     {["All", "Java", "Scilab", "DSA", "Web Dev"].map((filter) => (
@@ -68,7 +69,9 @@ export function NotesSection() {
                         </div>
                     </motion.div>
                 ))}
-            </div>
+            </div> */}
+            <ComingSoonPage />
+
         </motion.div>
     )
 }

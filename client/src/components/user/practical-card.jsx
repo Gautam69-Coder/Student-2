@@ -15,11 +15,11 @@ function QuestionBlock({ question, index }) {
     }
 
     return (
-        <div className="border-b last:border-b-0 border-gray-100">
-            <div className="sm:p-6 p-2">
+        <div className="border-b mb-2 last:border-b-0 border-gray-100">
+            <div className="sm:p-6 p-4">
                 <div className="flex items-start justify-between">
                     <h3 className="font-semibold text-slate-900 tracking-tight sm:pr-4 pr-2 line-clamp-1">
-                        <span className="text-slate-400 font-mono mr-2">Q{index + 1}.</span>
+                        <span className="text-slate-400 font-mono mr-2 border border-blue-300 rounded-full px-2 py-1">Q{index + 1}.</span>
                         {question.question}
                     </h3>
                     <div className="flex items-center gap-3 shrink-0">
@@ -39,8 +39,8 @@ function QuestionBlock({ question, index }) {
                         </button>
                     </div>
                 </div>
-                    <div className="flex-1 overflow-y-auto h-[30vh] bg-slate-50 pt-3">
-                        <pre className="font-mono text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
+                    <div className="flex-1 border rounded-xl overflow-y-auto h-[30vh] bg-slate-50 mt-6">
+                        <pre className="font-mono text-sm leading-relaxed text-slate-700 p-4 whitespace-pre-wrap">
                             <code>{question.code}</code>
                         </pre>
                     </div>

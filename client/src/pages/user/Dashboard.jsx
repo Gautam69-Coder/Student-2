@@ -26,17 +26,13 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const [subjects, setSubjects] = useState([]);
     const [practicals, setPracticals] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [subjectPracticals, setSubjectPracticals] = useState([]);
     const navigate = useNavigate();
 
     const searchResults = React.useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [], pyqs: [] };
 
         const query = searchQuery.toLowerCase();
-        console.log(query);
-        console.log(subjects);
-        console.log(practicals);
-        console.log(notes);
-        console.log(pyqSubjects);
 
         return {
             subjects: subjects.filter(s => (s.name)?.toLowerCase()?.includes(query) || (s.code)?.toLowerCase()?.includes(query)),
@@ -57,6 +53,14 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
         const practical = fetchPracticals();
         practical.then((res) => {
             setPracticals(res.data)
+            const grouped = res.data.reduce((acc, practical) => {
+                if (!acc[practical.section]) {
+                    acc[practical.section] = [];
+                }
+                acc[practical.section].push(practical);
+                return acc;
+            }, {});
+            setSubjectPracticals(grouped);
         });
     }
 
@@ -215,7 +219,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                         </div>
                     ) : (
                         <Routes>
-                            <Route path="/" element={<Home userName={userName} subjects={subjects} practicals={practicals} />} />
+                            <Route path="/" element={<Home userName={userName} subjects={subjects} subjectPracticals={subjectPracticals} practicals={practicals} />} />
                             <Route path="notes" element={<Notes />} />
                             <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} />} />
                             <Route path="pyqs" element={<PYQs />} />

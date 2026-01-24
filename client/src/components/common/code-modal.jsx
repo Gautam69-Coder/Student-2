@@ -53,8 +53,8 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto bg-slate-50 p-6">
-                            <pre className="font-mono text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
-                                <code>{code}</code>
+                            <pre className="font-mono text-sm leading-relaxed text-slate-700  p-4 overflow-x-auto">
+                                <code className="overflow-x-auto">{code}</code>
                             </pre>
                         </div>
                     </motion.div>

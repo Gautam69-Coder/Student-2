@@ -8,7 +8,7 @@ import { PracticalCard } from '@/components/user/practical-card';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
-export function Home({ userName, subjects, practicals }) {
+export function Home({ userName, subjects, practicals, subjectPracticals }) {
     const navigate = useNavigate();
     const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -21,8 +21,7 @@ export function Home({ userName, subjects, practicals }) {
     };
 
     useEffect(() => {
-        // console.log(practicals);
-        // setSelectedSubject(subjects);
+        console.log(subjectPracticals);       
     }, []);
 
     const itemVariants = {
@@ -35,11 +34,11 @@ export function Home({ userName, subjects, practicals }) {
     };
 
     return (
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-10">
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
             {/* Welcome Banner - Minimal Paper Card */}
             <motion.div
                 variants={itemVariants}
-                className="relative overflow-hidden rounded-xl bg-white p-8 border border-[#E5E5E5] shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
+                className="relative overflow-hidden rounded-xl bg-white sm:p-8 p-4 border border-[#E5E5E5] shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
             >
                 {/* Subtle Abstract Pattern */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-orange-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
@@ -55,18 +54,18 @@ export function Home({ userName, subjects, practicals }) {
                         Ready to learn? You have <span className="text-slate-900 font-medium">3 practicals</span> pending and <span className="text-slate-900 font-medium">2 PYQs</span> to review.
                     </p>
 
-                    <div className=" flex flex-wrap gap-6 mt-8">
-                        <div className="flex flex-col">
+                    <div className=" flex flex-wrap sm:gap-6 gap-3  mt-8">
+                        <div className="flex flex-col border p-2 rounded-2xl">
                             <p className="sm:text-3xl text-[15px] font-bold text-slate-900">{subjects.length}</p>
                             <p className="sm:text-sm text-[15px] text-slate-500 font-medium">Active Subjects</p>
                         </div>
                         <div className="w-px h-10 bg-slate-200" />
-                        <div className="flex flex-col">
+                        <div className="flex flex-col border p-2 rounded-2xl">
                             <p className="sm:text-3xl text-[15px] font-bold text-slate-900">{practicals.map((practical) => practical.questions.length).reduce((a, b) => a + b, 0)}</p>
                             <p className="sm:text-sm text-[15px] text-slate-500 font-medium">Notes Uploaded</p>
                         </div>
                         <div className="w-px h-10 bg-slate-200" />
-                        <div className="flex flex-col">
+                        <div className="flex flex-col border p-2 rounded-2xl">
                             <p className="sm:text-3xl text-[15px] font-bold text-slate-900">68%</p>
                             <p className="sm:text-sm text-[15px] text-slate-500 font-medium">Progress</p>
                         </div>
@@ -75,7 +74,7 @@ export function Home({ userName, subjects, practicals }) {
             </motion.div>
 
             {/* Subjects Grid - Bento Style */}
-            <motion.div variants={itemVariants}>
+            <motion.div variants={itemVariants} className='border rounded-2xl p-4'>
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-slate-900 tracking-tight">Current Subjects</h2>
                     <Link
@@ -85,12 +84,13 @@ export function Home({ userName, subjects, practicals }) {
                         View All <ArrowUpRight className="w-4 h-4" />
                     </Link>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 sm:gap-6 gap-4">
                     {subjects.map((subject, index) => (
                         <SubjectCard
                             key={index}
                             subject={subject}
                             index={index}
+                            subjectPracticals={subjectPracticals}
                             onClick={() => handleSubjectClick(subject)}
                         />
                     ))}
@@ -98,7 +98,7 @@ export function Home({ userName, subjects, practicals }) {
             </motion.div>
 
             {/* Recent Practicals */}
-            <motion.div variants={itemVariants}>
+            <motion.div variants={itemVariants} className='border p-4 rounded-2xl'>
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-slate-900 tracking-tight">Recent Practicals</h2>
                     <Link

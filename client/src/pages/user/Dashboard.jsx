@@ -112,6 +112,12 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             </div>
                         </div>
 
+                        {/* <div>
+                            <button className="p-2 rounded-md hover:bg-slate-100 transition-colors">
+                                <CloudCog className="w-6 h-6 text-slate-600 hover:text-slate-900 transition-colors" />
+                            </button>
+                        </div> */}
+
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => setUploadModalOpen(true)}

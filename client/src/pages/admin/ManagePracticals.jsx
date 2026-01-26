@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Trash, FlaskConical, Pen } from "lucide-react"
+import { Trash, FlaskConical, Pen, Search } from "lucide-react"
 import {
     createPractical,
     updatePractical,
@@ -17,6 +17,8 @@ export function ManagePracticals({ uniqueSubjectSections }) {
     });
     const [practicals, setPracticals] = useState([]);
     const [editPracticalId, setEditPracticalId] = useState(null);
+    const [filterRole, setFilterRole] = useState("all")
+
 
     const handleAddQuestion = () => {
         setNewPractical({
@@ -37,11 +39,11 @@ export function ManagePracticals({ uniqueSubjectSections }) {
         try {
             if (editPracticalId) {
                 const res = await updatePractical(editPracticalId, newPractical);
-                console.log(res.data);
+                
                 setEditPracticalId(null);
             } else {
                 const res = await createPractical(newPractical);
-                // console.log(res.data);
+           
                 setNewPractical({ practicalNumber: '', section: '', questions: [{ question: '', code: '' }] });
                 alert('Practical added successfully!');
             }
@@ -79,7 +81,6 @@ export function ManagePracticals({ uniqueSubjectSections }) {
     const handleFetchPracticals = async () => {
         try {
             const res = await fetchPracticals();
-            console.log(res.data);
             setPracticals(res.data);
         } catch (error) {
             console.error(error);
@@ -251,9 +252,32 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                 </motion.div>
             </form>
             <div>
-                <div className="pb-2 mb-2">
-                    <h2 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">Practicals</h2>
-                    <p className="text-slate-500">All Added Practicals</p>
+                <div className=" flex justify-between items-center">
+                    <div className="pb-2 mb-2">
+                        <h2 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">Practicals</h2>
+                        <p className="text-slate-500">All Added Practicals</p>
+                    </div>
+                    <div>
+                        <motion.div className="flex items-center flex-wrap gap-3 justify-between">
+
+                            <div className="flex gap-3">
+
+                                <select
+                                    value={filterRole}
+                                    onChange={(e) => {setFilterRole(e.target.value); console.log(e.target.value);}}
+                                    className="h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 cursor-pointer"
+                                >
+                                    {uniqueSubjectSections.map((section) => (
+                                        
+                                        <option key={section._id} value={section.name}>
+                                            {section.name}
+                                        </option>
+                                    ))}
+                                   
+                                </select>
+                            </div>
+                        </motion.div>
+                    </div>
                 </div>
                 <div className="bg-white border-2 p-4 rounded-2xl">
                     <table className="w-full  ">
@@ -264,7 +288,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                 <th className="px-4 py-2 text-center">Actions</th>
                             </tr>
                         </thead>
-                        {practicals.sort((a, b) => b.practicalNumber - a.practicalNumber).map((practical) => (
+                        {practicals.sort((a, b) => b.practicalNumber - a.practicalNumber).filter(practical => practical.section === filterRole || filterRole === "all").map((practical) => (
                             <tr className="border-b border-[#E5E5E5]" key={practical._id}>
                                 <td className="px-4 py-2 text-center">{practical.practicalNumber}</td>
                                 <td className="px-4 py-2 text-center">{practical.section}</td>

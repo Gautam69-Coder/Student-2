@@ -6,7 +6,7 @@ const auth = require('../middleware/auth');
 // Get all practicals
 router.get('/', async (req, res) => {
     try {
-        const practicals = await Practical.find().collation({ locale: "en", numericOrdering: true }).sort({ practicalNumber: -1 });
+        const practicals = await Practical.find().collation({ locale: "en", numericOrdering: true });
         res.json(practicals);
     } catch (err) {
         res.status(500).send('Server Error');

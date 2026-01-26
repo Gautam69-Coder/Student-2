@@ -21,7 +21,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals }) {
     };
 
     useEffect(() => {
-        console.log(subjectPracticals);       
+        console.log(practicals);       
     }, []);
 
     const itemVariants = {
@@ -109,7 +109,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals }) {
                     </Link>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {practicals.slice(0, 2).map((practical, index) => (
+                    {practicals.toReversed().slice(0, 2).map((practical, index) => (
                         <PracticalCard key={index} practical={practical} />
                     ))}
                 </div>

@@ -34,10 +34,8 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
             email,
             password
         }
-        console.log(loginData)
 
         const res = authState === "login" ? await loginUser(loginData) : await registerUser(userData)
-        console.log(res)
         localStorage.setItem('token', res.data.token);
         if (res.data.token) {
             onAuth(role, name || email.split("@")[0])

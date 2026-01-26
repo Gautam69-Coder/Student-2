@@ -16,7 +16,6 @@ export function ManageUsers({ users, setUsers, subjects }) {
     }
 
     const handleRoleChange = async (userId, newRole) => {
-        console.log(userId, newRole);
         try {
             await updateUserRole(userId, newRole);
             setUsers(users.map(user =>

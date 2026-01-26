@@ -7,7 +7,6 @@ import { useEffect } from "react"
 export function SubjectCard({ subject, index, onClick, subjectPracticals }) {
 
     useEffect(() => {
-        // console.log(subjectPracticals[subject.name]?.length);
     }, [subjectPracticals]);
 
     return (

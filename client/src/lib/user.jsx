@@ -7,7 +7,6 @@ export const userDetail = async () => {
             const user = res.data;
             return user;
         } catch (error) {
-            // console.log(error.message);
             return null;
         }
 

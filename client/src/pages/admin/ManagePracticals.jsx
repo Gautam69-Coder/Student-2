@@ -264,7 +264,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
 
                                 <select
                                     value={filterRole}
-                                    onChange={(e) => {setFilterRole(e.target.value); console.log(e.target.value);}}
+                                    onChange={(e) => {setFilterRole(e.target.value);}}
                                     className="h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 cursor-pointer"
                                 >
                                     {uniqueSubjectSections.map((section) => (

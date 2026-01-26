@@ -112,11 +112,11 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
         try {
             if (editPracticalId) {
                 const res = await updatePractical(editPracticalId, newPractical);
-                console.log(res.data);
+               
                 setEditPracticalId(null);
             } else {
                 const res = await createPractical(newPractical);
-                // console.log(res.data);
+               
                 setNewPractical({ practicalNumber: '', section: '', questions: [{ question: '', code: '' }] });
                 alert('Practical added successfully!');
             }
@@ -162,7 +162,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
     const handleFetchPracticals = async () => {
         try {
             const res = await fetchPracticals();
-            console.log(res.data);
+            
             setPracticals(res.data);
         } catch (error) {
             console.error(error);
@@ -177,7 +177,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
 
 
     const handleRoleChange = async (userId, newRole) => {
-        console.log(userId, newRole);
+      
         try {
             await updateUserRole(userId, newRole);
             setUsers(users.map(user =>
@@ -209,34 +209,19 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
         const user = fetchUsers();
         user.then((res) => {
             setUsers(res.data);
-            // console.log(res.data);
+         
         });
 
         const content = fetchContent();
         content.then((res) => {
             setSubjects(res.data)
-            // console.log(res.data)
-            // const uniqueSections = [...new Set(res.data.map(item => item.section))];
-            // setUniqueSubjectSections(uniqueSections);
+            
         });
 
         const section = fetchSections();
         section.then((res) => {
             setUniqueSubjectSections(res.data)
-            console.log(res.data)
         });
-
-
-        // const createPractical = fetchPracticals();
-        // createPractical.then((res) => {
-        //     console.log(res.data);
-        // });
-
-        // const createNote = fetchNotes();
-        // createNote.then((res) => {
-        //     console.log(res.data);
-        // });
-
 
     }, [])
 

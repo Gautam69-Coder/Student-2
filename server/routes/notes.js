@@ -31,7 +31,7 @@ router.get('/all', auth, async (req, res) => {
 
 // Create Note
 router.post('/', auth, async (req, res) => {
-    const { title, content, isGlobal } = req.body;
+    const { title, content, section, isGlobal, fileName, fileType, fileData } = req.body;
     try {
         // Only admin can create global notes
         let noteIsGlobal = false;
@@ -45,6 +45,10 @@ router.post('/', auth, async (req, res) => {
             user: req.user.id,
             title,
             content,
+            section: section || 'General',
+            fileName,
+            fileType,
+            fileData,
             isGlobal: noteIsGlobal
         });
         const note = await newNote.save();
@@ -56,7 +60,7 @@ router.post('/', auth, async (req, res) => {
 
 // Update Note
 router.put('/:id', auth, async (req, res) => {
-    const { title, content } = req.body;
+    const { title, content, section, fileName, fileType, fileData } = req.body;
     try {
         let note = await UserNote.findById(req.params.id);
         if (!note) return res.status(404).json({ msg: 'Note not found' });
@@ -68,6 +72,10 @@ router.put('/:id', auth, async (req, res) => {
 
         note.title = title || note.title;
         note.content = content || note.content;
+        note.section = section || note.section;
+        note.fileName = fileName || note.fileName;
+        note.fileType = fileType || note.fileType;
+        note.fileData = fileData || note.fileData;
 
         await note.save();
         res.json(note);

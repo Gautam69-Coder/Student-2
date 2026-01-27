@@ -4,6 +4,7 @@ import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import {
     fetchSections,
     fetchPracticals,
+    fetchNotes,
 } from "@/Api/api"
 
 import { Upload, Search, Command, Menu, Users, CloudCog } from "lucide-react"
@@ -25,9 +26,15 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const [role, setrole] = useState("user");
     const [subjects, setSubjects] = useState([]);
     const [practicals, setPracticals] = useState([]);
+    const [notes, setNotes] = useState([]);
+    const [notesRefreshKey, setNotesRefreshKey] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [subjectPracticals, setSubjectPracticals] = useState([]);
     const navigate = useNavigate();
+
+    const handleNoteCreated = () => {
+        setNotesRefreshKey(prev => prev + 1);
+    };
 
     const searchResults = React.useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [], pyqs: [] };
@@ -37,7 +44,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
         return {
             subjects: subjects.filter(s => (s.name)?.toLowerCase()?.includes(query) || (s.code)?.toLowerCase()?.includes(query)),
             practicals: practicals.filter(p => (p.questions[0].question)?.toLowerCase()?.includes(query) || (p.section)?.toLowerCase()?.includes(query)),
-            notes: notes.filter(n => (n.title)?.toLowerCase()?.includes(query) || (n.subject)?.toLowerCase()?.includes(query)),
+            notes: notes.filter(n => (n.title)?.toLowerCase()?.includes(query) || (n.content)?.toLowerCase()?.includes(query)),
             pyqs: pyqSubjects.filter(p => (p.name)?.toLowerCase()?.includes(query))
         };
     }, [searchQuery, subjects, practicals, notes, pyqSubjects]);
@@ -64,10 +71,23 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
         });
     }
 
+    const fetchUserNotes = () => {
+        fetchNotes().then((res) => {
+            setNotes(res.data);
+        }).catch(err => console.error("Error fetching notes for search:", err));
+    }
+
     useEffect(() => {
         fetchSubjects();
         fetchPractical();
+        fetchUserNotes();
     }, [])
+
+    useEffect(() => {
+        if (notesRefreshKey > 0) {
+            fetchUserNotes();
+        }
+    }, [notesRefreshKey])
 
     useEffect(() => {
         userDetail().then((user) => {
@@ -112,12 +132,6 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             </div>
                         </div>
 
-                        {/* <div>
-                            <button className="p-2 rounded-md hover:bg-slate-100 transition-colors">
-                                <CloudCog className="w-6 h-6 text-slate-600 hover:text-slate-900 transition-colors" />
-                            </button>
-                        </div> */}
-
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => setUploadModalOpen(true)}
@@ -155,21 +169,6 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                 </button>
                             </div>
 
-                            {/* Subjects Results */}
-                            {/* {searchResults.subjects.length > 0 && (
-                                <div className="space-y-4">
-                                    <h3 className="text-lg font-semibold text-slate-700">Subjects</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                        {searchResults.subjects.map((subject, index) => (
-                                            <div key={index} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                                                <h4 className="font-bold text-slate-900">{subject.name}</h4>
-                                                <p className="text-sm text-slate-500 mt-1">{subject.code}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )} */}
-
                             {/* Practicals Results */}
                             {searchResults.practicals.length > 0 && (
                                 <div className="space-y-4">
@@ -185,36 +184,28 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             )}
 
                             {/* Notes Results */}
-                            {/* {searchResults.notes.length > 0 && (
+                            {searchResults.notes.length > 0 && (
                                 <div className="space-y-4">
-                                    <h3 className="text-lg font-semibold text-slate-700">Notes</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <h3 className="text-lg font-semibold text-slate-700">My Notes</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         {searchResults.notes.map((note, index) => (
-                                            <div key={index} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex items-start gap-4">
-                                                <div className="flex-1">
-                                                    <h4 className="font-bold text-slate-900">{note.title}</h4>
-                                                    <p className="text-sm text-slate-500 mt-1">{note.subject} • {note.author}</p>
+                                            <div key={note._id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                                        <Code className="w-5 h-5 text-slate-900" />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-slate-900">{note.title}</h4>
+                                                        <p className="text-xs text-slate-500 mt-1">
+                                                            {new Date(note.createdAt).toLocaleDateString()}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
-                            )} */}
-
-                            {/* PYQ Results */}
-                            {/* {searchResults.pyqs.length > 0 && (
-                                <div className="space-y-4">
-                                    <h3 className="text-lg font-semibold text-slate-700">Previous Year Questions</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {searchResults.pyqs.map((pyq, index) => (
-                                            <div key={index} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                                                <h4 className="font-bold text-slate-900">{pyq.name}</h4>
-                                                <p className="text-sm text-slate-500 mt-1">{pyq.papers.length} Papers Available</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )} */}
+                            )}
 
                             {searchQuery && Object.values(searchResults).every(arr => arr.length === 0) && (
                                 <div className="text-center py-12">
@@ -226,7 +217,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                     ) : (
                         <Routes>
                             <Route path="/" element={<Home userName={userName} subjects={subjects} subjectPracticals={subjectPracticals} practicals={practicals} />} />
-                            <Route path="notes" element={<Notes />} />
+                            <Route path="notes" element={<Notes refreshKey={notesRefreshKey} />} />
                             <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} />} />
                             <Route path="pyqs" element={<PYQs />} />
                             <Route path="feedback" element={<Feedback />} />
@@ -236,7 +227,11 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 </div>
             </main >
 
-            <UploadModal open={uploadModalOpen} onOpenChange={setUploadModalOpen} />
+            <UploadModal
+                open={uploadModalOpen}
+                onOpenChange={setUploadModalOpen}
+                onNoteCreated={handleNoteCreated}
+            />
         </div >
     )
 }

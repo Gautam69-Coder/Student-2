@@ -14,9 +14,9 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization'],
     credentials: true
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.text());
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ limit: '100mb', extended: true }));
+app.use(bodyParser.text({ limit: '100mb' }));
 // Database Connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Connected'))

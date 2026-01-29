@@ -34,10 +34,6 @@ function AppContent() {
                     navigate('/dashboard');
                 }
                 setLoading(false);
-            }).catch((error) => {
-                console.log(error.message);
-                setError(error);
-                setLoading(false);
             })
         }
         else {
@@ -83,13 +79,6 @@ function AppContent() {
         )
     }
 
-    if (error) {
-        return (
-            <div className="h-screen">
-                <NotFoundPage status={500} message="Server Down" />
-            </div>
-        )
-    }
 
     return (
         <div className="min-h-screen bg-background">

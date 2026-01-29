@@ -39,9 +39,9 @@ function QuestionBlock({ question, index }) {
                         </button>
                     </div>
                 </div>
-                    <div className="flex-1 border rounded-xl overflow-y-auto h-[30vh] bg-slate-50 mt-6">
-                        <pre className="font-mono text-sm leading-relaxed text-slate-700 p-4 whitespace-pre-wrap">
-                            <code>{question.code}</code>
+                    <div className="flex-1 border rounded-xl overflow-y-auto max-w-[80vw]  h-[30vh] bg-slate-50 mt-6">
+                        <pre className="font-mono text-sm leading-relaxed text-slate-700 p-4 ">
+                            <code className="overflow-x-auto">{question.code}</code>
                         </pre>
                     </div>
             </div>

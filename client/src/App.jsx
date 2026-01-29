@@ -8,6 +8,7 @@ import { AIAssistant } from '@/components/common/ai-assistant';
 import { userDetail } from '@/lib/user';
 import { TimeLine } from '@/Utils/loaders';
 import { NotFoundPage } from './Utils/Error';
+import { SquirelLoader } from './Utils/loaders';
 
 function AppContent() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -77,7 +78,7 @@ function AppContent() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <TimeLine size={50} color="#14253e" />
+                <SquirelLoader />
             </div>
         )
     }

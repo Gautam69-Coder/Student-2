@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-// Shadcn UI components removed
+import { DotLoader } from "../../Utils/loaders"
 
 import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog } from "lucide-react"
 import { registerUser, loginUser } from "@/Api/api"
@@ -19,10 +19,11 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
     const [password, setPassword] = useState("")
     const [name, setName] = useState("")
     const [currentQuote] = useState(quotes[Math.floor(Math.random() * quotes.length)])
+    const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
+        setLoading(true)
         const userData = {
             username: name,
             email,
@@ -37,6 +38,7 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
 
         const res = authState === "login" ? await loginUser(loginData) : await registerUser(userData)
         localStorage.setItem('token', res.data.token);
+        setLoading(false)
         if (res.data.token) {
             onAuth(role, name || email.split("@")[0])
         }
@@ -191,13 +193,19 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                                 </div>
                             </div>
 
-                            <button
-                                type="submit"
-                                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium h-12 rounded-lg transition-all shadow-sm hover:translate-y-[-1px] active:scale-[0.99] flex items-center justify-center"
-                            >
-                                {authState === "login" ? "Sign In" : "Create Account"}
-                            </button>
-
+                            {loading ? (
+                                <div className="flex justify-center">
+                                    <DotLoader size={20}  />
+                                </div>
+                            ) : (
+                                <button
+                                    type="submit"
+                                    className="w-full bg-slate-900 hover:bg-slate-800 text-white h-11 rounded-lg font-medium transition-all"
+                                >
+                                    {authState === "login" ? "Sign In" : "Create Account"}
+                                </button>
+                            )
+                            }
                             <div className="relative my-6">
                                 <div className="absolute inset-0 flex items-center">
                                     <div className="w-full border-t border-slate-200"></div>

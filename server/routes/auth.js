@@ -59,10 +59,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Admin Login (Specific check for fixed password if needed, but using standard flow is better. 
-// The prompt says "Fixed, secure password is required to initially access the panel". 
-// I will implement a specific route or check for this.)
-
+// Admin Access Check
 router.post('/admin-access', (req, res) => {
     const { password } = req.body;
     if (password === process.env.ADMIN_PASS) {

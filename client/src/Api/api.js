@@ -3,8 +3,8 @@ import axios from 'axios';
 // const API_URL = window.location.hostname === 'localhost'
     // ? 'http://localhost:5001/api'
 //     : 'https://student-2-3ow8.onrender.com/api';
-const API_URL = 'https://student-2-3ow8.onrender.com/api';
-// const API_URL = 'http://localhost:5001/api';
+// const API_URL = 'https://student-2-3ow8.onrender.com/api';
+const API_URL = 'http://localhost:5001/api';
 
 const api = axios.create({
     baseURL: API_URL,

@@ -128,12 +128,18 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                 </td>
                                 {/* <td className="px-6 py-4 text-slate-500 text-sm font-medium">{user.lastActive}</td> */}
                                 <td className="sm:px-6 py-4">
-                                    <div className="flex sm:justify-end justify-center gap-2">
-                                        <button onClick={() => handleDeleteUser(user._id)} className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors">
-                                            {user.role !== "superadmin" ? <Trash className="w-4 h-4" /> : "😂"}
-                                        </button>
+                                    {user.role !== "superadmin" ? (
+                                        <div className="flex sm:justify-end justify-center gap-2">
 
-                                    </div>
+                                            <button onClick={() => handleDeleteUser(user._id)} className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors">
+                                                <Trash className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex sm:justify-end justify-center gap-2">
+                                            <span className="text-slate-400">😂</span>
+                                        </div>
+                                    )}
                                 </td>
                             </tr>
                         ))}

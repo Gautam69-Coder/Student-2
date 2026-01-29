@@ -15,8 +15,8 @@ router.get('/', async (req, res) => {
 
 // Create Section (Admin only)
 router.post('/', auth, async (req, res) => {
-    console.log("req.body");
-    if (req.user.role !== 'admin') return res.status(403).json({ msg: 'Access denied' });
+    console.log("req.body",req.user.role);
+    if (req.user.role !== 'admin' && req.user.role !== 'superadmin') return res.status(403).json({ msg: 'Access denied' });
     const { name } = req.body;
     console.log("name", name)
     try {
@@ -34,7 +34,7 @@ router.post('/', auth, async (req, res) => {
 
 // Delete Section (Admin only)
 router.delete('/:id', auth, async (req, res) => {
-    if (req.user.role !== 'admin') return res.status(403).json({ msg: 'Access denied' });
+    if (req.user.role !== 'admin' && req.user.role !== 'superadmin') return res.status(403).json({ msg: 'Access denied' });
 
     try {
         await Section.findByIdAndDelete(req.params.id);

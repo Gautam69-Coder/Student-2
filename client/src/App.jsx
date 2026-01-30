@@ -21,20 +21,20 @@ function AppContent() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
+        const authFlag = localStorage.getItem('isAuthenticated');
+        if (authFlag) {
             setLoading(true);
-            setIsAuthenticated(true);
             userDetail().then((user) => {
+                setIsAuthenticated(true);
                 setUserRole(user.role);
                 setCurrentUser(user.username);
-                if (user.role === 'admin') {
-                    navigate('/admin');
-                } else {
-                    navigate('/dashboard');
-                }
+                // No need to navigate here, let the routes handle it
+            }).catch(() => {
+                localStorage.removeItem('isAuthenticated');
+                setIsAuthenticated(false);
+            }).finally(() => {
                 setLoading(false);
-            })
+            });
         }
         else {
             setIsAuthenticated(false);
@@ -53,9 +53,16 @@ function AppContent() {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try {
+            const { logoutUser } = await import('@/Api/api');
+            await logoutUser();
+        } catch (err) {
+            console.error("Logout failed", err);
+        }
         setIsAuthenticated(false);
-        localStorage.removeItem('token');
+        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('token'); // Just in case
         setCurrentUser(null);
         setAuthViewState("login");
         navigate('/');

@@ -1,13 +1,14 @@
 import axios from 'axios';
 
 // const API_URL = window.location.hostname === 'localhost'
-    // ? 'http://localhost:5001/api'
+// ? 'http://localhost:5001/api'
 //     : 'https://student-2-3ow8.onrender.com/api';
-const API_URL = 'https://student-2-3ow8.onrender.com/api';
-// const API_URL = 'http://localhost:5001/api';
+// const API_URL = 'https://student-2-3ow8.onrender.com/api';
+const API_URL = 'http://localhost:5001/api';
 
 const api = axios.create({
     baseURL: API_URL,
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
     }
@@ -34,6 +35,7 @@ export const trackVisit = () => api.post('/auth/track-visit');
 export const fetchUsers = () => api.get('/auth/users');
 export const deleteUser = (id) => api.delete(`/auth/users/${id}`);
 export const updateUserRole = (id, role) => api.put(`/auth/users/${id}/role`, { role });
+export const logoutUser = () => api.post('/auth/logout');
 
 // Content Services
 export const fetchContent = () => api.get('/content');

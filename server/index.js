@@ -3,11 +3,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 dotenv.config();
 
 const app = express();
 
 // Middleware
+app.use(cookieParser());
 app.use(cors({
     origin: ['http://localhost:5173', 'https://student-2-3ow8.onrender.com', 'https://student-2.pages.dev'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

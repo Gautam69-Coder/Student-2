@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { motion } from "framer-motion"
-import { Code, Copy, Check } from "lucide-react"
+import { Code, Copy, Check, Image as ImageIcon, FileText, Download, ExternalLink } from "lucide-react"
 
 import { CodeModal } from "@/components/common/code-modal"
 
@@ -39,11 +39,57 @@ function QuestionBlock({ question, index }) {
                         </button>
                     </div>
                 </div>
-                    <div className="flex-1 border rounded-xl overflow-y-auto max-w-[80vw]  h-[30vh] bg-slate-50 mt-6">
-                        <pre className="font-mono text-sm leading-relaxed text-slate-700 p-4 ">
-                            <code className="overflow-x-auto">{question.code}</code>
-                        </pre>
+                <div className="flex-1 border rounded-xl overflow-y-auto max-w-[80vw]  h-[30vh] bg-slate-50 mt-6">
+                    <pre className="font-mono text-sm leading-relaxed text-slate-700 p-4 ">
+                        <code className="overflow-x-auto">{question.code}</code>
+                    </pre>
+                </div>
+
+                {/* Reference File/Image Display */}
+                {question.fileData && (
+                    <div className="mt-6 border border-slate-100 rounded-xl overflow-hidden bg-slate-50/50">
+                        {question.fileType?.startsWith('image/') ? (
+                            <div className="relative group cursor-pointer" onClick={() => window.open(question.fileData, '_blank')}>
+                                <img src={question.fileData} alt="Reference" className="w-full h-auto max-h-[500px] object-contain bg-white" />
+                                <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <div className="flex gap-3">
+                                        <button className="p-2 bg-white rounded-lg text-slate-900 shadow-xl flex items-center gap-2 text-sm font-bold">
+                                            <ExternalLink className="w-4 h-4" /> Full View
+                                        </button>
+                                        <a
+                                            href={question.fileData}
+                                            download={question.fileName || 'reference-image'}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="p-2 bg-white rounded-lg text-slate-900 shadow-xl flex items-center gap-2 text-sm font-bold"
+                                        >
+                                            <Download className="w-4 h-4" /> Save
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="p-6 flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center shadow-sm">
+                                        <FileText className="w-6 h-6 text-blue-500" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-bold text-slate-900 truncate">{question.fileName || 'Reference File'}</p>
+                                        <p className="text-xs text-slate-400 capitalize font-medium">{question.fileType?.split('/')[1] || 'file'}</p>
+                                    </div>
+                                </div>
+                                <a
+                                    href={question.fileData}
+                                    download={question.fileName || 'reference-file'}
+                                    className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-all shadow-sm"
+                                >
+                                    <Download className="w-4 h-4" />
+                                    Download
+                                </a>
+                            </div>
+                        )}
                     </div>
+                )}
             </div>
 
             <CodeModal

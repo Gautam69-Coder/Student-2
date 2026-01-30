@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { FileText, Download, Eye, Calendar, User, Trash2, Copy, Check, X, Code, Loader2, Layers, File, Image as ImageIcon } from "lucide-react"
 import { fetchNotes, deleteNote } from "@/Api/api"
+import { CodeModal } from "@/components/common/code-modal"
 
 export function NotesSection({ refreshKey }) {
     const [notes, setNotes] = useState([])
@@ -11,6 +12,7 @@ export function NotesSection({ refreshKey }) {
     const [selectedNote, setSelectedNote] = useState(null)
     const [copying, setCopying] = useState(false)
     const [activeSection, setActiveSection] = useState("All")
+    const [showCodeModal, setShowCodeModal] = useState(false)
 
     useEffect(() => {
         loadNotes()
@@ -102,8 +104,8 @@ export function NotesSection({ refreshKey }) {
                             key={sec}
                             onClick={() => setActiveSection(sec)}
                             className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${activeSection === sec
-                                    ? "bg-slate-900 text-white shadow-sm"
-                                    : "bg-white text-slate-600 border border-slate-200 hover:border-slate-400 hover:text-slate-900"
+                                ? "bg-slate-900 text-white shadow-sm"
+                                : "bg-white text-slate-600 border border-slate-200 hover:border-slate-400 hover:text-slate-900"
                                 }`}
                         >
                             {sec}
@@ -144,74 +146,106 @@ export function NotesSection({ refreshKey }) {
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.05 }}
-                                            className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all group relative overflow-hidden"
+                                            className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group overflow-hidden flex flex-col h-full"
                                         >
-                                            <div className="flex items-start gap-4">
-                                                <div className={`p-3 rounded-xl border transition-colors ${note.fileData ? 'bg-blue-50 border-blue-100 text-blue-600' : 'bg-slate-50 border-slate-100 text-slate-600 group-hover:bg-slate-900 group-hover:text-white'}`}>
-                                                    {note.fileData ? (
-                                                        note.fileType?.startsWith('image/') ? <ImageIcon className="w-5 h-5" /> : <File className="w-5 h-5" />
-                                                    ) : (
-                                                        <Code className="w-5 h-5" />
-                                                    )}
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <h3 className="font-bold text-slate-900 truncate text-lg group-hover:text-slate-900">
-                                                        {note.title}
-                                                    </h3>
-                                                    <div className="flex flex-wrap items-center gap-3 mt-3 text-xs font-medium text-slate-400">
-                                                        <span className="flex items-center gap-1.5">
-                                                            <Calendar className="w-3.5 h-3.5" />
-                                                            {new Date(note.createdAt).toLocaleDateString()}
-                                                        </span>
-                                                        {note.fileName && (
-                                                            <span className="text-blue-500 truncate max-w-[100px]">
-                                                                {note.fileName}
-                                                            </span>
-                                                        )}
-                                                        {note.isGlobal && (
-                                                            <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-[10px]">
-                                                                Global
-                                                            </span>
-                                                        )}
+                                            <div className="p-6 flex flex-col h-full">
+                                                <div className="flex items-start justify-between mb-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`p-2.5 rounded-xl border transition-colors ${note.fileData ? 'bg-blue-50 border-blue-100 text-blue-600' : 'bg-slate-900 border-slate-800 text-white'}`}>
+                                                            {note.fileData ? (
+                                                                note.fileType?.startsWith('image/') ? <ImageIcon className="w-5 h-5" /> : <File className="w-5 h-5" />
+                                                            ) : (
+                                                                <Code className="w-5 h-5" />
+                                                            )}
+                                                        </div>
+                                                        <h3 className="font-bold text-slate-900 truncate text-lg pr-2">
+                                                            {note.title}
+                                                        </h3>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); handleDelete(note._id); }}
+                                                            className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                                                            title="Delete Note"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+
+                                                <div className="flex flex-wrap items-center gap-3 mb-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                                                    <span className="flex items-center gap-1.5">
+                                                        <Calendar className="w-3.5 h-3.5" />
+                                                        {new Date(note.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                    {note.isGlobal && (
+                                                        <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+                                                            Public
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {/* Card Content Area */}
+                                                <div className="flex-1 mt-auto">
+                                                    {note.fileData ? (
+                                                        note.fileType?.startsWith('image/') ? (
+                                                            <div
+                                                                onClick={() => setSelectedNote(note)}
+                                                                className="rounded-xl overflow-hidden border border-slate-100 cursor-pointer hover:opacity-90 transition-opacity mb-4"
+                                                            >
+                                                                <img src={note.fileData} alt={note.title} className="w-full h-40 object-cover" />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-3 mb-4">
+                                                                <FileText className="w-8 h-8 text-blue-500" />
+                                                                <div className="overflow-hidden">
+                                                                    <p className="text-sm font-bold text-slate-700 truncate">{note.fileName}</p>
+                                                                    <p className="text-xs text-slate-400 capitalize">{note.fileType?.split('/')[1] || 'file'}</p>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    ) : (
+                                                        <div className="relative group/code mb-4">
+                                                            <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover/code:opacity-100 transition-opacity">
+                                                                <button
+                                                                    onClick={() => handleCopy(note.content)}
+                                                                    className="p-1.5 bg-white border border-slate-200 rounded-md shadow-sm text-slate-500 hover:text-slate-900"
+                                                                >
+                                                                    {copying ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+                                                                </button>
+                                                            </div>
+                                                            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 max-h-40 overflow-hidden relative">
+                                                                <pre className="font-mono text-xs leading-relaxed text-slate-600 whitespace-pre-wrap">
+                                                                    {note.content}
+                                                                </pre>
+                                                                <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-50 to-transparent" />
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Actions Footer */}
+                                                <div className="flex items-center gap-2 mt-2">
                                                     {note.fileData ? (
                                                         <button
                                                             onClick={() => handleDownload(note)}
-                                                            className="p-2 rounded-lg hover:bg-blue-50 text-blue-500 transition-colors"
-                                                            title="Download File"
+                                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-900 border border-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-sm"
                                                         >
                                                             <Download className="w-4 h-4" />
+                                                            Download
                                                         </button>
                                                     ) : (
                                                         <button
-                                                            onClick={() => setSelectedNote(note)}
-                                                            className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"
-                                                            title="View Content"
+                                                            onClick={() => { setSelectedNote(note); setShowCodeModal(true); }}
+                                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-900 border border-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-sm"
                                                         >
-                                                            <Eye className="w-4 h-4" />
+                                                            <Code className="w-4 h-4" />
+                                                            View Code
                                                         </button>
                                                     )}
-                                                    <button
-                                                        onClick={() => handleDelete(note._id)}
-                                                        className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
-                                                        title="Delete Note"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
                                                 </div>
                                             </div>
-
-                                            {/* Preview functionality for images */}
-                                            {note.fileData && note.fileType?.startsWith('image/') && (
-                                                <div
-                                                    onClick={() => setSelectedNote(note)}
-                                                    className="mt-4 rounded-xl overflow-hidden border border-slate-100 cursor-pointer hover:opacity-90 transition-opacity"
-                                                >
-                                                    <img src={note.fileData} alt={note.title} className="w-full h-32 object-cover" />
-                                                </div>
-                                            )}
                                         </motion.div>
                                     ))}
                                 </div>
@@ -220,8 +254,17 @@ export function NotesSection({ refreshKey }) {
                 </div>
             )}
 
+            {showCodeModal && selectedNote && !selectedNote.fileData && (
+                <CodeModal
+                    isOpen={showCodeModal}
+                    onClose={() => { setShowCodeModal(false); setSelectedNote(null); }}
+                    title={selectedNote.title}
+                    code={selectedNote.content}
+                />
+            )}
+
             <AnimatePresence>
-                {selectedNote && (
+                {selectedNote && selectedNote.fileData && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -245,23 +288,13 @@ export function NotesSection({ refreshKey }) {
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    {selectedNote.fileData ? (
-                                        <button
-                                            onClick={() => handleDownload(selectedNote)}
-                                            className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition-all"
-                                        >
-                                            <Download className="w-4 h-4" />
-                                            Download {selectedNote.fileName}
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={() => handleCopy(selectedNote.content)}
-                                            className="flex items-center gap-2 px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-sm font-medium transition-all"
-                                        >
-                                            {copying ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
-                                            {copying ? "Copied!" : "Copy Code"}
-                                        </button>
-                                    )}
+                                    <button
+                                        onClick={() => handleDownload(selectedNote)}
+                                        className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition-all"
+                                    >
+                                        <Download className="w-4 h-4" />
+                                        Download {selectedNote.fileName}
+                                    </button>
                                     <button
                                         onClick={() => setSelectedNote(null)}
                                         className="p-2 hover:bg-slate-100 rounded-full transition-colors"
@@ -272,19 +305,20 @@ export function NotesSection({ refreshKey }) {
                             </div>
 
                             <div className="flex-1 overflow-auto bg-slate-50 p-6 flex items-center justify-center">
-                                {selectedNote.fileData ? (
-                                    selectedNote.fileType?.startsWith('image/') ? (
-                                        <img src={selectedNote.fileData} alt={selectedNote.title} className="max-w-full max-h-full object-contain rounded-lg" />
-                                    ) : (
-                                        <div className="text-center p-12">
-                                            <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                                            <p className="text-slate-600 font-medium">This file type cannot be previewed. Please download it to view.</p>
-                                        </div>
-                                    )
+                                {selectedNote.fileType?.startsWith('image/') ? (
+                                    <img src={selectedNote.fileData} alt={selectedNote.title} className="max-w-full max-h-full object-contain rounded-lg shadow-xl" />
                                 ) : (
-                                    <pre className="w-full font-mono text-sm leading-relaxed text-slate-800 whitespace-pre-wrap wrap-break-word">
-                                        {selectedNote.content}
-                                    </pre>
+                                    <div className="text-center p-12 bg-white rounded-2xl border border-slate-200">
+                                        <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                                        <p className="text-slate-600 font-bold mb-2">Full File Preview Unavailable</p>
+                                        <p className="text-slate-400 text-sm mb-6">This {selectedNote.fileType?.split('/')[1] || 'file'} type cannot be displayed in-browser.</p>
+                                        <button
+                                            onClick={() => handleDownload(selectedNote)}
+                                            className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
+                                        >
+                                            Download to View
+                                        </button>
+                                    </div>
                                 )}
                             </div>
                         </motion.div>

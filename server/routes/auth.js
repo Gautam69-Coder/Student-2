@@ -26,7 +26,13 @@ router.post('/register', async (req, res) => {
         const payload = { id: user.id, role: user.role };
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 * 24 }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 3600 * 24 * 1000 // 1 day
+            });
+            res.json({ token, user: { id: user.id, username: user.username, role: user.role, email: user.email } });
         });
     } catch (err) {
         res.status(500).send('Server Error');
@@ -52,11 +58,23 @@ router.post('/login', async (req, res) => {
         const payload = { id: user.id, role: user.role };
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "30d" }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 30 * 24 * 3600 * 1000 // 30 days
+            });
+            res.json({ token, user: { id: user.id, username: user.username, role: user.role, email: user.email } });
         });
     } catch (err) {
         res.status(500).send('Server Error');
     }
+});
+
+// Logout
+router.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.json({ msg: 'Logged out successfully' });
 });
 
 // Admin Access Check

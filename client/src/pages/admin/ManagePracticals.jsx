@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Trash, FlaskConical, Pen, Search } from "lucide-react"
+import { Trash, FlaskConical, Pen, Search, FileUp, X, Image as ImageIcon, FileText } from "lucide-react"
 import {
     createPractical,
     updatePractical,
@@ -13,7 +13,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
     const [newPractical, setNewPractical] = useState({
         practicalNumber: '',
         section: '',
-        questions: [{ question: '', code: '' }]
+        questions: [{ question: '', code: '', fileData: null, fileName: null, fileType: null }]
     });
     const [practicals, setPracticals] = useState([]);
     const [editPracticalId, setEditPracticalId] = useState(null);
@@ -23,7 +23,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
     const handleAddQuestion = () => {
         setNewPractical({
             ...newPractical,
-            questions: [...newPractical.questions, { question: '', code: '' }]
+            questions: [...newPractical.questions, { question: '', code: '', fileData: null, fileName: null, fileType: null }]
         });
     };
 
@@ -34,17 +34,46 @@ export function ManagePracticals({ uniqueSubjectSections }) {
         });
     };
 
+    const handleFileChange = (index, e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const updatedQuestions = [...newPractical.questions];
+                updatedQuestions[index] = {
+                    ...updatedQuestions[index],
+                    fileData: reader.result,
+                    fileName: file.name,
+                    fileType: file.type
+                };
+                setNewPractical({ ...newPractical, questions: updatedQuestions });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleRemoveFile = (index) => {
+        const updatedQuestions = [...newPractical.questions];
+        updatedQuestions[index] = {
+            ...updatedQuestions[index],
+            fileData: null,
+            fileName: null,
+            fileType: null
+        };
+        setNewPractical({ ...newPractical, questions: updatedQuestions });
+    };
+
     const handleAddPractical = async (e) => {
         e.preventDefault();
         try {
             if (editPracticalId) {
                 const res = await updatePractical(editPracticalId, newPractical);
-                
+
                 setEditPracticalId(null);
             } else {
                 const res = await createPractical(newPractical);
-           
-                setNewPractical({ practicalNumber: '', section: '', questions: [{ question: '', code: '' }] });
+
+                setNewPractical({ practicalNumber: '', section: '', questions: [{ question: '', code: '', fileData: null, fileName: null, fileType: null }] });
                 alert('Practical added successfully!');
             }
             handleFetchPracticals(); // Refresh list after add/update
@@ -60,7 +89,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
             setNewPractical({
                 practicalNumber: practical.practicalNumber,
                 section: practical.section,
-                questions: practical.questions.length > 0 ? practical.questions : [{ question: '', code: '' }]
+                questions: practical.questions.length > 0 ? practical.questions : [{ question: '', code: '', fileData: null, fileName: null, fileType: null }]
             });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
@@ -149,70 +178,119 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                             </div>
                         </div>
 
-                        <div className="border-blue-400 border-dashed border rounded-lg p-4">
+                        <div className="border-blue-400 border-dashed border rounded-lg p-4 space-y-8">
                             {newPractical.questions.map((question, index) => (
                                 <React.Fragment key={index}>
-                                    <div>
-                                        <div className="flex justify-between w-full">
-                                            <label htmlFor="practical-question" className="  text-sm font-medium text-slate-700">
-                                                Question {index + 1}
+                                    <div className="space-y-4">
+                                        <div>
+                                            <div className="flex justify-between w-full">
+                                                <label htmlFor={`practical-question-${index}`} className="text-sm font-medium text-slate-700">
+                                                    Question {index + 1}
+                                                </label>
+                                                {newPractical.questions.length > 1 && (
+                                                    <Trash
+                                                        className="w-4 h-4 text-red-500 cursor-pointer hover:text-red-700"
+                                                        onClick={() => handleRemoveQuestion(index)}
+                                                    />
+                                                )}
+                                            </div>
+                                            <input
+                                                type="text"
+                                                id={`practical-question-${index}`}
+                                                value={newPractical.questions[index].question}
+                                                onChange={(e) => {
+                                                    const updatedQuestions = [...newPractical.questions];
+                                                    updatedQuestions[index] = {
+                                                        ...updatedQuestions[index],
+                                                        question: e.target.value,
+                                                    };
+                                                    setNewPractical({ ...newPractical, questions: updatedQuestions });
+                                                }}
+                                                required
+                                                placeholder="Write the practical question/problem statement..."
+                                                className="mt-2 w-full px-4 h-11 bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg transition-all"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor={`practical-code-${index}`} className="text-sm font-medium text-slate-700">
+                                                Code Template
                                             </label>
-                                            {newPractical.questions.length > 1 && (
-                                                <Trash
-                                                    className="w-4 h-4 text-red-500 cursor-pointer"
-                                                    onClick={() => handleRemoveQuestion(index)}
-                                                />
+                                            <textarea
+                                                id={`practical-code-${index}`}
+                                                value={newPractical.questions[index].code}
+                                                onChange={(e) => {
+                                                    const updatedQuestions = [...newPractical.questions];
+                                                    updatedQuestions[index] = {
+                                                        ...updatedQuestions[index],
+                                                        code: e.target.value,
+                                                    };
+                                                    setNewPractical({ ...newPractical, questions: updatedQuestions });
+                                                }}
+                                                required
+                                                placeholder="// Starter code for students..."
+                                                className="mt-2 w-full px-4 py-3 bg-gray-50 border border-gray-200 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg min-h-40 transition-all"
+                                            />
+                                        </div>
+
+                                        {/* File/Image Upload for Question */}
+                                        <div className="mt-2 text-slate-700">
+                                            <label className="text-sm font-medium block mb-2">
+                                                Reference Image or File (Optional)
+                                            </label>
+
+                                            {!newPractical.questions[index].fileData ? (
+                                                <div className="flex items-center justify-center w-full">
+                                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-all">
+                                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                            <FileUp className="w-8 h-8 mb-3 text-slate-400" />
+                                                            <p className="mb-2 text-sm text-slate-500 font-medium">Click to upload reference</p>
+                                                            <p className="text-xs text-slate-400 uppercase tracking-wider">Images, PDFs, or Code files</p>
+                                                        </div>
+                                                        <input
+                                                            type="file"
+                                                            className="hidden"
+                                                            onChange={(e) => handleFileChange(index, e)}
+                                                        />
+                                                    </label>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-4 p-4 bg-slate-900 border border-slate-800 rounded-xl relative group">
+                                                    <div className="p-2.5 bg-slate-800 rounded-lg text-white">
+                                                        {newPractical.questions[index].fileType?.startsWith('image/') ? (
+                                                            <ImageIcon className="w-5 h-5" />
+                                                        ) : (
+                                                            <FileText className="w-5 h-5" />
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-bold text-white truncate">
+                                                            {newPractical.questions[index].fileName}
+                                                        </p>
+                                                        <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-0.5">
+                                                            {(newPractical.questions[index].fileType || 'file').split('/')[1]}
+                                                        </p>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveFile(index)}
+                                                        className="p-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all"
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+
+                                                    {/* Image Preview Overlay */}
+                                                    {newPractical.questions[index].fileType?.startsWith('image/') && (
+                                                        <div className="absolute -top-32 left-0 w-32 h-32 rounded-lg border border-slate-200 shadow-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                                                            <img src={newPractical.questions[index].fileData} alt="Preview" className="w-full h-full object-cover bg-white" />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
-                                        <input
-                                            type="text"
-                                            id="Practical Question"
-                                            value={newPractical.questions[index].question}
-                                            onChange={(e) => {
-                                                const updatedQuestions = [...newPractical.questions];
-                                                updatedQuestions[index] = {
-                                                    ...updatedQuestions[index],
-                                                    question: e.target.value,
-                                                };
-
-                                                setNewPractical({
-                                                    ...newPractical,
-                                                    questions: updatedQuestions,
-                                                });
-                                            }}
-                                            required
-                                            placeholder="Write the practical question/problem statement..."
-                                            className="mt-2 w-full px-4 h-11 bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg transition-all"
-                                        />
                                     </div>
-
-                                    <div>
-                                        <label htmlFor="practical-code" className="text-sm font-medium text-slate-700">
-                                            Code Template
-                                        </label>
-                                        <textarea
-                                            id="practical-code"
-                                            value={newPractical.questions[index].code}
-                                            onChange={(e) => {
-                                                const updatedQuestions = [...newPractical.questions];
-                                                updatedQuestions[index] = {
-                                                    ...updatedQuestions[index],
-                                                    code: e.target.value,
-                                                };
-
-                                                setNewPractical({
-                                                    ...newPractical,
-                                                    questions: updatedQuestions,
-                                                });
-                                            }}
-                                            required
-                                            placeholder="// Starter code for students..."
-                                            className="mt-2 w-full px-4 py-3 bg-gray-50 border border-gray-200 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg min-h-40 transition-all"
-                                        />
-                                    </div>
-
-                                    {newPractical.questions.length > 1 && (
-                                        <hr className="border-slate-400 my-4" />
+                                    {index < newPractical.questions.length - 1 && (
+                                        <hr className="border-slate-100 my-2" />
                                     )}
                                 </React.Fragment>
                             ))}
@@ -237,7 +315,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                         setNewPractical({
                                             practicalNumber: '',
                                             section: '',
-                                            questions: [{ question: "", code: "" }]
+                                            questions: [{ question: "", code: "", fileData: null, fileName: null, fileType: null }]
                                         })
                                         setEditPracticalId(null)
                                     }}
@@ -250,7 +328,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
 
 
                 </motion.div>
-            </form>
+            </form >
             <div>
                 <div className=" flex justify-between items-center">
                     <div className="pb-2 mb-2">
@@ -264,16 +342,16 @@ export function ManagePracticals({ uniqueSubjectSections }) {
 
                                 <select
                                     value={filterRole}
-                                    onChange={(e) => {setFilterRole(e.target.value);}}
+                                    onChange={(e) => { setFilterRole(e.target.value); }}
                                     className="h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 cursor-pointer"
                                 >
                                     {uniqueSubjectSections.map((section) => (
-                                        
+
                                         <option key={section._id} value={section.name}>
                                             {section.name}
                                         </option>
                                     ))}
-                                   
+
                                 </select>
                             </div>
                         </motion.div>
@@ -305,6 +383,6 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                     </table>
                 </div>
             </div>
-        </motion.div>
+        </motion.div >
     )
 }

@@ -18,29 +18,41 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [name, setName] = useState("")
-    const [currentQuote] = useState(quotes[Math.floor(Math.random() * quotes.length)])
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [currentQuote] = useState(quotes[Math.floor(Math.random() * quotes.length)])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
-        const userData = {
-            username: name,
-            email,
-            password,
-            role
-        }
+        setError(null)
+        try {
+            const userData = {
+                username: name,
+                email,
+                password,
+                role
+            }
 
-        const loginData = {
-            email,
-            password
-        }
+            const loginData = {
+                email,
+                password
+            }
 
-        const res = authState === "login" ? await loginUser(loginData) : await registerUser(userData)
-        localStorage.setItem('token', res.data.token);
-        setLoading(false)
-        if (res.data.token) {
-            onAuth(role, name || email.split("@")[0])
+            const res = authState === "login" ? await loginUser(loginData) : await registerUser(userData)
+
+            // Set a flag in localStorage just to help the app check auth status on reload without extra API call initially
+            // But the actual token is in the HTTP-only cookie
+            localStorage.setItem('isAuthenticated', 'true');
+
+            if (res.data.user) {
+                onAuth(res.data.user.role, res.data.user.username);
+            }
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.msg || "An error occurred during authentication");
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -123,6 +135,16 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                             </button>
                         </div>
 
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mb-6 p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm font-medium text-center"
+                            >
+                                {error}
+                            </motion.div>
+                        )}
+
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <AnimatePresence mode="wait">
                                 {authState === "signup" && (
@@ -195,7 +217,7 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
 
                             {loading ? (
                                 <div className="flex justify-center">
-                                    <DotLoader size={20}  />
+                                    <DotLoader size={20} />
                                 </div>
                             ) : (
                                 <button
@@ -260,7 +282,7 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                         </p>
                     </div>
                 </motion.div>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }

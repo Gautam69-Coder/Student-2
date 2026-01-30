@@ -1,14 +1,9 @@
-import {getMe} from "@/Api/api"
+import { getMe } from "@/Api/api"
 export const userDetail = async () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        try {
-            const res = await getMe();
-            const user = res.data;
-            return user;
-        } catch (error) {
-            return null;
-        }
-
+    try {
+        const res = await getMe();
+        return res.data;
+    } catch (error) {
+        return null;
     }
 }

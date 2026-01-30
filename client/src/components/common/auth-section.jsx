@@ -20,6 +20,7 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
     const [name, setName] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const [adminSecret, setAdminSecret] = useState("")
     const [currentQuote] = useState(quotes[Math.floor(Math.random() * quotes.length)])
 
     const handleSubmit = async (e) => {
@@ -31,7 +32,8 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                 username: name,
                 email,
                 password,
-                role
+                role,
+                adminSecret
             }
 
             const loginData = {
@@ -50,7 +52,8 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
             }
         } catch (err) {
             console.error(err);
-            setError(err.response?.data?.msg || "An error occurred during authentication");
+            const message = err.response?.data?.msg || err.response?.data?.message || err.message || "An error occurred during authentication";
+            setError(message);
         } finally {
             setLoading(false)
         }
@@ -214,6 +217,33 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                                     </button>
                                 </div>
                             </div>
+
+                            <AnimatePresence>
+                                {authState === "signup" && role === "admin" && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: "auto" }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="overflow-hidden"
+                                    >
+                                        <label htmlFor="adminSecret" className="text-sm font-medium text-slate-700">
+                                            Admin Secret Key
+                                        </label>
+                                        <div className="relative mt-2">
+                                            <CloudCog className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <input
+                                                id="adminSecret"
+                                                type="password"
+                                                placeholder="Enter admin secret"
+                                                value={adminSecret}
+                                                onChange={(e) => setAdminSecret(e.target.value)}
+                                                className="w-full h-11 pl-10 pr-4 bg-slate-50/50 border border-slate-200 focus:border-slate-400 focus:outline-none focus:ring-0 rounded-lg transition-all text-sm"
+                                                required={role === "admin"}
+                                            />
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
 
                             {loading ? (
                                 <div className="flex justify-center">

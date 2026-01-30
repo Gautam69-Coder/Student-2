@@ -14,8 +14,15 @@ router.post('/register', async (req, res) => {
                 return res.status(400).json({ msg: 'Invalid Admin Secret' });
             }
         }
-        let user = await User.findOne({ email });
-        if (user) return res.status(400).json({ msg: 'User already exists' });
+        let user = await User.findOne({ $or: [{ email }, { username }] });
+        if (user) {
+            if (user.email === email) {
+                return res.status(400).json({ msg: 'Email is already registered' });
+            }
+            if (user.username === username) {
+                return res.status(400).json({ msg: 'Username is already taken' });
+            }
+        }
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);

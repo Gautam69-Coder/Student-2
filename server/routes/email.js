@@ -6,10 +6,16 @@ const User = require('../models/User');
 
 // Create Nodemailer Transporter
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // use SSL
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+    },
+    tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false
     }
 });
 
@@ -39,7 +45,8 @@ router.post('/send', auth, async (req, res) => {
         // Setup email data
         const mailOptions = {
             from: `"Student Hub" <${process.env.EMAIL_USER}>`,
-            to: recipients.join(', '), // Nodemailer supports comma-separated string
+            to: process.env.EMAIL_USER, // Send it to yourself
+            bcc: recipients, // Hide recipients from each other
             subject: subject,
             html: `<div>${body}</div>`
         };

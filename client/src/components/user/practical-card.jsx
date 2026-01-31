@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState,useEffect } from "react"
 import { motion } from "framer-motion"
 import { Code, Copy, Check, Image as ImageIcon, FileText, Download, ExternalLink } from "lucide-react"
 
@@ -68,13 +68,13 @@ function QuestionBlock({ question, index }) {
                                 </div>
                             </div>
                         ) : (
-                            <div className="p-6 flex items-center justify-between gap-4 border rounded-2xl ">
-                                <div className="flex items-center gap-4">
+                            <div className="p-6 sm:flex  items-center justify-between gap-4 border rounded-2xl ">
+                                <div className="flex items-center gap-4 sm:mb-0 mb-4 ">
                                     <div className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center shadow-sm">
                                         <FileText className="w-6 h-6 text-blue-500" />
                                     </div>
-                                    <div className="min-w-0">
-                                        <p className="text-sm font-bold text-slate-900 truncate">{question.fileName || 'Reference File'}</p>
+                                    <div className="min-w-0 ">
+                                        <p className="text-sm font-bold text-slate-900 truncate text-wrap mb-1">{question.fileName || 'Reference File'}</p>
                                         <p className="text-xs text-slate-400 capitalize font-medium">{'file'}</p>
                                     </div>
                                 </div>

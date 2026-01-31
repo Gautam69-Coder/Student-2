@@ -17,6 +17,7 @@ import { ManagePracticals } from "./ManagePracticals"
 import { ManagePYQs } from "./ManagePYQs"
 import { AnalyticsDashboard } from "./AnalyticsDashboard"
 import { ManageFeedback } from "./ManageFeedback"
+import { MessageSender } from "./MessageSender"
 
 const initialSubjects = [
     { name: "Java Programming", code: "CS301", progress: 75, color: "#f97316" },
@@ -99,6 +100,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                         <Route path="pyqs" element={<ManagePYQs />} />
                         <Route path="analytics" element={<AnalyticsDashboard />} />
                         <Route path="feedback" element={<ManageFeedback />} />
+                        <Route path="messages" element={<MessageSender users={users} />} />
                         <Route path="*" element={<Navigate to="" replace />} />
                     </Routes>
                 </div>

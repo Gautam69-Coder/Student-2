@@ -102,4 +102,30 @@ router.delete('/:id', auth, async (req, res) => {
     }
 });
 
+router.put('/public/:id', auth, async (req, res) => {
+    try {
+        let note = await UserNote.findById(req.params.id);
+        console.log(note.id)
+        if (!note) return res.status(404).json({ msg: 'Note not found' });
+
+        // Check user
+        if (note.user.toString() !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'superadmin') {
+            return res.status(401).json({ msg: 'Not authorized' });
+        }
+
+        const userFind = await UserNote.findById(note.id);
+
+        if(userFind.isGlobal){
+           userFind.isGlobal = false;
+        } else {
+            userFind.isGlobal = true;
+        }
+        
+        await userFind.save();
+        res.json(userFind);
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;

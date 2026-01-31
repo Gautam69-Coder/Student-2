@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { FileText, Download, Eye, Calendar, User, Trash2, Copy, Check, X, Code, Loader2, Layers, File, Image as ImageIcon } from "lucide-react"
-import { fetchNotes, deleteNote } from "@/Api/api"
+import { fetchNotes, deleteNote, makeNotePublic } from "@/Api/api"
 import { CodeModal } from "@/components/common/code-modal"
 
 export function NotesSection({ refreshKey }) {
@@ -13,6 +13,7 @@ export function NotesSection({ refreshKey }) {
     const [copying, setCopying] = useState(false)
     const [activeSection, setActiveSection] = useState("All")
     const [showCodeModal, setShowCodeModal] = useState(false)
+    const [publicNote, setPublicNote] = useState(false);
 
     useEffect(() => {
         loadNotes()
@@ -24,7 +25,7 @@ export function NotesSection({ refreshKey }) {
             const res = await fetchNotes()
             const fetchedNotes = res.data
             setNotes(fetchedNotes)
-
+            console.log(fetchedNotes)
             // Group notes by section
             const grouped = fetchedNotes.reduce((acc, note) => {
                 const section = note.section || "General"
@@ -41,6 +42,7 @@ export function NotesSection({ refreshKey }) {
             setLoading(false)
         }
     }
+
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this note?")) return
@@ -77,6 +79,19 @@ export function NotesSection({ refreshKey }) {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+
+    const handlePublicNote = async (noteId) => {
+        if (!window.confirm("Are you sure you want to do this action?")) return
+        try {
+            const res=await makeNotePublic(noteId)
+            const updatedNotes = notes.map(note => note._id === noteId ? { ...note, public: true } : note)
+            console.log(res)
+            setNotes(updatedNotes)
+        } catch (err) {
+            console.error("Error making note public:", err)
+        }
     }
 
     const sections = ["All", ...Object.keys(groupedNotes)]
@@ -174,15 +189,24 @@ export function NotesSection({ refreshKey }) {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex flex-wrap items-center gap-3 mb-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                                                <div className="flex flex-wrap justify-between items-center gap-3 mb-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                                                     <span className="flex items-center gap-1.5">
                                                         <Calendar className="w-3.5 h-3.5" />
                                                         {new Date(note.createdAt).toLocaleDateString()}
                                                     </span>
-                                                    {note.isGlobal && (
-                                                        <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+
+                                                    {note.isGlobal ? (
+                                                        <button className="bg-blue-50 border border-blue-600 hover:bg-blue-600 hover:text-white transition-colors text-blue-600 p-2 px-4 cursor-pointer rounded-md"
+                                                        onClick={()=>{handlePublicNote(note._id);}}
+                                                        >
                                                             Public
-                                                        </span>
+                                                        </button>
+                                                    ) : (
+                                                        <button className="bg-blue-50 border border-blue-600 hover:bg-blue-600 hover:text-white transition-colors text-blue-600 p-2 px-4 cursor-pointer rounded-md"
+                                                        onClick={()=>{handlePublicNote(note._id);}}
+                                                        >
+                                                            Private
+                                                        </button>
                                                     )}
                                                 </div>
 
@@ -201,7 +225,7 @@ export function NotesSection({ refreshKey }) {
                                                                 <FileText className="w-8 h-8 text-blue-500" />
                                                                 <div className="overflow-hidden">
                                                                     <p className="text-sm font-bold text-slate-700 truncate">{note.fileName}</p>
-                                                                    <p className="text-xs text-slate-400 capitalize">{note.fileType?.split('/')[1] || 'file'}</p>
+                                                                    {/* <p className="text-xs text-slate-400 capitalize">{note.fileType?.split('/')[1] || 'file'}</p> */}
                                                                 </div>
                                                             </div>
                                                         )

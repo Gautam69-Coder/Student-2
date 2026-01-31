@@ -49,6 +49,7 @@ export const fetchAllNotes = () => api.get('/notes/all');
 export const createNote = (noteData) => api.post('/notes', noteData);
 export const updateNote = (id, noteData) => api.put(`/notes/${id}`, noteData);
 export const deleteNote = (id) => api.delete(`/notes/${id}`);
+export const makeNotePublic = (id) => api.put(`/notes/public/${id}`);
 
 // Section Services
 export const fetchSections = () => api.get('/sections');
@@ -65,5 +66,8 @@ export const deletePractical = (id) => api.delete(`/practicals/${id}`);
 export const submitFeedback = (feedbackData) => api.post('/feedback', feedbackData);
 export const fetchAllFeedback = () => api.get('/feedback');
 export const updateFeedbackStatus = (id, status) => api.patch(`/feedback/${id}`, { status });
+
+// Email Services
+export const sendEmail = (emailData) => api.post('/email/send', emailData);
 
 export default api;

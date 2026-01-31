@@ -10,47 +10,57 @@ import { TimeLine } from '@/Utils/loaders';
 import { NotFoundPage } from './Utils/Error';
 import { SquirelLoader } from './Utils/loaders';
 
+// Helper component for protected routes
+const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
+    if (!isAuthenticated) {
+        return <Navigate to={redirectPath} replace />;
+    }
+    return children;
+};
+
 function AppContent() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userRole, setUserRole] = useState("user");
     const [currentUser, setCurrentUser] = useState(null);
-    const [authViewState, setAuthViewState] = useState("login"); // login or signup
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [authViewState, setAuthViewState] = useState("login");
+    const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        const authFlag = localStorage.getItem('isAuthenticated');
-        if (authFlag) {
-            setLoading(true);
-            userDetail().then((user) => {
-                setIsAuthenticated(true);
-                setUserRole(user.role);
-                setCurrentUser(user.username);
-                // No need to navigate here, let the routes handle it
-            }).catch(() => {
+        const checkAuth = async () => {
+            const authFlag = localStorage.getItem('isAuthenticated');
+            if (!authFlag) {
+                setIsAuthenticated(false);
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const user = await userDetail();
+                if (user) {
+                    setIsAuthenticated(true);
+                    setUserRole(user.role);
+                    setCurrentUser(user.username);
+                } else {
+                    throw new Error("User not found");
+                }
+            } catch (error) {
                 localStorage.removeItem('isAuthenticated');
                 setIsAuthenticated(false);
-            }).finally(() => {
+            } finally {
                 setLoading(false);
-            });
-        }
-        else {
-            setIsAuthenticated(false);
-            setLoading(false);
-        }
+            }
+        };
+
+        checkAuth();
     }, []);
 
     const handleAuth = (role, name) => {
         setIsAuthenticated(true);
         setUserRole(role);
         setCurrentUser(name);
-        if (role === 'admin') {
-            navigate('/admin');
-        } else {
-            navigate('/dashboard');
-        }
+        navigate(role === 'admin' ? '/admin' : '/dashboard');
     };
 
     const handleLogout = async () => {
@@ -62,30 +72,19 @@ function AppContent() {
         }
         setIsAuthenticated(false);
         localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('token'); // Just in case
+        localStorage.removeItem('token');
         setCurrentUser(null);
         setAuthViewState("login");
         navigate('/');
     };
-
-    const handleSwitchToAdmin = () => {
-        setUserRole('admin');
-        navigate('/admin');
-    }
-
-    const handleSwitchToStudent = () => {
-        setUserRole('student');
-        navigate('/dashboard');
-    }
 
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <SquirelLoader />
             </div>
-        )
+        );
     }
-
 
     return (
         <div className="min-h-screen bg-background">
@@ -93,14 +92,14 @@ function AppContent() {
                 <Route
                     path="/"
                     element={
-                        !isAuthenticated ? (
+                        isAuthenticated ? (
+                            <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />
+                        ) : (
                             <AuthSection
                                 authState={authViewState}
                                 setAuthState={setAuthViewState}
                                 onAuth={handleAuth}
                             />
-                        ) : (
-                            <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} />
                         )
                     }
                 />
@@ -108,32 +107,35 @@ function AppContent() {
                 <Route
                     path="/dashboard/*"
                     element={
-                        isAuthenticated ? (
+                        <ProtectedRoute isAuthenticated={isAuthenticated}>
                             <StudentDashboard
                                 userName={currentUser || "Student"}
                                 onLogout={handleLogout}
-                                onSwitchToAdmin={handleSwitchToAdmin}
+                                onSwitchToAdmin={() => {
+                                    setUserRole('admin');
+                                    navigate('/admin');
+                                }}
                             />
-                        ) : (
-                            <Navigate to="/" />
-                        )
+                        </ProtectedRoute>
                     }
                 />
 
                 <Route
                     path="/admin/*"
                     element={
-                        isAuthenticated ? (
+                        <ProtectedRoute isAuthenticated={isAuthenticated}>
                             <AdminPanel
                                 userName={currentUser || "Admin"}
                                 onLogout={handleLogout}
-                                onSwitchToStudent={handleSwitchToStudent}
+                                onSwitchToStudent={() => {
+                                    setUserRole('user');
+                                    navigate('/dashboard');
+                                }}
                             />
-                        ) : (
-                            <Navigate to="/" />
-                        )
+                        </ProtectedRoute>
                     }
                 />
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
             {isAuthenticated && <AIAssistant />}
         </div>

@@ -94,7 +94,7 @@ export function NotesSection({ refreshKey }) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 pb-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-900 tracking-tight">My Notes</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">My Notes</h2>
                     <p className="text-sm text-slate-500 mt-1">Access all your shared notes and code snippets.</p>
                 </div>
 
@@ -158,7 +158,7 @@ export function NotesSection({ refreshKey }) {
                                                                 <Code className="w-5 h-5" />
                                                             )}
                                                         </div>
-                                                        <h3 className="font-bold text-slate-900 truncate text-lg pr-2">
+                                                        <h3 className="font-bold text-slate-900 truncate text-base sm:text-lg pr-2">
                                                             {note.title}
                                                         </h3>
                                                     </div>
@@ -219,7 +219,7 @@ export function NotesSection({ refreshKey }) {
                                                                 <pre className="font-mono text-xs leading-relaxed text-slate-600 whitespace-pre-wrap">
                                                                     {note.content}
                                                                 </pre>
-                                                                <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-50 to-transparent" />
+                                                                <div className="absolute inset-x-0 bottom-0 h-12 bg-linear-to-t from-slate-50 to-transparent" />
                                                             </div>
                                                         </div>
                                                     )}

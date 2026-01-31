@@ -33,23 +33,25 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                     >
                         <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-white">
                             <div>
-                                <h3 className="text-lg font-bold text-slate-900">Code Preview</h3>
-                                <p className="text-sm text-slate-500 font-medium line-clamp-1 mt-0.5">{title}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={handleCopy}
-                                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium transition-colors"
-                                >
-                                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                    {copied ? "Copied!" : "Copy"}
-                                </button>
-                                <button
-                                    onClick={onClose}
-                                    className="p-2 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
+                                <div className="flex justify-between items-center mb-4 ">
+                                    <h3 className="text-lg font-bold text-slate-900">Code Preview</h3>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={handleCopy}
+                                            className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium transition-colors"
+                                        >
+                                            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                                            {copied ? "Copied!" : "Copy"}
+                                        </button>
+                                        <button
+                                            onClick={onClose}
+                                            className="p-2 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                                        >
+                                            <X className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-slate-500 font-medium  mt-0.5">{title}</p>
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto bg-slate-50 p-6">

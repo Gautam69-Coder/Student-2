@@ -1,10 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 const auth = require('../middleware/auth');
 const User = require('../models/User');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Create Nodemailer Transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 // Send Email
 router.post('/send', auth, async (req, res) => {
@@ -29,22 +36,21 @@ router.post('/send', auth, async (req, res) => {
             return res.status(400).json({ msg: 'No recipients found' });
         }
 
-        const { data, error } = await resend.emails.send({
-            from: 'Student Hub <onboarding@resend.dev>', // Default Resend test domain
-            to: recipients,
+        // Setup email data
+        const mailOptions = {
+            from: `"Student Hub" <${process.env.EMAIL_USER}>`,
+            to: recipients.join(', '), // Nodemailer supports comma-separated string
             subject: subject,
-            html: `<div>${body}</div>`,
-        });
+            html: `<div>${body}</div>`
+        };
 
-        if (error) {
-            console.error(error);
-            return res.status(400).json({ error });
-        }
+        // Send the email
+        await transporter.sendMail(mailOptions);
 
-        res.json({ msg: 'Email(s) sent successfully', data });
+        res.json({ msg: 'Email(s) sent successfully' });
     } catch (err) {
         console.error(err);
-        res.status(500).send('Server Error');
+        res.status(500).send('Server Error: ' + err.message);
     }
 });
 

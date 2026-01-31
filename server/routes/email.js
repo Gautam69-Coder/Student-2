@@ -6,22 +6,18 @@ const User = require('../models/User');
 
 // Create Nodemailer Transporter
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // use SSL
+    service: "gmail",
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        // do not fail on invalid certs
-        rejectUnauthorized: false
+        user: process.env.EMAIL_USER, //  Gmail
+        pass: process.env.EMAIL_PASS // Gmail App Password
     }
 });
+
 
 // Send Email
 router.post('/send', auth, async (req, res) => {
     const { to, subject, body, isAllUsers } = req.body;
+    console.log(to,subject,isAllUsers,body);
 
     try {
         // Only admin/superadmin can send emails

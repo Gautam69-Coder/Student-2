@@ -53,7 +53,7 @@ export function Practicals({ practicals, subjects }) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="sm:space-y-6 space-y-3 p-4">
             <div className="flex flex-col sm:gap-4 gap-2">
                 <div className="flex justify-between items-end">
-                    <h2 className="text-2xl font-bold text-slate-900 tracking-tight ">All Practicals</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight ">All Practicals</h2>
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -86,7 +86,7 @@ export function Practicals({ practicals, subjects }) {
                                 <button
                                     key={index}
                                     onClick={() => setSelectedPracticalNo(num)}
-                                    className={`h-8 px-3 min-w-[2rem] flex items-center justify-center rounded-full text-xs font-bold transition-all shrink-0 ${selectedPracticalNo === num
+                                    className={`h-8 px-3 min-w-8 flex items-center justify-center rounded-full text-xs font-bold transition-all shrink-0 ${selectedPracticalNo === num
                                         ? "bg-slate-900 text-white shadow-md"
                                         : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
                                         }`}

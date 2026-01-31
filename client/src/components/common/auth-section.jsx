@@ -42,9 +42,6 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
             }
 
             const res = authState === "login" ? await loginUser(loginData) : await registerUser(userData)
-
-            // Set a flag in localStorage just to help the app check auth status on reload without extra API call initially
-            // But the actual token is in the HTTP-only cookie
             localStorage.setItem('isAuthenticated', 'true');
 
             if (res.data.user) {
@@ -85,10 +82,10 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                             </span>
                         </div>
 
-                        <blockquote className="text-4xl font-semibold leading-tight text-slate-900 mb-8 font-serif italic">
+                        <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-slate-900 mb-8 font-serif italic">
                             "{currentQuote.text}"
                         </blockquote>
-                        <p className="text-lg text-slate-500 font-medium">— {currentQuote.author}</p>
+                        <p className="text-base sm:text-lg text-slate-500 font-medium">— {currentQuote.author}</p>
                     </motion.div>
                 </div>
             </motion.div>
@@ -104,7 +101,7 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                     {/* Paper Card */}
                     <div className="bg-white rounded-xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5]">
                         <div className="text-center mb-8">
-                            <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">
+                            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 tracking-tight">
                                 {authState === "login" ? "Welcome Back" : "Create Account"}
                             </h1>
                             <p className="text-slate-500">

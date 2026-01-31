@@ -42,6 +42,9 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
             }
 
             const res = authState === "login" ? await loginUser(loginData) : await registerUser(userData)
+            if (res.data.token) {
+                localStorage.setItem('token', res.data.token);
+            }
             localStorage.setItem('isAuthenticated', 'true');
 
             if (res.data.user) {

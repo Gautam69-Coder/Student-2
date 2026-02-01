@@ -6,7 +6,8 @@ const User = require('../models/User');
 
 // Create Nodemailer Transporter
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.sendgrid.net",
+    port: 587,
     auth: {
         user: process.env.EMAIL_USER, //  Gmail
         pass: process.env.EMAIL_PASS // Gmail App Password
@@ -17,7 +18,7 @@ const transporter = nodemailer.createTransport({
 // Send Email
 router.post('/send', auth, async (req, res) => {
     const { to, subject, body, isAllUsers } = req.body;
-    console.log(to,subject,isAllUsers,body);
+    console.log(to, subject, isAllUsers, body);
 
     try {
         // Only admin/superadmin can send emails

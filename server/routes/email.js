@@ -6,8 +6,9 @@ const User = require('../models/User');
 
 // Create Nodemailer Transporter
 const transporter = nodemailer.createTransport({
-    host: "smtp.sendgrid.net",
-    port: 587,
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER, //  Gmail
         pass: process.env.EMAIL_PASS // Gmail App Password

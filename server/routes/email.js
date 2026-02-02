@@ -31,7 +31,6 @@ router.post('/send', auth, async (req, res) => {
         user: process.env.EMAIL_USER ? 'Set' : 'Missing',
         pass: process.env.EMAIL_PASS ? 'Set' : 'Missing'
     });
-
     // Verify connection configuration
     transporter.verify(function (error, success) {
         if (error) {

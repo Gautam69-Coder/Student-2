@@ -5,12 +5,20 @@ const auth = require('../middleware/auth');
 const User = require('../models/User');
 
 // Configure Nodemailer Transporter
+// Use explicit host and port for better compatibility on cloud (Render)
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Use SSL
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     }
+});
+
+console.log('Validating Email Config:', {
+    user: process.env.EMAIL_USER ? 'Set' : 'Missing',
+    pass: process.env.EMAIL_PASS ? 'Set' : 'Missing'
 });
 
 // Verify connection configuration

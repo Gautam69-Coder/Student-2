@@ -17,7 +17,12 @@ const transporter = nodemailer.createTransport({
 // Send Email
 router.post('/send', auth, async (req, res) => {
     const { to, subject, body, isAllUsers } = req.body;
-    console.log(to, subject, isAllUsers, body);
+    console.log('=== EMAIL SEND REQUEST ===');
+    console.log('Timestamp:', new Date().toISOString());
+    console.log('To:', to);
+    console.log('Subject:', subject);
+    console.log('Is All Users:', isAllUsers);
+    console.log('Body preview:', body?.substring(0, 100));
     // // Only admin/superadmin can send emails
     // const adminUser = await User.findById(req.user.id);
     // if (!['admin', 'superadmin'].includes(adminUser.role)) {
@@ -65,8 +70,8 @@ router.post('/send', auth, async (req, res) => {
             pass: "kphj kzgc tuoa hqto" // Gmail App Password
         }
     });
-    const { findOrder } = req.body;
-    console.log(findOrder)
+    // const { findOrder } = req.body;
+    // console.log(findOrder)
     try {
         await transporter.sendMail({
             from: `"Test" <gautamdoliya69@gmail.com>`,
@@ -79,6 +84,7 @@ router.post('/send', auth, async (req, res) => {
                         <div/>
                         `
         });
+        res.json({ msg: 'Email sent successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error: ' + err.message);

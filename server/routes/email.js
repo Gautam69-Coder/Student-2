@@ -17,77 +17,64 @@ const transporter = nodemailer.createTransport({
 // Send Email
 router.post('/send', auth, async (req, res) => {
     const { to, subject, body, isAllUsers } = req.body;
+
     console.log('=== EMAIL SEND REQUEST ===');
     console.log('Timestamp:', new Date().toISOString());
     console.log('To:', to);
     console.log('Subject:', subject);
     console.log('Is All Users:', isAllUsers);
     console.log('Body preview:', body?.substring(0, 100));
-    // // Only admin/superadmin can send emails
-    // const adminUser = await User.findById(req.user.id);
-    // if (!['admin', 'superadmin'].includes(adminUser.role)) {
-    //     return res.status(403).json({ msg: 'Access denied' });
-    // }
 
-    // let recipients = [];
-    // if (isAllUsers) {
-    //     const users = await User.find({ role: 'user' }).select('email');
-    //     recipients = users.map(u => u.email).filter(e => e);
-    // } else {
-    //     recipients = Array.isArray(to) ? to : [to];
-    // }
-
-    // if (recipients.length === 0) {
-    //     return res.status(400).json({ msg: 'No recipients found' });
-    // }
-
-    // // Setup email data
-    // const mailOptions = {
-    //     from: `"Student Hub" <${process.env.EMAIL_USER}>`,
-    //     to: process.env.EMAIL_USER, // Send it to yourself
-    //     bcc: recipients, // Hide recipients from each other
-    //     subject: subject,
-    //     html: `<div>${body}</div>`
-    // };
-
-    // console.log(mailOptions);
-
-    // // Send the email
-    // const info = await transporter.sendMail(mailOptions);
-    // console.log('Email sent:', info);
-
-
-
-    // res.json({ msg: 'Email(s) sent successfully' });
-    const user = await User.findOne({ _id: req.user.id });
-    console.log(user)
-    // const email = user.email
-
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: "gautamdoliya69@gmail.com", //  Gmail
-            pass: "kphj kzgc tuoa hqto" // Gmail App Password
-        }
-    });
-    // const { findOrder } = req.body;
-    // console.log(findOrder)
     try {
-        await transporter.sendMail({
-            from: `"Test" <gautamdoliya69@gmail.com>`,
-            to: "practical947@gmail.com",
-            subject: "Test",
-            text: `Test`,
-            html:
-                `<div>
-                       <h2>Test Email</h2>
-                        <div/>
-                        `
+        // Only admin/superadmin can send emails
+        const adminUser = await User.findById(req.user.id);
+        if (!['admin', 'superadmin'].includes(adminUser.role)) {
+            return res.status(403).json({ msg: 'Access denied' });
+        }
+
+        let recipients = [];
+        if (isAllUsers) {
+            const users = await User.find({ role: 'user' }).select('email');
+            recipients = users.map(u => u.email).filter(e => e);
+        } else {
+            recipients = Array.isArray(to) ? to : [to];
+        }
+
+        if (recipients.length === 0) {
+            return res.status(400).json({ msg: 'No recipients found' });
+        }
+
+        // Setup email data
+        const mailOptions = {
+            from: `"Student Hub" <${process.env.EMAIL_USER}>`,
+            to: process.env.EMAIL_USER, // Send it to yourself
+            bcc: recipients, // Hide recipients from each other
+            subject: subject,
+            html: `<div>${body}</div>`
+        };
+
+        console.log('Sending email with options:', {
+            from: mailOptions.from,
+            recipientCount: recipients.length,
+            subject: mailOptions.subject
         });
-        res.json({ msg: 'Email sent successfully' });
+
+        // Send the email
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully:', info.messageId);
+
+        res.json({
+            msg: 'Email(s) sent successfully',
+            recipientCount: recipients.length
+        });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error: ' + err.message);
+        console.error('=== EMAIL SEND ERROR ===');
+        console.error('Error:', err.message);
+        console.error('Stack:', err.stack);
+        res.status(500).json({
+            msg: 'Failed to send email',
+            error: err.message
+        });
     }
 });
 

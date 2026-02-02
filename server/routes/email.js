@@ -8,8 +8,8 @@ const User = require('../models/User');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: "gautamdoliya69@gmail.com", //  Gmail
-        pass: "rubx tzep xffl zqwk" // Gmail App Password
+        user: process.env.EMAIL_USER, //  Gmail
+        pass: process.env.EMAIL_PASS // Gmail App Password
     }
 });
 
@@ -18,44 +18,67 @@ const transporter = nodemailer.createTransport({
 router.post('/send', auth, async (req, res) => {
     const { to, subject, body, isAllUsers } = req.body;
     console.log(to, subject, isAllUsers, body);
+    // // Only admin/superadmin can send emails
+    // const adminUser = await User.findById(req.user.id);
+    // if (!['admin', 'superadmin'].includes(adminUser.role)) {
+    //     return res.status(403).json({ msg: 'Access denied' });
+    // }
 
+    // let recipients = [];
+    // if (isAllUsers) {
+    //     const users = await User.find({ role: 'user' }).select('email');
+    //     recipients = users.map(u => u.email).filter(e => e);
+    // } else {
+    //     recipients = Array.isArray(to) ? to : [to];
+    // }
+
+    // if (recipients.length === 0) {
+    //     return res.status(400).json({ msg: 'No recipients found' });
+    // }
+
+    // // Setup email data
+    // const mailOptions = {
+    //     from: `"Student Hub" <${process.env.EMAIL_USER}>`,
+    //     to: process.env.EMAIL_USER, // Send it to yourself
+    //     bcc: recipients, // Hide recipients from each other
+    //     subject: subject,
+    //     html: `<div>${body}</div>`
+    // };
+
+    // console.log(mailOptions);
+
+    // // Send the email
+    // const info = await transporter.sendMail(mailOptions);
+    // console.log('Email sent:', info);
+
+
+
+    // res.json({ msg: 'Email(s) sent successfully' });
+    const user = await User.findOne({ _id: req.user.id });
+    console.log(user)
+    // const email = user.email
+
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "gautamdoliya69@gmail.com", //  Gmail
+            pass: "kphj kzgc tuoa hqto" // Gmail App Password
+        }
+    });
+    const { findOrder } = req.body;
+    console.log(findOrder)
     try {
-        // Only admin/superadmin can send emails
-        const adminUser = await User.findById(req.user.id);
-        if (!['admin', 'superadmin'].includes(adminUser.role)) {
-            return res.status(403).json({ msg: 'Access denied' });
-        }
-
-        let recipients = [];
-        if (isAllUsers) {
-            const users = await User.find({ role: 'user' }).select('email');
-            recipients = users.map(u => u.email).filter(e => e);
-        } else {
-            recipients = Array.isArray(to) ? to : [to];
-        }
-
-        if (recipients.length === 0) {
-            return res.status(400).json({ msg: 'No recipients found' });
-        }
-
-        // Setup email data
-        const mailOptions = {
-            from: `"Student Hub" <${process.env.EMAIL_USER}>`,
-            to: process.env.EMAIL_USER, // Send it to yourself
-            bcc: recipients, // Hide recipients from each other
-            subject: subject,
-            html: `<div>${body}</div>`
-        };
-
-        console.log(mailOptions);
-
-        // Send the email
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info);
-
-
-
-        res.json({ msg: 'Email(s) sent successfully' });
+        await transporter.sendMail({
+            from: `"Test" <gautamdoliya69@gmail.com>`,
+            to: "practical947@gmail.com",
+            subject: "Test",
+            text: `Test`,
+            html:
+                `<div>
+                       <h2>Test Email</h2>
+                        <div/>
+                        `
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error: ' + err.message);

@@ -6,29 +6,7 @@ const User = require('../models/User');
 
 // Configure Nodemailer Transporter
 // Use explicit host and port for better compatibility on cloud (Render)
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // Use SSL
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
 
-console.log('Validating Email Config:', {
-    user: process.env.EMAIL_USER ? 'Set' : 'Missing',
-    pass: process.env.EMAIL_PASS ? 'Set' : 'Missing'
-});
-
-// Verify connection configuration
-transporter.verify(function (error, success) {
-    if (error) {
-        console.error('❌ Nodemailer connection error:', error);
-    } else {
-        console.log('✅ Email server is ready to take our messages [Nodemailer/Gmail]');
-    }
-});
 
 // Send Email
 router.post('/send', auth, async (req, res) => {
@@ -38,9 +16,29 @@ router.post('/send', auth, async (req, res) => {
     console.log('Timestamp:', new Date().toISOString());
     console.log('Subject:', subject);
     console.log('Is All Users:', isAllUsers);
+
+    const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // Use SSL
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+
     console.log('Validating Email Config:', {
         user: process.env.EMAIL_USER ? 'Set' : 'Missing',
         pass: process.env.EMAIL_PASS ? 'Set' : 'Missing'
+    });
+
+    // Verify connection configuration
+    transporter.verify(function (error, success) {
+        if (error) {
+            console.error('❌ Nodemailer connection error:', error);
+        } else {
+            console.log('✅ Email server is ready to take our messages [Nodemailer/Gmail]');
+        }
     });
 
     try {

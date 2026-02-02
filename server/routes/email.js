@@ -38,6 +38,10 @@ router.post('/send', auth, async (req, res) => {
     console.log('Timestamp:', new Date().toISOString());
     console.log('Subject:', subject);
     console.log('Is All Users:', isAllUsers);
+    console.log('Validating Email Config:', {
+        user: process.env.EMAIL_USER ? 'Set' : 'Missing',
+        pass: process.env.EMAIL_PASS ? 'Set' : 'Missing'
+    });
 
     try {
         // Only admin/superadmin can send emails

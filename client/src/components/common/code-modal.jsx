@@ -32,7 +32,7 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                         className="relative w-full max-w-4xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] z-10"
                     >
                         <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-white">
-                            <div>
+                            <div className="w-full">
                                 <div className="flex justify-between items-center mb-4 ">
                                     <h3 className="text-lg font-bold text-slate-900">Code Preview</h3>
                                     <div className="flex items-center gap-2">

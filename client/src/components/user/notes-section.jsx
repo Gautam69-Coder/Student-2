@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { FileText, Download, Eye, Calendar, User, Trash2, Copy, Check, X, Code, Loader2, Layers, File, Image as ImageIcon } from "lucide-react"
 import { fetchNotes, deleteNote, makeNotePublic } from "@/Api/api"
 import { CodeModal } from "@/components/common/code-modal"
+import { getMe, fetchUsers } from "@/Api/api"
 
 export function NotesSection({ refreshKey }) {
     const [notes, setNotes] = useState([])
@@ -14,10 +15,30 @@ export function NotesSection({ refreshKey }) {
     const [activeSection, setActiveSection] = useState("All")
     const [showCodeModal, setShowCodeModal] = useState(false)
     const [publicNote, setPublicNote] = useState(false);
+    const [user, setUser] = useState(null);
+    const [allUsers, setallUsers] = useState([])
 
     useEffect(() => {
         loadNotes()
     }, [refreshKey])
+
+
+    useEffect(() => {
+        getMe().then(res => {
+            setUser(res.data);
+            setLoading(false);
+        }).catch(err => {
+            console.error(err);
+            setLoading(false);
+        });
+    }, []);
+
+    // useEffect(() => {
+    //     const user = fetchUsers();
+    //     user.then((res) => {
+    //        console.log(res.data)
+    //     });
+    // }, []);
 
     const loadNotes = async () => {
         setLoading(true)
@@ -25,7 +46,6 @@ export function NotesSection({ refreshKey }) {
             const res = await fetchNotes()
             const fetchedNotes = res.data
             setNotes(fetchedNotes)
-            console.log(fetchedNotes)
             // Group notes by section
             const grouped = fetchedNotes.reduce((acc, note) => {
                 const section = note.section || "General"
@@ -85,9 +105,10 @@ export function NotesSection({ refreshKey }) {
     const handlePublicNote = async (noteId) => {
         if (!window.confirm("Are you sure you want to do this action?")) return
         try {
-            const res=await makeNotePublic(noteId)
-            const updatedNotes = notes.map(note => note._id === noteId ? { ...note, public: true } : note)
+            const res = await makeNotePublic(noteId)
+            const updatedNotes =  notes.map(note => note._id === noteId ? { ...note, public: true } : note)
             console.log(res)
+            console.log(updatedNotes)
             setNotes(updatedNotes)
         } catch (err) {
             console.error("Error making note public:", err)
@@ -165,7 +186,7 @@ export function NotesSection({ refreshKey }) {
                                         >
                                             <div className="p-6 flex flex-col h-full">
                                                 <div className="flex items-start justify-between mb-4">
-                                                    <div className="flex items-center gap-3">
+                                                    <div className="flex items-center justify-between gap-3">
                                                         <div className={`p-2.5 rounded-xl border transition-colors ${note.fileData ? 'bg-blue-50 border-blue-100 text-blue-600' : 'bg-slate-900 border-slate-800 text-white'}`}>
                                                             {note.fileData ? (
                                                                 note.fileType?.startsWith('image/') ? <ImageIcon className="w-5 h-5" /> : <File className="w-5 h-5" />
@@ -176,6 +197,7 @@ export function NotesSection({ refreshKey }) {
                                                         <h3 className="font-bold text-slate-900 truncate text-base sm:text-lg pr-2">
                                                             {note.title}
                                                         </h3>
+                                                       
                                                     </div>
 
                                                     <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
@@ -184,7 +206,7 @@ export function NotesSection({ refreshKey }) {
                                                             className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
                                                             title="Delete Note"
                                                         >
-                                                            <Trash2 className="w-4 h-4" />
+                                                            {user._id === note.user ? <Trash2 className="w-4 h-4" /> : null}
                                                         </button>
                                                     </div>
                                                 </div>
@@ -195,18 +217,22 @@ export function NotesSection({ refreshKey }) {
                                                         {new Date(note.createdAt).toLocaleDateString()}
                                                     </span>
 
-                                                    {note.isGlobal ? (
-                                                        <button className="bg-blue-50 border border-blue-600 hover:bg-blue-600 hover:text-white transition-colors text-blue-600 p-2 px-4 cursor-pointer rounded-md"
-                                                        onClick={()=>{handlePublicNote(note._id);}}
-                                                        >
-                                                            Public
-                                                        </button>
-                                                    ) : (
-                                                        <button className="bg-blue-50 border border-blue-600 hover:bg-blue-600 hover:text-white transition-colors text-blue-600 p-2 px-4 cursor-pointer rounded-md"
-                                                        onClick={()=>{handlePublicNote(note._id);}}
-                                                        >
-                                                            Private
-                                                        </button>
+                                                    {user._id === note.user && (
+                                                        (
+                                                            note.isGlobal ? (
+                                                                <button className="bg-blue-50 border border-blue-600 hover:bg-blue-600 hover:text-white transition-colors text-blue-600 p-2 px-4 cursor-pointer rounded-md"
+                                                                    onClick={() => { handlePublicNote(note._id); }}
+                                                                >
+                                                                    Public
+                                                                </button>
+                                                            ) : (
+                                                                <button className="bg-blue-50 border border-blue-600 hover:bg-blue-600 hover:text-white transition-colors text-blue-600 p-2 px-4 cursor-pointer rounded-md"
+                                                                    onClick={() => { handlePublicNote(note._id); }}
+                                                                >
+                                                                    Private
+                                                                </button>
+                                                            )
+                                                        )
                                                     )}
                                                 </div>
 

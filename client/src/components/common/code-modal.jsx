@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check } from "lucide-react";
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { androidstudio } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 export function CodeModal({ isOpen, onClose, title, code }) {
     const [copied, setCopied] = useState(false);
@@ -11,6 +17,11 @@ export function CodeModal({ isOpen, onClose, title, code }) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
+
+    useEffect(() => {
+      console.log(title)
+    }, [])
+    
 
     if (typeof document === 'undefined') return null;
 
@@ -54,9 +65,16 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                                 <p className="text-sm text-slate-500 font-medium  mt-0.5">{title}</p>
                             </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto bg-slate-50 p-6">
-                            <pre className="font-mono text-sm leading-relaxed text-slate-700  p-4 overflow-x-auto">
-                                <code className="overflow-x-auto">{code}</code>
+                        <div className="flex-1 overflow-y-auto bg-slate-50 p-6 ">
+                            <pre className="font-mono text-sm leading-relaxed text-slate-700 bg-black sm:block hidden   p-4 overflow-x-auto">
+                                <SyntaxHighlighter  style={okaidia} showLineNumbers={true}>
+                                    {code}
+                                </SyntaxHighlighter>
+                            </pre>
+                             <pre className="font-mono text-sm leading-relaxed text-slate-700 bg-black sm:hidden block  p-4 overflow-x-auto">
+                                <SyntaxHighlighter  style={okaidia} showLineNumbers={false} >
+                                    {code}
+                                </SyntaxHighlighter>
                             </pre>
                         </div>
                     </motion.div>

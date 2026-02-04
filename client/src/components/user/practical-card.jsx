@@ -12,7 +12,7 @@ function QuestionBlock({ question, index }) {
         navigator.clipboard.writeText(question.code)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
-    }
+    }    
 
     return (
         <div className="border-b mb-2 last:border-b-0 border-gray-100">

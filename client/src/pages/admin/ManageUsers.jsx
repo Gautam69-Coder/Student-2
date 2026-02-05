@@ -57,20 +57,20 @@ export function ManageUsers({ users, setUsers, subjects }) {
                 <StatsCard title="Content Items" value={subjects.length} change="+24" icon={FileText} color="#06b6d4" />
             </motion.div>
             <motion.div variants={itemVariants} className="flex items-center flex-wrap gap-3 justify-between">
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Manage Users</h2>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Manage Users</h2>
                 <div className="flex gap-3">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                         <input
                             type="text"
                             placeholder="Search users..."
-                            className="w-64 pl-10 pr-4 h-10 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400"
+                            className="w-64 pl-10 pr-4 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         />
                     </div>
                     <select
                         value={filterRole}
                         onChange={(e) => setFilterRole(e.target.value)}
-                        className="h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 cursor-pointer"
+                        className="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 cursor-pointer text-slate-900 dark:text-white"
                     >
                         <option value="all">All Roles</option>
                         <option value="user">Students</option>
@@ -79,25 +79,25 @@ export function ManageUsers({ users, setUsers, subjects }) {
                 </div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="bg-white rounded-xl overflow-hidden border border-[#E5E5E5] shadow-sm">
+            <motion.div variants={itemVariants} className="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#E5E5E5] dark:border-slate-800 shadow-sm">
                 <table className="w-full">
                     <thead>
-                        <tr className="border-b border-slate-100 bg-slate-50/50">
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">User</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Role</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 ">Visits</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 sm:block hidden">Activity</th>
+                        <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</th>
+                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Role</th>
+                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Visits</th>
+                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:block hidden">Activity</th>
                             {/* <th className="text-left px-6 py-1 text-xs font-semibold uppercase tracking-wider text-slate-500">Last Active</th> */}
-                            <th className="text-right sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                            <th className="text-right sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredUsers.map((user) => (
-                            <tr key={user._id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                            <tr key={user._id} className="border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                 <td className="sm:px-6 px-2 py-2 sm:py-4">
                                     <div>
-                                        <p className="font-semibold text-slate-900 text-[15px]">{user.username}</p>
-                                        <p className="text-sm text-slate-500 sm:block hidden">{user.email}</p>
+                                        <p className="font-semibold text-slate-900 dark:text-white text-[15px]">{user.username}</p>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400 sm:block hidden">{user.email}</p>
                                     </div>
                                 </td>
                                 <td className="sm:px-6 px-2 py-2 sm:py-4 flex items-center">
@@ -105,9 +105,9 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                         <select
                                             value={user.role}
                                             onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                                            className={`sm:w-28 w-20 h-6 sm:h-8 sm:px-5 px-2 text-xs font-semibold rounded-md border-none focus:outline-none focus:ring-1 focus:ring-slate-400 cursor-pointer ${user.role === "admin"
-                                                ? "bg-slate-900 text-white"
-                                                : "bg-slate-100 text-black"
+                                            className={`sm:w-28 w-20 h-6 sm:h-8 sm:px-5 px-2 text-xs font-semibold rounded-md border-none focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 cursor-pointer ${user.role === "admin"
+                                                ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"
+                                                : "bg-slate-100 dark:bg-slate-800 text-black dark:text-white"
                                                 }`}
                                         >
                                             <option value="user">Student</option>
@@ -121,7 +121,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                     )}
                                 </td>
                                 <td className="sm:px-6 px-2 py-2 sm:py-4">
-                                    <span className="font-semibold text-slate-700">{user.visitCount}</span>
+                                    <span className="font-semibold text-slate-700 dark:text-slate-300">{user.visitCount}</span>
                                 </td>
                                 <td className="sm:px-6 px-2 py-2 sm:py-4 sm:block hidden">
                                     <SparklineChart color={user.role === "admin" ? "#0f172a" : "#64748b"} />
@@ -131,7 +131,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                     {user.role !== "superadmin" ? (
                                         <div className="flex sm:justify-end justify-center gap-2">
 
-                                            <button onClick={() => handleDeleteUser(user._id)} className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors">
+                                            <button onClick={() => handleDeleteUser(user._id)} className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
                                                 <Trash className="w-4 h-4" />
                                             </button>
                                         </div>

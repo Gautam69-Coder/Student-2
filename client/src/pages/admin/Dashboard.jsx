@@ -8,8 +8,9 @@ import {
     deleteUser
 } from "@/Api/api"
 
-import { GraduationCap, Menu, X } from "lucide-react"
+import { GraduationCap, Menu, X, Sun, Moon } from "lucide-react"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
+import { useTheme } from "@/context/ThemeContext"
 import { ManageUsers } from "./ManageUsers"
 import { ManageSubjects } from "./ManageSubjects"
 import { ManageContent } from "./ManageContent"
@@ -33,6 +34,7 @@ const pendingNotes = [
 ]
 
 export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
+    const { darkMode, toggleDarkMode } = useTheme();
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
     const [users, setUsers] = useState([])
     const [subjects, setSubjects] = useState(initialSubjects)
@@ -56,7 +58,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
     }, [])
 
     return (
-        <div className="flex min-h-screen bg-[#FCFAF8]">
+        <div className={`flex min-h-screen transition-colors duration-300 ${darkMode ? "bg-slate-950" : "bg-[#FCFAF8]"}`}>
             <AdminSidebar
                 isOpen={sidebarOpen}
                 setIsOpen={setSidebarOpen}
@@ -65,24 +67,32 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
 
             <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : "ml-0"}`}>
                 {/* Header */}
-                <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-[#E5E5E5]">
+                <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-[#E5E5E5] dark:border-slate-800 transition-colors">
                     <div className="flex items-center justify-between sm:px-8 px-4 py-5">
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={() => setSidebarOpen(true)}
-                                className="p-2 rounded-lg hover:bg-slate-100 transition-colors lg:hidden"
+                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors lg:hidden"
                             >
-                                <Menu className="w-6 h-6 text-slate-600" />
+                                <Menu className="w-6 h-6 text-slate-600 dark:text-slate-400" />
                             </button>
                             <div>
-                                <h1 className="text-xl font-bold text-slate-900 tracking-tight">Admin Command Center</h1>
-                                <p className="text-sm text-slate-500 font-medium">Welcome back, {userName}</p>
+                                <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Admin Command Center</h1>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Welcome back, {userName}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
                             <button
+                                onClick={toggleDarkMode}
+                                className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-all"
+                                title="Toggle Theme"
+                            >
+                                {darkMode ? <Sun className="w-5 h-5 text-orange-400" /> : <Moon className="w-5 h-5" />}
+                            </button>
+
+                            <button
                                 onClick={onSwitchToStudent}
-                                className="inline-flex items-center justify-center rounded-lg gap-2 border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400"
+                                className="inline-flex items-center justify-center rounded-lg gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400"
                             >
                                 <GraduationCap className="w-4 h-4" />
                                 <span className="hidden sm:inline">Student View</span>

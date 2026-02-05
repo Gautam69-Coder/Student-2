@@ -136,19 +136,19 @@ export function ManagePracticals({ uniqueSubjectSections }) {
     return (
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
             <motion.div variants={itemVariants}>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">Add New Practical</h2>
-                <p className="text-slate-500">Create a new practical assignment with code template</p>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">Add New Practical</h2>
+                <p className="text-slate-500 dark:text-slate-400">Create a new practical assignment with code template</p>
             </motion.div>
 
             <form onSubmit={handleAddPractical}>
-                <motion.div variants={itemVariants} className="bg-white rounded-xl p-8 border border-[#E5E5E5] shadow-sm ">
+                <motion.div variants={itemVariants} className="bg-white dark:bg-slate-900 rounded-xl p-8 border border-[#E5E5E5] dark:border-slate-800 shadow-sm ">
                     <div className="space-y-6">
                         <div className="flex justify-between w-full gap-4">
                             <div className="w-full">
-                                <label htmlFor="practical-subject" className="text-sm font-medium text-slate-700">
+                                <label htmlFor="practical-subject" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                     Subject
                                 </label>
-                                <select className="mt-2 w-full px-4 h-11 bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg appearance-none cursor-pointer"
+                                <select className="mt-2 w-full px-4 h-11 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg appearance-none cursor-pointer text-slate-900 dark:text-white"
                                     value={newPractical.section}
                                     onChange={e => setNewPractical({ ...newPractical, section: e.target.value })}
                                     required
@@ -163,7 +163,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                             </div>
 
                             <div className="w-full">
-                                <label htmlFor="practical-question" className="text-sm font-medium text-slate-700">
+                                <label htmlFor="practical-question" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                     Practical No
                                 </label>
                                 <input
@@ -172,24 +172,24 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                     value={newPractical.practicalNumber}
                                     onChange={e => setNewPractical({ ...newPractical, practicalNumber: e.target.value })}
                                     placeholder="Write the practical question/problem statement..."
-                                    className="mt-2 w-full px-4 h-11 bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg transition-all"
+                                    className="mt-2 w-full px-4 h-11 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div className="border-blue-400 border-dashed border rounded-lg p-4 space-y-8">
+                        <div className="border-blue-400/50 border-dashed border rounded-lg p-4 space-y-8 bg-blue-50/10 dark:bg-blue-900/10">
                             {newPractical.questions.map((question, index) => (
                                 <React.Fragment key={index}>
                                     <div className="space-y-4">
                                         <div>
                                             <div className="flex justify-between w-full">
-                                                <label htmlFor={`practical-question-${index}`} className="text-sm font-medium text-slate-700">
+                                                <label htmlFor={`practical-question-${index}`} className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                                     Question {index + 1}
                                                 </label>
                                                 {newPractical.questions.length > 1 && (
                                                     <Trash
-                                                        className="w-4 h-4 text-red-500 cursor-pointer hover:text-red-700"
+                                                        className="w-4 h-4 text-red-500 cursor-pointer hover:text-red-700 dark:hover:text-red-400"
                                                         onClick={() => handleRemoveQuestion(index)}
                                                     />
                                                 )}
@@ -208,12 +208,12 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                                 }}
                                                 required
                                                 placeholder="Write the practical question/problem statement..."
-                                                className="mt-2 w-full px-4 h-11 bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg transition-all"
+                                                className="mt-2 w-full px-4 h-11 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                             />
                                         </div>
 
                                         <div>
-                                            <label htmlFor={`practical-code-${index}`} className="text-sm font-medium text-slate-700">
+                                            <label htmlFor={`practical-code-${index}`} className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                                 Code Template
                                             </label>
                                             <textarea
@@ -229,23 +229,23 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                                 }}
                                                 required
                                                 placeholder="// Starter code for students..."
-                                                className="mt-2 w-full px-4 py-3 bg-gray-50 border border-gray-200 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg min-h-40 transition-all"
+                                                className="mt-2 w-full px-4 py-3 bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg min-h-40 transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                             />
                                         </div>
 
                                         {/* File/Image Upload for Question */}
-                                        <div className="mt-2 text-slate-700">
+                                        <div className="mt-2 text-slate-700 dark:text-slate-300">
                                             <label className="text-sm font-medium block mb-2">
                                                 Reference Image or File (Optional)
                                             </label>
 
                                             {!newPractical.questions[index].fileData ? (
                                                 <div className="flex items-center justify-center w-full">
-                                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-all">
+                                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 dark:border-slate-800 border-dashed rounded-xl cursor-pointer bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all">
                                                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                            <FileUp className="w-8 h-8 mb-3 text-slate-400" />
-                                                            <p className="mb-2 text-sm text-slate-500 font-medium">Click to upload reference</p>
-                                                            <p className="text-xs text-slate-400 uppercase tracking-wider">Images, PDFs, or Code files</p>
+                                                            <FileUp className="w-8 h-8 mb-3 text-slate-400 dark:text-slate-500" />
+                                                            <p className="mb-2 text-sm text-slate-500 dark:text-slate-400 font-medium">Click to upload reference</p>
+                                                            <p className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider">Images, PDFs, or Code files</p>
                                                         </div>
                                                         <input
                                                             type="file"
@@ -255,8 +255,8 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                                     </label>
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center gap-4 p-4 bg-slate-900 border border-slate-800 rounded-xl relative group">
-                                                    <div className="p-2.5 bg-slate-800 rounded-lg text-white">
+                                                <div className="flex items-center gap-4 p-4 bg-slate-900 dark:bg-slate-950 border border-slate-800 rounded-xl relative group">
+                                                    <div className="p-2.5 bg-slate-800 dark:bg-slate-900 rounded-lg text-white">
                                                         {newPractical.questions[index].fileType?.startsWith('image/') ? (
                                                             <ImageIcon className="w-5 h-5" />
                                                         ) : (
@@ -281,7 +281,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
 
                                                     {/* Image Preview Overlay */}
                                                     {newPractical.questions[index].fileType?.startsWith('image/') && (
-                                                        <div className="absolute -top-32 left-0 w-32 h-32 rounded-lg border border-slate-200 shadow-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                                                        <div className="absolute -top-32 left-0 w-32 h-32 rounded-lg border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                                                             <img src={newPractical.questions[index].fileData} alt="Preview" className="w-full h-full object-cover bg-white" />
                                                         </div>
                                                     )}
@@ -290,12 +290,12 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                         </div>
                                     </div>
                                     {index < newPractical.questions.length - 1 && (
-                                        <hr className="border-slate-100 my-2" />
+                                        <hr className="border-slate-100 dark:border-slate-800 my-2" />
                                     )}
                                 </React.Fragment>
                             ))}
 
-                            <button className="w-full bg-slate-900 mt-4 hover:bg-slate-800 text-white font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]"
+                            <button className="w-full bg-slate-900 dark:bg-slate-100 mt-4 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]"
                                 onClick={handleAddQuestion}
                                 type="button"
                             >
@@ -305,7 +305,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                         <div className="flex gap-4">
                             <button
                                 type="submit"
-                                className="w-full bg-slate-900 mt-4 hover:bg-slate-800 text-white font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+                                className="w-full bg-slate-900 dark:bg-slate-100 mt-4 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
                                 <FlaskConical className="w-4 h-4" /> {editPracticalId ? 'Update Practical' : 'Add Practical'}
                             </button>
                             {editPracticalId && (
@@ -332,8 +332,8 @@ export function ManagePracticals({ uniqueSubjectSections }) {
             <div>
                 <div className=" flex justify-between items-center">
                     <div className="pb-2 mb-2">
-                        <h2 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">Practicals</h2>
-                        <p className="text-slate-500">All Added Practicals</p>
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">Practicals</h2>
+                        <p className="text-slate-500 dark:text-slate-400">All Added Practicals</p>
                     </div>
                     <div>
                         <motion.div className="flex items-center flex-wrap gap-3 justify-between">
@@ -343,7 +343,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                 <select
                                     value={filterRole}
                                     onChange={(e) => { setFilterRole(e.target.value); }}
-                                    className="h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 cursor-pointer"
+                                    className="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 cursor-pointer text-slate-900 dark:text-white"
                                 >
                                     {uniqueSubjectSections.map((section) => (
 
@@ -357,24 +357,24 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                         </motion.div>
                     </div>
                 </div>
-                <div className="bg-white border-2 p-4 rounded-2xl">
+                <div className="bg-white dark:bg-slate-900 border-2 dark:border-slate-800 p-4 rounded-2xl">
                     <table className="w-full  ">
                         <thead>
-                            <tr>
-                                <th className="px-4 py-2 text-center">Practical Name</th>
-                                <th className="px-4 py-2 text-center">Subject</th>
-                                <th className="px-4 py-2 text-center">Actions</th>
+                            <tr className="border-b dark:border-slate-800">
+                                <th className="px-4 py-2 text-center text-slate-900 dark:text-slate-200">Practical Name</th>
+                                <th className="px-4 py-2 text-center text-slate-900 dark:text-slate-200">Subject</th>
+                                <th className="px-4 py-2 text-center text-slate-900 dark:text-slate-200">Actions</th>
                             </tr>
                         </thead>
                         {practicals.sort((a, b) => b.practicalNumber - a.practicalNumber).filter(practical => practical.section === filterRole || filterRole === "all").map((practical) => (
-                            <tr className="border-b border-[#E5E5E5]" key={practical._id}>
-                                <td className="px-4 py-2 text-center">{practical.practicalNumber}</td>
-                                <td className="px-4 py-2 text-center">{practical.section}</td>
+                            <tr className="border-b border-[#E5E5E5] dark:border-slate-800" key={practical._id}>
+                                <td className="px-4 py-2 text-center text-slate-700 dark:text-slate-300">{practical.practicalNumber}</td>
+                                <td className="px-4 py-2 text-center text-slate-700 dark:text-slate-300">{practical.section}</td>
                                 <td className="flex justify-center gap-2 mb-2 mt-2">
-                                    <button onClick={() => handleUpdatePractical(practical)} className="bg-slate-900 w-fit sm:px-4 px-2 sm:py-1  hover:bg-slate-800 text-white font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+                                    <button onClick={() => handleUpdatePractical(practical)} className="bg-slate-900 dark:bg-slate-800 w-fit sm:px-4 px-2 sm:py-1  hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
                                         <Pen className="w-4 h-4" />
                                     </button>
-                                    <button onClick={() => handleDeletePractical(practical._id)} className="bg-slate-900 w-fit sm:px-4 px-2 sm:py-1  hover:bg-slate-800 text-white font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+                                    <button onClick={() => handleDeletePractical(practical._id)} className="bg-slate-900 dark:bg-slate-800 w-fit sm:px-4 px-2 sm:py-1  hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
                                         <Trash className="w-4 h-4" />
                                     </button>
                                 </td>

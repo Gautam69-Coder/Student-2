@@ -1,13 +1,14 @@
 
 import React, { useState, useEffect } from "react"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
+import { motion, AnimatePresence } from "framer-motion"
 import {
     fetchSections,
     fetchPracticals,
     fetchNotes,
 } from "@/Api/api"
 
-import { Upload, Search, Command, Menu, Users, CloudCog, Sun, Moon } from "lucide-react"
+import { Upload, Search, Command, Menu, Users, CloudCog, Sun, Moon, Code, FileText, Download, X } from "lucide-react"
 import { StudentSidebar } from "@/components/user/student-sidebar"
 import { BottomNavbar } from "@/components/user/bottom-navbar"
 import { UploadModal } from "@/components/user/upload-modal"
@@ -35,10 +36,21 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const [notesRefreshKey, setNotesRefreshKey] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [subjectPracticals, setSubjectPracticals] = useState([]);
+    const [selectedNote, setSelectedNote] = useState(null);
     const navigate = useNavigate();
 
     const handleNoteCreated = () => {
         setNotesRefreshKey(prev => prev + 1);
+    };
+
+    const handleDownload = (note) => {
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.href = note.fileData; // Assuming fileData is the base64/url
+        link.download = note.fileName || 'download';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const searchResults = React.useMemo(() => {

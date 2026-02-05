@@ -45,7 +45,7 @@ export function MessageSender({ users }) {
             // Updated to use the new independent email server
             const recipientEmails = isAllUsers ? users.map(u => u.email) : selectedUsers;
 
-            await axios.post('http://localhost:5002/api/send-broadcast', {
+            await axios.post('https://student-hub-email-server.onrender.com/api/send-broadcast', {
                 to: recipientEmails,
                 subject: subject,
                 body: body.replace(/\n/g, '<br/>'),

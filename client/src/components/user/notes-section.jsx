@@ -33,12 +33,7 @@ export function NotesSection({ refreshKey }) {
         });
     }, []);
 
-    // useEffect(() => {
-    //     const user = fetchUsers();
-    //     user.then((res) => {
-    //        console.log(res.data)
-    //     });
-    // }, []);
+    
 
     const loadNotes = async () => {
         setLoading(true)
@@ -107,8 +102,8 @@ export function NotesSection({ refreshKey }) {
         try {
             const res = await makeNotePublic(noteId)
             const updatedNotes = notes.map(note => note._id === noteId ? { ...note, public: true } : note)
-            console.log(res)
-            console.log(updatedNotes)
+           
+            
             setNotes(updatedNotes)
         } catch (err) {
             console.error("Error making note public:", err)

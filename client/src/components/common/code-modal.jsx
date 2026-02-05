@@ -18,9 +18,7 @@ export function CodeModal({ isOpen, onClose, title, code }) {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    useEffect(() => {
-        console.log(title)
-    }, [])
+    
 
 
     if (typeof document === 'undefined') return null;

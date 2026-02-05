@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { DotLoader } from "../../Utils/loaders"
+import { useTheme } from "../../context/ThemeContext"
 
-import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog } from "lucide-react"
+import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog, Sun, Moon } from "lucide-react"
 import { registerUser, loginUser } from "@/Api/api"
 
 const quotes = [
@@ -13,6 +14,7 @@ const quotes = [
 ]
 
 export function AuthSection({ authState, setAuthState, onAuth }) {
+    const { darkMode, toggleDarkMode } = useTheme()
     const [role, setRole] = useState("user")
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState("")
@@ -60,15 +62,26 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
     }
 
     return (
-        <div className="min-h-screen flex bg-[#FCFAF8]">
+        <div className="min-h-screen flex bg-[#FCFAF8] dark:bg-slate-950 transition-colors duration-300 relative">
+            {/* Theme Toggle Button */}
+            <div className="absolute top-6 right-6 z-50">
+                <button
+                    onClick={toggleDarkMode}
+                    className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm"
+                    title="Toggle Theme"
+                >
+                    {darkMode ? <Sun className="w-5 h-5 text-orange-400" /> : <Moon className="w-5 h-5" />}
+                </button>
+            </div>
+
             {/* Left Side - Quote Section (Minimal Pattern) */}
             <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
-                className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-white border-r border-[#E5E5E5]"
+                className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-white dark:bg-slate-900 border-r border-[#E5E5E5] dark:border-slate-800"
             >
-                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(#000 1px, transparent 1px)", backgroundSize: "32px 32px" }}></div>
+                <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: darkMode ? "radial-gradient(#fff 1px, transparent 1px)" : "radial-gradient(#000 1px, transparent 1px)", backgroundSize: "32px 32px" }}></div>
 
                 <div className="relative z-10 flex flex-col justify-center px-12 lg:px-16 w-full">
                     <motion.div
@@ -77,18 +90,18 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                         transition={{ delay: 0.3, duration: 0.6 }}
                     >
                         <div className="flex items-center gap-3 mb-12">
-                            <div className="p-2 rounded-lg bg-slate-900">
-                                <Sparkles className="w-6 h-6 text-white" />
+                            <div className="p-2 rounded-lg bg-slate-900 dark:bg-slate-100">
+                                <Sparkles className="w-6 h-6 text-white dark:text-slate-900" />
                             </div>
-                            <span className="text-2xl font-bold text-slate-900 tracking-tight">
+                            <span className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
                                 Student Hub
                             </span>
                         </div>
 
-                        <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-slate-900 mb-8 font-serif italic">
+                        <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-slate-900 dark:text-white mb-8 font-serif italic">
                             "{currentQuote.text}"
                         </blockquote>
-                        <p className="text-base sm:text-lg text-slate-500 font-medium">— {currentQuote.author}</p>
+                        <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-medium">— {currentQuote.author}</p>
                     </motion.div>
                 </div>
             </motion.div>
@@ -102,12 +115,12 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                     className="w-full max-w-md"
                 >
                     {/* Paper Card */}
-                    <div className="bg-white rounded-xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5]">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800">
                         <div className="text-center mb-8">
-                            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 tracking-tight">
+                            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
                                 {authState === "login" ? "Welcome Back" : "Create Account"}
                             </h1>
-                            <p className="text-slate-500">
+                            <p className="text-slate-500 dark:text-slate-400 text-sm">
                                 {authState === "login"
                                     ? "Enter your details to access your account"
                                     : "Start your learning journey today"}
@@ -115,12 +128,12 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                         </div>
 
                         {/* Role Toggle */}
-                        <div className="flex gap-2 p-1.5 rounded-lg bg-slate-100 mb-8">
+                        <div className="flex gap-2 p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/50 mb-8">
                             <button
                                 onClick={() => setRole("student")}
                                 className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${role === "student"
-                                    ? "bg-white text-slate-900 shadow-sm ring-1 ring-black/5"
-                                    : "text-slate-500 hover:text-slate-900"
+                                    ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+                                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                                     }`}
                             >
                                 <GraduationCap className="w-4 h-4" />
@@ -129,8 +142,8 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                             <button
                                 onClick={() => setRole("admin")}
                                 className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${role === "admin"
-                                    ? "bg-white text-slate-900 shadow-sm ring-1 ring-black/5"
-                                    : "text-slate-500 hover:text-slate-900"
+                                    ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+                                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                                     }`}
                             >
                                 <Shield className="w-4 h-4" />
@@ -142,7 +155,7 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                             <motion.div
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="mb-6 p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm font-medium text-center"
+                                className="mb-6 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm font-medium text-center"
                             >
                                 {error}
                             </motion.div>
@@ -157,18 +170,18 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                                         exit={{ opacity: 0, height: 0 }}
                                         transition={{ duration: 0.2 }}
                                     >
-                                        <label htmlFor="name" className="text-sm font-medium text-slate-700">
+                                        <label htmlFor="name" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                             Full Name
                                         </label>
                                         <div className="relative mt-2">
-                                            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                                             <input
                                                 id="name"
                                                 type="text"
                                                 placeholder="John Doe"
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
-                                                className="w-full h-11 pl-10 pr-4 bg-slate-50/50 border border-slate-200 focus:border-slate-400 focus:outline-none focus:ring-0 rounded-lg transition-all text-sm"
+                                                className="w-full h-11 pl-10 pr-4 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                             />
                                         </div>
                                     </motion.div>
@@ -176,36 +189,36 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                             </AnimatePresence>
 
                             <div>
-                                <label htmlFor="email" className="text-sm font-medium text-slate-700">
+                                <label htmlFor="email" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                     Email Address
                                 </label>
                                 <div className="relative mt-2">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                                     <input
                                         id="email"
                                         type="email"
                                         placeholder="student@university.edu"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 bg-slate-50/50 border border-slate-200 focus:border-slate-400 focus:outline-none focus:ring-0 rounded-lg transition-all text-sm"
+                                        className="w-full h-11 pl-10 pr-4 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                         required
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="password" className="text-sm font-medium text-slate-700">
+                                <label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                     Password
                                 </label>
                                 <div className="relative mt-2">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                                     <input
                                         id="password"
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full h-11 pl-10 pr-10 bg-slate-50/50 border border-slate-200 focus:border-slate-400 focus:outline-none focus:ring-0 rounded-lg transition-all text-sm"
+                                        className="w-full h-11 pl-10 pr-10 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                         required
                                     />
                                     <button
@@ -226,18 +239,18 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                                         exit={{ opacity: 0, height: 0 }}
                                         className="overflow-hidden"
                                     >
-                                        <label htmlFor="adminSecret" className="text-sm font-medium text-slate-700">
+                                        <label htmlFor="adminSecret" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                             Admin Secret Key
                                         </label>
                                         <div className="relative mt-2">
-                                            <CloudCog className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <CloudCog className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                                             <input
                                                 id="adminSecret"
                                                 type="password"
                                                 placeholder="Enter admin secret"
                                                 value={adminSecret}
                                                 onChange={(e) => setAdminSecret(e.target.value)}
-                                                className="w-full h-11 pl-10 pr-4 bg-slate-50/50 border border-slate-200 focus:border-slate-400 focus:outline-none focus:ring-0 rounded-lg transition-all text-sm"
+                                                className="w-full h-11 pl-10 pr-4 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                                 required={role === "admin"}
                                             />
                                         </div>
@@ -247,12 +260,12 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
 
                             {loading ? (
                                 <div className="flex justify-center">
-                                    <DotLoader size={20} />
+                                    <DotLoader size={20} color={darkMode ? "white" : "black"} />
                                 </div>
                             ) : (
                                 <button
                                     type="submit"
-                                    className="w-full bg-slate-900 hover:bg-slate-800 text-white h-11 rounded-lg font-medium transition-all"
+                                    className="w-full bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 h-11 rounded-lg font-bold transition-all shadow-sm active:scale-[0.98]"
                                 >
                                     {authState === "login" ? "Sign In" : "Create Account"}
                                 </button>
@@ -260,16 +273,16 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                             }
                             <div className="relative my-6">
                                 <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-slate-200"></div>
+                                    <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-white px-2 text-slate-400 font-medium">Or continue with</span>
+                                    <span className="bg-white dark:bg-slate-900 px-2 text-slate-400 font-medium">Or continue with</span>
                                 </div>
                             </div>
 
                             <button
                                 type="button"
-                                className="w-full inline-flex items-center justify-center bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 h-12 rounded-lg font-medium transition-all"
+                                className="w-full inline-flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 h-11 rounded-lg font-medium transition-all shadow-sm"
                             >
                                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                                     <path
@@ -293,18 +306,18 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                             </button>
                         </form>
 
-                        <p className="text-center text-sm text-slate-500 mt-8">
+                        <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-8">
                             {authState === "login" ? (
                                 <>
                                     {"Don't have an account? "}
-                                    <button onClick={() => setAuthState("signup")} className="text-slate-900 font-semibold hover:underline">
+                                    <button onClick={() => setAuthState("signup")} className="text-slate-900 dark:text-white font-semibold hover:underline transition-colors">
                                         Sign up
                                     </button>
                                 </>
                             ) : (
                                 <>
                                     Already have an account?{" "}
-                                    <button onClick={() => setAuthState("login")} className="text-slate-900 font-semibold hover:underline">
+                                    <button onClick={() => setAuthState("login")} className="text-slate-900 dark:text-white font-semibold hover:underline transition-colors">
                                         Sign in
                                     </button>
                                 </>

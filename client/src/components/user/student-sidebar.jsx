@@ -39,19 +39,19 @@ export function StudentSidebar({ isOpen, setIsOpen, onLogout }) {
                         animate={{ x: 0 }}
                         exit={{ x: -280 }}
                         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                        className="fixed left-0 top-0 h-full w-64 bg-slate-900 border-r border-[#E5E5E5] z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
+                        className="fixed left-0 top-0 h-full w-64 bg-slate-900 dark:bg-slate-950 border-r border-[#E5E5E5] dark:border-slate-800 z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
                     >
                         <div className="flex flex-col h-full p-6">
                             {/* Header */}
                             <div className="flex items-center justify-between mb-10">
                                 <div className="flex items-center gap-2.5">
-                                    <div className="p-2  bg-slate-900">
+                                    <div className="p-2  bg-slate-900 dark:bg-slate-950">
                                         <Logo />
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="p-1.5 rounded-md hover:bg-slate-100 transition-colors lg:hidden"
+                                    className="p-1.5 rounded-md hover:bg-slate-800 dark:hover:bg-slate-800 transition-colors lg:hidden"
                                 >
                                     <X className="w-5 h-5 text-slate-500" />
                                 </button>
@@ -61,9 +61,6 @@ export function StudentSidebar({ isOpen, setIsOpen, onLogout }) {
                             <nav className="flex-1 space-y-1.5">
                                 {navItems.map((item) => {
                                     const Icon = item.icon
-                                    // Helper to check if active. 
-                                    // Home is active if pathname is exactly "/dashboard" or "/dashboard/"
-                                    // Others are active if pathname starts with /dashboard/{id}
                                     const isActive = item.id === 'home'
                                         ? location.pathname === '/dashboard' || location.pathname === '/dashboard/'
                                         : location.pathname.startsWith(`/dashboard/${item.id}`);
@@ -75,12 +72,12 @@ export function StudentSidebar({ isOpen, setIsOpen, onLogout }) {
                                             key={item.id}
                                             to={linkPath}
                                             onClick={() => window.innerWidth < 1024 && setIsOpen(false)} // Close sidebar on mobile on click
-                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium ${isActive
-                                                ? "bg-white text-black shadow-sm"
-                                                : "text-white hover:text-black hover:bg-white"
+                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-semibold ${isActive
+                                                ? "bg-white dark:bg-slate-800 text-black dark:text-white shadow-sm"
+                                                : "text-slate-400 hover:text-white hover:bg-white/5"
                                                 }`}
                                         >
-                                            <Icon className={`w-5 h-5 ${isActive ? "text-black" : "text-slate-400 group-hover:text-slate-900"}`} />
+                                            <Icon className={`w-5 h-5 ${isActive ? "text-black dark:text-white" : "text-slate-500"}`} />
                                             <span>{item.label}</span>
                                         </Link>
                                     )
@@ -88,12 +85,12 @@ export function StudentSidebar({ isOpen, setIsOpen, onLogout }) {
                             </nav>
 
                             {/* Logout */}
-                            <div className="pt-6 border-t border-slate-100 mt-auto">
+                            <div className="pt-6 border-t border-slate-800/50 mt-auto">
                                 <button
                                     onClick={onLogout}
-                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200 font-medium"
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-all duration-200 font-medium group"
                                 >
-                                    <LogOut className="w-5 h-5" />
+                                    <LogOut className="w-5 h-5 text-slate-500 group-hover:text-red-500" />
                                     <span>Sign Out</span>
                                 </button>
                             </div>

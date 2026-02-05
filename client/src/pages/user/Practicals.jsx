@@ -53,13 +53,13 @@ export function Practicals({ practicals, subjects }) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="sm:space-y-6 space-y-3 p-4">
             <div className="flex flex-col sm:gap-4 gap-2">
                 <div className="flex justify-between items-end">
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight ">All Practicals</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight ">All Practicals</h2>
                 </div>
 
                 <div className="flex flex-col gap-3">
                     {/* Subject Filters */}
                     {subjects.length > 0 && (
-                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide border rounded-2xl p-2  ">
+                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide border dark:border-slate-800 rounded-2xl p-2 bg-white dark:bg-slate-900">
                             {subjects.map((subject, index) => {
                                 const subjectName = subject.name || subject;
                                 return (
@@ -67,8 +67,8 @@ export function Practicals({ practicals, subjects }) {
                                         key={index}
                                         onClick={() => { setSelectedSubject(subjectName); }}
                                         className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedSubject === subjectName
-                                            ? "bg-slate-900 text-white shadow-md"
-                                            : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                                            ? "bg-white dark:bg-slate-800 text-black dark:text-white shadow-md border border-slate-200 dark:border-slate-700"
+                                            : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
                                             }`}
                                     >
                                         {subjectName}
@@ -81,14 +81,14 @@ export function Practicals({ practicals, subjects }) {
                     {/* Practical Number Filters */}
                     {uniquePracticalNumbers.length > 0 && (
                         <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 scrollbar-hide items-center">
-                            <div className=" text-xs font-semibold text-slate-400 uppercase mr-2 ">Practical No:</div>
+                            <div className=" text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase mr-2 ">Practical No:</div>
                             {uniquePracticalNumbers.map((num, index) => (
                                 <button
                                     key={index}
                                     onClick={() => setSelectedPracticalNo(num)}
                                     className={`h-8 px-3 min-w-8 flex items-center justify-center rounded-full text-xs font-bold transition-all shrink-0 ${selectedPracticalNo === num
-                                        ? "bg-slate-900 text-white shadow-md"
-                                        : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                                        ? "bg-white dark:bg-slate-800 text-black dark:text-white shadow-sm border border-slate-200 dark:border-slate-700"
+                                        : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
                                         }`}
                                 >
                                     {num}
@@ -107,7 +107,7 @@ export function Practicals({ practicals, subjects }) {
             </div>
 
             {filteredPracticals.length === 0 && (
-                <div className="text-center py-20 text-slate-500">
+                <div className="text-center py-20 text-slate-500 dark:text-slate-400">
                     No practicals found for the selected criteria.
                 </div>
             )}

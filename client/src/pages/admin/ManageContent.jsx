@@ -32,8 +32,8 @@ export function ManageContent({ pendingNotes }) {
                         className="bg-white rounded-xl p-6 border border-[#E5E5E5] hover:border-slate-300 transition-all shadow-sm flex items-center justify-between"
                     >
                         <div className="flex items-center gap-5">
-                            <div className="p-3 rounded-xl bg-orange-50 border border-orange-100">
-                                <FileText className="w-6 h-6 text-orange-600" />
+                            <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                <FileText className="w-6 h-6 text-slate-600" />
                             </div>
                             <div>
                                 <h3 className="font-bold text-slate-900 text-lg">{note.title}</h3>

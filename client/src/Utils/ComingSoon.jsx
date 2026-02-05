@@ -3,32 +3,7 @@ import { motion } from 'framer-motion';
 import { Navigate, useNavigate } from "react-router-dom";
 
 const ComingSoonPage = () => {
-    const [timeLeft, setTimeLeft] = useState({
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0
-    });
-
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const targetDate = new Date('2026-03-01T00:00:00').getTime();
-
-        const interval = setInterval(() => {
-            const now = new Date().getTime();
-            const difference = targetDate - now;
-
-            setTimeLeft({
-                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-                seconds: Math.floor((difference % (1000 * 60)) / 1000)
-            });
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -65,10 +40,10 @@ const ComingSoonPage = () => {
     };
 
     return (
-        <div className="h-[70vh] bg-white flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden relative">
+        <div className="min-h-[80vh] bg-white dark:bg-slate-950 flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden relative transition-colors duration-300">
             {/* Animated background circles */}
             <motion.div
-                className="absolute top-20 left-10 w-72 h-72 bg-violet-100 rounded-full blur-3xl opacity-30"
+                className="absolute top-20 left-10 w-72 h-72 bg-slate-100 dark:bg-slate-900 rounded-full blur-3xl opacity-30 dark:opacity-20"
                 animate={{
                     scale: [1, 1.2, 1],
                     x: [0, 50, 0],
@@ -81,7 +56,7 @@ const ComingSoonPage = () => {
                 }}
             />
             <motion.div
-                className="absolute bottom-20 right-10 w-96 h-96 bg-violet-200 rounded-full blur-3xl opacity-20"
+                className="absolute bottom-20 right-10 w-96 h-96 bg-slate-200 dark:bg-slate-900 rounded-full blur-3xl opacity-20 dark:opacity-20"
                 animate={{
                     scale: [1, 1.3, 1],
                     x: [0, -30, 0],
@@ -107,12 +82,12 @@ const ComingSoonPage = () => {
                     className="mb-8 inline-block"
                 >
                     <motion.div
-                        className="w-20 h-20 mx-auto bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl flex items-center justify-center shadow-2xl"
+                        className="w-20 h-20 mx-auto bg-slate-900 dark:bg-white rounded-2xl flex items-center justify-center shadow-2xl dark:shadow-slate-900/20"
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300 }}
                     >
                         <svg
-                            className="w-10 h-10 text-white"
+                            className="w-10 h-10 text-white dark:text-slate-900"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -130,11 +105,11 @@ const ComingSoonPage = () => {
                 {/* Main heading */}
                 <motion.h1
                     variants={itemVariants}
-                    className="text-5xl sm:text-6xl lg:text-7xl font-bold text-violet-600 mb-6 tracking-tight"
+                    className="text-4xl sm:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white mb-6 tracking-tight"
                 >
                     Something Amazing
                     <br />
-                    <span className="bg-gradient-to-r from-violet-600 via-violet-700 to-violet-800 bg-clip-text text-transparent">
+                    <span className="text-slate-700 dark:text-slate-300">
                         Is Coming Soon
                     </span>
                 </motion.h1>
@@ -142,25 +117,25 @@ const ComingSoonPage = () => {
                 {/* Subtitle */}
                 <motion.p
                     variants={itemVariants}
-                    className="text-lg sm:text-xl text-violet-500 mb-12 max-w-2xl mx-auto leading-relaxed"
+                    className="text-lg sm:text-xl text-slate-500 dark:text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed"
                 >
                     We're crafting something extraordinary for you. Stay tuned and be the first to experience it.
                 </motion.p>
 
                 <motion.button
                     type="submit"
-                    className="px-8 py-4 bg-gradient-to-r from-violet-600 to-violet-700 text-white rounded-full font-semibold shadow-lg"
+                    className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full font-bold shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-all"
                     whileHover={{
                         scale: 1.05,
-                        boxShadow: "0 20px 40px rgba(124, 58, 237, 0.3)"
+                        boxShadow: "0 20px 40px rgba(15, 23, 42, 0.2)"
                     }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ type: "spring", stiffness: 400 }}
-                    onClick={()=>{
+                    onClick={() => {
                         navigate("/")
                     }}
                 >
-                   Home
+                    Return Home
                 </motion.button>
             </motion.div>
         </div>

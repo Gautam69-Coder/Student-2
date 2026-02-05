@@ -9,6 +9,7 @@ import { userDetail } from '@/lib/user';
 import { TimeLine } from '@/Utils/loaders';
 import { NotFoundPage } from './Utils/Error';
 import { SquirelLoader } from './Utils/loaders';
+import { ThemeProvider } from './context/ThemeContext';
 
 // Helper component for protected routes
 const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
@@ -144,8 +145,10 @@ function AppContent() {
 
 export default function App() {
     return (
-        <Router>
-            <AppContent />
-        </Router>
+        <ThemeProvider>
+            <Router>
+                <AppContent />
+            </Router>
+        </ThemeProvider>
     );
 }

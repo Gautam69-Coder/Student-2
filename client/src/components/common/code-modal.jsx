@@ -65,7 +65,7 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                         </div>
                         <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 sm:p-8">
                             <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-                                <pre className="font-mono text-sm leading-relaxed bg-[#0d1117]! sm:block hidden p-4 overflow-x-auto">
+                                <pre className="font-mono text-sm leading-relaxed bg-[#0d1117]! sm:block hidden  overflow-x-auto">
                                     <SyntaxHighlighter
                                         language="javascript"
                                         style={atomOneDark}
@@ -75,12 +75,12 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                                         {code}
                                     </SyntaxHighlighter>
                                 </pre>
-                                <pre className="font-mono text-sm leading-relaxed bg-[#0d1117]! sm:hidden block p-4 overflow-x-auto">
+                                <pre className="font-mono text-sm leading-relaxed bg-[#0d1117]! sm:hidden block p-2 overflow-x-auto">
                                     <SyntaxHighlighter
                                         language="javascript"
                                         style={atomOneDark}
                                         showLineNumbers={false}
-                                        customStyle={{ margin: 0, padding: 0, background: 'transparent' }}
+                                        customStyle={{ margin: 0, padding: 0, background: 'transparent', padding: '2px',border: 'none' }}
                                     >
                                         {code}
                                     </SyntaxHighlighter>

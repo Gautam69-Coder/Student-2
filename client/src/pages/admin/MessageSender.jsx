@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { Mail, Send, Users, User, Check, AlertCircle, Loader2 } from "lucide-react"
 import { sendEmail } from "@/Api/api"
+import axios from "axios"
 
 export function MessageSender({ users }) {
     const [selectedUsers, setSelectedUsers] = useState([])
@@ -41,15 +42,17 @@ export function MessageSender({ users }) {
         setStatus(null)
 
         try {
-            const emailData = {
-                to: isAllUsers ? [] : selectedUsers,
-                isAllUsers: isAllUsers,
-                subject: subject,
-                body: body.replace(/\n/g, '<br/>')
-            }
+            // Updated to use the new independent email server
+            const recipientEmails = isAllUsers ? users.map(u => u.email) : selectedUsers;
 
-            const res = await sendEmail(emailData)
-            setStatus({ type: 'success', message: res.data.msg || 'Email sent successfully!' })
+            await axios.post('http://localhost:5002/api/send-broadcast', {
+                to: recipientEmails,
+                subject: subject,
+                body: body.replace(/\n/g, '<br/>'),
+                isAllUsers: isAllUsers
+            });
+
+            setStatus({ type: 'success', message: 'Email sent successfully via new Email Server!' })
 
             // Reset form on success
             if (!isAllUsers) setSelectedUsers([])
@@ -57,7 +60,7 @@ export function MessageSender({ users }) {
             setBody("")
         } catch (err) {
             console.error(err)
-            const errorMsg = err.response?.data?.msg || err.response?.data?.error?.message || 'Failed to send email'
+            const errorMsg = err.response?.data?.message || err.message || 'Failed to send email'
             setStatus({ type: 'error', message: errorMsg })
         } finally {
             setLoading(false)

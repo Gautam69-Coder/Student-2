@@ -27,7 +27,7 @@ export function AdminSidebar({ isOpen, setIsOpen, onLogout }) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setIsOpen(false)}
-                        className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 lg:hidden"
+                        className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 lg:hidden dark:bg-slate-900/40"
                     />
                 )}
             </AnimatePresence>
@@ -40,22 +40,22 @@ export function AdminSidebar({ isOpen, setIsOpen, onLogout }) {
                         animate={{ x: 0 }}
                         exit={{ x: -280 }}
                         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                        className="fixed left-0 top-0 h-full w-64 bg-slate-900 border-r border-slate-800 z-50 shadow-2xl"
+                        className="fixed left-0 top-0 h-full w-64 bg-slate-900 border-r border-slate-800 z-50 shadow-2xl dark:bg-slate-950 dark:border-slate-700"
                     >
                         <div className="flex flex-col h-full p-6">
                             {/* Header */}
                             <div className="flex items-center justify-between mb-10">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-lg bg-slate-800">
-                                        <Shield className="w-5 h-5 text-white" />
+                                    <div className="p-2 rounded-lg bg-slate-800 dark:bg-slate-700">
+                                        <Shield className="w-5 h-5 text-white dark:text-slate-50" />
                                     </div>
-                                    <span className="text-lg font-bold text-white tracking-tight">Admin Panel</span>
+                                    <span className="text-lg font-bold text-white tracking-tight dark:text-slate-50">Admin Panel</span>
                                 </div>
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="p-1.5 rounded-md hover:bg-slate-800 transition-colors lg:hidden"
+                                    className="p-1.5 rounded-md hover:bg-slate-800 transition-colors lg:hidden dark:hover:bg-slate-700"
                                 >
-                                    <X className="w-5 h-5 text-slate-400" />
+                                    <X className="w-5 h-5 text-slate-400 dark:text-slate-300" />
                                 </button>
                             </div>
 
@@ -74,11 +74,11 @@ export function AdminSidebar({ isOpen, setIsOpen, onLogout }) {
                                             to={linkPath}
                                             onClick={() => window.innerWidth < 1024 && setIsOpen(false)}
                                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium ${isActive
-                                                ? "bg-white text-slate-900 shadow-md"
-                                                : "text-slate-400 hover:text-white hover:bg-slate-800"
+                                                ? "bg-white text-slate-900 shadow-md dark:bg-slate-800 dark:text-white"
+                                                : "text-slate-400 hover:text-white hover:bg-slate-800 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800"
                                                 }`}
                                         >
-                                            <Icon className={`w-5 h-5 ${isActive ? "text-slate-900" : "text-slate-400 group-hover:text-white"}`} />
+                                            <Icon className={`w-5 h-5 ${isActive ? "text-slate-900 dark:text-white" : "text-slate-400 group-hover:text-white dark:text-slate-400 dark:group-hover:text-white"}`} />
                                             <span>{item.label}</span>
                                         </Link>
                                     )

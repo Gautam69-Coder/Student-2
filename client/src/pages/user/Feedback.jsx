@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { submitFeedback } from '@/Api/api';
 import { Send, MessageSquare, AlertCircle, Sparkles, HelpCircle } from 'lucide-react';
+import axios from 'axios';
 
-export const Feedback = () => {
+export const Feedback = ({ user }) => {
     const [formData, setFormData] = useState({
         title: '',
         message: '',

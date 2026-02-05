@@ -28,6 +28,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
     const [role, setrole] = useState("user");
+    const [currentUser, setCurrentUser] = useState(null);
     const [subjects, setSubjects] = useState([]);
     const [practicals, setPracticals] = useState([]);
     const [notes, setNotes] = useState([]);
@@ -96,6 +97,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     useEffect(() => {
         userDetail().then((user) => {
             setrole(user.role);
+            setCurrentUser(user);
         })
     }, [])
 
@@ -297,7 +299,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             <Route path="notes" element={<Notes refreshKey={notesRefreshKey} />} />
                             <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} />} />
                             <Route path="pyqs" element={<PYQs />} />
-                            <Route path="feedback" element={<Feedback />} />
+                            <Route path="feedback" element={<Feedback user={currentUser} />} />
                             <Route path="profile" element={<Profile onLogout={onLogout} />} />
                             <Route path="*" element={<Navigate to="" replace />} />
                         </Routes>

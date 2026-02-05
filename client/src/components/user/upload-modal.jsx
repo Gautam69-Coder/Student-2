@@ -124,7 +124,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => onOpenChange(false)}
-                        className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"
+                        className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] dark:bg-slate-900/60"
                     />
 
                     {/* Modal Content */}
@@ -132,35 +132,35 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                         initial={{ opacity: 0, scale: 0.95, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                        className="relative w-full max-w-2xl bg-white rounded-2xl p-6 shadow-2xl border border-slate-100 overflow-hidden"
+                        className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden"
                     >
                         <div className="flex flex-col gap-1 mb-6">
-                            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Share Your Notes</h2>
-                            <p className="text-sm text-slate-500">
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Share Your Notes</h2>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
                                 Share code snippets or upload your study documents.
                             </p>
                         </div>
 
                         <div className="space-y-4">
                             {error && (
-                                <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100">
+                                <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm border border-red-100 dark:border-red-900/30">
                                     <AlertCircle className="w-4 h-4" />
                                     {error}
                                 </div>
                             )}
 
                             {/* Upload Type Switcher */}
-                            <div className="flex p-1 bg-slate-100 rounded-xl mb-4">
+                            <div className="flex p-1 bg-slate-100 dark:bg-slate-950 rounded-xl mb-4">
                                 <button
                                     onClick={() => setUploadType("text")}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${uploadType === "text" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${uploadType === "text" ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
                                 >
                                     <Code className="w-4 h-4" />
                                     Text / Code
                                 </button>
                                 <button
                                     onClick={() => setUploadType("file")}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${uploadType === "file" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${uploadType === "file" ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
                                 >
                                     <File className="w-4 h-4" />
                                     Upload File
@@ -169,19 +169,19 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700">Title</label>
+                                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Title</label>
                                     <input
                                         type="text"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
                                         placeholder="e.g., Java Collections Framework"
-                                        className="mt-1.5 w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg text-sm transition-all"
+                                        className="mt-1.5 w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                        <Layout className="w-4 h-4 text-slate-500" />
+                                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                                        <Layout className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                                         Section
                                     </label>
                                     <div className="mt-1.5 flex gap-2">
@@ -193,13 +193,13 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                                     value={newSection}
                                                     onChange={(e) => setNewSection(e.target.value)}
                                                     placeholder="Enter new section name"
-                                                    className="w-full h-10 px-3 pr-10 bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg text-sm transition-all"
+                                                    className="w-full h-10 px-3 pr-10 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                                 />
                                                 <button
                                                     onClick={() => setIsAddingNew(false)}
-                                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-200 rounded-md transition-colors"
+                                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md transition-colors"
                                                 >
-                                                    <X className="w-4 h-4 text-slate-400" />
+                                                    <X className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                                                 </button>
                                             </div>
                                         ) : (
@@ -207,19 +207,19 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                                 <select
                                                     value={section}
                                                     onChange={(e) => setSection(e.target.value)}
-                                                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg text-sm appearance-none transition-all"
+                                                    className="w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm appearance-none transition-all text-slate-900 dark:text-white"
                                                 >
                                                     {sections.map(s => (
                                                         <option key={s} value={s}>{s}</option>
                                                     ))}
                                                 </select>
-                                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
                                             </div>
                                         )}
                                         <button
                                             type="button"
                                             onClick={() => setIsAddingNew(!isAddingNew)}
-                                            className={`h-10 px-3 rounded-lg border flex items-center justify-center gap-2 text-sm font-medium transition-all ${isAddingNew ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400'}`}
+                                            className={`h-10 px-3 rounded-lg border flex items-center justify-center gap-2 text-sm font-medium transition-all ${isAddingNew ? 'bg-slate-900 dark:bg-slate-100 border-slate-900 dark:border-slate-100 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-600'}`}
                                         >
                                             <Plus className="w-4 h-4" />
                                             <span className="hidden sm:inline">New</span>
@@ -229,42 +229,42 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 
                                 {uploadType === "text" ? (
                                     <div>
-                                        <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                            <Code className="w-4 h-4 text-slate-500" />
+                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                                            <Code className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                                             Content / Code
                                         </label>
                                         <textarea
                                             value={content}
                                             onChange={(e) => setContent(e.target.value)}
                                             placeholder="Paste your code or text here..."
-                                            className="mt-1.5 w-full px-3 py-3 bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-lg text-sm min-h-[250px] font-mono transition-all resize-y"
+                                            className="mt-1.5 w-full px-3 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm min-h-[250px] font-mono transition-all resize-y text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                         />
                                     </div>
                                 ) : (
                                     <div>
-                                        <label className="text-sm font-medium text-slate-700">File</label>
-                                        <div className={`mt-1.5 border-2 border-dashed rounded-xl p-8 text-center transition-all ${selectedFile ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-400 hover:bg-slate-50"}`}>
+                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">File</label>
+                                        <div className={`mt-1.5 border-2 border-dashed rounded-xl p-8 text-center transition-all ${selectedFile ? "border-slate-900 dark:border-slate-600 bg-slate-50 dark:bg-slate-900" : "border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900"}`}>
                                             {selectedFile ? (
                                                 <div className="flex flex-col items-center gap-3">
-                                                    <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-100">
-                                                        {selectedFile.type.startsWith('image/') ? <ImageIcon className="w-10 h-10 text-slate-900" /> : <FileText className="w-10 h-10 text-slate-900" />}
+                                                    <div className="p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                                                        {selectedFile.type.startsWith('image/') ? <ImageIcon className="w-10 h-10 text-slate-900 dark:text-white" /> : <FileText className="w-10 h-10 text-slate-900 dark:text-white" />}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <p className="font-bold text-slate-900 truncate max-w-[200px]">{selectedFile.name}</p>
-                                                        <p className="text-xs text-slate-500 font-medium">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                                                        <p className="font-bold text-slate-900 dark:text-white truncate max-w-[200px]">{selectedFile.name}</p>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
                                                     </div>
                                                     <button
                                                         onClick={() => { setSelectedFile(null); setFileBase64(""); }}
-                                                        className="text-xs font-bold text-red-500 hover:text-red-700 underline underline-offset-4"
+                                                        className="text-xs font-bold text-red-500 hover:text-red-700 dark:hover:text-red-400 underline underline-offset-4"
                                                     >
                                                         Remove File
                                                     </button>
                                                 </div>
                                             ) : (
                                                 <label className="cursor-pointer block">
-                                                    <Upload className="w-10 h-10 text-slate-300 mx-auto mb-4" />
-                                                    <p className="text-sm text-slate-900 font-bold mb-1">Click to upload file</p>
-                                                    <p className="text-xs text-slate-500">PDF, DOCX, PNG, JPG (Max 50MB)</p>
+                                                    <Upload className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+                                                    <p className="text-sm text-slate-900 dark:text-white font-bold mb-1">Click to upload file</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">PDF, DOCX, PNG, JPG (Max 50MB)</p>
                                                     <input
                                                         type="file"
                                                         className="hidden"
@@ -282,8 +282,8 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                 onClick={handleUpload}
                                 disabled={uploading || uploaded}
                                 className={`w-full h-12 flex items-center justify-center gap-2 font-bold rounded-xl transition-all shadow-sm ${uploading || uploaded
-                                    ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                                    : "bg-slate-900 hover:bg-slate-800 text-white active:scale-[0.99] shadow-lg shadow-slate-200"
+                                    ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
+                                    : "bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 active:scale-[0.99] shadow-lg shadow-slate-200 dark:shadow-none"
                                     }`}
                             >
                                 {uploaded ? (
@@ -295,7 +295,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                         <motion.div
                                             animate={{ rotate: 360 }}
                                             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                            className="w-4 h-4 border-2 border-slate-400 border-t-white rounded-full"
+                                            className="w-4 h-4 border-2 border-slate-400 border-t-white dark:border-slate-600 dark:border-t-slate-800 rounded-full"
                                         />
                                         Sharing...
                                     </>
@@ -309,7 +309,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 
                         <button
                             onClick={() => onOpenChange(false)}
-                            className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all"
+                            className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-all"
                         >
                             <X className="w-5 h-5" />
                         </button>

@@ -42,12 +42,12 @@ function QuestionBlock({ question, index }) {
                         </button>
                     </div>
                 </div>
-                <div className="flex-1 border dark:border-slate-800 rounded-xl overflow-hidden max-w-[80vw] bg-slate-50 dark:bg-[#0d1117] mt-6">
-                    <div className="h-[30vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 scrollbar-track-transparent">
+                <div className="flex-1 border dark:border-slate-800 rounded-xl overflow-hidden max-w-[80vw] font-bold bg-slate-100 dark:bg-[#0d1117] mt-6">
+                    <div className="h-[30vh]  overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 scrollbar-track-transparent">
                         <SyntaxHighlighter
                             language="javascript"
                             style={atomOneDark}
-                            showLineNumbers={true}
+                            // showLineNumbers={true}
                             customStyle={{
                                 margin: 0,
                                 padding: '1rem',

@@ -4,8 +4,8 @@ import { Code, Copy, Check, Image as ImageIcon, FileText, Download, ExternalLink
 
 import { CodeModal } from "@/components/common/code-modal"
 
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import Highlight from "react-highlight"
+import "highlight.js/styles/atom-one-dark.css"
 
 function QuestionBlock({ question, index }) {
     const [copied, setCopied] = useState(false)
@@ -44,20 +44,9 @@ function QuestionBlock({ question, index }) {
                 </div>
                 <div className="flex-1 border dark:border-slate-800 rounded-xl overflow-hidden max-w-[80vw] font-bold bg-slate-100 dark:bg-[#0d1117] mt-6">
                     <div className="h-[30vh]  overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 scrollbar-track-transparent">
-                        <SyntaxHighlighter
-                            language="javascript"
-                            style={atomOneDark}
-                            // showLineNumbers={true}
-                            customStyle={{
-                                margin: 0,
-                                padding: '1rem',
-                                background: 'transparent',
-                                fontSize: '13px',
-                                lineHeight: '1.6'
-                            }}
-                        >
+                        <Highlight className="javascript">
                             {question.code}
-                        </SyntaxHighlighter>
+                        </Highlight>
                     </div>
                 </div>
 

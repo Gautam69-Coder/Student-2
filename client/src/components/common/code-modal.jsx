@@ -2,12 +2,8 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check } from "lucide-react";
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
-import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { androidstudio } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import Highlight from "react-highlight";
+import "highlight.js/styles/atom-one-dark.css"
 
 export function CodeModal({ isOpen, onClose, title, code }) {
     const [copied, setCopied] = useState(false);
@@ -18,7 +14,7 @@ export function CodeModal({ isOpen, onClose, title, code }) {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    
+
 
 
     if (typeof document === 'undefined') return null;
@@ -64,27 +60,10 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 sm:p-8">
-                            <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-                                <pre className="font-mono text-sm leading-relaxed bg-[#0d1117]! sm:block hidden  overflow-x-auto">
-                                    <SyntaxHighlighter
-                                        language="javascript"
-                                        style={atomOneDark}
-                                        showLineNumbers={true}
-                                        customStyle={{ margin: 0, padding: 0, background: 'transparent' }}
-                                    >
-                                        {code}
-                                    </SyntaxHighlighter>
-                                </pre>
-                                <pre className="font-mono text-sm leading-relaxed bg-[#0d1117]! sm:hidden block p-2 overflow-x-auto">
-                                    <SyntaxHighlighter
-                                        language="javascript"
-                                        style={atomOneDark}
-                                        showLineNumbers={false}
-                                        customStyle={{ margin: 0, padding: 0, background: 'transparent', padding: '2px',border: 'none' }}
-                                    >
-                                        {code}
-                                    </SyntaxHighlighter>
-                                </pre>
+                            <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm bg-[#0d1117]">
+                                <Highlight className="javascript">
+                                    {code}
+                                </Highlight>
                             </div>
                         </div>
                     </motion.div>

@@ -13,39 +13,36 @@ export function SubjectCard({ subject, index, onClick, subjectPracticals }) {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ y: -4, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.1)" }}
+            transition={{ delay: index * 0.08, duration: 0.4 }}
+            whileHover={{ y: -6, scale: 1.02 }}
             onClick={onClick}
-            className="group bg-white dark:bg-slate-900 rounded-xl sm:p-6 p-2 cursor-pointer border border-[#E5E5E5] dark:border-slate-800 transition-all duration-300 hover:border-slate-400 dark:hover:border-slate-600"
+            className="group glass-card rounded-2xl interactive-card cursor-pointer sm:p-5 p-3 relative overflow-hidden"
         >
-            <div className="flex items-start sm:justify-between justify-center mb-5">
-                <div className="p-3 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 group-hover:bg-white dark:group-hover:bg-slate-900 group-hover:border-solid transition-all">
-                    <BookOpen className="w-5 h-5 text-slate-700 dark:text-slate-300" style={subject.color ? { color: subject.color } : {}} />
-                </div>
-                <div className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors sm:block hidden">
-                    <ArrowUpRight className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
-                </div>
-            </div>
+            {/* Neon Glow Effect on Hover */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-blue-500/0 to-purple-500/0 group-hover:from-cyan-500/5 group-hover:via-blue-500/5 group-hover:to-purple-500/5 transition-all duration-500 pointer-events-none" />
 
-            <h3 className="font-bold text-slate-900 dark:text-white text-lg sm:text-left sm:mb-3 mb-2 text-center tracking-tight group-hover:text-black dark:group-hover:text-white">{subject.name}</h3>
-            {/* <p className="text-sm text-slate-500 font-medium mb-6"></p> */}
-
-            <div className="space-y-2.5">
-                <div className="flex items-center justify-between border dark:border-slate-800 rounded-full p-2 sm:p-2 sm:px-4 text-xs sm:text-[13px] font-semibold tracking-wider bg-slate-50/50 dark:bg-slate-950/50">
-                    <span className="text-slate-400 dark:text-slate-500 sm:text-[13px] text-[10px]">Practicals : </span>
-                    <span className="text-slate-900 dark:text-white">
-                        {subjectPracticals[subject.name]?.length || 0}
-                    </span>
+            <div className="relative z-10">
+                <div className="flex items-start sm:justify-between justify-center mb-4">
+                    <div className="p-3 rounded-xl glass-card group-hover:bg-cyan-500/10 group-hover:border-cyan-500/30 transition-all duration-300">
+                        <BookOpen className="w-5 h-5 text-slate-700 dark:text-slate-300 group-hover:text-cyan-500 transition-colors" style={subject.color ? { color: subject.color } : {}} />
+                    </div>
+                    <div className="p-1.5 rounded-full hover:bg-cyan-500/10 transition-colors sm:block hidden">
+                        <ArrowUpRight className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-cyan-500 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </div>
                 </div>
-                {/* <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `75%` }}
-                        transition={{ delay: 0.5 + index * 0.1, duration: 0.8, ease: "easeOut" }}
-                        className="h-full rounded-full"
-                        style={{ backgroundColor: "aqua" }}
-                    />
-                </div> */}
+
+                <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-left mb-3 text-center tracking-tight group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors">
+                    {subject.name}
+                </h3>
+
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between glass-card rounded-full p-2 sm:px-4 text-xs sm:text-sm font-bold group-hover:border-cyan-500/20 transition-all">
+                        <span className="text-slate-500 dark:text-slate-400 sm:text-sm text-xs">Practicals</span>
+                        <span className="text-slate-900 dark:text-white bg-cyan-500/10 px-2.5 py-0.5 rounded-full text-cyan-600 dark:text-cyan-400">
+                            {subjectPracticals[subject.name]?.length || 0}
+                        </span>
+                    </div>
+                </div>
             </div>
         </motion.div>
     )

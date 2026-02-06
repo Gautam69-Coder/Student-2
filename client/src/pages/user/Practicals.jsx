@@ -100,7 +100,7 @@ export function Practicals({ practicals, subjects }) {
             </div>
 
 
-            <div className="">
+            <div className="sm:w-fit w-[87vw]">
                 {filteredPracticals.map((practical, index) => (
                     <PracticalCard key={index} practical={practical} />
                 ))}

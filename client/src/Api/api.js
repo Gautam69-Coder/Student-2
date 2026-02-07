@@ -68,4 +68,8 @@ export const updateFeedbackStatus = (id, status) => api.patch(`/feedback/${id}`,
 // Email Services
 export const sendEmail = (emailData) => api.post('/email/send', emailData);
 
+// Bookmark Services
+export const toggleBookmark = (id) => api.put(`/auth/bookmark/${id}`);
+export const fetchBookmarks = () => api.get('/auth/bookmarks');
+
 export default api;

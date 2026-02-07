@@ -6,6 +6,8 @@ import {
     fetchSections,
     fetchPracticals,
     fetchNotes,
+    fetchBookmarks,
+    toggleBookmark,
 } from "@/Api/api"
 
 import { Upload, Search, Command, Menu, Users, CloudCog, Sun, Moon, Code, FileText, Download, X } from "lucide-react"
@@ -37,6 +39,8 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [subjectPracticals, setSubjectPracticals] = useState([]);
     const [selectedNote, setSelectedNote] = useState(null);
+    const [userBookmarks, setUserBookmarks] = useState([]);
+    const [loadingPracticals, setLoadingPracticals] = useState(true);
     const navigate = useNavigate();
 
     const handleNoteCreated = () => {
@@ -74,6 +78,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     }
 
     const fetchPractical = () => {
+        setLoadingPracticals(true);
         const practical = fetchPracticals();
         practical.then((res) => {
             setPracticals(res.data)
@@ -85,6 +90,8 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 return acc;
             }, {});
             setSubjectPracticals(grouped);
+        }).finally(() => {
+            setLoadingPracticals(false);
         });
     }
 
@@ -94,10 +101,35 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
         }).catch(err => console.error("Error fetching notes for search:", err));
     }
 
+    const fetchUserBookmarks = async () => {
+        try {
+            const res = await fetchBookmarks();
+            setUserBookmarks(res.data.map(b => b._id));
+        } catch (err) {
+            console.error("Error fetching bookmarks:", err);
+        }
+    };
+
+    const handleToggleBookmark = async (practicalId) => {
+        try {
+            await toggleBookmark(practicalId);
+            setUserBookmarks(prev => {
+                if (prev.includes(practicalId)) {
+                    return prev.filter(id => id !== practicalId);
+                } else {
+                    return [...prev, practicalId];
+                }
+            });
+        } catch (err) {
+            console.error("Error toggling bookmark:", err);
+        }
+    };
+
     useEffect(() => {
         fetchSubjects();
         fetchPractical();
         fetchUserNotes();
+        fetchUserBookmarks();
     }, [])
 
     useEffect(() => {
@@ -125,14 +157,6 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 {/* Header - Minimalist White Bar */}
                 <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-border dark:border-slate-800">
                     <div className="flex items-center justify-between sm:px-8 px-4 py-4">
-                        {/* Mobile Sidebar Toggle - Hidden since we use BottomNavbar now */
-/* <button
-    onClick={() => setSidebarOpen(true)}
-    className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors lg:hidden"
->
-    <Menu className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-</button> */}
-
                         {/* Search Bar - Command K Style */}
                         <div className="flex-1 max-w-2xl mx-6">
                             <div className="relative group">
@@ -202,7 +226,11 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                     <div className=" gap-6">
                                         {searchResults.practicals.map((practical, index) => (
                                             <div key={index} className="mb-4">
-                                                <PracticalCard practical={practical} index={index} />
+                                                <PracticalCard
+                                                    practical={practical}
+                                                    isBookmarked={userBookmarks.includes(practical._id)}
+                                                    onToggleBookmark={handleToggleBookmark}
+                                                />
                                             </div>
                                         ))}
                                     </div>
@@ -307,9 +335,9 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                         </div>
                     ) : (
                         <Routes>
-                            <Route path="/" element={<Home userName={userName} subjects={subjects} subjectPracticals={subjectPracticals} practicals={practicals} />} />
+                            <Route path="/" element={<Home userName={userName} subjects={subjects} subjectPracticals={subjectPracticals} practicals={practicals} loadingPracticals={loadingPracticals} userBookmarks={userBookmarks} setUserBookmarks={setUserBookmarks} onToggleBookmark={handleToggleBookmark} />} />
                             <Route path="notes" element={<Notes refreshKey={notesRefreshKey} />} />
-                            <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} />} />
+                            <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} userBookmarks={userBookmarks} onToggleBookmark={handleToggleBookmark} />} />
                             <Route path="pyqs" element={<PYQs />} />
                             <Route path="feedback" element={<Feedback user={currentUser} />} />
                             <Route path="profile" element={<Profile onLogout={onLogout} />} />

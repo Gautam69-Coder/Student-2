@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { PracticalCard } from '@/components/user/practical-card';
 
-export function Practicals({ practicals, subjects }) {
+export function Practicals({ practicals, subjects, userBookmarks, onToggleBookmark }) {
     const location = useLocation();
     const [selectedSubject, setSelectedSubject] = useState("");
     const [selectedPracticalNo, setSelectedPracticalNo] = useState("");
@@ -102,7 +102,12 @@ export function Practicals({ practicals, subjects }) {
 
             <div className="sm:w-fit w-[87vw]">
                 {filteredPracticals.map((practical, index) => (
-                    <PracticalCard key={index} practical={practical} />
+                    <PracticalCard
+                        key={index}
+                        practical={practical}
+                        isBookmarked={userBookmarks?.includes(practical._id)}
+                        onToggleBookmark={onToggleBookmark}
+                    />
                 ))}
             </div>
 

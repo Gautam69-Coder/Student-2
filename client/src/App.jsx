@@ -6,11 +6,10 @@ import { StudentDashboard } from '@/pages/user/Dashboard';
 import { AdminPanel } from '@/pages/admin/Dashboard';
 import { AIAssistant } from '@/components/common/ai-assistant';
 import { userDetail } from '@/lib/user';
-import { TimeLine } from '@/Utils/loaders';
 import { NotFoundPage } from './Utils/Error';
-import { SquirelLoader } from './Utils/loaders';
 import { ThemeProvider } from './context/ThemeContext';
 import { useLenis } from '@/hooks/useLenis';
+import { CyberLoader } from '@/components/common/cyber-loader';
 
 // Helper component for protected routes
 const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
@@ -85,8 +84,8 @@ function AppContent() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <SquirelLoader />
+            <div className="flex items-center justify-center h-screen bg-background">
+                <CyberLoader />
             </div>
         );
     }

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowUpRight } from 'lucide-react';
@@ -7,8 +7,9 @@ import { SubjectCard } from '@/components/user/subject-card';
 import { PracticalCard } from '@/components/user/practical-card';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { PracticalCardSkeleton } from '@/components/common/skeleton';
 
-export function Home({ userName, subjects, practicals, subjectPracticals }) {
+export function Home({ userName, subjects, practicals, subjectPracticals, loadingPracticals, userBookmarks, onToggleBookmark }) {
     const navigate = useNavigate();
     const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -30,6 +31,22 @@ export function Home({ userName, subjects, practicals, subjectPracticals }) {
         navigate('/dashboard/practicals', { state: { selectedSubject: subject.name || subject } });
     };
 
+    // Memoize total questions calculation
+    const totalQuestions = useMemo(() => {
+        return practicals.reduce((acc, practical) => acc + practical.questions.length, 0);
+    }, [practicals]);
+
+    // Memoize recent practicals list to avoid re-reversing on every render
+    const recentPracticals = useMemo(() => {
+        return [...practicals].reverse().slice(0, 2);
+    }, [practicals]);
+
+    // Memoize saved practicals
+    const savedPracticals = useMemo(() => {
+        if (!userBookmarks || !practicals) return [];
+        return practicals.filter(p => userBookmarks.includes(p._id));
+    }, [practicals, userBookmarks]);
+
     return (
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
             {/* Welcome Banner - Ultra-Premium Glassmorphism */}
@@ -37,9 +54,9 @@ export function Home({ userName, subjects, practicals, subjectPracticals }) {
                 variants={itemVariants}
                 className="relative overflow-hidden rounded-2xl glass-card sm:p-8 p-5"
             >
-                {/* Animated Gradient Background */}
-                <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none animate-pulse" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-purple-500/10 via-cyan-500/10 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+                {/* Animated Gradient Background - Optimized */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-linear-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-linear-to-tr from-purple-500/10 via-cyan-500/10 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 text-indigo-500 dark:text-indigo-400 mb-3">
@@ -47,7 +64,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals }) {
                         <span className="text-sm font-bold uppercase tracking-wider">Good Morning</span>
                     </div>
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">
-                        Hello, <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">{userName}</span>
+                        Hello, <span className="bg-linear-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">{userName}</span>
                     </h1>
                     <p className="hidden md:block text-slate-600 dark:text-slate-300 max-w-xl text-base sm:text-lg leading-relaxed">
                         Ready to learn? You have <span className="text-indigo-600 dark:text-indigo-400 font-bold">3 practicals</span> pending and <span className="text-lime-500 dark:text-lime-400 font-bold">2 PYQs</span> to review.
@@ -58,12 +75,12 @@ export function Home({ userName, subjects, practicals, subjectPracticals }) {
                             <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">{subjects.length}</p>
                             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Active Subjects</p>
                         </div>
-                        <div className="hidden sm:block w-px h-14 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
+                        <div className="hidden sm:block w-px h-14 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
                         <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
-                            <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">{practicals.map((practical) => practical.questions.length).reduce((a, b) => a + b, 0)}</p>
+                            <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">{totalQuestions}</p>
                             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Total Questions</p>
                         </div>
-                        <div className="hidden sm:block w-px h-14 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
+                        <div className="hidden sm:block w-px h-14 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
                         <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-lime-500/30 transition-all group">
                             <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-lime-500 transition-colors">68%</p>
                             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Progress</p>
@@ -86,7 +103,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals }) {
                 <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 sm:gap-5 gap-3">
                     {subjects.map((subject, index) => (
                         <SubjectCard
-                            key={index}
+                            key={subject.name || subject._id || index}
                             subject={subject}
                             index={index}
                             subjectPracticals={subjectPracticals}
@@ -95,6 +112,25 @@ export function Home({ userName, subjects, practicals, subjectPracticals }) {
                     ))}
                 </div>
             </motion.div>
+
+            {/* Saved Practicals Section */}
+            {savedPracticals.length > 0 && (
+                <motion.div variants={itemVariants} className='glass-card p-5 rounded-2xl'>
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Saved Practicals</h2>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {savedPracticals.map((practical) => (
+                            <PracticalCard
+                                key={practical._id}
+                                practical={practical}
+                                isBookmarked={true}
+                                onToggleBookmark={onToggleBookmark}
+                            />
+                        ))}
+                    </div>
+                </motion.div>
+            )}
 
             {/* Recent Practicals - Enhanced Data Density */}
             <motion.div variants={itemVariants} className='glass-card p-5 rounded-2xl'>
@@ -108,9 +144,21 @@ export function Home({ userName, subjects, practicals, subjectPracticals }) {
                     </Link>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    {practicals.toReversed().slice(0, 2).map((practical, index) => (
-                        <PracticalCard key={index} practical={practical} />
-                    ))}
+                    {loadingPracticals ? (
+                        <>
+                            <PracticalCardSkeleton />
+                            <PracticalCardSkeleton />
+                        </>
+                    ) : (
+                        recentPracticals.map((practical, index) => (
+                            <PracticalCard
+                                key={practical._id || index}
+                                practical={practical}
+                                isBookmarked={userBookmarks?.includes(practical._id)}
+                                onToggleBookmark={onToggleBookmark}
+                            />
+                        ))
+                    )}
                 </div>
             </motion.div>
         </motion.div>

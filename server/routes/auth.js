@@ -193,4 +193,41 @@ router.put('/users/:id/role', auth, async (req, res) => {
     }
 });
 
+// Toggle Bookmark
+router.put('/bookmark/:id', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        const practicalId = req.params.id;
+
+        // Check if already bookmarked using toString for safe comparison
+        const isBookmarked = user.bookmarks.some(id => id.toString() === practicalId);
+
+        if (isBookmarked) {
+            // Remove
+            user.bookmarks = user.bookmarks.filter(id => id.toString() !== practicalId);
+            await user.save();
+            return res.json({ msg: 'Bookmark removed', bookmarks: user.bookmarks });
+        } else {
+            // Add
+            user.bookmarks.push(practicalId);
+            await user.save();
+            return res.json({ msg: 'Bookmark added', bookmarks: user.bookmarks });
+        }
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Get Bookmarks
+router.get('/bookmarks', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).populate('bookmarks');
+        res.json(user.bookmarks);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;

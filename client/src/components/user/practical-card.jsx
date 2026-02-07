@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Code, Copy, Check, Image as ImageIcon, FileText, Download, ExternalLink } from "lucide-react"
+import { Code, Copy, Check, Image as ImageIcon, FileText, Download, ExternalLink, Bookmark } from "lucide-react"
 
 import { CodeModal } from "@/components/common/code-modal"
 
@@ -121,7 +122,7 @@ function QuestionBlock({ question, index }) {
     )
 }
 
-export function PracticalCard({ practical }) {
+export function PracticalCard({ practical, isBookmarked, onToggleBookmark }) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -130,6 +131,27 @@ export function PracticalCard({ practical }) {
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="glass-card interactive-card rounded-xl overflow-hidden mb-6"
         >
+            <div className="flex items-center justify-between p-4 border-b border-slate-100/50 dark:border-white/10 bg-slate-50/50 dark:bg-white/5 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        Practical {practical.practicalNumber}
+                    </h3>
+                    {practical.section && (
+                        <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800/80 text-xs font-bold text-slate-700 dark:text-slate-300 capitalize border border-slate-300 dark:border-slate-700">
+                            {practical.section}
+                        </span>
+                    )}
+                </div>
+                {onToggleBookmark && (
+                    <button
+                        onClick={() => onToggleBookmark(practical._id)}
+                        className="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 transition-all active:scale-90"
+                        title={isBookmarked ? "Remove Bookmark" : "Bookmark Practical"}
+                    >
+                        <Bookmark className={`w-5 h-5 transition-all ${isBookmarked ? "fill-orange-500 text-orange-500 scale-110" : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}`} />
+                    </button>
+                )}
+            </div>
             <div>
                 {practical.questions.map((question, index) => (
                     <QuestionBlock key={index} question={question} index={index} />

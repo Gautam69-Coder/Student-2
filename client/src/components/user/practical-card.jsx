@@ -18,7 +18,7 @@ function QuestionBlock({ question, index }) {
     }
 
     return (
-        <div className="border-b mb-2 last:border-b-0 border-slate-100/50 dark:border-white/[0.06]">
+        <div className="border-b mb-2 last:border-b-0 border-slate-100/50 dark:border-white/6">
             <div className="sm:p-5 p-3  ">
                 {/* Compact Header with Better Data Density */}
                 <div className="flex items-start justify-between gap-3 mb-4">
@@ -32,14 +32,14 @@ function QuestionBlock({ question, index }) {
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                         <button
-                            className="group flex items-center justify-center w-9 h-9 glass-card hover:bg-cyan-500/10 dark:hover:bg-cyan-500/10 border-slate-200 dark:border-white/[0.08] hover:border-cyan-500/30 rounded-lg transition-all duration-300"
+                            className="group flex items-center justify-center w-9 h-9 glass-card hover:bg-cyan-500/10 dark:hover:bg-cyan-500/10 border-slate-200 dark:border-white/8 hover:border-cyan-500/30 rounded-lg transition-all duration-300"
                             onClick={() => setShowModal(true)}
                             title="View Code"
                         >
                             <Code className="w-4 h-4 text-slate-600 dark:text-slate-400 group-hover:text-cyan-500 transition-colors" />
                         </button>
                         <button
-                            className="group flex items-center justify-center w-9 h-9 glass-card hover:bg-cyan-500/10 dark:hover:bg-cyan-500/10 border-slate-200 dark:border-white/[0.08] hover:border-cyan-500/30 rounded-lg transition-all duration-300"
+                            className="group flex items-center justify-center w-9 h-9 glass-card hover:bg-cyan-500/10 dark:hover:bg-cyan-500/10 border-slate-200 dark:border-white/8 hover:border-cyan-500/30 rounded-lg transition-all duration-300"
                             onClick={handleCopy}
                             title="Copy Code"
                         >
@@ -52,7 +52,7 @@ function QuestionBlock({ question, index }) {
                 </div>
 
                 {/* High-End IDE Code Viewer */}
-                <div className="code-viewer mt-4">
+                <div className="code-viewer mt-4" data-lenis-prevent>
                     <div className="code-viewer-header">
                         <div className="code-viewer-dot bg-red-500"></div>
                         <div className="code-viewer-dot bg-yellow-500"></div>
@@ -69,7 +69,7 @@ function QuestionBlock({ question, index }) {
                         {question.fileType?.startsWith('image/') ? (
                             <div className="relative group cursor-pointer" onClick={() => window.open(question.fileData, '_blank')}>
                                 <img src={question.fileData} alt="Reference" className="w-full h-auto max-h-[400px] object-contain bg-slate-50 dark:bg-slate-950" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-6">
+                                <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-6">
                                     <div className="flex gap-2">
                                         <button className="px-4 py-2 glass-card hover:bg-cyan-500/20 border-cyan-500/30 text-white text-sm font-bold rounded-lg transition-all flex items-center gap-2 neon-glow">
                                             <ExternalLink className="w-4 h-4" /> Open Full View

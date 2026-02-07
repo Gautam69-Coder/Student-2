@@ -10,6 +10,7 @@ import { TimeLine } from '@/Utils/loaders';
 import { NotFoundPage } from './Utils/Error';
 import { SquirelLoader } from './Utils/loaders';
 import { ThemeProvider } from './context/ThemeContext';
+import { useLenis } from '@/hooks/useLenis';
 
 // Helper component for protected routes
 const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
@@ -20,6 +21,9 @@ const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
 };
 
 function AppContent() {
+    // Initialize Lenis smooth scrolling
+    useLenis();
+
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userRole, setUserRole] = useState("user");
     const [currentUser, setCurrentUser] = useState(null);

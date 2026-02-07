@@ -59,7 +59,7 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                                 <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">{title}</p>
                             </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 sm:p-8">
+                        <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 sm:p-8" data-lenis-prevent>
                             <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm bg-[#0d1117]">
                                 <Highlight className="javascript">
                                     {code}

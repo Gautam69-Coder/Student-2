@@ -329,7 +329,7 @@ html.lenis body {
   border-radius: 0.75rem;
   border: 1px solid rgb(226 232 240);
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .dark .code-viewer {
@@ -365,8 +365,9 @@ html.lenis body {
   @apply bg-transparent border-0 m-0 p-6 text-sm leading-relaxed;
   font-family: var(--font-mono);
   font-variant-ligatures: common-ligatures;
-  max-height: 28vh;
+  max-height: 30vh;
   overflow: auto !important;
+  overscroll-behavior: contain;
 }
 
 /* Enhanced Syntax Highlighting */

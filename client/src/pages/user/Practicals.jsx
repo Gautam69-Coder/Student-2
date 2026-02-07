@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
-import { PracticalCard } from '@/components/user/practical-card';
+import { PracticalCard } from '../../components/user/practical-card';
 
 export function Practicals({ practicals, subjects, userBookmarks, onToggleBookmark }) {
     const location = useLocation();

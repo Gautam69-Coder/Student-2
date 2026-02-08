@@ -40,7 +40,10 @@ io.on('connection', (socket) => {
                 // Increment visit count in database
                 const updatedUser = await User.findByIdAndUpdate(
                     userId,
-                    { $inc: { visitCount: 1 } },
+                    {
+                        $inc: { visitCount: 1 },
+                        lastVisit: new Date()
+                    },
                     { new: true }
                 );
 

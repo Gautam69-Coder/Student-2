@@ -1,9 +1,8 @@
 
 import React, { useState } from "react"
 import { motion } from "framer-motion"
-import { Users, Activity, HardDrive, FileText, Search, Trash } from "lucide-react"
+import { Users, Activity, HardDrive, FileText, Search, Trash, Clock } from "lucide-react"
 import { StatsCard } from "@/components/admin/stats-card"
-import { SparklineChart } from "@/components/admin/sparkline-chart"
 import { updateUserRole, deleteUser } from "@/Api/api"
 import { useSocket } from "@/context/SocketContext"
 
@@ -108,7 +107,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</th>
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Role</th>
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Online Visits</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:block hidden">Activity</th>
+                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:block hidden">Date Visit</th>
                             <th className="text-right sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Actions</th>
                         </tr>
                     </thead>
@@ -132,7 +131,14 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                             <div>
                                                 <div className="flex items-center gap-2">
                                                     <p className="font-semibold text-slate-900 dark:text-white text-[15px]">{user.username}</p>
-                                                    {isOnline && <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Online</span>}
+                                                    {isOnline ? (
+                                                        <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Online</span>
+                                                    ) : (
+                                                        <div className="flex items-center gap-1">
+                                                            <span className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">Logout</span>
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">• Offline</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <p className="text-sm text-slate-500 dark:text-slate-400 sm:block hidden">{user.email}</p>
                                             </div>
@@ -162,7 +168,15 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                     </td>
                                     <td className="sm:px-6 px-2 py-2 sm:py-4 sm:block hidden">
                                         <div className="flex items-center gap-2">
-                                            <SparklineChart color={activityColor} />
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                                                    {user.lastVisit ? new Date(user.lastVisit).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never'}
+                                                </span>
+                                                <span className="text-[10px] text-slate-400 flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    {user.lastVisit ? new Date(user.lastVisit).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
+                                                </span>
+                                            </div>
                                             {isOnline && (
                                                 <motion.span
                                                     animate={{ opacity: [0.4, 1, 0.4] }}

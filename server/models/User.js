@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { type: String, enum: ['user', 'admin', 'superadmin'], default: 'user' },
     visitCount: { type: Number, default: 1 },
+    lastVisit: { type: Date, default: Date.now },
     bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Practical' }]
 });
 

@@ -5,40 +5,33 @@ const auth = require('../middleware/auth');
 const User = require('../models/User');
 
 // Configure Nodemailer Transporter
-// Use explicit host and port for better compatibility on cloud (Render)
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Use SSL
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
+// Verify connection configuration
+transporter.verify(function (error, success) {
+    if (error) {
+        console.error('❌ Nodemailer connection error:', error);
+    } else {
+        console.log('✅ Email server is ready to take our messages [Nodemailer/Gmail]');
+    }
+});
 
 // Send Email
 router.post('/send', auth, async (req, res) => {
     const { to, subject, body, isAllUsers } = req.body;
 
-    console.log('=== EMAIL SEND REQUEST ===');
+    console.log('=== EMAIL SEND REQUEST (NODEMAILER) ===');
     console.log('Timestamp:', new Date().toISOString());
     console.log('Subject:', subject);
     console.log('Is All Users:', isAllUsers);
-
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, // Use SSL
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
-
-    console.log('Validating Email Config:', {
-        user: process.env.EMAIL_USER ? 'Set' : 'Missing',
-        pass: process.env.EMAIL_PASS ? 'Set' : 'Missing'
-    });
-    // Verify connection configuration
-    transporter.verify(function (error, success) {
-        if (error) {
-            console.error('❌ Nodemailer connection error:', error);
-        } else {
-            console.log('✅ Email server is ready to take our messages [Nodemailer/Gmail]');
-        }
-    });
 
     try {
         // Only admin/superadmin can send emails
@@ -61,23 +54,18 @@ router.post('/send', auth, async (req, res) => {
 
         console.log(`Preparing to send to ${recipients.length} recipients`);
 
-        // Setup email data
-        // Note: For privacy with many users, ideally use BCC, but keeping logic consistent using 'to' for now.
-        // If isAllUsers is true, we might want to use BCC to prevent exposing emails, 
-        // but for now we follow the requested replacement.
         const mailOptions = {
             from: {
                 name: 'Student Hub',
                 address: process.env.EMAIL_USER
             },
-            // If sending to many, use bcc to avoid long header and privacy leaks
             to: isAllUsers ? process.env.EMAIL_USER : recipients,
             bcc: isAllUsers ? recipients : undefined,
             subject: subject,
             html: `<div>${body}</div>`
         };
 
-        console.log('Sending email, Options:', {
+        console.log('Sending email via Nodemailer, Options:', {
             from: mailOptions.from,
             toCount: Array.isArray(mailOptions.to) ? mailOptions.to.length : 1,
             bccCount: Array.isArray(mailOptions.bcc) ? mailOptions.bcc.length : 0,
@@ -86,7 +74,7 @@ router.post('/send', auth, async (req, res) => {
 
         // Send the email
         const info = await transporter.sendMail(mailOptions);
-        console.log('✅ Email sent successfully:', info.messageId);
+        console.log('✅ Email sent successfully via Nodemailer:', info.messageId);
 
         res.json({
             msg: 'Email(s) sent successfully',

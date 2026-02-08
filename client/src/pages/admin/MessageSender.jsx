@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { Mail, Send, Users, User, Check, AlertCircle, Loader2 } from "lucide-react"
 import { sendEmail } from "@/Api/api"
-import axios from "axios"
 
 export function MessageSender({ users }) {
     const [selectedUsers, setSelectedUsers] = useState([])
@@ -42,17 +41,14 @@ export function MessageSender({ users }) {
         setStatus(null)
 
         try {
-            // Updated to use the new independent email server
-            const recipientEmails = isAllUsers ? users.map(u => u.email) : selectedUsers;
-
-            await axios.post('http://localhost:5003/api/send-broadcast', {
-                to: recipientEmails,
+            await sendEmail({
+                to: isAllUsers ? undefined : selectedUsers,
                 subject: subject,
                 body: body.replace(/\n/g, '<br/>'),
                 isAllUsers: isAllUsers
             });
 
-            setStatus({ type: 'success', message: 'Email sent successfully via new Email Server!' })
+            setStatus({ type: 'success', message: 'Email sent successfully via Resend!' })
 
             // Reset form on success
             if (!isAllUsers) setSelectedUsers([])

@@ -140,7 +140,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                         <Route path="content" element={<ManageContent pendingNotes={pendingNotes} />} />
                         <Route path="practicals" element={<ManagePracticals uniqueSubjectSections={uniqueSubjectSections} />} />
                         <Route path="pyqs" element={<ManagePYQs />} />
-                        <Route path="analytics" element={<AnalyticsDashboard />} />
+                        <Route path="analytics" element={<AnalyticsDashboard users={users} />} />
                         <Route path="feedback" element={<ManageFeedback />} />
                         <Route path="messages" element={<MessageSender users={users} />} />
                         <Route path="*" element={<Navigate to="" replace />} />

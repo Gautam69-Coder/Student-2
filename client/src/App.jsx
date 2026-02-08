@@ -10,6 +10,7 @@ import { NotFoundPage } from './Utils/Error';
 import { ThemeProvider } from './context/ThemeContext';
 import { useLenis } from '@/hooks/useLenis';
 import { CyberLoader } from '@/components/common/cyber-loader';
+import { SocketProvider } from './context/SocketContext';
 
 // Helper component for protected routes
 const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
@@ -19,7 +20,7 @@ const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
     return children;
 };
 
-function AppContent() {
+function AppContent({ onUserUpdate }) {
     // Initialize Lenis smooth scrolling
     useLenis();
 
@@ -46,6 +47,7 @@ function AppContent() {
                     setIsAuthenticated(true);
                     setUserRole(user.role);
                     setCurrentUser(user.username);
+                    onUserUpdate(user); // Pass full user object to parent
                 } else {
                     throw new Error("User not found");
                 }
@@ -60,10 +62,15 @@ function AppContent() {
         checkAuth();
     }, []);
 
-    const handleAuth = (role, name) => {
+    const handleAuth = async (role, name) => {
         setIsAuthenticated(true);
         setUserRole(role);
         setCurrentUser(name);
+
+        // After auth, get full user details for socket
+        const user = await userDetail();
+        if (user) onUserUpdate(user);
+
         navigate(role === 'admin' ? '/admin' : '/dashboard');
     };
 
@@ -78,6 +85,7 @@ function AppContent() {
         localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('token');
         setCurrentUser(null);
+        onUserUpdate(null);
         setAuthViewState("login");
         navigate('/');
     };
@@ -147,11 +155,15 @@ function AppContent() {
 }
 
 export default function App() {
+    const [user, setUser] = useState(null);
+
     return (
         <ThemeProvider>
-            <Router>
-                <AppContent />
-            </Router>
+            <SocketProvider user={user}>
+                <Router>
+                    <AppContent onUserUpdate={setUser} />
+                </Router>
+            </SocketProvider>
         </ThemeProvider>
     );
 }

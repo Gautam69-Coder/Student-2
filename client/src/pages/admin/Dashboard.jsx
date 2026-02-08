@@ -11,6 +11,7 @@ import {
 import { GraduationCap, Menu, X, Sun, Moon } from "lucide-react"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { useTheme } from "@/context/ThemeContext"
+import { useSocket } from "@/context/SocketContext"
 import { ManageUsers } from "./ManageUsers"
 import { ManageSubjects } from "./ManageSubjects"
 import { ManageContent } from "./ManageContent"
@@ -19,6 +20,7 @@ import { ManagePYQs } from "./ManagePYQs"
 import { AnalyticsDashboard } from "./AnalyticsDashboard"
 import { ManageFeedback } from "./ManageFeedback"
 import { MessageSender } from "./MessageSender"
+import { motion, AnimatePresence } from "framer-motion"
 
 const initialSubjects = [
     { name: "Java Programming", code: "CS301", progress: 75, color: "#f97316" },
@@ -35,10 +37,12 @@ const pendingNotes = [
 
 export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
     const { darkMode, toggleDarkMode } = useTheme();
+    const { onlineUsers, lastVisit, socket } = useSocket();
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
     const [users, setUsers] = useState([])
     const [subjects, setSubjects] = useState(initialSubjects)
     const [uniqueSubjectSections, setUniqueSubjectSections] = useState([]);
+    const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
         const user = fetchUsers();
@@ -56,6 +60,29 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
             setUniqueSubjectSections(res.data)
         });
     }, [])
+
+    // Real-time Visit Stats Listener
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on('user_stats_update', (data) => {
+            setUsers(currentUsers => currentUsers.map(user =>
+                user._id === data.userId ? { ...user, visitCount: data.visitCount } : user
+            ));
+        });
+
+        return () => socket.off('user_stats_update');
+    }, [socket]);
+
+    useEffect(() => {
+        if (lastVisit && lastVisit.username !== userName) {
+            const id = Date.now();
+            setNotifications(prev => [...prev, { id, ...lastVisit }]);
+            setTimeout(() => {
+                setNotifications(prev => prev.filter(n => n.id !== id));
+            }, 5000);
+        }
+    }, [lastVisit]);
 
     return (
         <div className={`flex min-h-screen transition-colors duration-300 ${darkMode ? "bg-slate-950" : "bg-[#FCFAF8]"}`}>
@@ -82,6 +109,11 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
+                            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg">
+                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                                <span className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider">{onlineUsers.length} Online</span>
+                            </div>
+
                             <button
                                 onClick={toggleDarkMode}
                                 className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-all"
@@ -101,7 +133,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                     </div>
                 </header>
 
-                <div className="sm:p-8 p-4 max-w-7xl mx-auto">
+                <div className="sm:p-8 p-4 max-w-7xl mx-auto overflow-hidden relative">
                     <Routes>
                         <Route path="/" element={<ManageUsers users={users} setUsers={setUsers} subjects={subjects} />} />
                         <Route path="subjects" element={<ManageSubjects subjects={subjects} uniqueSubjectSections={uniqueSubjectSections} setUniqueSubjectSections={setUniqueSubjectSections} />} />
@@ -113,6 +145,35 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                         <Route path="messages" element={<MessageSender users={users} />} />
                         <Route path="*" element={<Navigate to="" replace />} />
                     </Routes>
+                </div>
+
+                {/* Real-time Notifications */}
+                <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none">
+                    <AnimatePresence>
+                        {notifications.map((notification) => (
+                            <motion.div
+                                key={notification.id}
+                                initial={{ opacity: 0, x: 100, scale: 0.9 }}
+                                animate={{ opacity: 1, x: 0, scale: 1 }}
+                                exit={{ opacity: 0, x: 20, scale: 0.9 }}
+                                className="pointer-events-auto bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-4 rounded-2xl shadow-2xl border border-slate-800 dark:border-slate-200 flex items-center gap-4 min-w-[280px]"
+                            >
+                                <div className="w-10 h-10 rounded-full bg-slate-800 dark:bg-slate-100 flex items-center justify-center font-bold text-white dark:text-slate-900">
+                                    {notification.username.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold">{notification.username} is here!</p>
+                                    <p className="text-[10px] uppercase tracking-widest opacity-60 font-black">Just visited the website</p>
+                                </div>
+                                <button
+                                    onClick={() => setNotifications(n => n.filter(x => x.id !== notification.id))}
+                                    className="ml-auto p-1 opacity-40 hover:opacity-100"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </div>
             </main >
         </div >

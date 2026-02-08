@@ -3,9 +3,10 @@ import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Users, FileText, FlaskConical, Upload, BarChart3, LogOut, Shield, X, Sparkles, GraduationCap, MessageSquare, Mail } from "lucide-react"
 import { useLocation, Link } from "react-router-dom"
+import { useSocket } from "@/context/SocketContext"
 
 const navItems = [
-    { id: "users", label: "Manage Users", icon: Users },
+    { id: "users", label: "Manage Users", icon: Users, badge: true },
     { id: "subjects", label: "Manage Subjects", icon: GraduationCap },
     { id: "content", label: "Content Manager", icon: FileText },
     { id: "practicals", label: "Add Practical", icon: FlaskConical },
@@ -17,6 +18,8 @@ const navItems = [
 
 export function AdminSidebar({ isOpen, setIsOpen, onLogout }) {
     const location = useLocation();
+    const { onlineUsers } = useSocket();
+
     return (
         <>
             {/* Mobile Overlay */}
@@ -73,18 +76,24 @@ export function AdminSidebar({ isOpen, setIsOpen, onLogout }) {
                                             key={item.id}
                                             to={linkPath}
                                             onClick={() => window.innerWidth < 1024 && setIsOpen(false)}
-                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium ${isActive
+                                            className={`group relative w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium ${isActive
                                                 ? "bg-white text-slate-900 shadow-md dark:bg-slate-800 dark:text-white"
                                                 : "text-slate-400 hover:text-white hover:bg-slate-800 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800"
                                                 }`}
                                         >
                                             <Icon className={`w-5 h-5 ${isActive ? "text-slate-900 dark:text-white" : "text-slate-400 group-hover:text-white dark:text-slate-400 dark:group-hover:text-white"}`} />
                                             <span>{item.label}</span>
+
+                                            {item.badge && onlineUsers.length > 0 && (
+                                                <span className="absolute right-4 flex h-2 w-2">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                                </span>
+                                            )}
                                         </Link>
                                     )
                                 })}
                             </nav>
-
                             {/* Logout */}
                             <div className="pt-6 border-t border-slate-800 mt-auto">
                                 <button

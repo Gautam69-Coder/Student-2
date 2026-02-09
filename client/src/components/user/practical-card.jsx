@@ -1,5 +1,5 @@
 
-import React, { useState } from "react"
+import React, { useState, memo, useCallback, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     Code,
@@ -19,30 +19,30 @@ import { CodeModal } from "@/components/common/code-modal"
 import Highlight from "react-highlight"
 import "highlight.js/styles/atom-one-dark.css"
 
-function QuestionBlock({ question, index }) {
+const QuestionBlock = memo(function QuestionBlock({ question, index }) {
     const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false)
-    const [isHovered, setIsHovered] = useState(false)
 
-    const handleCopy = () => {
+    const handleCopy = useCallback(() => {
         navigator.clipboard.writeText(question.code)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
-    }
+    }, [question.code])
+
+    const handleOpenModal = useCallback(() => {
+        setShowModal(true)
+    }, [])
+
+    const handleCloseModal = useCallback(() => {
+        setShowModal(false)
+    }, [])
 
     return (
         <div
             className="group/q relative border-b last:border-b-0 border-slate-100/50 dark:border-white/5"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
         >
-            {/* Animated Side Accent */}
-            <motion.div
-                className="absolute left-0 top-0 bottom-0 w-1 bg-cyan-500/50"
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: isHovered ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
-            />
+            {/* Simplified Side Accent - CSS only */}
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-cyan-500/50 scale-y-0 group-hover/q:scale-y-100 transition-transform duration-300 origin-top" />
 
             <div className="sm:p-6 p-4">
                 <div className="flex   items-start justify-between gap-4 mb-6">
@@ -68,7 +68,7 @@ function QuestionBlock({ question, index }) {
                     <div className="flex  items-center gap-2 self-end sm:self-start">
                         <button
                             className="h-9 px-4 flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/20 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 border border-slate-200 dark:border-slate-700/50 hover:border-cyan-500/30 transition-all duration-300 font-bold text-xs"
-                            onClick={() => setShowModal(true)}
+                            onClick={handleOpenModal}
                         >
                             <Code className="w-3.5 h-3.5" />
                             <p className="sm:block hidden">View</p>
@@ -109,7 +109,7 @@ function QuestionBlock({ question, index }) {
 
                     </div>
 
-                    <div className="code-scroll-area bg-[#0d1117] overflow-y-auto" data-lenis-prevent style={{ maxHeight: '30vh' }}>
+                    <div className="code-scroll-area bg-[#0d1117] overflow-y-auto transform-gpu" data-lenis-prevent style={{ maxHeight: '30vh' }}>
                         <Highlight className="javascript">
                             {question.code}
                         </Highlight>
@@ -182,42 +182,41 @@ function QuestionBlock({ question, index }) {
 
             <CodeModal
                 isOpen={showModal}
-                onClose={() => setShowModal(false)}
+                onClose={handleCloseModal}
                 title={question.question}
                 code={question.code}
             />
         </div>
     )
-}
+})
 
-export function PracticalCard({ practical, isBookmarked, onToggleBookmark }) {
+export const PracticalCard = memo(function PracticalCard({ practical, isBookmarked, onToggleBookmark }) {
+    const handleToggle = useCallback(() => {
+        if (onToggleBookmark) {
+            onToggleBookmark(practical._id)
+        }
+    }, [onToggleBookmark, practical._id])
+
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="group relative mb-12"
-        >
-            {/* Background Glow Effect */}
-            {/* <div className="absolute -inset-2 bg-linear-to-r from-cyan-500/20 to-purple-500/20 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" /> */}
+        <div className="relative mb-12 transform-gpu">
+            {/* Removed expensive background glow animation */}
 
-            <div className="relative glass-card-premium rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-slate-900/80 backdrop-blur-3xl shadow-2xl">
+            <div className="relative glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-slate-900/80 backdrop-blur-md shadow-2xl transform-gpu">
                 {/* Header Section */}
                 <div className="flex items-center  sm:flex-row sm:items-center justify-between sm:p-4 p-2 sm:px-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
                     <div className="flex items-center gap-6">
 
-                                {practical.section && (
-                                    <span className="px-3 py-1 rounded-lg  bg-cyan-500/10 dark:bg-cyan-500/20 text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest border border-cyan-500/20">
-                                        {practical.section}
-                                    </span>
-                                )}
+                        {practical.section && (
+                            <span className="px-3 py-1 rounded-lg  bg-cyan-500/10 dark:bg-cyan-500/20 text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest border border-cyan-500/20">
+                                {practical.section}
+                            </span>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-4 mt-4 sm:mt-0">
                         {onToggleBookmark && (
                             <button
-                                onClick={() => onToggleBookmark(practical._id)}
+                                onClick={handleToggle}
                                 className={`group/btn w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${isBookmarked
                                     ? "bg-orange-500 shadow-lg shadow-orange-500/40"
                                     : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700"
@@ -255,6 +254,6 @@ export function PracticalCard({ practical, isBookmarked, onToggleBookmark }) {
                     {/* <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Modified: Feb 2026</span> */}
                 </div>
             </div>
-        </motion.div>
+        </div>
     )
-}
+})

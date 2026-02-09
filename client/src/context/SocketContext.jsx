@@ -57,6 +57,9 @@ export const SocketProvider = ({ children, user }) => {
                 email: user.email,
                 role: user.role
             });
+        } else if (isConnected && !user && socketRef.current) {
+            console.log('📤 Emitting user_logout');
+            socketRef.current.emit('user_logout');
         }
     }, [user, isConnected]);
 

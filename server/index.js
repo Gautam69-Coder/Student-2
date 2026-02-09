@@ -67,6 +67,22 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('user_logout', () => {
+        const userData = userMap.get(socket.id);
+        if (userData) {
+            console.log(`📤 User Logged Out: ${userData.username}`);
+            userMap.delete(socket.id);
+
+            // Check if user has other tabs open
+            const stillOnline = Array.from(userMap.values()).some(u => String(u.id) === String(userData.id));
+            if (!stillOnline) {
+                onlineUsers.delete(String(userData.id));
+                console.log(`📉 User removed from online list: ${userData.username}`);
+                io.emit('online_users_update', Array.from(onlineUsers));
+            }
+        }
+    });
+
     socket.on('disconnect', () => {
         const userData = userMap.get(socket.id);
         if (userData) {

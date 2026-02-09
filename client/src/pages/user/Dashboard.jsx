@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo, useCallback } from "react"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -43,11 +43,11 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const [loadingPracticals, setLoadingPracticals] = useState(true);
     const navigate = useNavigate();
 
-    const handleNoteCreated = () => {
+    const handleNoteCreated = useCallback(() => {
         setNotesRefreshKey(prev => prev + 1);
-    };
+    }, []);
 
-    const handleDownload = (note) => {
+    const handleDownload = useCallback((note) => {
         // Create a temporary link element
         const link = document.createElement('a');
         link.href = note.fileData; // Assuming fileData is the base64/url
@@ -55,29 +55,29 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    };
+    }, []);
 
-    const searchResults = React.useMemo(() => {
+    const searchResults = useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [], pyqs: [] };
 
         const query = searchQuery.toLowerCase();
 
         return {
             subjects: subjects.filter(s => (s.name)?.toLowerCase()?.includes(query) || (s.code)?.toLowerCase()?.includes(query)),
-            practicals: practicals.filter(p => (p.questions[0].question)?.toLowerCase()?.includes(query) || (p.section)?.toLowerCase()?.includes(query)),
+            practicals: practicals.filter(p => (p.questions[0]?.question)?.toLowerCase()?.includes(query) || (p.section)?.toLowerCase()?.includes(query)),
             notes: notes.filter(n => (n.title)?.toLowerCase()?.includes(query) || (n.content)?.toLowerCase()?.includes(query)),
             pyqs: pyqSubjects.filter(p => (p.name)?.toLowerCase()?.includes(query))
         };
-    }, [searchQuery, subjects, practicals, notes, pyqSubjects]);
+    }, [searchQuery, subjects, practicals, notes]);
 
-    const fetchSubjects = () => {
+    const fetchSubjects = useCallback(() => {
         const section = fetchSections();
         section.then((res) => {
             setSubjects(res.data)
         });
-    }
+    }, [])
 
-    const fetchPractical = () => {
+    const fetchPractical = useCallback(() => {
         setLoadingPracticals(true);
         const practical = fetchPracticals();
         practical.then((res) => {
@@ -93,24 +93,24 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
         }).finally(() => {
             setLoadingPracticals(false);
         });
-    }
+    }, [])
 
-    const fetchUserNotes = () => {
+    const fetchUserNotes = useCallback(() => {
         fetchNotes().then((res) => {
             setNotes(res.data);
         }).catch(err => console.error("Error fetching notes for search:", err));
-    }
+    }, [])
 
-    const fetchUserBookmarks = async () => {
+    const fetchUserBookmarks = useCallback(async () => {
         try {
             const res = await fetchBookmarks();
             setUserBookmarks(res.data.map(b => b._id));
         } catch (err) {
             console.error("Error fetching bookmarks:", err);
         }
-    };
+    }, []);
 
-    const handleToggleBookmark = async (practicalId) => {
+    const handleToggleBookmark = useCallback(async (practicalId) => {
         try {
             await toggleBookmark(practicalId);
             setUserBookmarks(prev => {
@@ -123,7 +123,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
         } catch (err) {
             console.error("Error toggling bookmark:", err);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchSubjects();
@@ -153,9 +153,9 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 onLogout={onLogout}
             />
 
-            <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : "ml-0"}`}>
+            <main className={`flex-1 transition-[margin] duration-300 ${sidebarOpen ? "lg:ml-64" : "ml-0"}`}>
                 {/* Header - Minimalist White Bar */}
-                <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-border dark:border-slate-800">
+                <header className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-b border-border dark:border-slate-800">
                     <div className="flex items-center justify-between sm:px-8 px-4 py-4">
                         {/* Search Bar - Command K Style */}
                         <div className="flex-1 max-w-2xl mx-6">

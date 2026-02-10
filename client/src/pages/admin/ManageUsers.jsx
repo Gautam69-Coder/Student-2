@@ -100,8 +100,8 @@ export function ManageUsers({ users, setUsers, subjects }) {
                 </div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#E5E5E5] dark:border-slate-800 shadow-sm">
-                <table className="w-full">
+            <motion.div variants={itemVariants} className="bg-white dark:bg-slate-900 overflow-x-auto sm:w-full w-sm rounded-xl  border border-[#E5E5E5] dark:border-slate-800 shadow-sm">
+                <table className="w-full table-auto border-collapse">
                     <thead>
                         <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</th>
@@ -117,7 +117,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                             const activityColor = user.role === 'admin' ? '#7C3AED' : (isOnline ? '#22C55E' : '#64748B');
 
                             return (
-                                <tr key={user._id} className="border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                <tr key={user._id} className="border-b  border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                     <td className="sm:px-6 px-2 py-2 sm:py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="relative">
@@ -129,13 +129,12 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                                 )}
                                             </div>
                                             <div>
-                                                <div className="flex items-center gap-2">
+                                                <div className="sm:flex  items-center gap-2">
                                                     <p className="font-semibold text-slate-900 dark:text-white text-[15px]">{user.username}</p>
                                                     {isOnline ? (
                                                         <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Online</span>
                                                     ) : (
                                                         <div className="flex items-center gap-1">
-                                                            <span className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">Logout</span>
                                                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">• Offline</span>
                                                         </div>
                                                     )}

@@ -20,6 +20,7 @@ const io = new Server(server, {
 });
 
 const User = require('./models/User');
+const { time } = require('console');
 
 // Presence Tracking
 const onlineUsers = new Set();
@@ -42,7 +43,12 @@ io.on('connection', (socket) => {
                     userId,
                     {
                         $inc: { visitCount: 1 },
-                        lastVisit: new Date()
+                        lastVisit: new Date(),
+                        time: new Date().toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            second: 'numeric',
+                        })
                     },
                     { new: true }
                 );
@@ -67,11 +73,30 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('user_logout', () => {
+    socket.on('user_logout',async () => {
         const userData = userMap.get(socket.id);
         if (userData) {
             console.log(`📤 User Logged Out: ${userData.username}`);
             userMap.delete(socket.id);
+
+            const updatedUser = await User.findByIdAndUpdate(
+                userData.id,
+                {
+                    $inc: { visitCount: 1 },
+                    lastVisit: new Date(),
+                    time: new Date().toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                    })
+                },
+                { new: true }
+            );
+
+            io.emit('user_stats_update', {
+                userId: userData.id,
+                visitCount: updatedUser?.visitCount,
+                time: updatedUser?.time
+            });
 
             // Check if user has other tabs open
             const stillOnline = Array.from(userMap.values()).some(u => String(u.id) === String(userData.id));

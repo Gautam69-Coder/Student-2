@@ -174,7 +174,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                                 </span>
                                                 <span className="text-[10px] text-slate-400 flex items-center gap-1">
                                                     <Clock className="w-3 h-3" />
-                                                    {user.lastVisit ? new Date(user.lastVisit).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
+                                                    {user.time || 'N/A'}
                                                 </span>
                                             </div>
                                             {isOnline && (

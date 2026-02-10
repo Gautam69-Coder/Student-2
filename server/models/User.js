@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
     role: { type: String, enum: ['user', 'admin', 'superadmin'], default: 'user' },
     visitCount: { type: Number, default: 1 },
     lastVisit: { type: Date, default: Date.now },
+    time : {type: String},
     bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Practical' }]
 });
 

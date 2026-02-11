@@ -70,7 +70,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
+                className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
             >
                 <StatsCard title="Total Users" value={users.length} change="+12%" icon={Users} color="#0f172a" />
                 <StatsCard title="Online Now" value={onlineUsers.length} change="Live" icon={Activity} color="#10b981" />
@@ -101,13 +101,13 @@ export function ManageUsers({ users, setUsers, subjects }) {
             </motion.div>
 
             <motion.div variants={itemVariants} className="bg-white dark:bg-slate-900 overflow-x-auto sm:w-full w-sm rounded-xl  border border-[#E5E5E5] dark:border-slate-800 shadow-sm">
-                <table className="w-full table-auto border-collapse">
+                <table className="w-full">
                     <thead>
                         <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</th>
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Role</th>
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Online Visits</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:block hidden">Date Visit</th>
+                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 ">Date Visit</th>
                             <th className="text-right sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Actions</th>
                         </tr>
                     </thead>
@@ -165,7 +165,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                     <td className="sm:px-6 px-2 py-2 sm:py-4">
                                         <span className="font-semibold text-slate-700 dark:text-slate-300">{formatCount(user.visitCount)}</span>
                                     </td>
-                                    <td className="sm:px-6 px-2 py-2 sm:py-4 sm:block hidden">
+                                    <td className="sm:px-6 px-2 py-2 sm:py-4 ">
                                         <div className="flex items-center gap-2">
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
@@ -176,15 +176,6 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                                     {user.time || 'N/A'}
                                                 </span>
                                             </div>
-                                            {isOnline && (
-                                                <motion.span
-                                                    animate={{ opacity: [0.4, 1, 0.4] }}
-                                                    transition={{ duration: 2, repeat: Infinity }}
-                                                    className="text-[10px] font-bold text-green-500"
-                                                >
-                                                    LIVE
-                                                </motion.span>
-                                            )}
                                         </div>
                                     </td>
                                     <td className="sm:px-6 py-4">

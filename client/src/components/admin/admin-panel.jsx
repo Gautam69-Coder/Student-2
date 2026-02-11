@@ -334,7 +334,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                                 variants={containerVariants}
                                 initial="hidden"
                                 animate="visible"
-                                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
+                                className="grid grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
                             >
                                 <StatsCard title="Total Users" value={users.length} change="+12%" icon={Users} color="#0f172a" />
                                 <StatsCard title="Daily Active" value="N/A" change="+8%" icon={Activity} color="#10b981" />

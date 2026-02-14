@@ -44,9 +44,9 @@ io.on('connection', (socket) => {
                     {
                         $inc: { visitCount: 1 },
                         lastVisit: new Date(),
-                        time: new Date(user.lastVisit).toLocaleTimeString('en-US', {
+                        time: new Date(userData.lastVisit).toLocaleTimeString('en-US', {
                             hour: '2-digit', minute: '2-digit',
-                            timeZone: 'Asia/Kolkata'
+                            timeZone: 'Asia/Kolkata',
                         })
                     },
                     { new: true }

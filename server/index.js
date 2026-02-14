@@ -45,9 +45,7 @@ io.on('connection', (socket) => {
                         $inc: { visitCount: 1 },
                         lastVisit: new Date(),
                         time: new Date().toLocaleTimeString('en-US', {
-                            hour: 'numeric',
-                            minute: 'numeric',
-                            second: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
                         })
                     },
                     { new: true }
@@ -60,7 +58,7 @@ io.on('connection', (socket) => {
                 io.emit('user_stats_update', {
                     userId: userId,
                     visitCount: updatedUser?.visitCount,
-                    lastVisit : updatedUser?.lastVisit,
+                    lastVisit: updatedUser?.lastVisit,
                 });
             } catch (err) {
                 console.error('❌ Error updating visit count:', err.message);
@@ -75,7 +73,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('user_logout',async () => {
+    socket.on('user_logout', async () => {
         const userData = userMap.get(socket.id);
         if (userData) {
             console.log(`📤 User Logged Out: ${userData.username}`);

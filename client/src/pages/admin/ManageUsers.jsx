@@ -97,7 +97,6 @@ export function ManageUsers({ users, setUsers, subjects }) {
                         <option value="user">Students</option>
                         <option value="admin">Admins</option>
                         <option value="superadmin">Super Admins</option>
-
                     </select>
                 </div>
             </motion.div>

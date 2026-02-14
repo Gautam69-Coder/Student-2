@@ -54,11 +54,13 @@ io.on('connection', (socket) => {
                 );
 
                 console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.visitCount}`);
+                console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.lastVisit}`);
 
                 // Broadcast update so admin table sees new visit count
                 io.emit('user_stats_update', {
                     userId: userId,
-                    visitCount: updatedUser?.visitCount
+                    visitCount: updatedUser?.visitCount,
+                    lastVisit : updatedUser?.lastVisit,
                 });
             } catch (err) {
                 console.error('❌ Error updating visit count:', err.message);
@@ -78,25 +80,6 @@ io.on('connection', (socket) => {
         if (userData) {
             console.log(`📤 User Logged Out: ${userData.username}`);
             userMap.delete(socket.id);
-
-            const updatedUser = await User.findByIdAndUpdate(
-                userData.id,
-                {
-                    $inc: { visitCount: 1 },
-                    lastVisit: new Date(),
-                    time: new Date().toLocaleTimeString('en-US', {
-                        hour: 'numeric',
-                        minute: 'numeric',
-                    })
-                },
-                { new: true }
-            );
-
-            io.emit('user_stats_update', {
-                userId: userData.id,
-                visitCount: updatedUser?.visitCount,
-                time: updatedUser?.time
-            });
 
             // Check if user has other tabs open
             const stillOnline = Array.from(userMap.values()).some(u => String(u.id) === String(userData.id));

@@ -126,7 +126,7 @@ router.get('/users', auth, async (req, res) => {
             return res.status(403).json({ msg: 'Access denied' });
         }
 
-        const users = await User.find().select('-password');
+        const users = await User.find().select('-password').sort({ visitCount: -1 });
         res.json(users);
     } catch (err) {
         res.status(500).send('Server Error');

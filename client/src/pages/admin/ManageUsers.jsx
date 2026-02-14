@@ -90,12 +90,14 @@ export function ManageUsers({ users, setUsers, subjects }) {
                     </div>
                     <select
                         value={filterRole}
-                        onChange={(e) => setFilterRole(e.target.value)}
+                        onChange={(e) => {setFilterRole(e.target.value) ; console.log('Filter changed to:', e.target.value)}}
                         className="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 cursor-pointer text-slate-900 dark:text-white"
                     >
                         <option value="all">All Roles</option>
                         <option value="user">Students</option>
                         <option value="admin">Admins</option>
+                        <option value="superadmin">Super Admins</option>
+
                     </select>
                 </div>
             </motion.div>
@@ -170,6 +172,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
                                                     {user.lastVisit ? new Date(user.lastVisit).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never'}
+                                                    {/* {user.lastVisit} */}
                                                 </span>
                                                 <span className="text-[10px] text-slate-400 flex items-center gap-1">
                                                     <Clock className="w-3 h-3" />

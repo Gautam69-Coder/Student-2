@@ -50,7 +50,7 @@ export function Practicals({ practicals, subjects, userBookmarks, onToggleBookma
     }
 
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="sm:space-y-6 space-y-3 p-4">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="sm:space-y-6 space-y-3 sm:p-4 p-2">
             <div className="flex flex-col sm:gap-4 gap-2">
                 <div className="flex justify-between items-end">
                     <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white w-full  tracking-tight ">All Practicals</h2>

@@ -10,7 +10,8 @@ import {
     toggleBookmark,
 } from "@/Api/api"
 
-import { Upload, Search, Command, Menu, Users, CloudCog, Sun, Moon, Code, FileText, Download, X } from "lucide-react"
+import { Upload, Search, Command, Menu, Users, CloudCog, Code, FileText, Download, X } from "lucide-react"
+import { ThemeToggle } from "@/components/common/theme-toggle"
 import { StudentSidebar } from "@/components/user/student-sidebar"
 import { BottomNavbar } from "@/components/user/bottom-navbar"
 import { UploadModal } from "@/components/user/upload-modal"
@@ -175,13 +176,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
-                            <button
-                                onClick={toggleDarkMode}
-                                className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm"
-                                title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                            >
-                                {darkMode ? <Sun className="w-5 h-5 text-orange-400" /> : <Moon className="w-5 h-5" />}
-                            </button>
+                            <ThemeToggle />
 
                             <button
                                 onClick={() => setUploadModalOpen(true)}

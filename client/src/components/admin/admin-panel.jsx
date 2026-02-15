@@ -22,6 +22,7 @@ import {
 import { AdminSidebar } from "./admin-sidebar"
 import { StatsCard } from "./stats-card"
 import { SparklineChart } from "./sparkline-chart"
+import { ThemeToggle } from "../common/theme-toggle"
 import {
     fetchUsers,
     updateUserRole,
@@ -112,11 +113,11 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
         try {
             if (editPracticalId) {
                 const res = await updatePractical(editPracticalId, newPractical);
-               
+
                 setEditPracticalId(null);
             } else {
                 const res = await createPractical(newPractical);
-               
+
                 setNewPractical({ practicalNumber: '', section: '', questions: [{ question: '', code: '' }] });
                 alert('Practical added successfully!');
             }
@@ -162,7 +163,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
     const handleFetchPracticals = async () => {
         try {
             const res = await fetchPracticals();
-            
+
             setPracticals(res.data);
         } catch (error) {
             console.error(error);
@@ -177,7 +178,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
 
 
     const handleRoleChange = async (userId, newRole) => {
-      
+
         try {
             await updateUserRole(userId, newRole);
             setUsers(users.map(user =>
@@ -209,13 +210,13 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
         const user = fetchUsers();
         user.then((res) => {
             setUsers(res.data);
-         
+
         });
 
         const content = fetchContent();
         content.then((res) => {
             setSubjects(res.data)
-            
+
         });
 
         const section = fetchSections();
@@ -244,6 +245,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                             <p className="text-sm text-slate-500 font-medium">Welcome back, {userName}</p>
                         </div>
                         <div className="flex items-center gap-3">
+                            <ThemeToggle />
                             <button
                                 onClick={onSwitchToStudent}
                                 className="inline-flex items-center justify-center rounded-lg gap-2 border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400"
@@ -584,7 +586,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                                                 onClick={handleAddQuestion}
                                                 type="button"
                                             >
-                                               + Add Question
+                                                + Add Question
                                             </button>
                                         </div>
                                         <div className="flex gap-4">
@@ -600,7 +602,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                                                         setNewPractical({
                                                             practicalNumber: '',
                                                             subject: '',
-                                                            questions: [{ question : "", code : "" }]
+                                                            questions: [{ question: "", code: "" }]
                                                         })
                                                         setEditPracticalId(null)
                                                     }}

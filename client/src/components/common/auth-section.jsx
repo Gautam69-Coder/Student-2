@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { DotLoader } from "../../Utils/loaders"
 import { useTheme } from "../../context/ThemeContext"
 
-import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog, Sun, Moon } from "lucide-react"
+import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog } from "lucide-react"
+import { ThemeToggle } from "./theme-toggle"
 import { registerUser, loginUser } from "@/Api/api"
 
 const quotes = [
@@ -65,13 +66,7 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
         <div className="min-h-screen flex bg-[#FCFAF8] dark:bg-slate-950 transition-colors duration-300 relative">
             {/* Theme Toggle Button */}
             <div className="absolute top-6 right-6 z-50">
-                <button
-                    onClick={toggleDarkMode}
-                    className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm"
-                    title="Toggle Theme"
-                >
-                    {darkMode ? <Sun className="w-5 h-5 text-orange-400" /> : <Moon className="w-5 h-5" />}
-                </button>
+                <ThemeToggle />
             </div>
 
             {/* Left Side - Quote Section (Minimal Pattern) */}

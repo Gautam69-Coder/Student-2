@@ -7,6 +7,7 @@ import { useTheme } from "../../context/ThemeContext"
 import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { registerUser, loginUser } from "@/Api/api"
+import { useTitle } from "@/hooks/useTitle"
 
 const quotes = [
     { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
@@ -15,6 +16,7 @@ const quotes = [
 ]
 
 export function AuthSection({ authState, setAuthState, onAuth }) {
+    useTitle(authState === "login" ? "Login" : "Sign Up");
     const { darkMode, toggleDarkMode } = useTheme()
     const [role, setRole] = useState("user")
     const [showPassword, setShowPassword] = useState(false)

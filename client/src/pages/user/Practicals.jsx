@@ -3,8 +3,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { PracticalCard } from '../../components/user/practical-card';
+import { useTitle } from '@/hooks/useTitle';
 
 export function Practicals({ practicals, subjects, userBookmarks, onToggleBookmark }) {
+    useTitle("Practicals");
     const location = useLocation();
     const [selectedSubject, setSelectedSubject] = useState("");
     const [selectedPracticalNo, setSelectedPracticalNo] = useState("");

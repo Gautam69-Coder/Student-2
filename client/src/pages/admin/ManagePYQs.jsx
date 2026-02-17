@@ -2,8 +2,10 @@
 import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { Upload } from "lucide-react"
+import { useTitle } from "@/hooks/useTitle"
 
 export function ManagePYQs() {
+    useTitle("Manage PYQs");
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {

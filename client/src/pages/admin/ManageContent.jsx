@@ -2,8 +2,10 @@
 import React from "react"
 import { motion } from "framer-motion"
 import { FileText, Eye, Check, X } from "lucide-react"
+import { useTitle } from "@/hooks/useTitle"
 
 export function ManageContent({ pendingNotes }) {
+    useTitle("Manage Content");
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {

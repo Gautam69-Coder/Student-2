@@ -3,8 +3,10 @@ import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { Trash } from "lucide-react"
 import { createSection, deleteSection } from "@/Api/api"
+import { useTitle } from "@/hooks/useTitle"
 
 export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubjectSections }) {
+    useTitle("Manage Subjects");
     const [newSubject, setNewSubject] = useState("")
 
     const handleAddSection = async (sectionName) => {

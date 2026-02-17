@@ -8,8 +8,10 @@ import {
     deletePractical,
     fetchPracticals
 } from "@/Api/api"
+import { useTitle } from "@/hooks/useTitle"
 
 export function ManagePracticals({ uniqueSubjectSections }) {
+    useTitle("Manage Practicals");
     const [newPractical, setNewPractical] = useState({
         practicalNumber: '',
         section: '',

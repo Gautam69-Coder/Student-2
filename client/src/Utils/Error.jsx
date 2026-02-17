@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTitle } from '@/hooks/useTitle';
 
-export const NotFoundPage = ({status,message}) => {
+export const NotFoundPage = ({ status = 404, message = "Page Not Found" }) => {
+  useTitle(`${status} ${message}`);
   return (
 
     <>
@@ -9,7 +11,7 @@ export const NotFoundPage = ({status,message}) => {
           <div className="w-full md:w-1/2">
             <div className="mb-10 lg:mb-20">
               <div>
-               <img src="circle_logo.png" alt="" />
+                <img src="circle_logo.png" alt="" />
               </div>
             </div>
             <div className="mb-10 md:mb-20 text-gray-600 font-light">

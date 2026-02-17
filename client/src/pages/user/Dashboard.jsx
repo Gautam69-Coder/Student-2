@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
+import { Link } from "react-router-dom"
 import {
     fetchSections,
     fetchPracticals,
@@ -17,6 +18,7 @@ import { BottomNavbar } from "@/components/user/bottom-navbar"
 import { UploadModal } from "@/components/user/upload-modal"
 import { userDetail } from "@/lib/user";
 import { useTheme } from "@/context/ThemeContext";
+import { useTitle } from "@/hooks/useTitle";
 
 import { Home } from "./Home";
 import { Notes } from "./Notes";
@@ -24,10 +26,12 @@ import { Practicals } from "./Practicals";
 import { PYQs } from "./PYQs";
 import { Feedback } from "./Feedback";
 import { Profile } from "./Profile";
+import { AboutContact } from "./AboutContact";
 import { notes, pyqSubjects } from "@/data/student-data";
 import { PracticalCard } from "@/components/user/practical-card";
 
 export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
+    useTitle("Dashboard");
     const { darkMode, toggleDarkMode } = useTheme();
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -157,7 +161,13 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
             <main className={`flex-1 transition-[margin] duration-300 ${sidebarOpen ? "lg:ml-64" : "ml-0"}`}>
                 {/* Header - Minimalist White Bar */}
                 <header className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-b border-border dark:border-slate-800">
-                    <div className="flex items-center justify-between sm:px-8 px-4 py-4">
+                    <div className="flex items-center justify-between sm:px-8 px-4 py-4 gap-2">
+                        <button
+                            onClick={() => setSidebarOpen(true)}
+                            className="lg:hidden p-2 -ml-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                        >
+                            <Menu className="w-6 h-6" />
+                        </button>
                         {/* Search Bar - Command K Style */}
                         <div className="flex-1 max-w-2xl mx-6">
                             <div className="relative group">
@@ -336,10 +346,27 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             <Route path="pyqs" element={<PYQs />} />
                             <Route path="feedback" element={<Feedback user={currentUser} />} />
                             <Route path="profile" element={<Profile onLogout={onLogout} />} />
+                            <Route path="about-contact" element={<AboutContact />} />
                             <Route path="*" element={<Navigate to="" replace />} />
                         </Routes>
                     )}
                 </div>
+
+                {/* Footer */}
+                <footer className="px-8 py-12 border-t border-border dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6 max-w-7xl mx-auto">
+                        <div className="flex items-center gap-4 text-slate-400 dark:text-slate-500 text-sm font-medium">
+                            <Link to="/dashboard/about-contact" className="hover:text-slate-900 dark:hover:text-white transition-colors">About Us</Link>
+                            <span>•</span>
+                            <Link to="/dashboard/about-contact" className="hover:text-slate-900 dark:hover:text-white transition-colors">Contact</Link>
+                            <span>•</span>
+                            <Link to="/dashboard/feedback" className="hover:text-slate-900 dark:hover:text-white transition-colors">Feedback</Link>
+                        </div>
+                        <p className="text-slate-400 dark:text-slate-500 text-sm font-medium">
+                            © 2026 Student Hub. Built with ❤️ for students.
+                        </p>
+                    </div>
+                </footer>
             </main >
 
             <UploadModal

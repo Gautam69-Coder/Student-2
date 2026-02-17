@@ -1,8 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Activity, TrendingUp, Users, Target, Zap } from 'lucide-react';
+import { useTitle } from '@/hooks/useTitle';
 
 export function AnalyticsDashboard({ users = [] }) {
+    useTitle("Analytics");
     // Prediction Logic based on Online Visits
     const totalVisits = users.reduce((acc, user) => acc + (user.visitCount || 0), 0);
     const activeUsers = users.filter(u => (u.visitCount || 0) > 1).length;
@@ -133,7 +135,7 @@ export function AnalyticsDashboard({ users = [] }) {
                         ))}
                     </div>
 
-                    <div className="mt-8 p-5 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl text-white shadow-lg shadow-indigo-500/20">
+                    <div className="mt-8 p-5 bg-linear-to-br from-indigo-600 to-indigo-700 rounded-2xl text-white shadow-lg shadow-indigo-500/20">
                         <div className="flex justify-between items-start mb-4">
                             <div>
                                 <h5 className="font-bold text-sm">Monthly Goal Progress</h5>

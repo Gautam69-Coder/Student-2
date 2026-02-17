@@ -21,6 +21,7 @@ import { AnalyticsDashboard } from "./AnalyticsDashboard"
 import { ManageFeedback } from "./ManageFeedback"
 import { MessageSender } from "./MessageSender"
 import { motion, AnimatePresence } from "framer-motion"
+import { useTitle } from "@/hooks/useTitle"
 
 const initialSubjects = [
     { name: "Java Programming", code: "CS301", progress: 75, color: "#f97316" },
@@ -36,6 +37,7 @@ const pendingNotes = [
 ]
 
 export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
+    useTitle("Admin Panel");
     const { darkMode, toggleDarkMode } = useTheme();
     const { onlineUsers, lastVisit, socket } = useSocket();
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)

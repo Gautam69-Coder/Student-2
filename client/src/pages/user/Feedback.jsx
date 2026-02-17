@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { submitFeedback } from '@/Api/api';
 import { Send, MessageSquare, AlertCircle, Sparkles, HelpCircle } from 'lucide-react';
 import axios from 'axios';
+import { useTitle } from '@/hooks/useTitle';
 
 export const Feedback = ({ user }) => {
+    useTitle("Feedback");
     const [formData, setFormData] = useState({
         title: '',
         message: '',

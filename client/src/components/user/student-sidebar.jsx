@@ -1,7 +1,7 @@
 
 import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Home, FileText, BookOpen, FlaskConical, LogOut, Sparkles, X, MessageSquare, User } from "lucide-react"
+import { Home, FileText, BookOpen, FlaskConical, LogOut, Sparkles, X, MessageSquare, User, Info } from "lucide-react"
 import { useLocation, Link } from "react-router-dom"
 import { Logo } from "../logo/logo"
 
@@ -12,6 +12,7 @@ const navItems = [
     { id: "practicals", label: "Practicals", icon: FlaskConical },
     { id: "feedback", label: "Feedback", icon: MessageSquare },
     { id: "profile", label: "Profile", icon: User },
+    { id: "about-contact", label: "About & Contact", icon: Info },
 ]
 
 export function StudentSidebar({ isOpen, setIsOpen, onLogout }) {

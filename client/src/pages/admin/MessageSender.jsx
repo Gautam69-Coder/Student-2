@@ -2,8 +2,10 @@ import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { Mail, Send, Users, User, Check, AlertCircle, Loader2 } from "lucide-react"
 import { sendEmail } from "@/Api/api"
+import { useTitle } from "@/hooks/useTitle"
 
 export function MessageSender({ users }) {
+    useTitle("Message Sender");
     const [selectedUsers, setSelectedUsers] = useState([])
     const [isAllUsers, setIsAllUsers] = useState(false)
     const [subject, setSubject] = useState("")

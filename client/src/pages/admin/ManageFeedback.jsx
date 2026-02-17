@@ -5,8 +5,10 @@ import {
     Filter, Search, User, Calendar, Tag, ChevronDown,
     MoreVertical, ArrowUpRight
 } from 'lucide-react';
+import { useTitle } from '@/hooks/useTitle';
 
 export const ManageFeedback = () => {
+    useTitle("Manage Feedback");
     const [feedbacks, setFeedbacks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('All');

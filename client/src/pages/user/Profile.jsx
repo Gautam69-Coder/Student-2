@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { User, Mail, Shield, Calendar, MapPin, Briefcase, Camera, Edit2, LogOut, MessageSquare } from "lucide-react";
+import { User, Mail, Shield, Calendar, MapPin, Briefcase, Camera, Edit2, LogOut, MessageSquare, Info } from "lucide-react";
 import { getMe } from "@/Api/api";
+import { useTitle } from "@/hooks/useTitle";
 
 export function Profile({ onLogout }) {
+    useTitle("Profile");
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -83,6 +85,14 @@ export function Profile({ onLogout }) {
                         >
                             <MessageSquare className="w-5 h-5" />
                             Send Feedback / Message
+                        </Link>
+
+                        <Link
+                            to="/dashboard/about-contact"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/10 text-indigo-600 dark:text-indigo-400 font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/20 transition-colors"
+                        >
+                            <Info className="w-5 h-5" />
+                            About & Contact Us
                         </Link>
 
                         <button

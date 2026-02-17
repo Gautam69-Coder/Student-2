@@ -129,7 +129,7 @@ export function NotesSection({ refreshKey }) {
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Access all your shared notes and code snippets.</p>
                 </div>
 
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+                <div className="flex flex-wrap items-center gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
                     {sections.map((sec) => (
                         <button
                             key={sec}
@@ -189,7 +189,7 @@ export function NotesSection({ refreshKey }) {
                                                                 <Code className="w-5 h-5" />
                                                             )}
                                                         </div>
-                                                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-base sm:text-lg pr-2">
+                                                        <h3 className="font-bold text-slate-900 dark:text-white truncate line-clamp-1  text-base sm:text-lg pr-2">
                                                             {note.title}
                                                         </h3>
 

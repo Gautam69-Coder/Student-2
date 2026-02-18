@@ -65,8 +65,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const searchResults = useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [], pyqs: [] };
 
-        const query = searchQuery.toLowerCase();
-
+        const query = searchQuery.toLowerCase(); 
         return {
             subjects: subjects.filter(s => (s.name)?.toLowerCase()?.includes(query) || (s.code)?.toLowerCase()?.includes(query)),
             practicals: practicals.filter(p => (p.questions[0]?.question)?.toLowerCase()?.includes(query) || (p.section)?.toLowerCase()?.includes(query)),
@@ -179,9 +178,8 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                     placeholder="Search notes, practicals, PYQs..."
                                     className="w-full h-10 pl-10 pr-20 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:ring-1 focus:ring-slate-400/50 rounded-lg shadow-sm transition-all text-sm dark:text-white"
                                 />
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-[10px] font-medium text-slate-400 dark:text-slate-500">
-                                    <Command className="w-3 h-3" />
-                                    <span>K</span>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-1.5 py-0.5 rounded border dark:border-slate-600  dark: text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                                    <X className="w-3 h-4" onClick={()=>setSearchQuery("")} />
                                 </div>
                             </div>
                         </div>
@@ -209,7 +207,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 </header>
 
                 {/* Content */}
-                <div className="p-2 sm:p-8 sm:max-w-7xl max-w-2xl  pb-24 lg:pb-8">
+                <div className="p-2 sm:p-8 sm:max-w-full max-w-2xl  pb-24 lg:pb-8">
                     {searchQuery ? (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <div className="flex items-center justify-between">

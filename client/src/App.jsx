@@ -12,6 +12,7 @@ import { useLenis } from '@/hooks/useLenis';
 import { CyberLoader } from '@/components/common/cyber-loader';
 import { SocketProvider } from './context/SocketContext';
 import LandingPage from './pages/LandingPage';
+import { ServerOffline } from '@/components/common/server-offline';
 
 // Helper component for protected routes
 const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
@@ -30,8 +31,20 @@ function AppContent({ onUserUpdate }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [authViewState, setAuthViewState] = useState("login");
     const [loading, setLoading] = useState(true);
+    const [isServerOffline, setIsServerOffline] = useState(false);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleOffline = () => setIsServerOffline(true);
+        window.addEventListener('server-offline', handleOffline);
+        return () => window.removeEventListener('server-offline', handleOffline);
+    }, []);
+
+    const handleRetry = () => {
+        setIsServerOffline(false);
+        window.location.reload();
+    };
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -90,6 +103,10 @@ function AppContent({ onUserUpdate }) {
         setAuthViewState("login");
         navigate('/');
     };
+
+    if (isServerOffline) {
+        return <ServerOffline onRetry={handleRetry} />;
+    }
 
     if (loading) {
         return (

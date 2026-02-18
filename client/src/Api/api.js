@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+// const API_URL = window.location.hostname === 'localhost'
+//     ? 'http://localhost:5001/api'
+//     : 'https://student-2-3ow8.onrender.com/api';
+
 const API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:5001/api'
-    : 'https://student-2-3ow8.onrender.com/api';
+    : 'https://student-2-temprory.onrender.com/api';
 
 const api = axios.create({
     baseURL: API_URL,
@@ -22,6 +26,18 @@ api.interceptors.request.use(
         return config;
     },
     (error) => Promise.reject(error)
+);
+
+// Add a response interceptor to handle errors globally
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (!error.response || error.code === 'ERR_NETWORK') {
+            // Trigger a custom event for server offline
+            window.dispatchEvent(new CustomEvent('server-offline'));
+        }
+        return Promise.reject(error);
+    }
 );
 
 // Auth Services

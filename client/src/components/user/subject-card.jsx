@@ -22,7 +22,7 @@ export function SubjectCard({ subject, index, onClick, subjectPracticals }) {
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-blue-500/0 to-purple-500/0 group-hover:from-cyan-500/5 group-hover:via-blue-500/5 group-hover:to-purple-500/5 transition-all duration-500 pointer-events-none" />
 
             <div className="relative z-10">
-                <div className="flex items-start sm:justify-between justify-center mb-4">
+                <div className="flex  items-start sm:justify-between justify-center mb-4">
                     <div className="p-3 rounded-xl glass-card group-hover:bg-cyan-500/10 group-hover:border-cyan-500/30 transition-all duration-300">
                         <BookOpen className="w-5 h-5 text-slate-700 dark:text-slate-300 group-hover:text-cyan-500 transition-colors" style={subject.color ? { color: subject.color } : {}} />
                     </div>

@@ -84,7 +84,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                         View All <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </Link>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 sm:gap-5 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 sm:gap-5 gap-3">
                     {subjects.map((subject, index) => (
                         <SubjectCard
                             key={subject.name || subject._id || index}

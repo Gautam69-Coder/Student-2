@@ -163,13 +163,13 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 <header className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-b border-border dark:border-slate-800">
                     <div className="flex items-center justify-between sm:px-8 px-4 py-4 gap-2">
                         <button
-                            onClick={() => setSidebarOpen(true)}
-                            className="lg:hidden p-2 -ml-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                            onClick={() => setSidebarOpen(!sidebarOpen)}
+                            className="hidden sm:block p-2 -ml-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                         >
                             <Menu className="w-6 h-6" />
                         </button>
                         {/* Search Bar - Command K Style */}
-                        <div className="flex-1 max-w-2xl mx-6">
+                        <div className="flex-1 max-w-2xl sm:mx-6 mx-1">
                             <div className="relative group">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 group-focus-within:text-slate-600 dark:group-focus-within:text-slate-300 transition-colors" />
                                 <input
@@ -209,7 +209,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 </header>
 
                 {/* Content */}
-                <div className="p-2 sm:p-8 sm:max-w-7xl max-w-2xl mx-auto pb-24 lg:pb-8">
+                <div className="p-2 sm:p-8 sm:max-w-7xl max-w-2xl  pb-24 lg:pb-8">
                     {searchQuery ? (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <div className="flex items-center justify-between">

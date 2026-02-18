@@ -204,8 +204,8 @@ export const PracticalCard = memo(function PracticalCard({ practical, isBookmark
         <div className="relative h-full">
             {/* Removed expensive background glow animation */}
 
-            <div className="relative h-full glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
-                {/* Header Section */}
+            <div className="max-w-sm sm:max-w-full  relative h-full glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
+                {/* Header Section */} 
                 <div className="flex items-center  sm:flex-row sm:items-center justify-between sm:p-4 p-2 sm:px-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
                     <div className="flex items-center gap-6">
 

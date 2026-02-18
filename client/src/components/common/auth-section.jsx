@@ -8,6 +8,7 @@ import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCo
 import { ThemeToggle } from "./theme-toggle"
 import { registerUser, loginUser } from "@/Api/api"
 import { useTitle } from "@/hooks/useTitle"
+import { Link } from "react-router-dom"
 
 const quotes = [
     { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
@@ -86,14 +87,13 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3, duration: 0.6 }}
                     >
-                        <div className="flex items-center gap-3 mb-12">
-                            <div className="p-2 rounded-lg bg-slate-900 dark:bg-slate-100">
-                                <Sparkles className="w-6 h-6 text-white dark:text-slate-900" />
-                            </div>
-                            <span className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-                                Student Hub
-                            </span>
-                        </div>
+                        <Link to="/" className="mb-12 group w-fit block">
+                            <img
+                                src="/logo.png"
+                                alt="Student Hub Logo"
+                                className="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+                            />
+                        </Link>
 
                         <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-slate-900 dark:text-white mb-8 font-serif italic">
                             "{currentQuote.text}"

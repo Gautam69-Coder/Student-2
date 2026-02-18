@@ -11,6 +11,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { useLenis } from '@/hooks/useLenis';
 import { CyberLoader } from '@/components/common/cyber-loader';
 import { SocketProvider } from './context/SocketContext';
+import LandingPage from './pages/LandingPage';
 
 // Helper component for protected routes
 const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
@@ -103,6 +104,17 @@ function AppContent({ onUserUpdate }) {
             <Routes>
                 <Route
                     path="/"
+                    element={
+                        isAuthenticated ? (
+                            <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />
+                        ) : (
+                            <LandingPage />
+                        )
+                    }
+                />
+
+                <Route
+                    path="/auth"
                     element={
                         isAuthenticated ? (
                             <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />

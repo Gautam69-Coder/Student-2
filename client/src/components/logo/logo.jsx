@@ -1,11 +1,11 @@
 export const Logo = () => {
     return (
-        <img className="rounded-[10px]" src="https://res.cloudinary.com/gautamcloudinary/image/upload/v1769183620/logo_uphrxc.png" alt="" />
+        <img className="h-8 w-auto object-contain" src="/logo.png" alt="Student Hub Logo" />
     )
 }
 
 export const circleLogo = () => {
     return (
-        <img className="rounded-full" src="https://res.cloudinary.com/gautamcloudinary/image/upload/v1769183620/logo_uphrxc.png" alt="" />
+        <img className="h-8 w-auto rounded-full object-contain" src="/circle_logo.png" alt="Student Hub Circle Logo" />
     )
 }

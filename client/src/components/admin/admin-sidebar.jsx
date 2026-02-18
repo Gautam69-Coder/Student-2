@@ -49,10 +49,7 @@ export function AdminSidebar({ isOpen, setIsOpen, onLogout }) {
                             {/* Header */}
                             <div className="flex items-center justify-between mb-10">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-lg bg-slate-800 dark:bg-slate-700">
-                                        <Shield className="w-5 h-5 text-white dark:text-slate-50" />
-                                    </div>
-                                    <span className="text-lg font-bold text-white tracking-tight dark:text-slate-50">Admin Panel</span>
+                                    <img src="/logo.png" alt="Student Hub Admin Logo" className="h-8 w-auto object-contain" />
                                 </div>
                                 <button
                                     onClick={() => setIsOpen(false)}

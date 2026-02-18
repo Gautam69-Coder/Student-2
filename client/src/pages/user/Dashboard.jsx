@@ -11,7 +11,7 @@ import {
     toggleBookmark,
 } from "@/Api/api"
 
-import { Upload, Search, Command, Menu, Users, CloudCog, Code, FileText, Download, X } from "lucide-react"
+import { Upload, Search, Command, Menu, Users, CloudCog, Code, FileText, Download, X, Bell } from "lucide-react"
 import { ThemeToggle } from "@/components/common/theme-toggle"
 import { StudentSidebar } from "@/components/user/student-sidebar"
 import { BottomNavbar } from "@/components/user/bottom-navbar"
@@ -65,7 +65,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const searchResults = useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [], pyqs: [] };
 
-        const query = searchQuery.toLowerCase(); 
+        const query = searchQuery.toLowerCase();
         return {
             subjects: subjects.filter(s => (s.name)?.toLowerCase()?.includes(query) || (s.code)?.toLowerCase()?.includes(query)),
             practicals: practicals.filter(p => (p.questions[0]?.question)?.toLowerCase()?.includes(query) || (p.section)?.toLowerCase()?.includes(query)),
@@ -161,12 +161,15 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 {/* Header - Minimalist White Bar */}
                 <header className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-b border-border dark:border-slate-800">
                     <div className="flex items-center justify-between sm:px-8 px-4 py-4 gap-2">
+
+                        {/* SideBar Open and close */}
                         <button
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                             className="hidden sm:block p-2 -ml-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                         >
                             <Menu className="w-6 h-6" />
                         </button>
+
                         {/* Search Bar - Command K Style */}
                         <div className="flex-1 max-w-2xl sm:mx-6 mx-1">
                             <div className="relative group">
@@ -179,13 +182,15 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                     className="w-full h-10 pl-10 pr-20 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:ring-1 focus:ring-slate-400/50 rounded-lg shadow-sm transition-all text-sm dark:text-white"
                                 />
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-1.5 py-0.5 rounded border dark:border-slate-600  dark: text-[10px] font-medium text-slate-400 dark:text-slate-500">
-                                    <X className="w-3 h-4" onClick={()=>setSearchQuery("")} />
+                                    <X className="w-3 h-4" onClick={() => setSearchQuery("")} />
                                 </div>
                             </div>
                         </div>
+
                         <div className="flex items-center gap-3">
                             <ThemeToggle />
 
+                            {/* Theme Toggle */}
                             <button
                                 onClick={() => setUploadModalOpen(true)}
                                 className="flex items-center justify-center bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white px-4 h-10 rounded-lg gap-2 shadow-sm transition-all active:scale-[0.98] text-sm font-bold"
@@ -202,6 +207,13 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                     <span className="hidden sm:inline">Admin View</span>
                                 </button>
                             )}
+
+                            <button
+                                className="flex items-center justify-center rounded-lg gap-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 h-10 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-700">
+                                    
+                                <Bell className="w-4 h-4" />
+                            </button>
+
                         </div>
                     </div>
                 </header>

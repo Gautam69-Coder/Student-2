@@ -29,7 +29,7 @@ export function AIAssistant() {
   return (
     <>
       {/* Levitating Pencil Bubble */}
-      {/* <AnimatePresence>
+      <AnimatePresence>
         {!isOpen && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
@@ -45,7 +45,7 @@ export function AIAssistant() {
             <PencilLine className="w-6 h-6 text-white" />
           </motion.button>
         )}
-      </AnimatePresence> */}
+      </AnimatePresence>
 
       {/* Minimal Chat Window */}
       {/* <AnimatePresence> */}

@@ -230,7 +230,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                     <h3 className="text-lg font-semibold text-slate-700">Practicals</h3>
                                     <div className=" gap-6">
                                         {searchResults.practicals.map((practical, index) => (
-                                            <div key={index} className="mb-4">
+                                            <div key={index}>
                                                 <PracticalCard
                                                     practical={practical}
                                                     isBookmarked={userBookmarks.includes(practical._id)}

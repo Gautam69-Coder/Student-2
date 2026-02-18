@@ -109,7 +109,10 @@ const QuestionBlock = memo(function QuestionBlock({ question, index }) {
 
                     </div>
 
-                    <div className="code-scroll-area bg-[#0d1117] overflow-y-auto transform-gpu" data-lenis-prevent style={{ maxHeight: '30vh' }}>
+                    <div
+                        className=" bg-[#0d1117] hover:overflow-y-auto sm:hover:overflow-y-auto overscroll-contain"
+                        style={{ height: '300px' }}
+                    >
                         <Highlight className="javascript">
                             {question.code}
                         </Highlight>
@@ -198,10 +201,10 @@ export const PracticalCard = memo(function PracticalCard({ practical, isBookmark
     }, [onToggleBookmark, practical._id])
 
     return (
-        <div className="relative mb-12 transform-gpu">
+        <div className="relative h-full">
             {/* Removed expensive background glow animation */}
 
-            <div className="relative glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-slate-900/80 backdrop-blur-md shadow-2xl transform-gpu">
+            <div className="relative h-full glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
                 {/* Header Section */}
                 <div className="flex items-center  sm:flex-row sm:items-center justify-between sm:p-4 p-2 sm:px-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
                     <div className="flex items-center gap-6">

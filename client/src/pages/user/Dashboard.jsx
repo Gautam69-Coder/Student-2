@@ -46,6 +46,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const [selectedNote, setSelectedNote] = useState(null);
     const [userBookmarks, setUserBookmarks] = useState([]);
     const [loadingPracticals, setLoadingPracticals] = useState(true);
+    const [isBell, setisBell] = useState(false);
     const navigate = useNavigate();
 
     const handleNoteCreated = useCallback(() => {
@@ -209,17 +210,34 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             )}
 
                             {/* <button
-                                className="flex items-center justify-center rounded-lg gap-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 h-10 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-700">
-                                    
+                                className="flex items-center justify-center rounded-lg gap-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 h-10 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-700"
+                                onClick={() => { setisBell(!isBell) }}
+                            >
+
                                 <Bell className="w-4 h-4" />
                             </button> */}
+
+                            {/* {isBell ? (
+                                <AnimatePresence>
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                        animate={{ opacity: 1, scale: 1, y: 150 }}
+                                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                        className=" absolute right-8 w-80 h-50 rounded-2xl bg-white dark:bg-slate-800  shadow-md p-2 border border-slate-200 dark:border-slate-700">
+
+
+                                    </motion.div>
+                                </AnimatePresence>
+                            ) : (
+                                null
+                            )} */}
 
                         </div>
                     </div>
                 </header>
 
                 {/* Content */}
-                <div className="p-2 sm:p-8 sm:max-w-full max-w-2xl  pb-24 lg:pb-8">
+                <div className="p-2 sm:p-8   pb-24 lg:pb-8">
                     {searchQuery ? (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <div className="flex items-center justify-between">
@@ -237,8 +255,8 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             {/* Practicals Results */}
                             {searchResults.practicals.length > 0 && (
                                 <div className="space-y-4">
-                                    <h3 className="text-lg font-semibold text-slate-700">Practicals</h3>
-                                    <div className=" gap-6">
+                                    <h3 className="text-lg  font-semibold text-slate-700">Practicals</h3>
+                                    <div className=" gap-6 w-full grid grid-cols-1 ">
                                         {searchResults.practicals.map((practical, index) => (
                                             <div key={index}>
                                                 <PracticalCard

@@ -117,7 +117,7 @@ function AppContent({ onUserUpdate }) {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen max-w-full sm:max-w-screen  bg-background">
             <Routes>
                 <Route
                     path="/"

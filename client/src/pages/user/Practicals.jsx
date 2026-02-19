@@ -102,7 +102,7 @@ export function Practicals({ practicals, subjects, userBookmarks, onToggleBookma
             </div>
 
 
-            <div className="sm:w-full w-[90vw]">
+            <div className="sm:w-full ">
                 {filteredPracticals.map((practical, index) => (
                     <PracticalCard
                         key={index}

@@ -92,7 +92,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                     </div>
                     <select
                         value={filterRole}
-                        onChange={(e) => { setFilterRole(e.target.value); console.log('Filter changed to:', e.target.value) }}
+                        onChange={(e) => { setFilterRole(e.target.value)}}
                         className="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 cursor-pointer text-slate-900 dark:text-white"
                     >
                         <option value="all">All Roles</option>

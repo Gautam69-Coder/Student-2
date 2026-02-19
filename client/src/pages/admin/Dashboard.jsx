@@ -50,7 +50,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
         const user = fetchUsers();
         user.then((res) => {
             setUsers(res.data);
-            console.log("Fetched users:", res.data);
+            // console.log("Fetched users:", res.data);
         });
 
         const content = fetchContent();

@@ -28,17 +28,17 @@ export const SocketProvider = ({ children, user }) => {
         socketRef.current = socket;
 
         socket.on('connect', () => {
-            console.log('✅ Connected to WebSocket:', socket.id);
+            // console.log('✅ Connected to WebSocket:', socket.id);
             setIsConnected(true);
         });
 
         socket.on('disconnect', () => {
-            console.log('❌ Disconnected from WebSocket');
+            // console.log('❌ Disconnected from WebSocket');
             setIsConnected(false);
         });
 
         socket.on('online_users_update', (users) => {
-            console.log('👥 Online users updated:', users);
+            // console.log('👥 Online users updated:', users);
             setOnlineUsers(users);
         });
 
@@ -54,7 +54,7 @@ export const SocketProvider = ({ children, user }) => {
     // Separate effect to handle user registration when user OR connection changes
     useEffect(() => {
         if (isConnected && user && socketRef.current) {
-            console.log('📤 Emitting user_online for:', user.username);
+            // console.log('📤 Emitting user_online for:', user.username);
             socketRef.current.emit('user_online', {
                 id: user._id || user.id,
                 username: user.username,
@@ -62,7 +62,7 @@ export const SocketProvider = ({ children, user }) => {
                 role: user.role
             });
         } else if (isConnected && !user && socketRef.current) {
-            console.log('📤 Emitting user_logout');
+            // console.log('📤 Emitting user_logout');
             socketRef.current.emit('user_logout');
         }
     }, [user, isConnected]);

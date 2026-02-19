@@ -208,11 +208,11 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                 </button>
                             )}
 
-                            <button
+                            {/* <button
                                 className="flex items-center justify-center rounded-lg gap-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 h-10 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-700">
                                     
                                 <Bell className="w-4 h-4" />
-                            </button>
+                            </button> */}
 
                         </div>
                     </div>

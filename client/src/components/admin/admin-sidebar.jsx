@@ -13,7 +13,7 @@ const navItems = [
     { id: "pyqs", label: "Upload PYQs", icon: Upload },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "feedback", label: "User Feedback", icon: MessageSquare },
-    { id: "messages", label: "Message Sender", icon: Mail },
+    // { id: "messages", label: "Message Sender", icon: Mail },
 ]
 
 export function AdminSidebar({ isOpen, setIsOpen, onLogout }) {

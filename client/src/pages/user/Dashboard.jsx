@@ -29,6 +29,7 @@ import { Profile } from "./Profile";
 import { AboutContact } from "./AboutContact";
 import { notes, pyqSubjects } from "@/data/student-data";
 import { PracticalCard } from "@/components/user/practical-card";
+import Notification from "@/components/user/notification";
 
 export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     useTitle("Dashboard");
@@ -217,35 +218,8 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                 <Bell className="w-4 h-4" />
                             </button>
 
-                            {isBell ? (
-                                <AnimatePresence>
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0, y: 10, x: 500 }}
-                                        animate={{ opacity: 1, scale: 1, x: 0 }}
-                                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                                        className=" absolute sm:right-8 right-4  sm:w-120 w-80 top-20 h-50 rounded-2xl bg-white dark:bg-slate-800  shadow-md p-2 border border-slate-200 dark:border-slate-700">
-
-                                        <div className="h-full w-full">
-                                            <div className=" flex justify-between items-center border-b border-slate-200 dark:border-slate-700">
-                                                <p className="text-sm font-bold text-slate-900 dark:text-white p-3 ">Notifications</p>
-                                                <Bell className="w-4 h-4  text-slate-500 dark:text-slate-400" />
-                                            </div>
-                                            <div className="flex items-center gap-3 p-3 border-b border-slate-200 dark:border-slate-700">
-                                                <div className="p-2 rounded-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600">
-                                                    <Bell className="w-4 h-4 text-slate-900 dark:text-white" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-bold text-slate-900 dark:text-white">System Update</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Version 2.0 will be released on 30th June 2026.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                    </motion.div>
-                                </AnimatePresence>
-                            ) : (
-                                null
+                            {isBell && (
+                                    <Notification />
                             )}
 
                         </div>

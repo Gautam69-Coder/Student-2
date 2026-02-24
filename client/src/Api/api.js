@@ -81,6 +81,11 @@ export const submitFeedback = (feedbackData) => api.post('/feedback', feedbackDa
 export const fetchAllFeedback = () => api.get('/feedback');
 export const updateFeedbackStatus = (id, status) => api.patch(`/feedback/${id}`, { status });
 
+
+// Notification Services
+export const sendNotification = (formData) => api.post('/notifications', formData);
+export const fetchNotifications = () => api.get('/notifications');
+
 // Email Services
 export const sendEmail = (emailData) => api.post('/email/send', emailData);
 

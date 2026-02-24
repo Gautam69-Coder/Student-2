@@ -54,8 +54,8 @@ io.on('connection', (socket) => {
                     { new: true }
                 );
 
-                console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.visitCount}`);
-                console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.lastVisit}`);
+                // console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.visitCount}`);
+                // console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.lastVisit}`);
 
                 // Broadcast update so admin table sees new visit count
                 io.emit('user_stats_update', {
@@ -67,7 +67,7 @@ io.on('connection', (socket) => {
                 console.error('❌ Error updating visit count:', err.message);
             }
 
-            console.log(`📊 Total Unique Online: ${onlineUsers.size}`);
+            // console.log(`📊 Total Unique Online: ${onlineUsers.size}`);
 
             io.emit('online_users_update', Array.from(onlineUsers));
             io.emit('user_visit', { ...userData, timestamp: new Date() });
@@ -136,7 +136,7 @@ app.use('/api/notes', require('./routes/notes'));
 app.use('/api/sections', require('./routes/sections'));
 app.use('/api/practicals', require('./routes/practicals'));
 app.use('/api/feedback', require('./routes/feedback'));
-app.use('/api/notification', require('./routes/notification'));
+app.use('/api/notifications', require('./routes/notification'));
 // app.use('/api/email', require('./routes/email'));
 
 app.get('/', (req, res) => {

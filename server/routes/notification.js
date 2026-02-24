@@ -4,17 +4,33 @@ const Notification = require('../models/Notification');
 const auth = require('../middleware/auth');
 
 
-router.post('/', auth, async (req, res) => {
+router.post('/',auth, async (req, res) => {
     try {
         const { title, message } = req.body;
 
-        console.log(title)
-        console.log(message)
+        console.log(title, message)
+        // console.log(formData.message)
+        const date = new Date().toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            timeZone: 'Asia/Kolkata',
+        });
+        const time = new Date().toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+            timeZone: 'Asia/Kolkata',
+        });
+        
+        console.log(date, time);
 
         const notification = new Notification({
             userId: req.user.id,
             title,
-            message
+            message,
+            date: date,
+            time: time
         });
         await notification.save();
 
@@ -22,6 +38,7 @@ router.post('/', auth, async (req, res) => {
 
     } catch (err) {
         console.error("Error sending notification:", err);
+        return res.status(500).json({ msg: 'Server error. Please try again later.' });
     }
 });
 

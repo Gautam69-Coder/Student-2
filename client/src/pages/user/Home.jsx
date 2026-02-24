@@ -44,12 +44,33 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                         <Sparkles className="w-4 h-4" />
                         <span className="text-sm font-bold uppercase tracking-wider">Good Morning</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
-                        Welcome back, <br />
-                        <span className="bg-linear-to-r from-blue-400 to-indigo-400 dark:from-blue-600 dark:to-indigo-600 bg-clip-text text-transparent">
-                            {userName}!
-                        </span>
-                    </h1>
+                    <div className='sm:flex flex-wrap justify-between font-black mb-4 tracking-tight leading-tight'>
+                        <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
+                            Welcome back, <br />
+                            <span className="bg-linear-to-r from-blue-400 to-indigo-400 dark:from-blue-600 dark:to-indigo-600 bg-clip-text text-transparent">
+                                {userName}!
+                            </span>
+                        </h1>
+
+                        <div className='space-y-2 text-green-500 dark:text-green-400 text-sm font-medium'>
+                            <div>
+                                {new Date().toLocaleDateString('en-US', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                                timeZone: 'Asia/Kolkata',
+                            })}
+                            </div>
+                            <div>
+                                {new Date().toLocaleTimeString('en-US', {
+                                hour: 'numeric',
+                                minute: 'numeric',
+                                hour12: true,
+                                timeZone: 'Asia/Kolkata',
+                            })}
+                            </div>
+                        </div>
+                    </div>
                     <p className="hidden md:block text-slate-600 dark:text-slate-300 max-w-xl text-base sm:text-lg leading-relaxed">
                         Ready to learn? You have <span className="text-indigo-600 dark:text-indigo-400 font-bold">3 practicals</span> pending and <span className="text-lime-500 dark:text-lime-400 font-bold">2 PYQs</span> to review.
                     </p>

@@ -17,6 +17,14 @@ const NotificationSchema = new mongooase.Schema({
     isRead: {
         type: Boolean,
         default: false
+    },
+    date: {
+        type: String,
+        required: true
+    },
+    time: {
+        type: String,
+        required: true
     }
 }, { timestamps: true });
 

@@ -17,6 +17,7 @@ import { ManageSubjects } from "./ManageSubjects"
 import { ManageContent } from "./ManageContent"
 import { ManagePracticals } from "./ManagePracticals"
 import { ManagePYQs } from "./ManagePYQs"
+import { ManageNotification } from "./ManageNotification"
 import { AnalyticsDashboard } from "./AnalyticsDashboard"
 import { ManageFeedback } from "./ManageFeedback"
 import { MessageSender } from "./MessageSender"
@@ -146,6 +147,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                         <Route path="analytics" element={<AnalyticsDashboard users={users} />} />
                         <Route path="feedback" element={<ManageFeedback />} />
                         <Route path="messages" element={<MessageSender users={users} />} />
+                        <Route path="notifications" element={<ManageNotification />} />
                         <Route path="*" element={<Navigate to="" replace />} />
                     </Routes>
                 </div>

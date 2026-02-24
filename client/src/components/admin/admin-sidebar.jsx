@@ -1,7 +1,7 @@
 
 import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Users, FileText, FlaskConical, Upload, BarChart3, LogOut, Shield, X, Sparkles, GraduationCap, MessageSquare, Mail } from "lucide-react"
+import { Users, FileText, FlaskConical, Upload, BarChart3, LogOut, Shield, X, Sparkles, GraduationCap, MessageSquare, Mail, Bell } from "lucide-react"
 import { useLocation, Link } from "react-router-dom"
 import { useSocket } from "@/context/SocketContext"
 
@@ -13,6 +13,7 @@ const navItems = [
     { id: "pyqs", label: "Upload PYQs", icon: Upload },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "feedback", label: "User Feedback", icon: MessageSquare },
+    { id: "notifications", label: "Notifications", icon: Bell },
     // { id: "messages", label: "Message Sender", icon: Mail },
 ]
 

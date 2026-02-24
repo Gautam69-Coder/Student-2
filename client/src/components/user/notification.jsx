@@ -57,11 +57,11 @@ const notification = () => {
                             <div key={notification.id}>
                                 <div className="flex  w-full items-center gap-3 p-3 border-b border-slate-200 dark:border-slate-700">
                                     <div className="p-2 rounded-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600">
-                                        <Bell className="w-4 h-4 text-slate-900 dark:text-white" />
+                                        <Bell className="sm:w-4 sm:h-4 w-3 h-3 text-slate-900 dark:text-white" />
                                     </div>
 
                                     <div className="flex items-center justify-between w-full">
-                                        <div>
+                                        <div className='w-[60%]'>
                                             <p className="text-sm font-bold text-slate-900 dark:text-white">{notification.title}</p>
                                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{notification.message}</p>
                                         </div>
@@ -70,9 +70,9 @@ const notification = () => {
                                         ) : (
                                             null
                                         )} */}
-                                        <div>
-                                            <div className="text-xs text-slate-500 dark:text-slate-400">{notification.date || "No date available"}</div>
-                                            <div className="text-xs text-slate-500 dark:text-slate-400">{notification.time || "No time available"}</div>
+                                        <div className='sm:text-base text-[10px] w-[30%] '>
+                                            <div className=" text-slate-500 dark:text-slate-400">{notification.date || "No date"}</div>
+                                            <div className=" text-slate-500 dark:text-slate-400">{notification.time || "No time"}</div>
                                         </div>
                                     </div>
                                 </div>

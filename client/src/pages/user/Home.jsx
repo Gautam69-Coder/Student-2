@@ -52,7 +52,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                             </span>
                         </h1>
 
-                        <div className='space-y-2 text-green-500 dark:text-green-400 text-sm font-medium'>
+                        <div className='space-y-2 text-green-500 dark:text-green-400 text-sm font-medium '>
                             <div>
                                 {new Date().toLocaleDateString('en-US', {
                                 day: 'numeric',

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Upload, FileText, X, Check, Code, AlertCircle, Plus, ChevronDown, Layout, File, Image as ImageIcon } from "lucide-react"
+import { PDFDocument } from "pdf-lib"
 import { createNote, fetchSections } from "@/Api/api"
 
 export function UploadModal({ open, onOpenChange, onNoteCreated }) {
@@ -17,6 +18,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
     const [uploadType, setUploadType] = useState("text") // 'text' or 'file'
     const [selectedFile, setSelectedFile] = useState(null)
     const [fileBase64, setFileBase64] = useState("")
+    const [isDragOver, setIsDragOver] = useState(false)
 
     useEffect(() => {
         if (open) {
@@ -37,21 +39,93 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
         }
     }
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0]
-        if (!file) return
+    const processFiles = async (files) => {
+        if (!files || files.length === 0) return
 
-        if (file.size > 50 * 1024 * 1024) {
-            setError("File size should be less than 50MB")
+        const maxSize = 50 * 1024 * 1024
+        const totalSize = Array.from(files).reduce((sum, f) => sum + f.size, 0)
+        if (totalSize > maxSize) {
+            setError("Total file size should be less than 50MB")
             return
         }
 
-        setSelectedFile(file)
-        const reader = new FileReader()
-        reader.onloadend = () => {
-            setFileBase64(reader.result)
+        setError("")
+
+        // Single file (pdf, image, doc, etc.)
+        if (files.length === 1) {
+            const file = files[0]
+            setSelectedFile(file)
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                setFileBase64(reader.result)
+            }
+            reader.readAsDataURL(file)
+            return
         }
-        reader.readAsDataURL(file)
+
+        // Multiple images → generate a single PDF
+        const allImages = Array.from(files).every((f) => f.type.startsWith("image/"))
+        if (!allImages) {
+            setError("Multiple upload is only supported for images. Please select images only.")
+            return
+        }
+
+        try {
+            const pdfDoc = await PDFDocument.create()
+
+            for (const file of files) {
+                const arrayBuffer = await file.arrayBuffer()
+                let embedded
+                if (file.type === "image/png") {
+                    embedded = await pdfDoc.embedPng(arrayBuffer)
+                } else {
+                    embedded = await pdfDoc.embedJpg(arrayBuffer)
+                }
+                const { width, height } = embedded
+                const page = pdfDoc.addPage([width, height])
+                page.drawImage(embedded, { x: 0, y: 0, width, height })
+            }
+
+            const pdfBytes = await pdfDoc.save()
+            const blob = new Blob([pdfBytes], { type: "application/pdf" })
+            const virtualFile = new File([blob], `${title || "Notes"}-images.pdf`, {
+                type: "application/pdf",
+            })
+            setSelectedFile(virtualFile)
+
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                setFileBase64(reader.result)
+            }
+            reader.readAsDataURL(virtualFile)
+        } catch (err) {
+            console.error("Error creating PDF from images:", err)
+            setError("Failed to create PDF from images. Please try again.")
+        }
+    }
+
+    const handleFileChange = (e) => {
+        const files = e.target.files
+        if (!files || files.length === 0) return
+        processFiles(files)
+    }
+
+    const handleDrop = (e) => {
+        e.preventDefault()
+        setIsDragOver(false)
+        const files = e.dataTransfer.files
+        if (!files || files.length === 0) return
+        processFiles(files)
+    }
+
+    const handleDragOver = (e) => {
+        e.preventDefault()
+        setIsDragOver(true)
+    }
+
+    const handleDragLeave = (e) => {
+        e.preventDefault()
+        setIsDragOver(false)
     }
 
     const handleUpload = async () => {
@@ -243,7 +317,18 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                 ) : (
                                     <div>
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">File</label>
-                                        <div className={`mt-1.5 border-2 border-dashed rounded-xl p-8 text-center transition-all ${selectedFile ? "border-slate-900 dark:border-slate-600 bg-slate-50 dark:bg-slate-900" : "border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900"}`}>
+                                        <div
+                                            className={`mt-1.5 border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer ${
+                                                selectedFile
+                                                    ? "border-slate-900 dark:border-slate-600 bg-slate-50 dark:bg-slate-900"
+                                                    : isDragOver
+                                                    ? "border-indigo-500 bg-indigo-50/40 dark:border-indigo-400 dark:bg-indigo-900/20"
+                                                    : "border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900"
+                                            }`}
+                                            onDrop={handleDrop}
+                                            onDragOver={handleDragOver}
+                                            onDragLeave={handleDragLeave}
+                                        >
                                             {selectedFile ? (
                                                 <div className="flex flex-col items-center gap-3">
                                                     <div className="p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
@@ -263,13 +348,18 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                             ) : (
                                                 <label className="cursor-pointer block">
                                                     <Upload className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
-                                                    <p className="text-sm text-slate-900 dark:text-white font-bold mb-1">Click to upload file</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">PDF, DOCX, PNG, JPG (Max 50MB)</p>
+                                                    <p className="text-sm text-slate-900 dark:text-white font-bold mb-1">
+                                                        Click to upload or drag &amp; drop
+                                                    </p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                        PDF, DOCX, PNG, JPG (Max 50MB). Drop multiple images to auto-create a PDF.
+                                                    </p>
                                                     <input
                                                         type="file"
                                                         className="hidden"
                                                         onChange={handleFileChange}
                                                         accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                                        multiple
                                                     />
                                                 </label>
                                             )}

@@ -193,49 +193,19 @@ const QuestionBlock = memo(function QuestionBlock({ question, index }) {
     )
 })
 
-export const PracticalCard = memo(function PracticalCard({ practical, isBookmarked, onToggleBookmark }) {
-    const handleToggle = useCallback(() => {
-        if (onToggleBookmark) {
-            onToggleBookmark(practical._id)
-        }
-    }, [onToggleBookmark, practical._id])
-
+export const PracticalCard = memo(function PracticalCard({ practical }) {
     return (
         <div className="relative h-full">
             {/* Removed expensive background glow animation */}
 
             <div className="max-w-sm sm:max-w-full  relative h-full glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
                 {/* Header Section */}
-                <div className="flex items-center  sm:flex-row sm:items-center justify-between sm:p-4 p-2 sm:px-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
-                    <div className="flex items-center gap-6">
-
-                        {practical.section && (
-                            <span className="px-3 py-1 rounded-lg  bg-cyan-500/10 dark:bg-cyan-500/20 text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest border border-cyan-500/20">
-                                {practical.section}
-                            </span>
-                        )}
-                    </div>
-
-                    <div className="flex items-center gap-4 mt-4 sm:mt-0">
-                        {onToggleBookmark && (
-                            <button
-                                onClick={handleToggle}
-                                className={`group/btn w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${isBookmarked
-                                    ? "bg-orange-500 shadow-lg shadow-orange-500/40"
-                                    : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700"
-                                    }`}
-                                title={isBookmarked ? "Release Bookmark" : "Store in Archive"}
-                            >
-                                <Bookmark
-                                    className={`w-5 h-5 transition-all duration-300 ${isBookmarked
-                                        ? "fill-white text-white scale-110"
-                                        : "text-slate-400 group-hover/btn:text-slate-600 dark:group-hover/btn:text-slate-200"
-                                        }`}
-                                />
-                            </button>
-                        )}
-
-                    </div>
+                <div className="flex items-center sm:flex-row sm:items-center justify-between sm:p-4 p-2 sm:px-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
+                    {practical.section && (
+                        <span className="px-3 py-1 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest border border-cyan-500/20">
+                            {practical.section}
+                        </span>
+                    )}
                 </div>
 
                 {/* Content Section */}

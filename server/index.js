@@ -137,6 +137,7 @@ app.use('/api/sections', require('./routes/sections'));
 app.use('/api/practicals', require('./routes/practicals'));
 app.use('/api/feedback', require('./routes/feedback'));
 app.use('/api/notifications', require('./routes/notification'));
+app.use('/api/community', require('./routes/community'));
 // app.use('/api/email', require('./routes/email'));
 
 app.get('/', (req, res) => {

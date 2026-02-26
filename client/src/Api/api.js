@@ -81,7 +81,6 @@ export const submitFeedback = (feedbackData) => api.post('/feedback', feedbackDa
 export const fetchAllFeedback = () => api.get('/feedback');
 export const updateFeedbackStatus = (id, status) => api.patch(`/feedback/${id}`, { status });
 
-
 // Notification Services
 export const sendNotification = (formData) => api.post('/notifications', formData);
 export const fetchNotifications = () => api.get('/notifications');
@@ -92,5 +91,15 @@ export const sendEmail = (emailData) => api.post('/email/send', emailData);
 // Bookmark Services
 export const toggleBookmark = (id) => api.put(`/auth/bookmark/${id}`);
 export const fetchBookmarks = () => api.get('/auth/bookmarks');
+
+// Community Services
+export const fetchCommunityPosts = (page = 1, limit = 20) =>
+    api.get('/community', { params: { page, limit } });
+
+export const createCommunityPost = (data) =>
+    api.post('/community', data);
+
+export const toggleCommunityLike = (id) =>
+    api.post(`/community/${id}/like`);
 
 export default api;

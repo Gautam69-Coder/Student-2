@@ -27,8 +27,8 @@ import { getMe } from "../../Api/api"
 const navItems = [
     { id: "home", label: "Home", icon: Home, path: "/dashboard" },
     { id: "notes", label: "Notes", icon: FileText, path: "/dashboard/notes" },
-    { id: "pyqs", label: "PYQs", icon: BookOpen, path: "/dashboard/pyqs" },
     { id: "practicals", label: "Practicals", icon: FlaskConical, path: "/dashboard/practicals" },
+    { id: "community", label: "Community", icon: Users, path: "/dashboard/community" },
 ]
 
 const moreItems = [

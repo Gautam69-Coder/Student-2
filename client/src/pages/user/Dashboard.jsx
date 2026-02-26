@@ -7,8 +7,6 @@ import {
     fetchSections,
     fetchPracticals,
     fetchNotes,
-    fetchBookmarks,
-    toggleBookmark,
 } from "@/Api/api"
 
 
@@ -23,11 +21,10 @@ import { useTitle } from "@/hooks/useTitle";
 import { Home } from "./Home";
 import { Notes } from "./Notes";
 import { Practicals } from "./Practicals";
-import { PYQs } from "./PYQs";
 import { Feedback } from "./Feedback";
 import { Profile } from "./Profile";
 import { AboutContact } from "./AboutContact";
-import { pyqSubjects } from "@/data/student-data";
+import { Community } from "./Community";
 import { PracticalCard } from "@/components/user/practical-card";
 import Notification from "@/components/user/notification";
 
@@ -46,7 +43,6 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [subjectPracticals, setSubjectPracticals] = useState([]);
     const [selectedNote, setSelectedNote] = useState(null);
-    const [userBookmarks, setUserBookmarks] = useState([]);
     const [loadingPracticals, setLoadingPracticals] = useState(true);
     const [isBell, setisBell] = useState(false);
     const navigate = useNavigate();
@@ -66,14 +62,13 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     }, []);
 
     const searchResults = useMemo(() => {
-        if (!searchQuery) return { subjects: [], practicals: [], notes: [], pyqs: [] };
+        if (!searchQuery) return { subjects: [], practicals: [], notes: [] };
 
         const query = searchQuery.toLowerCase();
         return {
             subjects: subjects.filter(s => (s.name)?.toLowerCase()?.includes(query) || (s.code)?.toLowerCase()?.includes(query)),
             practicals: practicals.filter(p => (p.questions[0]?.question)?.toLowerCase()?.includes(query) || (p.section)?.toLowerCase()?.includes(query)),
             notes: notes.filter(n => (n.title)?.toLowerCase()?.includes(query) || (n.content)?.toLowerCase()?.includes(query)),
-            pyqs: pyqSubjects.filter(p => (p.name)?.toLowerCase()?.includes(query))
         };
     }, [searchQuery, subjects, practicals, notes]);
 
@@ -108,35 +103,10 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
         }).catch(err => console.error("Error fetching notes for search:", err));
     }, [])
 
-    const fetchUserBookmarks = useCallback(async () => {
-        try {
-            const res = await fetchBookmarks();
-            setUserBookmarks(res.data.map(b => b._id));
-        } catch (err) {
-            console.error("Error fetching bookmarks:", err);
-        }
-    }, []);
-
-    const handleToggleBookmark = useCallback(async (practicalId) => {
-        try {
-            await toggleBookmark(practicalId);
-            setUserBookmarks(prev => {
-                if (prev.includes(practicalId)) {
-                    return prev.filter(id => id !== practicalId);
-                } else {
-                    return [...prev, practicalId];
-                }
-            });
-        } catch (err) {
-            console.error("Error toggling bookmark:", err);
-        }
-    }, []);
-
     useEffect(() => {
         fetchSubjects();
         fetchPractical();
         fetchUserNotes();
-        fetchUserBookmarks();
     }, [])
 
     useEffect(() => {
@@ -186,13 +156,11 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                             {searchResults.practicals.length > 0 && (
                                 <div className="space-y-4">
                                     <h3 className="text-lg  font-semibold text-slate-700">Practicals</h3>
-                                    <div className=" gap-6 w-full grid grid-cols-1 ">
+                                    <div className="gap-6 w-full grid grid-cols-1">
                                         {searchResults.practicals.map((practical, index) => (
                                             <div key={index}>
                                                 <PracticalCard
                                                     practical={practical}
-                                                    isBookmarked={userBookmarks.includes(practical._id)}
-                                                    onToggleBookmark={handleToggleBookmark}
                                                 />
                                             </div>
                                         ))}
@@ -298,11 +266,27 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                         </div>
                     ) : (
                         <Routes>
-                            <Route path="/" element={<Home userName={userName} subjects={subjects} subjectPracticals={subjectPracticals} practicals={practicals} loadingPracticals={loadingPracticals} userBookmarks={userBookmarks} setUserBookmarks={setUserBookmarks} onToggleBookmark={handleToggleBookmark} />} />
+                            <Route
+                                path="/"
+                                element={
+                                    <Home
+                                        userName={userName}
+                                        subjects={subjects}
+                                        subjectPracticals={subjectPracticals}
+                                        practicals={practicals}
+                                        loadingPracticals={loadingPracticals}
+                                        stats={{
+                                            notesCount: notes.length,
+                                            visitCount: currentUser?.visitCount || 0,
+                                            lastVisit: currentUser?.lastVisit || null,
+                                        }}
+                                    />
+                                }
+                            />
                             <Route path="notes" element={<Notes refreshKey={notesRefreshKey} />} />
-                            <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} userBookmarks={userBookmarks} onToggleBookmark={handleToggleBookmark} />} />
-                            <Route path="pyqs" element={<PYQs />} />
+                            <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} />} />
                             <Route path="feedback" element={<Feedback user={currentUser} />} />
+                            <Route path="community" element={<Community />} />
                             <Route path="profile" element={<Profile onLogout={onLogout} />} />
                             <Route path="about-contact" element={<AboutContact />} />
                             <Route path="*" element={<Navigate to="" replace />} />

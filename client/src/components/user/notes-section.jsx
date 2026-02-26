@@ -245,7 +245,12 @@ export function NotesSection({ refreshKey }) {
                                                             <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 flex items-center gap-3 mb-4">
                                                                 <FileText className="w-8 h-8 text-blue-500" />
                                                                 <div className="overflow-hidden">
-                                                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">{note.fileName}</p>
+                                                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">
+                                                                        {note.fileName}
+                                                                    </p>
+                                                                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                                                        {note.fileType === "application/pdf" ? "PDF Document" : "Attachment"}
+                                                                    </p>
                                                                 </div>
                                                             </div>
                                                         )
@@ -272,13 +277,24 @@ export function NotesSection({ refreshKey }) {
                                                 {/* Actions Footer */}
                                                 <div className="flex items-center gap-2 mt-2">
                                                     {note.fileData ? (
-                                                        <button
-                                                            onClick={() => handleDownload(note)}
-                                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-900 dark:bg-slate-800 border border-slate-900 dark:border-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-all shadow-sm"
-                                                        >
-                                                            <Download className="w-4 h-4" />
-                                                            Download
-                                                        </button>
+                                                        <>
+                                                            {note.fileType === "application/pdf" && (
+                                                                <button
+                                                                    onClick={() => setSelectedNote(note)}
+                                                                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                                                                >
+                                                                    <Eye className="w-4 h-4" />
+                                                                    Open PDF
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                onClick={() => handleDownload(note)}
+                                                                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-900 dark:bg-slate-800 border border-slate-900 dark:border-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-all shadow-sm"
+                                                            >
+                                                                <Download className="w-4 h-4" />
+                                                                Download
+                                                            </button>
+                                                        </>
                                                     ) : (
                                                         <button
                                                             onClick={() => { setSelectedNote(note); setShowCodeModal(true); }}
@@ -322,11 +338,11 @@ export function NotesSection({ refreshKey }) {
                             initial={{ opacity: 0, scale: 0.95, y: 10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            className="relative w-full max-w-4xl max-h-[85vh] bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col"
+                            className="relative w-full max-w-7xl h-full bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col"
                         >
-                            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+                            <div className="sm:flex space-y-2 sm:space-y-0 sm:items-center justify-between p-6 border-b border-slate-100">
                                 <div>
-                                    <h2 className="text-xl font-bold text-slate-900">{selectedNote.title}</h2>
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedNote.title}</h2>
                                     <p className="text-sm text-slate-500 mt-1">
                                         {selectedNote.section} • Created on {new Date(selectedNote.createdAt).toLocaleDateString()}
                                     </p>
@@ -334,10 +350,10 @@ export function NotesSection({ refreshKey }) {
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => handleDownload(selectedNote)}
-                                        className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition-all"
+                                        className="flex  items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-lg text-sm font-medium transition-all"
                                     >
                                         <Download className="w-4 h-4" />
-                                        Download {selectedNote.fileName}
+                                        Download 
                                     </button>
                                     <button
                                         onClick={() => setSelectedNote(null)}
@@ -350,12 +366,24 @@ export function NotesSection({ refreshKey }) {
 
                             <div className="flex-1 overflow-auto bg-slate-50 p-6 flex items-center justify-center">
                                 {selectedNote.fileType?.startsWith('image/') ? (
-                                    <img src={selectedNote.fileData} alt={selectedNote.title} className="max-w-full max-h-full object-contain rounded-lg shadow-xl" />
+                                    <img
+                                        src={selectedNote.fileData}
+                                        alt={selectedNote.title}
+                                        className="max-w-full max-h-full object-contain rounded-lg shadow-xl"
+                                    />
+                                ) : selectedNote.fileType === "application/pdf" ? (
+                                    <iframe
+                                        src={selectedNote.fileData}
+                                        title={selectedNote.title}
+                                        className="w-full h-full rounded-lg border border-slate-200"
+                                    />
                                 ) : (
                                     <div className="text-center p-12 bg-white rounded-2xl border border-slate-200">
                                         <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                                         <p className="text-slate-600 font-bold mb-2">Full File Preview Unavailable</p>
-                                        <p className="text-slate-400 text-sm mb-6">This {selectedNote.fileType?.split('/')[1] || 'file'} type cannot be displayed in-browser.</p>
+                                        <p className="text-slate-400 text-sm mb-6">
+                                            This {selectedNote.fileType?.split('/')[1] || 'file'} type cannot be displayed in-browser.
+                                        </p>
                                         <button
                                             onClick={() => handleDownload(selectedNote)}
                                             className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"

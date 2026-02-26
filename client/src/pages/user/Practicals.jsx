@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { PracticalCard } from '../../components/user/practical-card';
 import { useTitle } from '@/hooks/useTitle';
 
-export function Practicals({ practicals, subjects, userBookmarks, onToggleBookmark }) {
+export function Practicals({ practicals, subjects }) {
     useTitle("Practicals");
     const location = useLocation();
     const [selectedSubject, setSelectedSubject] = useState("");
@@ -107,8 +107,6 @@ export function Practicals({ practicals, subjects, userBookmarks, onToggleBookma
                     <PracticalCard
                         key={index}
                         practical={practical}
-                        isBookmarked={userBookmarks?.includes(practical._id)}
-                        onToggleBookmark={onToggleBookmark}
                     />
                 ))}
             </div>

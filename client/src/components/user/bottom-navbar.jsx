@@ -1,13 +1,13 @@
 
 import React from 'react';
-import { Home, FileText, BookOpen, FlaskConical, User } from 'lucide-react';
+import { Home, FileText, FlaskConical, User, Users } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 
 const navItems = [
     { id: "home", label: "Home", icon: Home },
     { id: "notes", label: "Notes", icon: FileText },
     { id: "practicals", label: "Practicals", icon: FlaskConical },
-    { id: "pyqs", label: "PYQs", icon: BookOpen },
+    { id: "community", label: "Community", icon: Users },
     { id: "profile", label: "Profile", icon: User },
 ];
 

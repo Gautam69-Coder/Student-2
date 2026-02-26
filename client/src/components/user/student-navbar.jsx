@@ -307,6 +307,19 @@ export function StudentNavbar({
                                 </Link>
                             ))}
 
+                            {isAdmin && (
+                                <Link
+                                    to="/admin"
+                                    className={`hidden lg:flex p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 transition-all ${isActive("/dashboard/profile")
+                                        ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
+                                        : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+                                        }`}
+                                >
+                                    <Users className="w-5 h-5" />
+                                </Link>
+                            )}
+
+
                             <div className="h-px bg-slate-100 dark:bg-slate-800 my-2" />
 
                             <button

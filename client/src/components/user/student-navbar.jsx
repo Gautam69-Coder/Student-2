@@ -29,6 +29,7 @@ const navItems = [
     { id: "notes", label: "Notes", icon: FileText, path: "/dashboard/notes" },
     { id: "practicals", label: "Practicals", icon: FlaskConical, path: "/dashboard/practicals" },
     { id: "community", label: "Community", icon: Users, path: "/dashboard/community" },
+
 ]
 
 const moreItems = [
@@ -305,22 +306,14 @@ export function StudentNavbar({
                                     <item.icon className="w-5 h-5" />
                                     <span className="font-semibold">{item.label}</span>
                                 </Link>
-                            ))}
 
-                            {isAdmin && (
-                                <Link
-                                    to="/admin"
-                                    className={`hidden lg:flex p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 transition-all ${isActive("/dashboard/profile")
-                                        ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
-                                        : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
-                                        }`}
-                                >
-                                    <Users className="w-5 h-5" />
-                                </Link>
-                            )}
+                            ))}
 
 
                             <div className="h-px bg-slate-100 dark:bg-slate-800 my-2" />
+
+
+
 
                             <button
                                 onClick={() => {
@@ -332,6 +325,20 @@ export function StudentNavbar({
                                 <Upload className="w-5 h-5" />
                                 <span className="font-semibold">Share Notes</span>
                             </button>
+
+
+                            <button
+                                onClick={() => {
+                                    navigate("/admin");
+                                    setMobileMenuOpen(false);
+                                }}
+                                className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            >
+                                <Users className="w-5 h-5" />
+                                <span className="font-semibold">Admin</span>
+                            </button>
+
+
 
                             <button
                                 onClick={() => {

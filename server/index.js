@@ -27,7 +27,7 @@ const onlineUsers = new Set();
 const userMap = new Map(); // socket.id -> { userId, username }
 
 io.on('connection', (socket) => {
-    console.log('🔌 New connection attempt:', socket.id);
+    // console.log('🔌 New connection attempt:', socket.id);
 
     socket.on('user_online', async (userData) => {
         if (userData && userData.id) {
@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
             onlineUsers.add(userId);
             userMap.set(socket.id, { ...userData, id: userId });
 
-            console.log(`👤 User Registered: ${userData.username} [ID: ${userId}]`);
+            // console.log(`👤 User Registered: ${userData.username} [ID: ${userId}]`);
 
             try {
                 // Increment visit count in database
@@ -95,15 +95,15 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         const userData = userMap.get(socket.id);
         if (userData) {
-            console.log(`👋 Socket Disconnected: ${userData.username} (${socket.id})`);
+            // console.log(`👋 Socket Disconnected: ${userData.username} (${socket.id})`);
             userMap.delete(socket.id);
 
             // Check if user has other tabs open
             const stillOnline = Array.from(userMap.values()).some(u => String(u.id) === String(userData.id));
             if (!stillOnline) {
                 onlineUsers.delete(String(userData.id));
-                console.log(`📉 User logged out completely: ${userData.username}`);
-                console.log(`📊 Total Unique Online: ${onlineUsers.size}`);
+                // console.log(`📉 User logged out completely: ${userData.username}`);
+                // console.log(`📊 Total Unique Online: ${onlineUsers.size}`);
                 io.emit('online_users_update', Array.from(onlineUsers));
             }
         } else {

@@ -209,14 +209,14 @@ export function StudentNavbar({
                                 </button>
                             )}
 
-                            <button
-                                onClick={() => setUploadModalOpen(true)}
-                                className="hidden md:flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:opacity-90 active:scale-95 transition-all"
-                            >
-                                <Upload className="w-4 h-4" />
-                                Share
-                            </button>
                         </div>
+                        <button
+                            onClick={() => setUploadModalOpen(true)}
+                            className="hidden md:flex items-center gap-2 bg-slate-900 dark:bg-white  text-white dark:text-slate-900 px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:opacity-90 active:scale-95 transition-all"
+                        >
+                            <Upload className="w-4 h-4" />
+                            Share
+                        </button>
 
                         <ThemeToggle />
 
@@ -259,6 +259,7 @@ export function StudentNavbar({
                                 <Users className="w-5 h-5" />
                             </Link>
                         )}
+
 
                         {/* Mobile Menu Toggle */}
                         <button

@@ -41,7 +41,7 @@ router.post('/', auth, async (req, res) => {
             }
         }
 
-        
+
 
         const newNote = new UserNote({
             user: req.user.id,
@@ -57,6 +57,7 @@ router.post('/', auth, async (req, res) => {
         res.json(note);
     } catch (err) {
         res.status(500).send('Server Error');
+        console.log(err)
     }
 });
 

@@ -41,6 +41,8 @@ router.post('/', auth, async (req, res) => {
             }
         }
 
+        
+
         const newNote = new UserNote({
             user: req.user.id,
             title,

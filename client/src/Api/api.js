@@ -4,9 +4,9 @@ import axios from 'axios';
 //     ? 'http://localhost:5001/api'
 //     : 'https://student-2-3ow8.onrender.com/api';
 
-const API_URL = window.location.hostname === 'localhost'
-    ? 'http://localhost:5001/api'
-    : 'https://student-2-temprory.onrender.com/api';
+// const API_URL = window.location.hostname === 'localhost'
+//     ? 'http://localhost:5001/api'
+//     : 'https://student-2-temprory.onrender.com/api';
 
 const api = axios.create({
     baseURL: API_URL,

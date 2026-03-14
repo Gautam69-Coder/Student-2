@@ -35,7 +35,6 @@ export function ManageUsers({ users, setUsers, subjects }) {
         ? users
         : users.filter(user => user.role === filterRole)
 
-    console.log("Filtered Users:", filteredUsers)
 
     // Pagination Logic
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -47,7 +46,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-
+    
     const formatCount = (num) => {
         if (!num) return 0;
         if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';

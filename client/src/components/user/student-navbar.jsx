@@ -73,7 +73,6 @@ export function StudentNavbar({
         // Check if user is authenticated on component mount
         getMe()
             .then((response) => {
-                console.log("User authenticated:", response.data);
                 setIsAdmin(response.data.role === "admin" || response.data.role === "superadmin");
             })
             .catch((error) => {

@@ -68,7 +68,6 @@ export function StudentNavbar({
         }
         return location.pathname.startsWith(path);
     };
-
     useEffect(() => {
         // Check if user is authenticated on component mount
         getMe()

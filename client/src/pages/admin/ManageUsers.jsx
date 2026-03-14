@@ -35,6 +35,8 @@ export function ManageUsers({ users, setUsers, subjects }) {
         ? users
         : users.filter(user => user.role === filterRole)
 
+    console.log("Filtered Users:", filteredUsers)
+
     // Pagination Logic
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -92,7 +94,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                     </div>
                     <select
                         value={filterRole}
-                        onChange={(e) => { setFilterRole(e.target.value)}}
+                        onChange={(e) => { setFilterRole(e.target.value) }}
                         className="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 cursor-pointer text-slate-900 dark:text-white"
                     >
                         <option value="all">All Roles</option>
@@ -110,7 +112,8 @@ export function ManageUsers({ users, setUsers, subjects }) {
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</th>
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Role</th>
                             <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Online Visits</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 ">Date Visit</th>
+                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 ">Current Visit</th>
+                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 ">Last Visit</th>
                             <th className="text-right sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Actions</th>
                         </tr>
                     </thead>
@@ -172,12 +175,26 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                         <div className="flex items-center gap-2">
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                                                    {user.lastVisit ? new Date(user.lastVisit).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never'}
-                                                    {/* {user.lastVisit} */}
+                                                    {user.currentVisit ? new Date(user.currentVisit).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never'}
+                                                    {/* {user.currentVisit} */}
                                                 </span>
                                                 <span className="text-[10px] text-slate-400 flex items-center gap-1">
                                                     <Clock className="w-3 h-3" />
-                                                    {user.time || 'N/A'}
+                                                    {user.currentVisitTime || 'N/A'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="sm:px-6 px-2 py-2 sm:py-4 ">
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                                                    {user.lastVisit ? new Date(user.lastVisit).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never'}
+                                                    {/* {user.currentVisit} */}
+                                                </span>
+                                                <span className="text-[10px] text-slate-400 flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    {user.lastVisitTime || 'N/A'}
                                                 </span>
                                             </div>
                                         </div>

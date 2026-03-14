@@ -43,8 +43,8 @@ io.on('connection', (socket) => {
                     userId,
                     {
                         $inc: { visitCount: 1 },
-                        lastVisit: new Date(),
-                        time: new Date().toLocaleTimeString('en-US', {
+                        currentVisit: new Date(),
+                        currentVisitTime: new Date().toLocaleTimeString('en-US', {
                             hour: 'numeric',
                             minute: 'numeric',
                             hour12: true,
@@ -54,14 +54,15 @@ io.on('connection', (socket) => {
                     { new: true }
                 );
 
-                // console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.visitCount}`);
-                // console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.lastVisit}`);
+                console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.lastVisitTime}`);
+                // console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.currentVisitTime}`);
 
                 // Broadcast update so admin table sees new visit count
                 io.emit('user_stats_update', {
                     userId: userId,
                     visitCount: updatedUser?.visitCount,
-                    lastVisit : updatedUser?.lastVisit,
+                    currentVisit: updatedUser?.currentVisit,
+                    currentVisitTime: updatedUser?.currentVisitTime
                 });
             } catch (err) {
                 console.error('❌ Error updating visit count:', err.message);
@@ -76,7 +77,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('user_logout',async () => {
+    socket.on('user_logout', async () => {
         const userData = userMap.get(socket.id);
         if (userData) {
             console.log(`📤 User Logged Out: ${userData.username}`);
@@ -92,18 +93,41 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         const userData = userMap.get(socket.id);
         if (userData) {
             // console.log(`👋 Socket Disconnected: ${userData.username} (${socket.id})`);
             userMap.delete(socket.id);
+
+            const userId = String(userData.id);
+
+
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                {
+                    $inc: { visitCount: 1 },
+                    lastVisit: new Date(),
+                    lastVisitTime: new Date().toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                        timeZone: 'Asia/Kolkata',
+                    })
+                },
+                { new: true }
+            );
+
+            console.log(`📈 Disconnect ${userData.username}: ${updatedUser?.lastVisitTime}`);
+
+
+            updatedUser.save();
 
             // Check if user has other tabs open
             const stillOnline = Array.from(userMap.values()).some(u => String(u.id) === String(userData.id));
             if (!stillOnline) {
                 onlineUsers.delete(String(userData.id));
                 // console.log(`📉 User logged out completely: ${userData.username}`);
-                // console.log(`📊 Total Unique Online: ${onlineUsers.size}`);
+                console.log(`📊 Total Unique Online: ${onlineUsers.size}`);
                 io.emit('online_users_update', Array.from(onlineUsers));
             }
         } else {

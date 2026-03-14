@@ -22,10 +22,13 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         default: 1
     },
-    lastVisit: {
+    currentVisit: {
         type: Date
     },
-    time: {
+    currentVisitTime: {
+        type: String
+    },
+    lastVisitTime:{
         type: String
     },
     bookmarks: [

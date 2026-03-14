@@ -70,9 +70,11 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
         if (!socket) return;
 
         socket.on('user_stats_update', (data) => {
+            // console.log('📊 Received user_stats_update:', data);
             setUsers(currentUsers => currentUsers.map(user =>
                 user._id === data.userId ? { ...user, visitCount: data.visitCount } : user
             ));
+            // console.log('📊 Updated users with new visit count:', data.visitCount);
         });
 
         return () => socket.off('user_stats_update');

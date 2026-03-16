@@ -164,6 +164,10 @@ app.use('/api/notifications', require('./routes/notification'));
 app.use('/api/community', require('./routes/community'));
 // app.use('/api/email', require('./routes/email'));
 
+
+// Track user activity
+app.use('/api/home', require('./routes/activitytrack'));
+
 app.get('/', (req, res) => {
     res.send('API is running with Socket.io...');
 });

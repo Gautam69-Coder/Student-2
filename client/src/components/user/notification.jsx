@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell } from "lucide-react";
 import { fetchNotifications } from '@/Api/api';
@@ -6,7 +6,7 @@ import { fetchNotifications } from '@/Api/api';
 const NotificationPanel = () => {
     const [notifications, setNotifications] = useState([]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const fetchNotificationsData = async () => {
             try {
                 const response = await fetchNotifications();

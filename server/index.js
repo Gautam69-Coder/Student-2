@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
                     { new: true }
                 );
 
-                console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.lastVisitTime}`);
+                // console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.lastVisitTime}`);
                 // console.log(`📈 Visit count updated for ${userData.username}: ${updatedUser?.currentVisitTime}`);
 
                 // Broadcast update so admin table sees new visit count
@@ -166,7 +166,8 @@ app.use('/api/community', require('./routes/community'));
 
 
 // Track user activity
-app.use('/api/home', require('./routes/activitytrack'));
+app.use('/api/hometracking', require('./routes/activitytrack'));
+app.use('/api/trackingData', require('./routes/activitytrack'));
 
 app.get('/', (req, res) => {
     res.send('API is running with Socket.io...');

@@ -108,7 +108,6 @@ router.delete('/:id', auth, async (req, res) => {
 router.put('/public/:id', auth, async (req, res) => {
     try {
         let note = await UserNote.findById(req.params.id);
-        console.log(note.id)
         if (!note) return res.status(404).json({ msg: 'Note not found' });
 
         // Check user

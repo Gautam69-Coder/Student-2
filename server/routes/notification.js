@@ -7,9 +7,6 @@ const auth = require('../middleware/auth');
 router.post('/',auth, async (req, res) => {
     try {
         const { title, message } = req.body;
-
-        console.log(title, message)
-        // console.log(formData.message)
         const date = new Date().toLocaleDateString('en-US', {
             day: 'numeric',
             month: 'short',
@@ -23,7 +20,6 @@ router.post('/',auth, async (req, res) => {
             timeZone: 'Asia/Kolkata',
         });
         
-        console.log(date, time);
 
         const notification = new Notification({
             userId: req.user.id,

@@ -1,28 +1,57 @@
 const express = require("express");
 const router = express.Router();
-// const auth = require('../middleware/auth');
+const auth = require('../middleware/auth');
 const Track = require("../models/ActivityTracker")
+const User = require("../models/User")
 
-router.post('/', async (req, res) => {
-    const { count } = req.body;
+router.post('/', auth, async (req, res) => {
+    try {
+        const { section } = req.body;
+        const userId = req.user.id;
 
-    const incCount = count + 1;
+        const validSections = ['home', 'notes', 'practicals', 'community', 'feedback'];
 
-    const ActivityTracker=new Track({
-        home: [
+        if (!validSections.includes(section)) {
+            return res.status(400).json({ msg: 'Invalid section' });
+        }
+
+        const newEntry = {
+            date: new Date().toLocaleDateString(),
+            currentTime: new Date().toLocaleTimeString()
+        };
+
+        const userName = await User.findById(userId)
+
+        const tracker = await Track.findOneAndUpdate(
+            {},
             {
-                visitCout: incCount.toString(),
-                date: new Date().toLocaleDateString(),
-                currentTime: new Date().toLocaleTimeString()
-            }
-        ],
-   })
+                $inc: { [`${section}.visitCount`]: 1 },
+                $set: { username: userName.username},
+                $push: { [`${section}.history`]: newEntry },
+            },
+            { upsert: true, new: true }
+        );
 
-   ActivityTracker.save();
+        res.json({ msg: 'Visit count updated', tracker });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: "Server Error" });
+    }
+})
 
-   console.log(ActivityTracker);
+router.get('/', async (req, res) => {
+    try {
+        
+        const trackData=await Track.find();
+        console.log(trackData);
 
-   res.json({ msg: 'Visit count updated', ActivityTracker });
+        res.json({ msg: 'Visit count updated', trackData });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: "Server Error" });
+    }
 })
 
 module.exports = router;

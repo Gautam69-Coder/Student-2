@@ -19,8 +19,6 @@ export const ManageNotification = () => {
         setLoading(true);
         setStatus({ type: '', message: '' });
 
-        console.log("Notification Data:", formData);
-
         try {
             await sendNotification(formData);
             setStatus({ type: 'success', message: 'Notification sent successfully!' });

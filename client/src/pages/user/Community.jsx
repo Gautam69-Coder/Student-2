@@ -29,7 +29,6 @@ export function Community() {
             try {
                 const res = await fetchCommunityPosts(1, 30);
                 setPosts(res.data.posts || []);
-                console.log(res.data.posts);
             } catch (err) {
                 setError("Unable to load community right now. Please try again.");
             } finally {
@@ -57,7 +56,6 @@ export function Community() {
             setPosts((prev) => [res.data, ...prev]);
             setContent("");
             setTitle("");
-            console.log(res.data);
         } catch (err) {
             setError(err.response?.data?.msg || "Could not share your post. Try again.");
         } finally {

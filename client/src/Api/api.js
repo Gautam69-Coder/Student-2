@@ -93,13 +93,12 @@ export const toggleBookmark = (id) => api.put(`/auth/bookmark/${id}`);
 export const fetchBookmarks = () => api.get('/auth/bookmarks');
 
 // Community Services
-export const fetchCommunityPosts = (page = 1, limit = 20) =>
-    api.get('/community', { params: { page, limit } });
+export const fetchCommunityPosts = (page = 1, limit = 20) =>api.get('/community', { params: { page, limit } });
+export const createCommunityPost = (data) =>api.post('/community', data);
+export const toggleCommunityLike = (id) =>api.post(`/community/${id}/like`);
 
-export const createCommunityPost = (data) =>
-    api.post('/community', data);
-
-export const toggleCommunityLike = (id) =>
-    api.post(`/community/${id}/like`);
+// Tracking Api
+export const sendTrackerHome=(section)=>api.post('/hometracking',{section : section})
+export const getTrackerData=()=>api.get('/trackingData')
 
 export default api;

@@ -1,15 +1,30 @@
 
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { Sparkles, ArrowUpRight } from 'lucide-react';
 import { SubjectCard } from '../../components/user/subject-card';
 import { PracticalCard } from '../../components/user/practical-card';
 import { Link, useNavigate } from 'react-router-dom';
 import { PracticalCardSkeleton } from '@/components/common/skeleton';
 import { useTitle } from '@/hooks/useTitle';
+import { sendTrackerHome } from "@/Api/api"
+
+
 
 export function Home({ userName, subjects, practicals, subjectPracticals, loadingPracticals, stats = {} }) {
     useTitle("Home");
     const navigate = useNavigate();
+
+
+    const trackHome = async () => {
+        let section="home";
+        const track = await sendTrackerHome(section);
+        // console.log(track.data);
+    }
+
+    useEffect(() => {
+        trackHome();
+    }, [])
+
 
     const handleSubjectClick = useCallback((subject) => {
         navigate('/dashboard/practicals', { state: { selectedSubject: subject.name || subject } });
@@ -53,19 +68,19 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                         <div className='space-y-2 text-green-500 dark:text-green-400 text-sm font-medium '>
                             <div>
                                 {new Date().toLocaleDateString('en-US', {
-                                day: 'numeric',
-                                month: 'short',
-                                year: 'numeric',
-                                timeZone: 'Asia/Kolkata',
-                            })}
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric',
+                                    timeZone: 'Asia/Kolkata',
+                                })}
                             </div>
                             <div>
                                 {new Date().toLocaleTimeString('en-US', {
-                                hour: 'numeric',
-                                minute: 'numeric',
-                                hour12: true,
-                                timeZone: 'Asia/Kolkata',
-                            })}
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    hour12: true,
+                                    timeZone: 'Asia/Kolkata',
+                                })}
                             </div>
                         </div>
                     </div>
@@ -198,7 +213,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                     </Link>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                        {loadingPracticals ? (
+                    {loadingPracticals ? (
                         <>
                             <PracticalCardSkeleton />
                             <PracticalCardSkeleton />

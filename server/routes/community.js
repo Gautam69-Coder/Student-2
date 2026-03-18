@@ -44,7 +44,6 @@ router.post('/', auth, async (req, res) => {
             return res.status(400).json({ msg: 'Content is required' });
         }
 
-        console.log(req.body);
 
         const post = new CommunityPost({
             userId: req.user.id,

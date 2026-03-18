@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, use } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { sendTrackerHome } from "../../Api/api"
 import {
     Home,
     FileText,
@@ -53,6 +54,10 @@ export function StudentNavbar({
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [moreMenuOpen, setMoreMenuOpen] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    
+    //useState for tacking navigation user
+    const [track,setTrack]=useState(null); 
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -61,6 +66,20 @@ export function StudentNavbar({
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+
+    const trackHome = async (section) => {
+        const track = await sendTrackerHome(section);
+    }
+
+    useEffect(() => {
+        let sections = track?.split("/").pop();
+        if (sections == "dashboard" || sections == null){
+            sections="home";
+        }
+        trackHome(sections);
+    }, [track])
+
 
     const isActive = (path) => {
         if (path === "/dashboard") {
@@ -109,6 +128,7 @@ export function StudentNavbar({
                                     ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md"
                                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                                     }`}
+                                onClick={()=>{setTrack(item.path)}}
                             >
                                 <item.icon className="w-4 h-4" />
                                 {item.label}

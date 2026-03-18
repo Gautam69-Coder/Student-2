@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 
 
 const TrackVisitSchema = new mongoose.Schema({
-    visitCout: {
-        type: String,
-        required: true,
-        default:'0'
-    },
     date: {
         type: String,
         required: true,
@@ -21,36 +16,66 @@ const TrackVisitSchema = new mongoose.Schema({
 
 const ActivityTrackerSchema = new mongoose.Schema(
     {
-        home: [
-            {
-                type: TrackVisitSchema,
-                required: true
-            }
-        ],
-        notes: [
-            {
-                type: TrackVisitSchema,
-                required: true
-            }
-        ],
-        practicals: [
-            {
-                type: TrackVisitSchema,
-                required: true
-            }
-        ],
-        community: [
-            {
-                type: TrackVisitSchema,
-                required: true
-            }
-        ],
-        feedback: [
-            {
-                type: TrackVisitSchema,
-                required: true
-            }
-        ]
+        username: {
+            type: String,
+            require: true,
+        },
+        home: {
+            visitCount: {
+                type: Number,
+                default: '1'
+            },
+            history: [
+                {
+                    type: TrackVisitSchema,
+                }
+            ],
+        },
+        notes: {
+            visitCount: {
+                type: Number,
+                default: '1'
+            },
+            history: [
+                {
+                    type: TrackVisitSchema,
+                }
+            ],
+        },
+
+        practicals: {
+            visitCount: {
+                type: Number,
+                default: '1'
+            },
+            history: [
+                {
+                    type: TrackVisitSchema,
+                }
+            ],
+        },
+        community: {
+            visitCount: {
+                type: Number,
+                default: '1'
+            },
+            history: [
+                {
+                    type: TrackVisitSchema,
+                }
+            ],
+        },
+        feedback: {
+            visitCount: {
+                type: Number,
+                default: 1,
+            },
+            history: [
+                {
+                    type: TrackVisitSchema,
+                }
+            ],
+        }
     }
 )
 

@@ -1,9 +1,10 @@
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Users, Activity, HardDrive, FileText, Search, Trash, Clock } from "lucide-react"
 import { StatsCard } from "@/components/admin/stats-card"
 import { updateUserRole, deleteUser } from "@/Api/api"
+import { getTrackerData } from "../../Api/api"
 import { useSocket } from "@/context/SocketContext"
 import { useTitle } from "@/hooks/useTitle"
 
@@ -31,6 +32,15 @@ export function ManageUsers({ users, setUsers, subjects }) {
         }
     }
 
+    useEffect(() => {
+        getTrackerData().then(res => {
+            console.log(res);
+        }).catch(err => {
+            console.error(err);
+        });
+    }, [])
+
+
     const filteredUsers = filterRole === "all"
         ? users
         : users.filter(user => user.role === filterRole)
@@ -46,7 +56,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-    
+
     const formatCount = (num) => {
         if (!num) return 0;
         if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';

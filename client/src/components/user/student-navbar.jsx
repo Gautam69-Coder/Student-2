@@ -54,9 +54,9 @@ export function StudentNavbar({
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [moreMenuOpen, setMoreMenuOpen] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
-    
+
     //useState for tacking navigation user
-    const [track,setTrack]=useState(null); 
+    const [track, setTrack] = useState(null);
 
 
     useEffect(() => {
@@ -73,11 +73,14 @@ export function StudentNavbar({
     }
 
     useEffect(() => {
-        let sections = track?.split("/").pop();
-        if (sections == "dashboard" || sections == null){
-            sections="home";
+        if (track !== null) {
+            let sections = track?.split("/").pop();
+            sections=sections.replace("-","")
+            if (sections == "dashboard") {
+                sections = "home";
+            }
+            trackHome(sections);
         }
-        trackHome(sections);
     }, [track])
 
 
@@ -128,7 +131,9 @@ export function StudentNavbar({
                                     ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md"
                                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                                     }`}
-                                onClick={()=>{setTrack(item.path)}}
+                                onClick={() => {
+                                    setTrack(item.path)
+                                }}
                             >
                                 <item.icon className="w-4 h-4" />
                                 {item.label}
@@ -138,7 +143,10 @@ export function StudentNavbar({
                         {/* More Menu Dropdown */}
                         <div className="relative">
                             <button
-                                onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+                                onClick={() => {
+                                    setMoreMenuOpen(!moreMenuOpen)
+                                }
+                                }
                                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 ${moreMenuOpen || moreItems.some(item => isActive(item.path))
                                     ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
                                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -164,7 +172,10 @@ export function StudentNavbar({
                                                 <Link
                                                     key={item.id}
                                                     to={item.path}
-                                                    onClick={() => setMoreMenuOpen(false)}
+                                                    onClick={() => {
+                                                        setMoreMenuOpen(false)
+                                                        setTrack(item.path)
+                                                    }}
                                                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive(item.path)
                                                         ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
                                                         : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
@@ -373,6 +384,6 @@ export function StudentNavbar({
                     </motion.div>
                 )}
             </AnimatePresence>
-        </nav>
+        </nav >
     )
 }

@@ -23,59 +23,70 @@ const ActivityTrackerSchema = new mongoose.Schema(
         home: {
             visitCount: {
                 type: Number,
-                default: '1'
+                default: '0'
             },
-            history: [
-                {
-                    type: TrackVisitSchema,
-                }
-            ],
+            // history: [
+            //     {
+            //         type: TrackVisitSchema,
+            //     }
+            // ],
         },
         notes: {
             visitCount: {
                 type: Number,
-                default: '1'
+                default: '0'
             },
-            history: [
-                {
-                    type: TrackVisitSchema,
-                }
-            ],
+            // history: [
+            //     {
+            //         type: TrackVisitSchema,
+            //     }
+            // ],
         },
 
         practicals: {
             visitCount: {
                 type: Number,
-                default: '1'
+                default: '0'
             },
-            history: [
-                {
-                    type: TrackVisitSchema,
-                }
-            ],
+            // history: [
+            //     {
+            //         type: TrackVisitSchema,
+            //     }
+            // ],
         },
         community: {
             visitCount: {
                 type: Number,
-                default: '1'
+                default: '0'
             },
-            history: [
-                {
-                    type: TrackVisitSchema,
-                }
-            ],
+            // history: [
+            //     {
+            //         type: TrackVisitSchema,
+            //     }
+            // ],
         },
         feedback: {
             visitCount: {
                 type: Number,
-                default: 1,
+                default: 0,
             },
-            history: [
-                {
-                    type: TrackVisitSchema,
-                }
-            ],
-        }
+            // history: [
+            //     {
+            //         type: TrackVisitSchema,
+            //     }
+            // ],
+        },
+        aboutcontact: {
+            visitCount: {
+                type: Number,
+                default: 0,
+            },
+            // history: [
+            //     {
+            //         type: TrackVisitSchema,
+            //     }
+            // ],
+        },
     }
 )
 

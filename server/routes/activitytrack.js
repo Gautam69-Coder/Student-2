@@ -8,8 +8,9 @@ router.post('/', auth, async (req, res) => {
     try {
         const { section } = req.body;
         const userId = req.user.id;
+        console.log(section);
 
-        const validSections = ['home', 'notes', 'practicals', 'community', 'feedback'];
+        const validSections = ['home', 'notes', 'practicals', 'community', 'feedback','aboutcontact'];
 
         if (!validSections.includes(section)) {
             return res.status(400).json({ msg: 'Invalid section' });
@@ -23,11 +24,11 @@ router.post('/', auth, async (req, res) => {
         const userName = await User.findById(userId)
 
         const tracker = await Track.findOneAndUpdate(
-            {},
+            {_id : userId},
             {
                 $inc: { [`${section}.visitCount`]: 1 },
-                $set: { username: userName.username},
-                $push: { [`${section}.history`]: newEntry },
+                $setOnInsert: { username: userName.username}, // this will work only one time 
+                // $push: { [`${section}.history`]: newEntry },
             },
             { upsert: true, new: true }
         );

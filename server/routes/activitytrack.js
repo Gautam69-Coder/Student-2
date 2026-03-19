@@ -13,7 +13,7 @@ router.post('/', auth, async (req, res) => {
         const validSections = ['home', 'notes', 'practicals', 'community', 'feedback','aboutcontact'];
 
         if (!validSections.includes(section)) {
-            return res.status(400).json({ msg: 'Invalid section' });
+            return res.status(400).json({ msg: 'Invalid section' })
         }
 
         const newEntry = {

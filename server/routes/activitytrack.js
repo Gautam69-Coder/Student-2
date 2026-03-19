@@ -21,6 +21,8 @@ router.post('/', auth, async (req, res) => {
             currentTime: new Date().toLocaleTimeString()
         };
 
+        
+
         const userName = await User.findById(userId)
 
         const tracker = await Track.findOneAndUpdate(

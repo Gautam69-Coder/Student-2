@@ -5,13 +5,13 @@ const SocketContext = createContext();
 
 export const useSocket = () => useContext(SocketContext);
 
-const SOCKET_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? `http://${window.location.hostname}:5001`
-    : 'https://student-2-3ow8.onrender.com';
-
 // const SOCKET_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
 //     ? `http://${window.location.hostname}:5001`
-//     : 'https://student-2-temprory.onrender.com';
+//     : 'https://student-2-3ow8.onrender.com';
+
+const SOCKET_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? `http://${window.location.hostname}:5001`
+    : 'https://student-2-temprory.onrender.com';
 
 export const SocketProvider = ({ children, user }) => {
     const socketRef = useRef(null);

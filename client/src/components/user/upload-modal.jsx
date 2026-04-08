@@ -1,190 +1,104 @@
 
-import React, { useState, useEffect } from "react"
+import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Upload, FileText, X, Check, Code, AlertCircle, Plus, ChevronDown, Layout, File, Image as ImageIcon } from "lucide-react"
-import { PDFDocument } from "pdf-lib"
-import { createNote, fetchSections } from "@/Api/api"
+import { Upload, FileText, X, Check, Code, AlertCircle, Plus, ChevronDown, Layout, File, Image as ImageIcon, Section } from "lucide-react"
+import { useState, useEffect } from "react"
+import { createNoteFile } from "../../Api/api"
+import { createNoteText } from "../../Api/api"
+import { customMessage } from "../../Utils/customMessage.jsx"
+import { fetchNotes } from "../../Api/api"
+import { DotLoader } from "../../Utils/loaders.jsx"
 
 export function UploadModal({ open, onOpenChange, onNoteCreated }) {
-    const [title, setTitle] = useState("")
-    const [content, setContent] = useState("")
-    const [section, setSection] = useState("General")
-    const [newSection, setNewSection] = useState("")
-    const [isAddingNew, setIsAddingNew] = useState(false)
-    const [sections, setSections] = useState(["General"])
-    const [uploading, setUploading] = useState(false)
-    const [uploaded, setUploaded] = useState(false)
-    const [error, setError] = useState("")
-    const [uploadType, setUploadType] = useState("text") // 'text' or 'file'
-    const [selectedFile, setSelectedFile] = useState(null)
-    const [fileBase64, setFileBase64] = useState("")
-    const [isDragOver, setIsDragOver] = useState(false)
 
-    useEffect(() => {
-        if (open) {
-            loadSections()
-        }
-    }, [open])
+    const [fileType, setfileType] = useState("text");
+    const [newSection, setNewSection] = useState(true);
+    const [noteData, setNoteData] = useState({
+        title: "",
+        section: "General",
+        code: ""
+    })
+    const [fileUpload, setFileUpload] = useState(null);
+    const [allSections, setallSections] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const handleChanged = (e) => {
+        setNoteData({ ...noteData, [e.target.name]: e.target.value })
+    }
 
     const loadSections = async () => {
         try {
-            const res = await fetchSections()
-            const sectionNames = res.data.map(s => s.name)
-            if (!sectionNames.includes("General")) {
-                sectionNames.unshift("General")
-            }
-            setSections(sectionNames)
+            const res = await fetchNotes();
+            const sections = res.data.map(item => item.section);
+            setallSections([...new Set(sections)]);
         } catch (err) {
-            console.error("Error loading sections:", err)
+            console.error("Failed to load sections", err);
         }
     }
 
-    const processFiles = async (files) => {
-        if (!files || files.length === 0) return
+    // Only fetch sections when the modal actually opens
+    useEffect(() => {
+        if (open) loadSections();
+    }, [open]);
 
-        const maxSize = 50 * 1024 * 1024
-        const totalSize = Array.from(files).reduce((sum, f) => sum + f.size, 0)
-        if (totalSize > maxSize) {
-            setError("Total file size should be less than 50MB")
-            return
-        }
+    const handleFileUpload = (e) => {
+        setFileUpload(e.target.files[0])
+    }
 
-        setError("")
-
-        // Single file (pdf, image, doc, etc.)
-        if (files.length === 1) {
-            const file = files[0]
-            setSelectedFile(file)
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setFileBase64(reader.result)
-            }
-            reader.readAsDataURL(file)
-            return
-        }
-
-        // Multiple images → generate a single PDF
-        const allImages = Array.from(files).every((f) => f.type.startsWith("image/"))
-        if (!allImages) {
-            setError("Multiple upload is only supported for images. Please select images only.")
-            return
-        }
-
-        try {
-            const pdfDoc = await PDFDocument.create()
-
-            for (const file of files) {
-                const arrayBuffer = await file.arrayBuffer()
-                let embedded
-                if (file.type === "image/png") {
-                    embedded = await pdfDoc.embedPng(arrayBuffer)
-                } else {
-                    embedded = await pdfDoc.embedJpg(arrayBuffer)
+    const handleSubmit = async () => {
+        // Basic validation for text notes and file uploads
+        // For text notes, ensure title, section, and code are provided
+        if (fileType === "text") {
+            if (!noteData.title || !noteData.section || !noteData.code) return customMessage({ content: "All fields are required", type: "error" });
+            try {
+                setLoading(true);
+                const code = await createNoteText(noteData);
+                if (code.data.success) {
+                    customMessage({ content: code.data.msg, type: "success" });
+                    setNoteData({ title: "", section: "General", code: "" });
+                    onOpenChange(false);
+                    onNoteCreated?.(); // Trigger notes refresh in parent
+                    setLoading(false);
                 }
-                const { width, height } = embedded
-                const page = pdfDoc.addPage([width, height])
-                page.drawImage(embedded, { x: 0, y: 0, width, height })
+            } catch (err) {
+                console.error("Note not uploaded", err);
+                setLoading(false);
             }
+        }
+        // For file uploads, you would handle the file input and send it to the server using createNoteFile
+        else {
+            if (!noteData.title || !noteData.section || !fileUpload) return customMessage({ content: "All fields are required", type: "error" });
+            try {
+                setLoading(true);
+                const formData = new FormData();
+                formData.append("file", fileUpload);
+                formData.append("title", noteData.title);
+                formData.append("section", noteData.section);
 
-            const pdfBytes = await pdfDoc.save()
-            const blob = new Blob([pdfBytes], { type: "application/pdf" })
-            const virtualFile = new File([blob], `${title || "Notes"}-images.pdf`, {
-                type: "application/pdf",
-            })
-            setSelectedFile(virtualFile)
-
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setFileBase64(reader.result)
+                const file = await createNoteFile(formData);
+                if (file.data.success) {
+                    customMessage({ content: file.data.msg, type: "success" });
+                    setNoteData({ title: "", section: "General" });
+                    setFileUpload(null);
+                    onOpenChange(false);
+                    onNoteCreated?.(); // Trigger notes refresh in parent
+                    setLoading(false);
+                }
+            } catch (err) {
+                console.error("File not uploaded", err);
+                setLoading(false);
             }
-            reader.readAsDataURL(virtualFile)
-        } catch (err) {
-            console.error("Error creating PDF from images:", err)
-            setError("Failed to create PDF from images. Please try again.")
         }
     }
 
-    const handleFileChange = (e) => {
-        const files = e.target.files
-        if (!files || files.length === 0) return
-        processFiles(files)
-    }
-
-    const handleDrop = (e) => {
-        e.preventDefault()
-        setIsDragOver(false)
-        const files = e.dataTransfer.files
-        if (!files || files.length === 0) return
-        processFiles(files)
-    }
-
-    const handleDragOver = (e) => {
-        e.preventDefault()
-        setIsDragOver(true)
-    }
-
-    const handleDragLeave = (e) => {
-        e.preventDefault()
-        setIsDragOver(false)
-    }
-
-    const handleUpload = async () => {
-        const finalSection = isAddingNew ? newSection.trim() : section
-
-        if (!title.trim() || !finalSection) {
-            setError("Title and section are required")
-            return
-        }
-
-        if (uploadType === 'text' && !content.trim()) {
-            setError("Content is required")
-            return
-        }
-
-        if (uploadType === 'file' && !selectedFile) {
-            setError("Please select a file")
-            return
-        }
-
-        setError("")
-        setUploading(true)
-        try {
-            const noteData = {
-                title,
-                section: finalSection,
-            }
-
-            if (uploadType === 'text') {
-                noteData.content = content
-            } else {
-                noteData.fileName = selectedFile.name
-                noteData.fileType = selectedFile.type
-                noteData.fileData = fileBase64
-            }
-
-            await createNote(noteData)
-            setUploading(false)
-            setUploaded(true)
-
-            if (onNoteCreated) {
-                onNoteCreated()
-            }
-
-            setTimeout(() => {
-                onOpenChange(false)
-                setUploaded(false)
-                setTitle("")
-                setContent("")
-                setSection("General")
-                setNewSection("")
-                setIsAddingNew(false)
-                setSelectedFile(null)
-                setFileBase64("")
-            }, 1500)
-        } catch (err) {
-            setUploading(false)
-            setError(err.response?.data?.msg || "Failed to upload note. Please try again.")
-            console.error(err)
+    // Handle section creation or selection 
+    const handleSection = () => {
+        if (newSection) {
+            setNewSection(false);
+            setNoteData({ ...noteData, section: '' });
+        } else {
+            setNoteData({ ...noteData, section: noteData.section });
+            setNewSection(true);
         }
     }
 
@@ -216,25 +130,18 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                         </div>
 
                         <div className="space-y-4">
-                            {error && (
-                                <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm border border-red-100 dark:border-red-900/30">
-                                    <AlertCircle className="w-4 h-4" />
-                                    {error}
-                                </div>
-                            )}
-
                             {/* Upload Type Switcher */}
                             <div className="flex p-1 bg-slate-100 dark:bg-slate-950 rounded-xl mb-4">
                                 <button
-                                    onClick={() => setUploadType("text")}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${uploadType === "text" ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${fileType === "text" ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-all" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"} shadow-sm`}
+                                    onClick={() => { setfileType("text") }}
                                 >
                                     <Code className="w-4 h-4" />
                                     Text / Code
                                 </button>
                                 <button
-                                    onClick={() => setUploadType("file")}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${uploadType === "file" ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${fileType === "file" ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-all" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"}`}
+                                    onClick={() => { setfileType("file"); }}
                                 >
                                     <File className="w-4 h-4" />
                                     Upload File
@@ -246,10 +153,11 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Title</label>
                                     <input
                                         type="text"
-                                        value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
                                         placeholder="e.g., Java Collections Framework"
+                                        name="title"
+                                        value={noteData.title}
                                         className="mt-1.5 w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                        onChange={(e) => { handleChanged(e) }}
                                     />
                                 </div>
 
@@ -259,141 +167,104 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                         Section
                                     </label>
                                     <div className="mt-1.5 flex gap-2">
-                                        {isAddingNew ? (
+                                        {newSection ? (
                                             <div className="relative flex-1">
-                                                <input
-                                                    type="text"
-                                                    autoFocus
-                                                    value={newSection}
-                                                    onChange={(e) => setNewSection(e.target.value)}
-                                                    placeholder="Enter new section name"
-                                                    className="w-full h-10 px-3 pr-10 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                                                />
-                                                <button
-                                                    onClick={() => setIsAddingNew(false)}
-                                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md transition-colors"
+                                                <select
+                                                    className="w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm appearance-none transition-all text-slate-900 dark:text-white"
+                                                    name="section"
+                                                    onChange={(e) => { handleChanged(e); console.log(newSection) }}
+                                                    value={noteData.section}
                                                 >
-                                                    <X className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-                                                </button>
+                                                    {allSections.map((item, index) => {
+                                                        return <option key={index} value={item}>{item}</option>
+                                                    })}
+                                                </select>
+                                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
                                             </div>
                                         ) : (
                                             <div className="relative flex-1">
-                                                <select
-                                                    value={section}
-                                                    onChange={(e) => setSection(e.target.value)}
-                                                    className="w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm appearance-none transition-all text-slate-900 dark:text-white"
-                                                >
-                                                    {sections.map(s => (
-                                                        <option key={s} value={s}>{s}</option>
-                                                    ))}
-                                                </select>
-                                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                                                <div>
+                                                    <input
+                                                        className="w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm appearance-none transition-all text-slate-900 dark:text-white"
+                                                        name="section"
+                                                        onChange={(e) => { handleChanged(e); }}
+                                                        value={noteData.section}
+                                                        placeholder="Enter the section"
+
+                                                    />
+                                                </div>
+
+                                                <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500  cursor-pointer"
+                                                    onClick={() => { setNewSection(true) }}
+                                                />
                                             </div>
                                         )}
                                         <button
                                             type="button"
-                                            onClick={() => setIsAddingNew(!isAddingNew)}
-                                            className={`h-10 px-3 rounded-lg border flex items-center justify-center gap-2 text-sm font-medium transition-all ${isAddingNew ? 'bg-slate-900 dark:bg-slate-100 border-slate-900 dark:border-slate-100 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-600'}`}
+                                            className="h-10 px-3 rounded-lg border flex items-center justify-center gap-2 text-sm font-medium transition-all bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-600"
+                                            onClick={() => {
+                                                handleSection();
+                                            }}
                                         >
                                             <Plus className="w-4 h-4" />
-                                            <span className="hidden sm:inline">New</span>
+                                            <span className="hidden sm:inline" >New</span>
                                         </button>
+
                                     </div>
                                 </div>
 
-                                {uploadType === "text" ? (
+
+                                {fileType === "text" && (
                                     <div>
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                                             <Code className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                                             Content / Code
                                         </label>
                                         <textarea
-                                            value={content}
-                                            onChange={(e) => setContent(e.target.value)}
                                             placeholder="Paste your code or text here..."
-                                            className="mt-1.5 w-full px-3 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm min-h-[250px] font-mono transition-all resize-y text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                            className="mt-1.5 w-full px-3 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm min-h-62.5 font-mono transition-all resize-y text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                            name="code"
+                                            value={noteData.code}
+                                            onChange={(e) => { handleChanged(e) }}
                                         />
                                     </div>
-                                ) : (
+                                )}
+                                {fileType === "file" && (
                                     <div>
-                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">File</label>
-                                        <div
-                                            className={`mt-1.5 border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer ${
-                                                selectedFile
-                                                    ? "border-slate-900 dark:border-slate-600 bg-slate-50 dark:bg-slate-900"
-                                                    : isDragOver
-                                                    ? "border-indigo-500 bg-indigo-50/40 dark:border-indigo-400 dark:bg-indigo-900/20"
-                                                    : "border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900"
-                                            }`}
-                                            onDrop={handleDrop}
-                                            onDragOver={handleDragOver}
-                                            onDragLeave={handleDragLeave}
-                                        >
-                                            {selectedFile ? (
-                                                <div className="flex flex-col items-center gap-3">
-                                                    <div className="p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
-                                                        {selectedFile.type.startsWith('image/') ? <ImageIcon className="w-10 h-10 text-slate-900 dark:text-white" /> : <FileText className="w-10 h-10 text-slate-900 dark:text-white" />}
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="font-bold text-slate-900 dark:text-white truncate max-w-[200px]">{selectedFile.name}</p>
-                                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                                                    </div>
-                                                    <button
-                                                        onClick={() => { setSelectedFile(null); setFileBase64(""); }}
-                                                        className="text-xs font-bold text-red-500 hover:text-red-700 dark:hover:text-red-400 underline underline-offset-4"
-                                                    >
-                                                        Remove File
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <label className="cursor-pointer block">
-                                                    <Upload className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
-                                                    <p className="text-sm text-slate-900 dark:text-white font-bold mb-1">
-                                                        Click to upload or drag &amp; drop
-                                                    </p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                                                        PDF, DOCX, PNG, JPG (Max 50MB). Drop multiple images to auto-create a PDF.
-                                                    </p>
-                                                    <input
-                                                        type="file"
-                                                        className="hidden"
-                                                        onChange={handleFileChange}
-                                                        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                                                        multiple
-                                                    />
-                                                </label>
-                                            )}
+                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                                            <ImageIcon className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                            Upload Document
+                                        </label>
+                                        <div className="mt-1.5 flex items-center gap-4">
+                                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 transition-all text-sm text-slate-500 min-h-[250px] dark:text-slate-400">
+                                                <FileText className="w-6 h-6 mb-2" />
+                                                {!fileUpload ? <span>Click to select a file (Only PDF,DOCX, TXT, IMG) are supported</span> : <span>{fileUpload.name}</span>}
+                                                <input type="file" className="hidden"
+                                                    onChange={(e) => {
+                                                        handleFileUpload(e);
+                                                    }} />
+                                            </label>
                                         </div>
                                     </div>
                                 )}
                             </div>
 
                             <button
-                                onClick={handleUpload}
-                                disabled={uploading || uploaded}
-                                className={`w-full h-12 flex items-center justify-center gap-2 font-bold rounded-xl transition-all shadow-sm ${uploading || uploaded
-                                    ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
-                                    : "bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 active:scale-[0.99] shadow-lg shadow-slate-200 dark:shadow-none"
-                                    }`}
+                                className="w-full h-12 flex items-center justify-center gap-2 font-bold rounded-xl transition-all shadow-sm bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 active:scale-[0.99] shadow-lg shadow-slate-200 dark:shadow-none"
+                                onClick={() => {
+                                    handleSubmit();
+                                }}
                             >
-                                {uploaded ? (
-                                    <>
-                                        <Check className="w-4 h-4" /> Shared Successfully
-                                    </>
-                                ) : uploading ? (
-                                    <>
-                                        <motion.div
-                                            animate={{ rotate: 360 }}
-                                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                            className="w-4 h-4 border-2 border-slate-400 border-t-white dark:border-slate-600 dark:border-t-slate-800 rounded-full"
-                                        />
-                                        Sharing...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Upload className="w-4 h-4" /> Save Note
-                                    </>
-                                )}
+                                {
+                                    loading ? (
+                                        <DotLoader size="10px" color={"white"}/>
+                                    ) : (
+                                        <>
+                                            <Upload className="w-4 h-4" />
+                                            {fileType === "text" ? "Save Note" : "Upload Note"}
+                                        </>
+                                    )
+                                }
                             </button>
                         </div>
 
@@ -404,8 +275,9 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                             <X className="w-5 h-5" />
                         </button>
                     </motion.div>
-                </div>
-            )}
-        </AnimatePresence>
+                </div >
+            )
+            }
+        </AnimatePresence >
     )
 }

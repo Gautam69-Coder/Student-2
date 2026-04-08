@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import auth from '../middleware/auth.js';
+import CommunityPost from '../models/CommunityPost.js';
+
 const router = express.Router();
-const CommunityPost = require('../models/CommunityPost');
-const auth = require('../middleware/auth');
 
 // @route   GET api/community
 // @desc    Get recent community posts (paginated)
@@ -38,7 +39,7 @@ router.get('/', auth, async (req, res) => {
 // @access  Private
 router.post('/', auth, async (req, res) => {
     try {
-        const { title, content,username } = req.body;
+        const { title, content, username } = req.body;
 
         if (!content || !content.trim()) {
             return res.status(400).json({ msg: 'Content is required' });
@@ -93,5 +94,5 @@ router.post('/:id/like', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
 

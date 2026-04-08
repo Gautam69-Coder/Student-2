@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, use } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { sendTrackerHome } from "../../Api/api"
 import {
@@ -68,9 +68,9 @@ export function StudentNavbar({
     }, []);
 
 
-    const trackHome = async (section) => {
-        const track = await sendTrackerHome(section);
-    }
+    const trackHome = useCallback(async (section) => {
+        await sendTrackerHome(section);
+    }, [])
 
     useEffect(() => {
         if (track !== null) {
@@ -91,7 +91,7 @@ export function StudentNavbar({
         return location.pathname.startsWith(path);
     };
     useEffect(() => {
-        // Check if user is authenticated on component mount
+        // Fetch role once on mount only
         getMe()
             .then((response) => {
                 setIsAdmin(response.data.role === "admin" || response.data.role === "superadmin");
@@ -99,7 +99,7 @@ export function StudentNavbar({
             .catch((error) => {
                 console.error("Authentication error:", error);
             });
-    }, [navigate]);
+    }, []);
 
 
     return (

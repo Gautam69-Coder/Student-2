@@ -1,18 +1,33 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthSection } from '@/components/common/auth-section';
-import { StudentDashboard } from '@/pages/user/Dashboard';
-import { AdminPanel } from '@/pages/admin/Dashboard';
-import { AIAssistant } from '@/components/common/ai-assistant';
 import { userDetail } from '@/lib/user';
 import { NotFoundPage } from './Utils/Error';
 import { ThemeProvider } from './context/ThemeContext';
 import { useLenis } from '@/hooks/useLenis';
 import { CyberLoader } from '@/components/common/cyber-loader';
 import { SocketProvider } from './context/SocketContext';
-import LandingPage from './pages/LandingPage';
 import { ServerOffline } from '@/components/common/server-offline';
+import { message } from 'antd';
+
+// Lazy-load heavy route components — drastically reduces initial bundle
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const StudentDashboard = lazy(() =>
+    import('@/pages/user/Dashboard').then(m => ({ default: m.StudentDashboard }))
+);
+const AdminPanel = lazy(() =>
+    import('@/pages/admin/Dashboard').then(m => ({ default: m.AdminPanel }))
+);
+const AIAssistant = lazy(() =>
+    import('@/components/common/ai-assistant').then(m => ({ default: m.AIAssistant }))
+);
+
+const PageLoader = () => (
+    <div className="flex items-center justify-center h-screen bg-background">
+        <CyberLoader />
+    </div>
+);
 
 // Helper component for protected routes
 const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
@@ -23,7 +38,6 @@ const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
 };
 
 function AppContent({ onUserUpdate }) {
-    // Initialize Lenis smooth scrolling
     useLenis();
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -61,7 +75,7 @@ function AppContent({ onUserUpdate }) {
                     setIsAuthenticated(true);
                     setUserRole(user.role);
                     setCurrentUser(user.username);
-                    onUserUpdate(user); // Pass full user object to parent
+                    onUserUpdate(user);
                 } else {
                     throw new Error("User not found");
                 }
@@ -80,11 +94,8 @@ function AppContent({ onUserUpdate }) {
         setIsAuthenticated(true);
         setUserRole(role);
         setCurrentUser(name);
-
-        // After auth, get full user details for socket
         const user = await userDetail();
         if (user) onUserUpdate(user);
-
         navigate(role === 'admin' ? '/admin' : '/dashboard');
     };
 
@@ -109,76 +120,78 @@ function AppContent({ onUserUpdate }) {
     }
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen bg-background">
-                <CyberLoader />
-            </div>
-        );
+        return <PageLoader />;
     }
 
     return (
-        <div className="min-h-screen max-w-full sm:max-w-screen  bg-background">
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        isAuthenticated ? (
-                            <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />
-                        ) : (
-                            <LandingPage />
-                        )
-                    }
-                />
+        <div className="min-h-screen max-w-full sm:max-w-screen bg-background">
+            <Suspense fallback={<PageLoader />}>
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            isAuthenticated ? (
+                                <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />
+                            ) : (
+                                <LandingPage />
+                            )
+                        }
+                    />
 
-                <Route
-                    path="/auth"
-                    element={
-                        isAuthenticated ? (
-                            <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />
-                        ) : (
-                            <AuthSection
-                                authState={authViewState}
-                                setAuthState={setAuthViewState}
-                                onAuth={handleAuth}
-                            />
-                        )
-                    }
-                />
+                    <Route
+                        path="/auth"
+                        element={
+                            isAuthenticated ? (
+                                <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />
+                            ) : (
+                                <AuthSection
+                                    authState={authViewState}
+                                    setAuthState={setAuthViewState}
+                                    onAuth={handleAuth}
+                                />
+                            )
+                        }
+                    />
 
-                <Route
-                    path="/dashboard/*"
-                    element={
-                        <ProtectedRoute isAuthenticated={isAuthenticated}>
-                            <StudentDashboard
-                                userName={currentUser || "Student"}
-                                onLogout={handleLogout}
-                                onSwitchToAdmin={() => {
-                                    setUserRole('admin');
-                                    navigate('/admin');
-                                }}
-                            />
-                        </ProtectedRoute>
-                    }
-                />
+                    <Route
+                        path="/dashboard/*"
+                        element={
+                            <ProtectedRoute isAuthenticated={isAuthenticated}>
+                                <StudentDashboard
+                                    userName={currentUser || "Student"}
+                                    onLogout={handleLogout}
+                                    onSwitchToAdmin={() => {
+                                        setUserRole('admin');
+                                        navigate('/admin');
+                                    }}
+                                />
+                            </ProtectedRoute>
+                        }
+                    />
 
-                <Route
-                    path="/admin/*"
-                    element={
-                        <ProtectedRoute isAuthenticated={isAuthenticated}>
-                            <AdminPanel
-                                userName={currentUser || "Admin"}
-                                onLogout={handleLogout}
-                                onSwitchToStudent={() => {
-                                    setUserRole('user');
-                                    navigate('/dashboard');
-                                }}
-                            />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-            {isAuthenticated && <AIAssistant />}
+                    <Route
+                        path="/admin/*"
+                        element={
+                            <ProtectedRoute isAuthenticated={isAuthenticated}>
+                                <AdminPanel
+                                    userName={currentUser || "Admin"}
+                                    onLogout={handleLogout}
+                                    onSwitchToStudent={() => {
+                                        setUserRole('user');
+                                        navigate('/dashboard');
+                                    }}
+                                />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+            </Suspense>
+            {isAuthenticated && (
+                <Suspense fallback={null}>
+                    <AIAssistant />
+                </Suspense>
+            )}
         </div>
     );
 }

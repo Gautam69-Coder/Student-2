@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const PracticalSchema = new mongoose.Schema({
     practicalNumber: { type: String, required: true },
@@ -12,4 +12,4 @@ const PracticalSchema = new mongoose.Schema({
     }]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Practical', PracticalSchema);
+export default mongoose.model('Practical', PracticalSchema);

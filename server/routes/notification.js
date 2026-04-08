@@ -1,10 +1,12 @@
-const express = require('express');
+
+import express from 'express';
+import auth from '../middleware/auth.js';
+import Notification from '../models/Notification.js';
+
 const router = express.Router();
-const Notification = require('../models/Notification');
-const auth = require('../middleware/auth');
 
 
-router.post('/',auth, async (req, res) => {
+router.post('/', auth, async (req, res) => {
     try {
         const { title, message } = req.body;
         const date = new Date().toLocaleDateString('en-US', {
@@ -19,7 +21,7 @@ router.post('/',auth, async (req, res) => {
             hour12: true,
             timeZone: 'Asia/Kolkata',
         });
-        
+
 
         const notification = new Notification({
             userId: req.user.id,
@@ -38,7 +40,7 @@ router.post('/',auth, async (req, res) => {
     }
 });
 
-router.get('/', async(req, res) => {
+router.get('/', async (req, res) => {
     try {
 
         const getNotification = await Notification.find();
@@ -49,4 +51,4 @@ router.get('/', async(req, res) => {
     }
 })
 
-module.exports = router;
+export default router;

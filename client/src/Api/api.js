@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:5001/api'
-    : 'https://student-2-temprory.onrender.com/api'; 
+    : 'https://student-2-temprory.onrender.com/api';
 
 const api = axios.create({
     baseURL: API_URL,
@@ -60,7 +60,10 @@ export const deleteContent = (id) => api.delete(`/content/${id}`);
 // Notes Services
 export const fetchNotes = () => api.get('/notes');
 export const fetchAllNotes = () => api.get('/notes/all');
-export const createNote = (noteData) => api.post('/notes', noteData);
+export const createNoteFile = (noteData) => api.post('/notes/file', noteData, {
+    headers: { "Content-Type": "multipart/form-data" }
+})
+export const createNoteText = (noteData) => api.post('/notes/text', noteData);
 export const updateNote = (id, noteData) => api.put(`/notes/${id}`, noteData);
 export const deleteNote = (id) => api.delete(`/notes/${id}`);
 export const makeNotePublic = (id) => api.put(`/notes/public/${id}`);
@@ -93,12 +96,12 @@ export const toggleBookmark = (id) => api.put(`/auth/bookmark/${id}`);
 export const fetchBookmarks = () => api.get('/auth/bookmarks');
 
 // Community Services
-export const fetchCommunityPosts = (page = 1, limit = 20) =>api.get('/community', { params: { page, limit } });
-export const createCommunityPost = (data) =>api.post('/community', data);
-export const toggleCommunityLike = (id) =>api.post(`/community/${id}/like`);
+export const fetchCommunityPosts = (page = 1, limit = 20) => api.get('/community', { params: { page, limit } });
+export const createCommunityPost = (data) => api.post('/community', data);
+export const toggleCommunityLike = (id) => api.post(`/community/${id}/like`);
 
 // Tracking Api
-export const sendTrackerHome=(section)=>api.post('/hometracking',{section : section})
-export const getTrackerData=()=>api.get('/trackingData')
+export const sendTrackerHome = (section) => api.post('/hometracking', { section: section })
+export const getTrackerData = () => api.get('/trackingData')
 
 export default api;

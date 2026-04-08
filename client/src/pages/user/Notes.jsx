@@ -3,7 +3,7 @@ import React from 'react';
 import { NotesSection } from '@/components/user/notes-section';
 import { useTitle } from '@/hooks/useTitle';
 
-export function Notes({ refreshKey }) {
+export function Notes({ notes, user, loading, onRefresh }) {
     useTitle("Notes");
-    return <NotesSection refreshKey={refreshKey} />;
+    return <NotesSection notes={notes} user={user} loading={loading} onRefresh={onRefresh} />;
 }

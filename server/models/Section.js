@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const SectionSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true }
 });
 
-module.exports = mongoose.model('Section', SectionSchema);
+export default mongoose.model('Section', SectionSchema);

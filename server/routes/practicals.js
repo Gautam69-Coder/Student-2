@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const Practical = require('../models/Practical');
-const auth = require('../middleware/auth');
+import express from 'express';
+import auth from '../middleware/auth.js';
+import Practical from '../models/Practical.js';
 
+const router = express.Router();
 // Get all practicals
 router.get('/', async (req, res) => {
     try {
@@ -59,4 +59,4 @@ router.delete('/:id', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

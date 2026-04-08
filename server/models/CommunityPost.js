@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const CommunityPostSchema = new mongoose.Schema(
     {
@@ -42,5 +42,5 @@ CommunityPostSchema.set('toJSON', {
     virtuals: true,
 });
 
-module.exports = mongoose.model('CommunityPost', CommunityPostSchema);
+export default mongoose.model('CommunityPost', CommunityPostSchema);
 

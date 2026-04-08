@@ -1,10 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const auth = require('../middleware/auth');
+import express from 'express';
+import auth from '../middleware/auth.js';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import User from '../models/User.js';
 
+const router = express.Router();
 // Register
 router.post('/register', async (req, res) => {
     const { username, email, password, role, adminSecret } = req.body;
@@ -230,4 +230,4 @@ router.get('/bookmarks', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

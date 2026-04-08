@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 
 const TrackVisitSchema = new mongoose.Schema({
@@ -90,4 +90,4 @@ const ActivityTrackerSchema = new mongoose.Schema(
     }
 )
 
-module.exports = mongoose.model('ActivityTracker', ActivityTrackerSchema);
+export default mongoose.model('ActivityTracker', ActivityTrackerSchema);

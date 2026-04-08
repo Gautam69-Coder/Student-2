@@ -1,7 +1,8 @@
-const express = require('express');
+
+import express from 'express';
+import auth from '../middleware/auth.js';
+import Section from '../models/Section.js';
 const router = express.Router();
-const Section = require('../models/Section');
-const auth = require('../middleware/auth');
 
 // Get all sections
 router.get('/', async (req, res) => {
@@ -42,4 +43,4 @@ router.delete('/:id', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

@@ -1,8 +1,8 @@
-const express = require("express");
+import express from 'express';
+import auth from '../middleware/auth.js';
+import Track from "../models/ActivityTracker.js"
+import User from "../models/User.js"
 const router = express.Router();
-const auth = require('../middleware/auth');
-const Track = require("../models/ActivityTracker")
-const User = require("../models/User")
 
 router.post('/', auth, async (req, res) => {
     try {
@@ -10,7 +10,7 @@ router.post('/', auth, async (req, res) => {
         const userId = req.user.id;
         console.log(section);
 
-        const validSections = ['home', 'notes', 'practicals', 'community', 'feedback','aboutcontact'];
+        const validSections = ['home', 'notes', 'practicals', 'community', 'feedback', 'aboutcontact'];
 
         if (!validSections.includes(section)) {
             return res.status(400).json({ msg: 'Invalid section' })
@@ -21,15 +21,15 @@ router.post('/', auth, async (req, res) => {
             currentTime: new Date().toLocaleTimeString()
         };
 
-        
+
 
         const userName = await User.findById(userId)
 
         const tracker = await Track.findOneAndUpdate(
-            {_id : userId},
+            { _id: userId },
             {
                 $inc: { [`${section}.visitCount`]: 1 },
-                $setOnInsert: { username: userName.username}, // this will work only one time 
+                $setOnInsert: { username: userName.username }, // this will work only one time 
                 // $push: { [`${section}.history`]: newEntry },
             },
             { upsert: true, new: true }
@@ -45,8 +45,8 @@ router.post('/', auth, async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        
-        const trackData=await Track.find();
+
+        const trackData = await Track.find();
         console.log(trackData);
 
         res.json({ msg: 'Visit count updated', trackData });
@@ -57,4 +57,4 @@ router.get('/', async (req, res) => {
     }
 })
 
-module.exports = router;
+export default router;

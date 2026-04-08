@@ -1,9 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const Feedback = require('../models/Feedback');
-const auth = require('../middleware/auth');
-const User = require('../models/User');
 
+import express from 'express';
+import auth from '../middleware/auth.js';
+import Feedback from '../models/Feedback.js';
+import User from '../models/User.js';
+
+const router = express.Router();
 // @route   POST api/feedback
 // @desc    Submit feedback
 // @access  Private
@@ -67,4 +68,4 @@ router.patch('/:id', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

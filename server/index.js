@@ -1,13 +1,15 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const http = require('http');
-const { Server } = require('socket.io');
-
+import dotenv from 'dotenv';
 dotenv.config();
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import http from 'http';
+import { Server } from 'socket.io';
+import User from './models/User.js';
+
 
 const app = express();
 const server = http.createServer(app);
@@ -19,8 +21,8 @@ const io = new Server(server, {
     }
 });
 
-const User = require('./models/User');
-const { time } = require('console');
+// Socket.io Presence Tracking
+import { time } from 'console';
 
 // Presence Tracking
 const onlineUsers = new Set();
@@ -154,20 +156,31 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.log(err));
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/content', require('./routes/content'));
-app.use('/api/notes', require('./routes/notes'));
-app.use('/api/sections', require('./routes/sections'));
-app.use('/api/practicals', require('./routes/practicals'));
-app.use('/api/feedback', require('./routes/feedback'));
-app.use('/api/notifications', require('./routes/notification'));
-app.use('/api/community', require('./routes/community'));
-// app.use('/api/email', require('./routes/email'));
+import auth from './routes/auth.js';
+import content from './routes/content.js';
+import notes from './routes/notes.js';
+import sections from './routes/sections.js';
+import practicals from './routes/practicals.js';
+import feedback from './routes/feedback.js';
+import notification from './routes/notification.js';
+import community from './routes/community.js';
+// import email from './routes/email.js';
+app.use('/api/auth', auth);
+app.use('/api/content', content);
+app.use('/api/notes', notes);
+app.use('/api/sections', sections);
+app.use('/api/practicals', practicals);
+app.use('/api/feedback',feedback);
+app.use('/api/notifications', notification);
+app.use('/api/community', community);
+// app.use('/api/email', email);
 
 
 // Track user activity
-app.use('/api/hometracking', require('./routes/activitytrack'));
-app.use('/api/trackingData', require('./routes/activitytrack'));
+import activityTrack from './routes/activitytrack.js';
+
+app.use('/api/hometracking', activityTrack);
+app.use('/api/trackingData', activityTrack);
 
 app.get('/', (req, res) => {
     res.send('API is running with Socket.io...');

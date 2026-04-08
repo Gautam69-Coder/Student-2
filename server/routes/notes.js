@@ -1,7 +1,9 @@
-const express = require('express');
+import express from 'express';
+import auth from '../middleware/auth.js';
+import UserNote from '../models/UserNote.js';
 const router = express.Router();
-const UserNote = require('../models/UserNote');
-const auth = require('../middleware/auth');
+import uploadMulter from '../middleware/multer.js';
+import { uploadCloudinary } from '../utils/uploadcloudinary.js';
 
 // Get User Notes (and Global Notes)
 router.get('/', auth, async (req, res) => {
@@ -30,31 +32,46 @@ router.get('/all', auth, async (req, res) => {
 });
 
 // Create Note
-router.post('/', auth, async (req, res) => {
-    const { title, content, section, isGlobal, fileName, fileType, fileData } = req.body;
+router.post('/file', auth, uploadMulter.single("file"), async (req, res) => {
+    try {
+        const { title, section } = req.body
+        const filePath = req.file.path;
+        const file = req.file
+
+        //Upload file to cloudinary 
+        const uploadFile = await uploadCloudinary(filePath)
+        console.log(uploadFile);
+        const newNote = new UserNote({
+            user: req.user.id,
+            title,
+            section: section || 'General',
+            fileName: file.originalname,
+            fileType: file.mimetype,
+            fileData: uploadFile.secure_url
+        });
+        const note = await newNote.save();
+
+        res.json({ noteData: note, msg: "File Uploaded Successfully", success: true });
+
+    } catch (err) {
+        res.status(500).send('Server Error');
+        console.log(err)
+    }
+});
+
+router.post('/text', auth, async (req, res) => {
+    const { title, code, section } = req.body;
     try {
         // Only admin can create global notes
-        let noteIsGlobal = false;
-        if (isGlobal) {
-            if (req.user.role === 'admin') {
-                noteIsGlobal = true;
-            }
-        }
-
-
 
         const newNote = new UserNote({
             user: req.user.id,
             title,
-            content,
+            content: code,
             section: section || 'General',
-            fileName,
-            fileType,
-            fileData,
-            isGlobal: noteIsGlobal
         });
         const note = await newNote.save();
-        res.json(note);
+        res.json({ noteData: note, msg: "Code Uploaded Successfully", success: true });
     } catch (err) {
         res.status(500).send('Server Error');
         console.log(err)
@@ -117,12 +134,12 @@ router.put('/public/:id', auth, async (req, res) => {
 
         const userFind = await UserNote.findById(note.id);
 
-        if(userFind.isGlobal){
-           userFind.isGlobal = false;
+        if (userFind.isGlobal) {
+            userFind.isGlobal = false;
         } else {
             userFind.isGlobal = true;
         }
-        
+
         await userFind.save();
         res.json(userFind);
     } catch (err) {
@@ -130,4 +147,4 @@ router.put('/public/:id', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

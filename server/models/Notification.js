@@ -1,4 +1,4 @@
-const mongooase = require("mongoose");
+import mongooase from 'mongoose';
 
 const NotificationSchema = new mongooase.Schema({
     userId: {
@@ -28,4 +28,4 @@ const NotificationSchema = new mongooase.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongooase.model('Notification', NotificationSchema);
+export default mongooase.model('Notification', NotificationSchema);

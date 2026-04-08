@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ContentSchema = new mongoose.Schema({
     title: { type: String, required: true },
@@ -12,4 +12,4 @@ const ContentSchema = new mongoose.Schema({
     icon: { type: String } // URL to icon/preview image
 }, { timestamps: true });
 
-module.exports = mongoose.model('Content', ContentSchema);
+export default mongoose.model('Content', ContentSchema);

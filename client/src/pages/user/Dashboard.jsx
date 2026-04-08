@@ -44,6 +44,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     const [subjectPracticals, setSubjectPracticals] = useState([]);
     const [selectedNote, setSelectedNote] = useState(null);
     const [loadingPracticals, setLoadingPracticals] = useState(true);
+    const [notesLoading, setNotesLoading] = useState(true);
     const [isBell, setisBell] = useState(false);
     const navigate = useNavigate();
 
@@ -98,9 +99,11 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     }, [])
 
     const fetchUserNotes = useCallback(() => {
-        fetchNotes().then((res) => {
-            setNotes(res.data);
-        }).catch(err => console.error("Error fetching notes for search:", err));
+        setNotesLoading(true);
+        fetchNotes()
+            .then((res) => setNotes(res.data))
+            .catch(err => console.error("Error fetching notes for search:", err))
+            .finally(() => setNotesLoading(false));
     }, [])
 
     useEffect(() => {
@@ -283,7 +286,15 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                     />
                                 }
                             />
-                            <Route path="notes" element={<Notes refreshKey={notesRefreshKey} />} />
+                            <Route path="notes" element={
+                                <Notes
+                                    refreshKey={notesRefreshKey}
+                                    notes={notes}
+                                    user={currentUser}
+                                    loading={notesLoading}
+                                    onRefresh={handleNoteCreated}
+                                />
+                            } />
                             <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} />} />
                             <Route path="feedback" element={<Feedback user={currentUser} />} />
                             <Route path="community" element={<Community />} />

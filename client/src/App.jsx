@@ -10,6 +10,7 @@ import { CyberLoader } from '@/components/common/cyber-loader';
 import { SocketProvider } from './context/SocketContext';
 import { ServerOffline } from '@/components/common/server-offline';
 import { message } from 'antd';
+import MotionFlipCard from './Utils/Test';
 
 // Lazy-load heavy route components — drastically reduces initial bundle
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -127,6 +128,7 @@ function AppContent({ onUserUpdate }) {
         <div className="min-h-screen max-w-full sm:max-w-screen bg-background">
             <Suspense fallback={<PageLoader />}>
                 <Routes>
+                    <Route path='/test' element={<MotionFlipCard/>} />
                     <Route
                         path="/"
                         element={

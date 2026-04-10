@@ -8,7 +8,6 @@ router.post('/', auth, async (req, res) => {
     try {
         const { section } = req.body;
         const userId = req.user.id;
-        console.log(section);
 
         const validSections = ['home', 'notes', 'practicals', 'community', 'feedback', 'aboutcontact'];
 
@@ -47,7 +46,6 @@ router.get('/', async (req, res) => {
     try {
 
         const trackData = await Track.find();
-        console.log(trackData);
 
         res.json({ msg: 'Visit count updated', trackData });
     }

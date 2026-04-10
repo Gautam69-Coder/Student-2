@@ -68,7 +68,6 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
         // For file uploads, you would handle the file input and send it to the server using createNoteFile
         else {
             if (!noteData.title || !noteData.section || !fileUpload) return customMessage({ content: "All fields are required", type: "error" });
-             
             try {
                 setLoading(true);
                 const formData = new FormData();

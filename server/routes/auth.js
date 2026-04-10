@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
         });
     } catch (err) {
         res.status(500).send('Server Error');
-        console.log(err)
+        console.error(err)
     }
 });
 
@@ -77,6 +77,34 @@ router.post('/login', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
+//Update Profile
+router.post('/update-profile', auth, async (req, res) => {
+    try {
+        const userId = req.user.id
+        let field = req.body.field
+
+        if(field.confirmPassword){
+            delete field.confirmPassword
+        }
+
+        if (field.password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(field.password, salt);
+            field = { ...field, password: hashedPassword }
+        }
+
+        const updateUserInfo = await User.findByIdAndUpdate(
+            userId,
+            { $set: field },
+            { new: true }
+        ).select('-password -__v -visitCount -currentVisit -currentVisitTime -lastVisitTime');
+
+        res.json({ msg: "Profile updated successfully", type: "success", user: updateUserInfo })
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+})
 
 // Logout
 router.post('/logout', (req, res) => {

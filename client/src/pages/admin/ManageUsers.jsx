@@ -34,7 +34,6 @@ export function ManageUsers({ users, setUsers, subjects }) {
 
     useEffect(() => {
         getTrackerData().then(res => {
-            console.log(res);
         }).catch(err => {
             console.error(err);
         });

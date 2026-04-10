@@ -40,7 +40,6 @@ router.post('/file', auth, uploadMulter.single("file"), async (req, res) => {
 
         //Upload file to cloudinary 
         const uploadFile = await uploadCloudinary(filePath)
-        console.log(uploadFile);
         const newNote = new UserNote({
             user: req.user.id,
             title,
@@ -55,7 +54,7 @@ router.post('/file', auth, uploadMulter.single("file"), async (req, res) => {
 
     } catch (err) {
         res.status(500).send('Server Error');
-        console.log(err)
+        console.error(err)
     }
 });
 
@@ -74,7 +73,7 @@ router.post('/text', auth, async (req, res) => {
         res.json({ noteData: note, msg: "Code Uploaded Successfully", success: true });
     } catch (err) {
         res.status(500).send('Server Error');
-        console.log(err)
+        console.error(err)
     }
 });
 

@@ -23,6 +23,19 @@ html.lenis body {
   pointer-events: none;
 }
 
+.perspective {
+  perspective: 1000px;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

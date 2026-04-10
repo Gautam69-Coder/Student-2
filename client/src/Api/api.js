@@ -50,6 +50,7 @@ export const fetchUsers = () => api.get('/auth/users');
 export const deleteUser = (id) => api.delete(`/auth/users/${id}`);
 export const updateUserRole = (id, role) => api.put(`/auth/users/${id}/role`, { role });
 export const logoutUser = () => api.post('/auth/logout');
+export const userProfileUpdate=(field)=>api.post('/auth/update-profile',{field})
 
 // Content Services
 export const fetchContent = () => api.get('/content');

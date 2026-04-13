@@ -3,6 +3,7 @@ import auth from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import admin from '../config/fireBaseAdmin.js';
 
 const router = express.Router();
 // Register
@@ -54,6 +55,7 @@ router.post('/login', async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
+        // console.log("User :", user)
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
@@ -63,6 +65,8 @@ router.post('/login', async (req, res) => {
         await user.save();
 
         const payload = { id: user.id, role: user.role };
+
+        // console.log("Payload:", payload);
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "30d" }, (err, token) => {
             if (err) throw err;
             res.cookie('token', token, {
@@ -74,6 +78,7 @@ router.post('/login', async (req, res) => {
             res.json({ token, user: { id: user.id, username: user.username, role: user.role, email: user.email } });
         });
     } catch (err) {
+        console.log(err);
         res.status(500).send('Server Error');
     }
 });
@@ -84,7 +89,7 @@ router.post('/update-profile', auth, async (req, res) => {
         const userId = req.user.id
         let field = req.body.field
 
-        if(field.confirmPassword){
+        if (field.confirmPassword) {
             delete field.confirmPassword
         }
 
@@ -112,6 +117,39 @@ router.post('/logout', (req, res) => {
     res.json({ msg: 'Logged out successfully' });
 });
 
+router.post("/google", async (req, res) => {
+    const { token } = req.body;
+
+    try {
+        // ✅ Verify Firebase token
+
+        const decoded = await admin.auth().verifyIdToken(token);
+
+        const { uid, email, name, picture } = decoded;
+
+        // 🔍 Check if user exists
+        let user = await User.findOne({ email });
+        let isGoogleUser = true;
+
+        if (!user) {
+            user = await User.create({
+                name,
+                email,
+                avatar: picture,
+                uid,
+                isGoogleUser
+            });
+        }
+        res.json({
+            message: "Login successful",
+            user,
+        });
+    } catch (err) {
+        res.status(401).json({ error: "Invalid token" });
+    }
+});
+
+
 // Admin Access Check
 router.post('/admin-access', (req, res) => {
     const { password } = req.body;
@@ -125,9 +163,11 @@ router.post('/admin-access', (req, res) => {
 router.get('/verify', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
+        // console.log("Verified User:", user);
         res.json(user);
     } catch (err) {
         res.status(500).send('Server Error');
+        console.error("Error fetching user data:", err);
     }
 });
 

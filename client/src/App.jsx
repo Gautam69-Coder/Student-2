@@ -69,7 +69,6 @@ function AppContent({ onUserUpdate }) {
                 setLoading(false);
                 return;
             }
-
             try {
                 const user = await userDetail();
                 if (user) {
@@ -83,10 +82,11 @@ function AppContent({ onUserUpdate }) {
             } catch (error) {
                 localStorage.removeItem('isAuthenticated');
                 setIsAuthenticated(false);
+                console.error("Error fetching user data:", error);
             } finally {
                 setLoading(false);
             }
-        };
+        };  
 
         checkAuth();
     }, []);

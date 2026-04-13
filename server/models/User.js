@@ -1,6 +1,14 @@
 import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
+    isGoogleUser: {
+        type: Boolean,
+        default: false
+    },
+    uid: {
+        type: String,
+        unique: true
+    },
     username: {
         type: String,
         required: true,
@@ -9,6 +17,9 @@ const UserSchema = new mongoose.Schema({
     email: {
         type: String, required: true,
         unique: true
+    },
+    avatar: {
+        type: String
     },
     password: {
         type: String, required: true

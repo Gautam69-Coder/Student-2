@@ -75,7 +75,7 @@ export function StudentNavbar({
     useEffect(() => {
         if (track !== null) {
             let sections = track?.split("/").pop();
-            sections=sections.replace("-","")
+            sections = sections.replace("-", "")
             if (sections == "dashboard") {
                 sections = "home";
             }
@@ -356,20 +356,19 @@ export function StudentNavbar({
                                 <span className="font-semibold">Share Notes</span>
                             </button>
 
-
-                            <button
-                                onClick={() => {
-                                    navigate("/admin");
-                                    setMobileMenuOpen(false);
-                                }}
-                                className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-                            >
-                                <Users className="w-5 h-5" />
-                                <span className="font-semibold">Admin</span>
-                            </button>
-
-
-
+                            {(role === "admin" || role === "superadmin") && (
+                                <button
+                                    onClick={() => {
+                                        navigate("/admin");
+                                        setMobileMenuOpen(false);
+                                    }}
+                                    className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                >
+                                    <Users className="w-5 h-5" />
+                                    <span className="font-semibold">Admin</span>
+                                </button>
+                            )}
+                            
                             <button
                                 onClick={() => {
                                     setMobileMenuOpen(false);

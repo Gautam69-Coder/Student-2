@@ -4,6 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 
+
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import http from 'http';
@@ -12,6 +13,7 @@ import User from './models/User.js';
 
 
 const app = express();
+app.use(express.json());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {

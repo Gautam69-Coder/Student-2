@@ -4,6 +4,7 @@ export const userDetail = async () => {
         const res = await getMe();
         return res.data;
     } catch (error) {
+        console.error("Error fetching user data:", error);
         return null;
     }
 }

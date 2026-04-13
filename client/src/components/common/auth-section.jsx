@@ -3,18 +3,25 @@ import React, { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { DotLoader } from "../../Utils/loaders"
 import { useTheme } from "../../context/ThemeContext"
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../firebase";
+import { customMessage } from "../../Utils/customMessage"
 
 import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { registerUser, loginUser } from "@/Api/api"
 import { useTitle } from "@/hooks/useTitle"
 import { Link } from "react-router-dom"
+import axios from "axios"
 
 const quotes = [
     { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
     { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
     { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
 ]
+
+
+
 
 export function AuthSection({ authState, setAuthState, onAuth }) {
     useTitle(authState === "login" ? "Login" : "Sign Up");
@@ -55,6 +62,12 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
 
             if (res.data.user) {
                 onAuth(res.data.user.role, res.data.user.username);
+                customMessage(
+                    {
+                        type: "success",
+                        content: `${authState === "login" ? "Login" : "Sign Up"} successful! ${authState === "login" ? "Welcome back" : "Welcome"}, ${res.data.user.username}!`
+                    }
+                );
             }
         } catch (err) {
             console.error(err);
@@ -64,6 +77,40 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
             setLoading(false)
         }
     }
+
+    const handleGoogleLogin = async () => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+
+            const user = result.user;
+
+            // 🔑 Get Firebase ID Token
+            const token = await user.getIdToken();
+
+            // Send token to backend
+            const res = await axios.post("http://localhost:5001/api/auth/google", {
+                token,
+            });
+
+            if (token) {
+                localStorage.setItem('token', token);
+            }
+            localStorage.setItem('isAuthenticated', 'true');
+
+            if (res.data.user) {
+                onAuth(res.data.user.role, res.data.user.username);
+                customMessage(
+                    {
+                        type: "success",
+                        content: `${res.data.message}, ${res.data.user.username}!`
+                    }
+                );
+            }
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     return (
         <div className="min-h-screen flex bg-[#FCFAF8] dark:bg-slate-950 transition-colors duration-300 relative">
@@ -280,6 +327,7 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                             <button
                                 type="button"
                                 className="w-full inline-flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 h-11 rounded-lg font-medium transition-all shadow-sm"
+                                onClick={() => { handleGoogleLogin() }}
                             >
                                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                                     <path

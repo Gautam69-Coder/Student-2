@@ -6,13 +6,13 @@ import { useTheme } from "../../context/ThemeContext"
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 import { customMessage } from "../../Utils/customMessage"
+import { Link } from "react-router-dom"
+import { googleLogin } from "@/Api/api"
 
 import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { registerUser, loginUser } from "@/Api/api"
 import { useTitle } from "@/hooks/useTitle"
-import { Link } from "react-router-dom"
-import axios from "axios"
 
 const quotes = [
     { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
@@ -88,9 +88,7 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
             const token = await user.getIdToken();
 
             // Send token to backend
-            const res = await axios.post("http://localhost:5001/api/auth/google", {
-                token,
-            });
+            const res = await googleLogin(token);
 
             if (token) {
                 localStorage.setItem('token', token);

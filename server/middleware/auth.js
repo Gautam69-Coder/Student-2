@@ -14,8 +14,6 @@ const auth = async (req, res, next) => {
             req.user = decoded;
             next();
         } catch (err) {
-            console.error("JWT Error:", err);
-
             const decodedToken = await admin.auth().verifyIdToken(token);
             const email = decodedToken.email;
 

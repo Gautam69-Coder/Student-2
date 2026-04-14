@@ -135,9 +135,15 @@ export function ManageUsers({ users, setUsers, subjects }) {
                                     <td className="sm:px-6 px-2 py-2 sm:py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="relative">
-                                                <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-400">
-                                                    {user.username.charAt(0).toUpperCase()}
-                                                </div>
+                                                {user.avatar ? (
+                                                    <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-400">
+                                                        <img src={user.avatar} className="rounded-full" alt={user.avatar} />
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-400">
+                                                        {user.username.charAt(0).toUpperCase()}
+                                                    </div>
+                                                )}
                                                 {isOnline && (
                                                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full shadow-sm animate-pulse" />
                                                 )}
@@ -264,6 +270,6 @@ export function ManageUsers({ users, setUsers, subjects }) {
                     </div>
                 </div>
             </motion.div>
-        </motion.div>
+        </motion.div >
     )
 }

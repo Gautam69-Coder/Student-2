@@ -54,6 +54,7 @@ export function StudentNavbar({
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [moreMenuOpen, setMoreMenuOpen] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [userData, setUserData] = useState([]);
 
     //useState for tacking navigation user
     const [track, setTrack] = useState(null);
@@ -95,6 +96,7 @@ export function StudentNavbar({
         getMe()
             .then((response) => {
                 setIsAdmin(response.data.role === "admin" || response.data.role === "superadmin");
+                setUserData(response.data);
             })
             .catch((error) => {
                 console.error("Authentication error:", error);
@@ -269,12 +271,18 @@ export function StudentNavbar({
                         {/* Profile Link for Desktop */}
                         <Link
                             to="/dashboard/profile"
-                            className={`hidden lg:flex p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 transition-all ${isActive("/dashboard/profile")
-                                ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
-                                : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+                            className={`hidden lg:flex ${userData.avatar ? null : "p-2.5 rounded-xl border border-slate-200 dark:border-slate-800"} transition-all ${isActive("/dashboard/profile")
+                                ? "rounded-[15px] bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
+                                : " rounded-[15px] hover:shadow-blue-700 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
                                 }`}
                         >
-                            <User className="w-5 h-5" />
+                            {userData.avatar ? (
+                                <img height={38} width={38}
+                                    className="rounded-[15px]"
+                                    src={userData.avatar} alt={userData?.avatar} />
+                            ) : (
+                                <User className="w-5 h-5" />
+                            )}
                         </Link>
 
                         {isAdmin && (
@@ -368,7 +376,7 @@ export function StudentNavbar({
                                     <span className="font-semibold">Admin</span>
                                 </button>
                             )}
-                            
+
                             <button
                                 onClick={() => {
                                     setMobileMenuOpen(false);

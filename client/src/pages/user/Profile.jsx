@@ -121,9 +121,15 @@ export function Profile({ onLogout }) {
                             {/* Header/Cover */}
                             <div className="h-32 bg-slate-900 dark:bg-slate-950 relative">
                                 <div className="absolute -bottom-12 left-8 p-1 bg-white dark:bg-slate-900 rounded-2xl shadow-lg dark:shadow-none">
-                                    <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
-                                        <User className="w-12 h-12 text-slate-400 dark:text-slate-500" />
-                                    </div>
+                                    {user.avatar ? (
+                                        <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                                            <img src={user.avatar} className=" text-slate-400 dark:text-slate-500" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                                            <User className="w-12 h-12 text-slate-400 dark:text-slate-500" />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -131,7 +137,7 @@ export function Profile({ onLogout }) {
                             <div className="pt-16 pb-8 px-8">
                                 <div className="flex justify-between items-start mb-8">
                                     <div>
-                                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{user.username}</h1>
+                                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{user.username.charAt(0).toLocaleUpperCase() + user.username.slice(1).toLocaleLowerCase()}</h1>
                                         <p className="text-slate-500 dark:text-slate-400 font-medium">Student at University</p>
                                     </div>
                                     <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80 transition-colors"
@@ -210,12 +216,12 @@ export function Profile({ onLogout }) {
                             <div className="pt-16 pb-8 px-8">
                                 <div className="flex justify-between items-start mb-8">
                                     <div>
-                                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{userDetail.username}</h1>
+                                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{userDetail.username.charAt(0).toLocaleUpperCase() + userDetail.username.slice(1).toLocaleLowerCase()}</h1>
                                         <p className="text-slate-500 dark:text-slate-400 font-medium">Student at University</p>
                                     </div>
 
                                     <div className="sm:block hidden">
-                                        <InfoCard icon={<Mail />} label="Email Address" value={userDetail.email} />
+                                        <InfoCard icon={<Mail />} label="Email Address" value={userDetail.email.toLocaleLowerCase()} />
                                     </div>
                                 </div>
 

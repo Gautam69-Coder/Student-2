@@ -139,6 +139,19 @@ router.post("/google", async (req, res) => {
                 uid,
                 isGoogleUser
             });
+        } else {
+            user = await User.findOneAndUpdate(
+                { email },
+                {
+                    $set: {
+                        name,
+                        avatar: picture,
+                        uid,
+                        isGoogleUser
+                    }
+                },
+                { new: true }
+            );
         }
         res.json({
             message: "Login successful",

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
+import PracticalUpload from "../../components/user/practical-upload"
 import { Link } from "react-router-dom"
 import {
     fetchSections,
@@ -34,6 +35,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
     useTitle("Dashboard");
     const { darkMode, toggleDarkMode } = useTheme();
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
+    const [practicalUploadOpen, setPracticalUploadOpen] = useState(false);
     const [role, setrole] = useState("user");
     const [currentUser, setCurrentUser] = useState(null);
     const [subjects, setSubjects] = useState([]);
@@ -295,7 +297,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                                     onRefresh={handleNoteCreated}
                                 />
                             } />
-                            <Route path="practicals" element={<Practicals practicals={practicals} subjects={subjects} />} />
+                            <Route path="practicals" element={<Practicals practicals={practicals} setPracticalUploadOpen={setPracticalUploadOpen} subjects={subjects} />} />
                             <Route path="feedback" element={<Feedback user={currentUser} />} />
                             <Route path="community" element={<Community />} />
                             <Route path="profile" element={<Profile onLogout={onLogout} />} />
@@ -327,7 +329,13 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 onOpenChange={setUploadModalOpen}
                 onNoteCreated={handleNoteCreated}
             />
-            <BottomNavbar  />
+
+            <PracticalUpload
+                open={practicalUploadOpen}
+                onOpenChange={setPracticalUploadOpen}
+                uniqueSubjects={subjects}
+            />
+            <BottomNavbar />
         </div >
     )
 }

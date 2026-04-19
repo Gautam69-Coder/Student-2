@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { PracticalCard } from '../../components/user/practical-card';
 import { useTitle } from '@/hooks/useTitle';
 
-export function Practicals({ practicals, subjects }) {
+export function Practicals({ practicals, subjects,setPracticalUploadOpen }) {
     useTitle("Practicals");
     const location = useLocation();
     const [selectedSubject, setSelectedSubject] = useState("");
@@ -56,6 +56,14 @@ export function Practicals({ practicals, subjects }) {
             <div className="flex flex-col sm:gap-4 gap-2">
                 <div className="flex justify-between items-end">
                     <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white w-full  tracking-tight ">All Practicals</h2>
+                    <button
+                        className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all 
+                       bg-white hover:dark:bg-white hover:dark:text-black dark:bg-slate-800 text-black dark:text-white shadow-md border border-slate-200 dark:border-slate-700
+                        `}
+                        onClick={()=>{setPracticalUploadOpen(true)}}
+                    >
+                        Add Practical
+                    </button>
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -99,7 +107,7 @@ export function Practicals({ practicals, subjects }) {
                         </div>
                     )}
                 </div>
-            </div>
+            </div >
 
 
             <div className="sm:w-full ">
@@ -111,11 +119,13 @@ export function Practicals({ practicals, subjects }) {
                 ))}
             </div>
 
-            {filteredPracticals.length === 0 && (
-                <div className="text-center py-20 text-slate-500 dark:text-slate-400">
-                    No practicals found for the selected criteria.
-                </div>
-            )}
-        </motion.div>
+            {
+                filteredPracticals.length === 0 && (
+                    <div className="text-center py-20 text-slate-500 dark:text-slate-400">
+                        No practicals found for the selected criteria.
+                    </div>
+                )
+            }
+        </motion.div >
     );
 }

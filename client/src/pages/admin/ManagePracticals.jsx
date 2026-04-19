@@ -19,7 +19,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
     });
     const [practicals, setPracticals] = useState([]);
     const [editPracticalId, setEditPracticalId] = useState(null);
-    const [filterRole, setFilterRole] = useState("all")
+    const [filterRole, setFilterRole] = useState("all");
 
 
     const handleAddQuestion = () => {
@@ -327,8 +327,6 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                             )}
                         </div>
                     </div>
-
-
                 </motion.div>
             </form >
             <div>

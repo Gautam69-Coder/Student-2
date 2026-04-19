@@ -327,8 +327,7 @@ export function StudentDashboard({ userName, onLogout, onSwitchToAdmin }) {
                 onOpenChange={setUploadModalOpen}
                 onNoteCreated={handleNoteCreated}
             />
-
-            <BottomNavbar />
+            <BottomNavbar  />
         </div >
     )
 }

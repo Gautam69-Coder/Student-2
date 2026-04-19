@@ -1,10 +1,11 @@
-import React, { useState, useEffect,useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell } from "lucide-react";
-import { fetchNotifications } from '@/Api/api';
+import { Bell, LucideUtensilsCrossed } from "lucide-react";
+import { fetchNotifications, notificationStatusUpdate } from '@/Api/api';
 
 const NotificationPanel = () => {
     const [notifications, setNotifications] = useState([]);
+    const [isRead, setIsRead] = useState(false);
 
     useLayoutEffect(() => {
         const fetchNotificationsData = async () => {
@@ -18,6 +19,18 @@ const NotificationPanel = () => {
 
         fetchNotificationsData();
     }, []);
+
+    const handleNotificationStatus = async (notificationId) => {
+        try {
+            const notiStatus = await notificationStatusUpdate({ isRead: true, notificationId });
+            // Update local state to reflect the change
+            setNotifications(prev =>
+                prev.map(n => n._id === notificationId ? { ...n, isRead: true } : n)
+            );
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     return (
         <AnimatePresence>
@@ -49,11 +62,21 @@ const NotificationPanel = () => {
                     {notifications.length > 0 ? (
                         notifications.map((notification) => (
                             <div
-                                key={notification.id}
+                                key={notification._id || notification.id}
                                 className="px-4 py-3 border-b last:border-b-0 border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
+                                onMouseEnter={() => {
+                                    if (!notification.isRead) {
+                                        handleNotificationStatus(notification._id);
+                                    }
+                                }}
                             >
                                 <div className="flex items-start gap-3">
-                                    <div className="mt-1 w-2 h-2 rounded-full bg-emerald-500" />
+                                    {!notification.isRead && (
+                                        <div className="mt-1 w-2 h-2 rounded-full bg-emerald-500" />
+                                    )}
+                                    <div className="p-1.5 rounded-lg bg-indigo-100/80 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300">
+                                        <Bell className="w-4 h-4" />
+                                    </div>
                                     <div className="flex-1">
                                         <p className="text-sm font-semibold text-slate-900 dark:text-white line-clamp-1">
                                             {notification.title}

@@ -331,21 +331,44 @@ export function StudentNavbar({
                                 />
                             </div>
 
-                            {[...navItems, ...moreItems, { id: "profile", label: "Profile", icon: User, path: "/dashboard/profile" }].map((item) => (
-                                <Link
-                                    key={item.id}
-                                    to={item.path}
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-colors ${isActive(item.path)
-                                        ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
-                                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-                                        }`}
-                                >
-                                    <item.icon className="w-5 h-5" />
-                                    <span className="font-semibold">{item.label}</span>
-                                </Link>
+                            {[...navItems, ...moreItems].map((item) => (
+                                <>
+                                    <Link
+                                        key={item.id}
+                                        to={item.path}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-colors ${isActive(item.path)
+                                            ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                                            : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                            }`}
+                                    >
+                                        <item.icon className="w-5 h-5" />
+                                        <span className="font-semibold">{item.label}</span>
+                                    </Link>
+                                </>
+
+
 
                             ))}
+                            <Link
+                                to={"/dashboard/profile"}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-colors ${isActive("/dashboard/profile")
+                                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    }`}
+                            >
+                                {userData.avatar ? (
+                                    <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                                        <img src={userData.avatar} className=" text-slate-400 dark:text-slate-500" />
+                                    </div>
+                                ) : (
+                                    <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                                        <User className="w-12 h-12 text-slate-400 dark:text-slate-500" />
+                                    </div>
+                                )}
+                                <span className="font-semibold">Profile</span>
+                            </Link>
 
 
                             <div className="h-px bg-slate-100 dark:bg-slate-800 my-2" />

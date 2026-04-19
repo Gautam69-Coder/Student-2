@@ -198,9 +198,15 @@ export function Profile({ onLogout }) {
                             {/* Header/Cover */}
                             <div className="h-32 bg-slate-900  dark:bg-slate-950 relative">
                                 <div className="absolute  -bottom-12 left-8 p-1 bg-white dark:bg-slate-900 rounded-2xl shadow-lg dark:shadow-none">
-                                    <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
-                                        <User className="w-12 h-12 text-slate-400 dark:text-slate-500" />
-                                    </div>
+                                    {user.avatar ? (
+                                        <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                                            <img src={user.avatar} className=" text-slate-400 dark:text-slate-500" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                                            <User className="w-12 h-12 text-slate-400 dark:text-slate-500" />
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="absolute -bottom-5 right-8">
                                     <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80 transition-colors"

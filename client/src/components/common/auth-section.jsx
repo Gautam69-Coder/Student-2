@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { DotLoader } from "../../Utils/loaders"
 import { useTheme } from "../../context/ThemeContext"
+import { signInWithRedirect } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 import { customMessage } from "../../Utils/customMessage"
 import { Link } from "react-router-dom"
 import { googleLogin } from "@/Api/api"
+import { getRedirectResult } from "firebase/auth";
 
 import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
@@ -35,6 +37,43 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
     const [error, setError] = useState(null)
     const [adminSecret, setAdminSecret] = useState("")
     const [currentQuote] = useState(quotes[Math.floor(Math.random() * quotes.length)])
+
+    useEffect(() => {
+        const handleRedirect = async () => {
+            try {
+                const result = await getRedirectResult(auth);
+                console.log(auth)
+                console.log(result)
+                if (result) {
+                    const user = result.user;
+
+                    // 🔑 Get Firebase ID Token
+                    const token = await user.getIdToken();
+                    console.log("Token", token);
+
+                    // Send token to backend
+                    const res = await googleLogin(token);
+
+                    if (token) {
+                        localStorage.setItem('token', token);
+                    }
+                    localStorage.setItem('isAuthenticated', 'true');
+
+                    if (res.data.user) {
+                        onAuth(res.data.user.role, res.data.user.username);
+                        customMessage({
+                            type: "success",
+                            content: `${res.data.message}, ${res.data.user.username}!`
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        handleRedirect();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -105,6 +144,14 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
                 );
             }
 
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleGoogleLoginMobile = async () => {
+        try {
+            await signInWithRedirect(auth, provider);
         } catch (err) {
             console.error(err);
         }

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthSection } from '@/components/common/auth-section';
@@ -8,6 +7,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { useLenis } from '@/hooks/useLenis';
 import { CyberLoader } from '@/components/common/cyber-loader';
 import { SocketProvider } from './context/SocketContext';
+import { DataProvider, useData } from './context/DataContext';
 import { ServerOffline } from '@/components/common/server-offline';
 import { message } from 'antd';
 import MotionFlipCard from './Utils/Test';
@@ -38,14 +38,10 @@ const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
     return children;
 };
 
-function AppContent({ onUserUpdate }) {
+function AppContent() {
     useLenis();
-
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [userRole, setUserRole] = useState("user");
-    const [currentUser, setCurrentUser] = useState(null);
+    const { user, loading: dataLoading, logout } = useData();
     const [authViewState, setAuthViewState] = useState("login");
-    const [loading, setLoading] = useState(true);
     const [isServerOffline, setIsServerOffline] = useState(false);
 
     const navigate = useNavigate();
@@ -61,43 +57,10 @@ function AppContent({ onUserUpdate }) {
         window.location.reload();
     };
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const authFlag = localStorage.getItem('isAuthenticated');
-            if (!authFlag) {
-                setIsAuthenticated(false);
-                setLoading(false);
-                return;
-            }
-            try {
-                const user = await userDetail();
-                if (user) {
-                    setIsAuthenticated(true);
-                    setUserRole(user.role);
-                    setCurrentUser(user.username);
-                    onUserUpdate(user);
-                } else {
-                    throw new Error("User not found");
-                }
-            } catch (error) {
-                localStorage.removeItem('isAuthenticated');
-                setIsAuthenticated(false);
-                console.error("Error fetching user data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };  
-
-        checkAuth();
-    }, []);
-
     const handleAuth = async (role, name) => {
-        setIsAuthenticated(true);
-        setUserRole(role);
-        setCurrentUser(name);
-        const user = await userDetail();
-        if (user) onUserUpdate(user);
-        navigate(role === 'admin' ? '/admin' : '/dashboard');
+        localStorage.setItem('isAuthenticated', 'true');
+        // Reload to re-trigger context fetches and state updates
+        window.location.reload();
     };
 
     const handleLogout = async () => {
@@ -107,11 +70,7 @@ function AppContent({ onUserUpdate }) {
         } catch (err) {
             console.error("Logout failed", err);
         }
-        setIsAuthenticated(false);
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('token');
-        setCurrentUser(null);
-        onUserUpdate(null);
+        logout();
         setAuthViewState("login");
         navigate('/');
     };
@@ -120,9 +79,13 @@ function AppContent({ onUserUpdate }) {
         return <ServerOffline onRetry={handleRetry} />;
     }
 
-    if (loading) {
+    if (dataLoading.user) {
         return <PageLoader />;
     }
+
+    const isAuthenticated = !!user;
+    const userRole = user?.role || "user";
+    const currentUser = user?.username;
 
     return (
         <div className="min-h-screen max-w-full sm:max-w-screen bg-background">
@@ -162,10 +125,6 @@ function AppContent({ onUserUpdate }) {
                                 <StudentDashboard
                                     userName={currentUser || "Student"}
                                     onLogout={handleLogout}
-                                    onSwitchToAdmin={() => {
-                                        setUserRole('admin');
-                                        navigate('/admin');
-                                    }}
                                 />
                             </ProtectedRoute>
                         }
@@ -178,10 +137,6 @@ function AppContent({ onUserUpdate }) {
                                 <AdminPanel
                                     userName={currentUser || "Admin"}
                                     onLogout={handleLogout}
-                                    onSwitchToStudent={() => {
-                                        setUserRole('user');
-                                        navigate('/dashboard');
-                                    }}
                                 />
                             </ProtectedRoute>
                         }
@@ -199,15 +154,22 @@ function AppContent({ onUserUpdate }) {
 }
 
 export default function App() {
-    const [user, setUser] = useState(null);
-
     return (
         <ThemeProvider>
-            <SocketProvider user={user}>
-                <Router>
-                    <AppContent onUserUpdate={setUser} />
-                </Router>
-            </SocketProvider>
+            <DataProvider>
+                <ContextWrapper />
+            </DataProvider>
         </ThemeProvider>
+    );
+}
+
+function ContextWrapper() {
+    const { user } = useData();
+    return (
+        <SocketProvider user={user}>
+            <Router>
+                <AppContent />
+            </Router>
+        </SocketProvider>
     );
 }

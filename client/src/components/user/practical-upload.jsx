@@ -1,35 +1,31 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from "framer-motion"
-import { X } from "lucide-react"
-import { useState } from 'react'
-import { Trash, FlaskConical, FileUp, FileText, Image as ImageIcon } from "lucide-react"
+import { X, Trash, FlaskConical, FileUp, FileText, Image as ImageIcon } from "lucide-react"
 import { createPractical, updatePractical } from "@/Api/api"
 import { getLenis } from "@/hooks/useLenis"
+import { useData } from "@/context/DataContext"
 
 const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
+    const { refreshPracticals } = useData();
 
     const [newPractical, setNewPractical] = useState({
         practicalNumber: '',
         section: '',
         questions: [{ question: '', code: '', fileData: null, fileName: null, fileType: null }]
     });
-    const [practicals, setPracticals] = useState([]);
     const [editPracticalId, setEditPracticalId] = useState(null);
 
     // ─── Lenis: stop smooth-scroll while modal is open ───────────────────────────
     useEffect(() => {
         const lenis = getLenis();
         if (open) {
-            // Pause Lenis so the page behind the modal doesn't scroll
             lenis?.stop();
-            // Also lock native body scroll as a fallback
             document.body.style.overflow = 'hidden';
         } else {
             lenis?.start();
             document.body.style.overflow = '';
         }
         return () => {
-            // Safety cleanup in case the component unmounts while open
             getLenis()?.start();
             document.body.style.overflow = '';
         };
@@ -50,9 +46,14 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                 setEditPracticalId(null);
             } else {
                 await createPractical(newPractical);
-                setNewPractical({ practicalNumber: '', section: '', questions: [{ question: '', code: '', fileData: null, fileName: null, fileType: null }] });
+                setNewPractical({ 
+                    practicalNumber: '', 
+                    section: '', 
+                    questions: [{ question: '', code: '', fileData: null, fileName: null, fileType: null }] 
+                });
                 alert('Practical added successfully!');
             }
+            refreshPracticals(); // Refresh global practicals list
         } catch (error) {
             console.error('Error adding practical:', error);
             alert('Failed to add practical');
@@ -98,10 +99,7 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
     return (
         <AnimatePresence>
             {open && (
-                /* ── Outermost overlay — fixed, no overflow, just a centering layer ── */
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
-
-                    {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -110,19 +108,12 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                         className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] dark:bg-slate-900/60"
                     />
 
-                    {/* Modal panel */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 10 }}
                         className="relative z-10 w-full max-w-5xl h-[90vh] flex flex-col"
                     >
-                        {/*
-                         * ── Scrollable inner container ──────────────────────────────────
-                         * data-lenis-prevent  → tells Lenis to ignore wheel events here
-                         * overscroll-behavior: contain → stops scroll from leaking to page
-                         * scrollbar is hidden via CSS classes (webkit + firefox + IE)
-                         */}
                         <div
                             data-lenis-prevent
                             className="
@@ -136,7 +127,6 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                                 [scrollbar-width:none]
                             "
                         >
-                            {/* Header */}
                             <div className="flex justify-between mb-5">
                                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
                                     Add New Practical
@@ -149,7 +139,6 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                                 </button>
                             </div>
 
-                            {/* Form */}
                             <form onSubmit={handleAddPractical}>
                                 <div className="bg-white dark:bg-slate-900 rounded-xl p-8 border border-[#E5E5E5] dark:border-slate-800 shadow-sm">
                                     <div className="space-y-6">
@@ -238,7 +227,6 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                                                             />
                                                         </div>
 
-                                                        {/* File/Image Upload */}
                                                         <div className="mt-2 text-slate-700 dark:text-slate-300">
                                                             <label className="text-sm font-medium block mb-2">
                                                                 Reference Image or File (Optional)
@@ -284,7 +272,6 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                                                                         <X className="w-4 h-4" />
                                                                     </button>
 
-                                                                    {/* Image Preview Overlay */}
                                                                     {newPractical.questions[index].fileType?.startsWith('image/') && (
                                                                         <div className="absolute -top-32 left-0 w-32 h-32 rounded-lg border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                                                                             <img src={newPractical.questions[index].fileData} alt="Preview" className="w-full h-full object-cover bg-white" />

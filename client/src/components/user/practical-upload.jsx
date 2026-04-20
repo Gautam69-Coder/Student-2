@@ -119,7 +119,7 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                             className="
                                 bg-white dark:bg-slate-900
                                 rounded-xl border border-[#E5E5E5] dark:border-slate-800
-                                shadow-sm p-8
+                                shadow-sm sm:p-8 p-4
                                 h-full overflow-y-auto overflow-x-hidden
                                 overscroll-contain
                                 [&::-webkit-scrollbar]:hidden
@@ -140,7 +140,7 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                             </div>
 
                             <form onSubmit={handleAddPractical}>
-                                <div className="bg-white dark:bg-slate-900 rounded-xl p-8 border border-[#E5E5E5] dark:border-slate-800 shadow-sm">
+                                <div className="bg-white dark:bg-slate-900 rounded-xl sm:p-8  sm:border border-[#E5E5E5] dark:border-slate-800 shadow-sm">
                                     <div className="space-y-6">
                                         <div className="flex justify-between w-full gap-4">
                                             <div className="w-full">

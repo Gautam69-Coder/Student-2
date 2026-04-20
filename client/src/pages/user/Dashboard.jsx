@@ -18,6 +18,7 @@ import { userDetail } from "@/lib/user";
 import { useTheme } from "@/context/ThemeContext";
 import { useTitle } from "@/hooks/useTitle";
 import { useData } from "@/context/DataContext";
+import { toUpperName } from "@/Utils/ToUpperName";
 
 import { Home } from "./Home";
 import { Notes } from "./Notes";

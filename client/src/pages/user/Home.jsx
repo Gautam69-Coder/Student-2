@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PracticalCardSkeleton } from '@/components/common/skeleton';
 import { useTitle } from '@/hooks/useTitle';
 import { sendTrackerHome } from "@/Api/api"
+import { toUpperName } from '../../Utils/ToUpperName';
 
 
 
@@ -61,7 +62,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                         <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
                             Welcome back, <br />
                             <span className="bg-linear-to-r from-blue-400 to-indigo-400 dark:from-blue-600 dark:to-indigo-600 bg-clip-text text-transparent">
-                                {userName}!
+                                {toUpperName(userName)}!
                             </span>
                         </h1>
 

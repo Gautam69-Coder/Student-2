@@ -77,8 +77,12 @@ export const deleteSection = (id) => api.delete(`/sections/${id}`);
 
 // Practical Services
 export const fetchPracticals = () => api.get('/practicals');
-export const createPractical = (practicalData) => api.post('/practicals', practicalData);
-export const updatePractical = (id, practicalData) => api.put(`/practicals/${id}`, practicalData);
+export const createPractical = (practicalData) => api.post('/practicals', practicalData, {
+    headers: { "Content-Type": "multipart/form-data" }
+});
+export const updatePractical = (id, practicalData) => api.put(`/practicals/${id}`, practicalData, {
+    headers: { "Content-Type": "multipart/form-data" }
+});
 export const deletePractical = (id) => api.delete(`/practicals/${id}`);
 
 // Feedback Services
@@ -89,7 +93,7 @@ export const updateFeedbackStatus = (id, status) => api.patch(`/feedback/${id}`,
 // Notification Services
 export const sendNotification = (formData) => api.post('/notifications', formData);
 export const fetchNotifications = () => api.get('/notifications');
-export const notificationStatusUpdate = (data)=>api.post("/notifications/notification-status", data);
+export const notificationStatusUpdate = (data) => api.post("/notifications/notification-status", data);
 // Email Services
 export const sendEmail = (emailData) => api.post('/email/send', emailData);
 

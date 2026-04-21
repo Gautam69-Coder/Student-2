@@ -123,7 +123,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index }) {
                 </div>
 
                 {/* Multimedia Attachments */}
-                {question.fileData && (
+                {question.fileUrl && (
                     <div className="mt-6 flex flex-col gap-4">
                         <div className="flex items-center gap-2">
                             <div className="h-[1px] flex-1 bg-slate-100 dark:bg-white/5" />
@@ -134,21 +134,22 @@ const QuestionBlock = memo(function QuestionBlock({ question, index }) {
                         {question.fileType?.startsWith('image/') ? (
                             <div className="relative group/asset rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50">
                                 <img
-                                    src={question.fileData}
+                                    src={question.fileUrl}
                                     alt="Practical Reference"
                                     className="w-full h-auto max-h-[500px] object-contain transition-transform duration-500 group-hover/asset:scale-[1.02]"
                                 />
-                                <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover/asset:opacity-100 transition-all duration-300 flex items-end justify-center p-8">
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover/asset:opacity-100 transition-all duration-300 flex items-end justify-center p-8">
                                     <div className="flex gap-3">
                                         <button
-                                            onClick={() => window.open(question.fileData, '_blank')}
+                                            onClick={() => window.open(question.fileUrl, '_blank')}
                                             className="px-5 py-2.5 bg-white text-slate-900 text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform"
                                         >
                                             <ExternalLink className="w-4 h-4" /> Expand View
                                         </button>
                                         <a
-                                            href={question.fileData}
-                                            download={question.fileName || 'practical-ref'}
+                                            href={question.fileUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors"
                                         >
                                             <Download className="w-4 h-4" /> Get Asset
@@ -170,12 +171,13 @@ const QuestionBlock = memo(function QuestionBlock({ question, index }) {
                                     </div>
                                 </div>
                                 <a
-                                    href={question.fileData}
-                                    download={question.fileName || 'attachment'}
+                                    href={question.fileUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="h-10 px-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
                                 >
                                     <Download className="w-4 h-4" />
-                                    Download
+                                    View File
                                 </a>
                             </div>
                         )}

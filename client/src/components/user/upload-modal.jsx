@@ -74,7 +74,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                 formData.append("file", fileUpload);
                 formData.append("title", noteData.title);
                 formData.append("section", noteData.section);
-
+                console.log("FileUpload : ",fileUpload)
                 const file = await createNoteFile(formData);
                 if (file.data.success) {
                     customMessage({ content: file.data.msg, type: "success" });

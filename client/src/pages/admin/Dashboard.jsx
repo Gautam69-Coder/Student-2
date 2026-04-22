@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react"
-import { Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import {
     fetchUsers,
     fetchContent,
@@ -23,6 +23,8 @@ import { ManageFeedback } from "./ManageFeedback"
 import { MessageSender } from "./MessageSender"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTitle } from "@/hooks/useTitle"
+import { Navigate, useNavigate } from "react-router-dom"
+
 
 const initialSubjects = [
     { name: "Java Programming", code: "CS301", progress: 75, color: "#f97316" },
@@ -46,6 +48,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
     const [subjects, setSubjects] = useState(initialSubjects)
     const [uniqueSubjectSections, setUniqueSubjectSections] = useState([]);
     const [notifications, setNotifications] = useState([]);
+     const navigate=useNavigate();
 
     useEffect(() => {
         const user = fetchUsers();
@@ -129,7 +132,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                             </button>
 
                             <button
-                                onClick={onSwitchToStudent}
+                                onClick={()=>{navigate("/dashboard");}}
                                 className="inline-flex items-center justify-center rounded-lg gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400"
                             >
                                 <GraduationCap className="w-4 h-4" />

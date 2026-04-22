@@ -91,7 +91,7 @@ function AppContent() {
         <div className="min-h-screen max-w-full sm:max-w-screen bg-background">
             <Suspense fallback={<PageLoader />}>
                 <Routes>
-                    <Route path='/test' element={<MotionFlipCard/>} />
+                        <Route path='/test' element={<MotionFlipCard/>} />
                     <Route
                         path="/"
                         element={

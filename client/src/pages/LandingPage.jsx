@@ -116,10 +116,10 @@ export default function LandingPage() {
                     <div className="flex items-center gap-4">
                         <ThemeToggle />
                         <Link
-                            to="/auth"
+                            to="/dashboard"
                             className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-lg"
                         >
-                            Sign In <ArrowRight className="w-4 h-4" />
+                            Explore Dashboard <ArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
                 </div>
@@ -154,7 +154,7 @@ export default function LandingPage() {
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <Link
-                                to="/auth"
+                                to="/dashboard"
                                 className="group relative px-8 py-4 rounded-2xl bg-indigo-600 text-white font-bold text-lg overflow-hidden shadow-[0_0_40px_rgba(79,70,229,0.3)] hover:shadow-[0_0_60px_rgba(79,70,229,0.5)] transition-all"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
@@ -294,7 +294,7 @@ export default function LandingPage() {
                                 Join thousands of students who are already using Student Hub to ace their exams and manage their academic journey.
                             </p>
                             <Link
-                                to="/auth"
+                                to="/dashboard"
                                 className="inline-flex items-center gap-2 px-10 py-5 rounded-2xl bg-white text-slate-900 font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl"
                             >
                                 Get Started Free <ArrowRight className="w-6 h-6" />

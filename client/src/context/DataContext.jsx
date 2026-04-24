@@ -55,7 +55,6 @@ export const DataProvider = ({ children }) => {
 
     // Fetch Subjects
     useEffect(() => {
-        if (!user) return;
         const loadSubjects = async () => {
             setLoading(prev => ({ ...prev, subjects: true }));
             try {
@@ -72,7 +71,6 @@ export const DataProvider = ({ children }) => {
 
     // Fetch Practicals
     useEffect(() => {
-        if (!user) return;
         const loadPracticals = async () => {
             setLoading(prev => ({ ...prev, practicals: true }));
             try {
@@ -89,7 +87,6 @@ export const DataProvider = ({ children }) => {
 
     // Fetch Notes
     useEffect(() => {
-        if (!user) return;
         const loadNotes = async () => {
             setLoading(prev => ({ ...prev, notes: true }));
             try {

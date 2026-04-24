@@ -25,7 +25,7 @@ const quotes = [
 
 
 
-export function AuthSection({ authState, setAuthState, onAuth }) {
+export function AuthSection({ authState, setAuthState, onAuth, isModal = false }) {
     useTitle(authState === "login" ? "Login" : "Sign Up");
     const { darkMode, toggleDarkMode } = useTheme()
     const [role, setRole] = useState("user")
@@ -158,45 +158,49 @@ export function AuthSection({ authState, setAuthState, onAuth }) {
     };
 
     return (
-        <div className="min-h-screen flex bg-[#FCFAF8] dark:bg-slate-950 transition-colors duration-300 relative">
+        <div className={`${isModal ? "w-full" : "min-h-screen flex"} bg-[#FCFAF8] dark:bg-slate-950 transition-colors duration-300 relative`}>
             {/* Theme Toggle Button */}
-            <div className="absolute top-6 right-6 z-50">
-                <ThemeToggle />
-            </div>
+            {!isModal && (
+                <div className="absolute top-6 right-6 z-50">
+                    <ThemeToggle />
+                </div>
+            )}
 
             {/* Left Side - Quote Section (Minimal Pattern) */}
-            <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-white dark:bg-slate-900 border-r border-[#E5E5E5] dark:border-slate-800"
-            >
-                <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: darkMode ? "radial-gradient(#fff 1px, transparent 1px)" : "radial-gradient(#000 1px, transparent 1px)", backgroundSize: "32px 32px" }}></div>
+            {!isModal && (
+                <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-white dark:bg-slate-900 border-r border-[#E5E5E5] dark:border-slate-800"
+                >
+                    <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: darkMode ? "radial-gradient(#fff 1px, transparent 1px)" : "radial-gradient(#000 1px, transparent 1px)", backgroundSize: "32px 32px" }}></div>
 
-                <div className="relative z-10 flex flex-col justify-center px-12 lg:px-16 w-full">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3, duration: 0.6 }}
-                    >
-                        <Link to="/" className="mb-12 group w-fit block">
-                            <img
-                                src="/logo.png"
-                                alt="Student Hub Logo"
-                                className="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
-                            />
-                        </Link>
+                    <div className="relative z-10 flex flex-col justify-center px-12 lg:px-16 w-full">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3, duration: 0.6 }}
+                        >
+                            <Link to="/" className="mb-12 group w-fit block">
+                                <img
+                                    src="/logo.png"
+                                    alt="Student Hub Logo"
+                                    className="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+                                />
+                            </Link>
 
-                        <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-slate-900 dark:text-white mb-8 font-serif italic">
-                            "{currentQuote.text}"
-                        </blockquote>
-                        <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-medium">— {currentQuote.author}</p>
-                    </motion.div>
-                </div>
-            </motion.div>
+                            <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-slate-900 dark:text-white mb-8 font-serif italic">
+                                "{currentQuote.text}"
+                            </blockquote>
+                            <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-medium">— {currentQuote.author}</p>
+                        </motion.div>
+                    </div>
+                </motion.div>
+            )}
 
             {/* Right Side - Auth Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
+            <div className={`${isModal ? "w-full" : "w-full lg:w-1/2"} flex items-center justify-center p-6 lg:p-12`}>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

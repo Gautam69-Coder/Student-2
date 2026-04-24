@@ -84,7 +84,7 @@ const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPu
     );
 });
 
-export function NotesSection({ notes = [], user, loading, onRefresh }) {
+export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth }) {
     const [selectedNote, setSelectedNote] = useState(null);
     const [copying, setCopying] = useState(null);
     const [activeSection, setActiveSection] = useState("All");
@@ -105,16 +105,20 @@ export function NotesSection({ notes = [], user, loading, onRefresh }) {
     }, [onRefresh]);
 
     const handleCopy = useCallback((id, content) => {
-        navigator.clipboard.writeText(content);
-        setCopying(id);
-        setTimeout(() => setCopying(null), 2000);
-    }, []);
+        requireAuth(() => {
+            navigator.clipboard.writeText(content);
+            setCopying(id);
+            setTimeout(() => setCopying(null), 2000);
+        });
+    }, [requireAuth]);
 
     const handleDownload = useCallback((note) => {
-        const a = document.createElement("a");
-        a.href = note.fileData; a.download = note.fileName || "note";
-        a.click();
-    }, []);
+        requireAuth(() => {
+            const a = document.createElement("a");
+            a.href = note.fileData; a.download = note.fileName || "note";
+            a.click();
+        });
+    }, [requireAuth]);
 
     const handlePublic = useCallback(async (id) => {
         if (!window.confirm("Change visibility?")) return;
@@ -162,7 +166,18 @@ export function NotesSection({ notes = [], user, loading, onRefresh }) {
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {sectionNotes.map((note) => (
-                                    <NoteCard key={note._id} note={note} user={user} copying={copying} onDelete={handleDelete} onCopy={handleCopy} onDownload={handleDownload} onPublic={handlePublic} onSelect={setSelectedNote} onShowCode={(n) => { setSelectedNote(n); setShowCodeModal(true); }} />
+                                    <NoteCard 
+                                        key={note._id} 
+                                        note={note} 
+                                        user={user} 
+                                        copying={copying} 
+                                        onDelete={handleDelete} 
+                                        onCopy={handleCopy} 
+                                        onDownload={handleDownload} 
+                                        onPublic={handlePublic} 
+                                        onSelect={(n) => requireAuth(() => setSelectedNote(n))} 
+                                        onShowCode={(n) => requireAuth(() => { setSelectedNote(n); setShowCodeModal(true); })} 
+                                    />
                                 ))}
                             </div>
                         </div>

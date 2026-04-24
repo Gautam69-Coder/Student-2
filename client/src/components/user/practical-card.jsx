@@ -19,19 +19,23 @@ import { CodeModal } from "@/components/common/code-modal"
 import Highlight from "react-highlight"
 import "highlight.js/styles/atom-one-dark.css"
 
-const QuestionBlock = memo(function QuestionBlock({ question, index }) {
+const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth }) {
     const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false)
 
     const handleCopy = useCallback(() => {
-        navigator.clipboard.writeText(question.code)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-    }, [question.code])
+        requireAuth(() => {
+            navigator.clipboard.writeText(question.code)
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000)
+        });
+    }, [question.code, requireAuth])
 
     const handleOpenModal = useCallback(() => {
-        setShowModal(true)
-    }, [])
+        requireAuth(() => {
+            setShowModal(true)
+        });
+    }, [requireAuth])
 
     const handleCloseModal = useCallback(() => {
         setShowModal(false)
@@ -141,19 +145,22 @@ const QuestionBlock = memo(function QuestionBlock({ question, index }) {
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover/asset:opacity-100 transition-all duration-300 flex items-end justify-center p-8">
                                     <div className="flex gap-3">
                                         <button
-                                            onClick={() => window.open(question.fileUrl, '_blank')}
+                                            onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
                                             className="px-5 py-2.5 bg-white text-slate-900 text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform"
                                         >
                                             <ExternalLink className="w-4 h-4" /> Expand View
                                         </button>
-                                        <a
-                                            href={question.fileUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                        <button
+                                            onClick={() => requireAuth(() => {
+                                                const link = document.createElement('a');
+                                                link.href = question.fileUrl;
+                                                link.download = question.fileName || 'asset';
+                                                link.click();
+                                            })}
                                             className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors"
                                         >
                                             <Download className="w-4 h-4" /> Get Asset
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -170,15 +177,13 @@ const QuestionBlock = memo(function QuestionBlock({ question, index }) {
                                         <p className="text-[11px] font-medium text-slate-400">Application Resource</p>
                                     </div>
                                 </div>
-                                <a
-                                    href={question.fileUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <button
+                                    onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
                                     className="h-10 px-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
                                 >
                                     <Download className="w-4 h-4" />
                                     View File
-                                </a>
+                                </button>
                             </div>
                         )}
                     </div>
@@ -195,7 +200,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index }) {
     )
 })
 
-export const PracticalCard = memo(function PracticalCard({ practical }) {
+export const PracticalCard = memo(function PracticalCard({ practical, requireAuth }) {
     return (
         <div className="relative h-full">
             {/* Removed expensive background glow animation */}
@@ -213,7 +218,7 @@ export const PracticalCard = memo(function PracticalCard({ practical }) {
                 {/* Content Section */}
                 <div>
                     {practical.questions.map((question, index) => (
-                        <QuestionBlock key={index} question={question} index={index} />
+                        <QuestionBlock key={index} question={question} index={index} requireAuth={requireAuth} />
                     ))}
                 </div>
 

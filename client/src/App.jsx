@@ -109,29 +109,13 @@ function AppContent() {
                     />
 
                     <Route
-                        path="/auth"
-                        element={
-                            isAuthenticated ? (
-                                <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />
-                            ) : (
-                                <AuthSection
-                                    authState={authViewState}
-                                    setAuthState={setAuthViewState}
-                                    onAuth={handleAuth}
-                                />
-                            )
-                        }
-                    />
-
-                    <Route
                         path="/dashboard/*"
                         element={
-                            <ProtectedRoute isAuthenticated={isAuthenticated}>
-                                <StudentDashboard
-                                    userName={currentUser || "Student"}
-                                    onLogout={handleLogout}
-                                />
-                            </ProtectedRoute>
+                            <StudentDashboard
+                                userName={currentUser || "Student"}
+                                onLogout={handleLogout}
+                                onAuth={handleAuth}
+                            />
                         }
                     />
 

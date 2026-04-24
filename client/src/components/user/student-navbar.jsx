@@ -46,7 +46,8 @@ export function StudentNavbar({
     role,
     setUploadModalOpen,
     isBell,
-    setisBell
+    setisBell,
+    requireAuth
 }) {
     const location = useLocation();
     const navigate = useNavigate();
@@ -269,8 +270,8 @@ export function StudentNavbar({
                         </div>
 
                         {/* Profile Link for Desktop */}
-                        <Link
-                            to="/dashboard/profile"
+                        <button
+                            onClick={() => requireAuth(() => navigate("/dashboard/profile"))}
                             className={`hidden lg:flex ${userData.avatar ? null : "p-2.5 rounded-xl border border-slate-200 dark:border-slate-800"} transition-all ${isActive("/dashboard/profile")
                                 ? "rounded-[15px] bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
                                 : " rounded-[15px] hover:shadow-blue-700 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
@@ -283,7 +284,7 @@ export function StudentNavbar({
                             ) : (
                                 <User className="w-5 h-5" />
                             )}
-                        </Link>
+                        </button>
 
                         {isAdmin && (
                             <Link
@@ -350,10 +351,12 @@ export function StudentNavbar({
 
 
                             ))}
-                            <Link
-                                to={"/dashboard/profile"}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-colors ${isActive("/dashboard/profile")
+                            <button
+                                onClick={() => {
+                                    setMobileMenuOpen(false);
+                                    requireAuth(() => navigate("/dashboard/profile"));
+                                }}
+                                className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-colors ${isActive("/dashboard/profile")
                                     ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
                                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                                     }`}
@@ -368,7 +371,7 @@ export function StudentNavbar({
                                     </div>
                                 )}
                                 <span className="font-semibold">Profile</span>
-                            </Link>
+                            </button>
 
 
                             <div className="h-px bg-slate-100 dark:bg-slate-800 my-2" />

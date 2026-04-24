@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { PracticalCard } from '../../components/user/practical-card';
 import { SEO } from '@/components/common/SEO';
 
-export function Practicals({ practicals, subjects,setPracticalUploadOpen }) {
+export function Practicals({ practicals, subjects, setPracticalUploadOpen, requireAuth }) {
     const location = useLocation();
     const [selectedSubject, setSelectedSubject] = useState("");
     const [selectedPracticalNo, setSelectedPracticalNo] = useState("");
@@ -119,6 +119,7 @@ export function Practicals({ practicals, subjects,setPracticalUploadOpen }) {
                     <PracticalCard
                         key={index}
                         practical={practical}
+                        requireAuth={requireAuth}
                     />
                 ))}
             </div>

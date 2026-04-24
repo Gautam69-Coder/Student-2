@@ -31,8 +31,9 @@ import { PracticalCard } from "@/components/user/practical-card";
 import Notification from "@/components/user/notification";
 
 import { StudentNavbar } from "@/components/user/student-navbar"
+import { AuthModal } from "@/components/common/auth-modal"
 
-export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
+export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
     useTitle("Dashboard");
     const { darkMode, toggleDarkMode } = useTheme();
     const { 
@@ -46,10 +47,22 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
 
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
     const [practicalUploadOpen, setPracticalUploadOpen] = useState(false);
+    const [authModalOpen, setAuthModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedNote, setSelectedNote] = useState(null);
     const [isBell, setisBell] = useState(false);
     const navigate = useNavigate();
+
+    const isAuthenticated = !!user;
+
+    const handleAuthRequired = useCallback((action) => {
+        if (!isAuthenticated) {
+            setAuthModalOpen(true);
+            return false;
+        }
+        if (action) action();
+        return true;
+    }, [isAuthenticated]);
 
     const handleNoteCreated = useCallback(() => {
         refreshNotes();
@@ -70,8 +83,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
         const query = searchQuery.toLowerCase();
         return {
             subjects: subjects.filter(s => (s.name)?.toLowerCase()?.includes(query) || (s.code)?.toLowerCase()?.includes(query)),
-            practicals: practicals.filter(p => (p.questions[0]?.question)?.toLowerCase()?.includes(query) || (p.section)?.toLowerCase()?.includes(query)),
-            notes: notes.filter(n => (n.title)?.toLowerCase()?.includes(query) || (n.content)?.toLowerCase()?.includes(query)),
+            practicals: displayedPracticals.filter(p => (p.questions[0]?.question)?.toLowerCase()?.includes(query) || (p.section)?.toLowerCase()?.includes(query)),
+            notes: displayedNotes.filter(n => (n.title)?.toLowerCase()?.includes(query) || (n.content)?.toLowerCase()?.includes(query)),
         };
     }, [searchQuery, subjects, practicals, notes]);
 
@@ -88,6 +101,10 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
     const userName = user?.username || "Student";
     const role = user?.role || "user";
 
+    // Limit content for guests
+    const displayedNotes = isAuthenticated ? notes : notes.slice(-3).reverse();
+    const displayedPracticals = isAuthenticated ? practicals : practicals.slice(-3).reverse();
+
     return (
         <div className="flex flex-col min-h-screen bg-background dark:bg-slate-950 transition-colors duration-300">
             <StudentNavbar
@@ -96,13 +113,36 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                 onLogout={onLogout}
                 onSwitchToAdmin={onSwitchToAdmin}
                 role={role}
-                setUploadModalOpen={setUploadModalOpen}
+                setUploadModalOpen={() => handleAuthRequired(() => setUploadModalOpen(true))}
                 isBell={isBell}
                 setisBell={setisBell}
+                requireAuth={handleAuthRequired}
             />
 
             <main className="flex-1 w-full max-w-8xl mx-auto pt-24 px-4 sm:px-8">
-                {/* Content */}
+                {!isAuthenticated && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-8 p-6 rounded-3xl bg-linear-to-r from-indigo-500/10 via-purple-500/10 to-cyan-500/10 border border-indigo-500/20 backdrop-blur-sm relative overflow-hidden"
+                    >
+                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+                            <div>
+                                <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">You're exploring as a Guest</h2>
+                                <p className="text-slate-600 dark:text-slate-400 mt-1 max-w-lg">Unlock full access to 100+ Mumbai University notes, MERN stack practicals, and our student community.</p>
+                            </div>
+                            <button 
+                                onClick={() => setAuthModalOpen(true)}
+                                className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-bold shadow-xl hover:scale-105 active:scale-95 transition-all whitespace-nowrap"
+                            >
+                                Get Full Access
+                            </button>
+                        </div>
+                        {/* Decorative blobs */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+                    </motion.div>
+                )}
                 <div className="pb-24 lg:pb-8">
                     {searchQuery ? (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -239,8 +279,9 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                         userName={userName}
                                         subjects={subjects}
                                         subjectPracticals={subjectPracticals}
-                                        practicals={practicals}
+                                        practicals={displayedPracticals}
                                         loadingPracticals={loading.practicals}
+                                        requireAuth={handleAuthRequired}
                                         stats={{
                                             notesCount: notes.length,
                                             visitCount: user?.visitCount || 0,
@@ -251,16 +292,23 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                             />
                             <Route path="notes" element={
                                 <Notes
-                                    notes={notes}
+                                    notes={displayedNotes}
                                     user={user}
                                     loading={loading.notes}
                                     onRefresh={handleNoteCreated}
+                                    requireAuth={handleAuthRequired}
                                 />
                             } />
-                            <Route path="practicals" element={<Practicals practicals={practicals} setPracticalUploadOpen={setPracticalUploadOpen} subjects={subjects} />} />
-                            <Route path="feedback" element={<Feedback user={user} />} />
-                            <Route path="community" element={<Community />} />
-                            <Route path="profile" element={<Profile onLogout={onLogout} />} />
+                            <Route path="practicals" element={<Practicals practicals={displayedPracticals} setPracticalUploadOpen={() => handleAuthRequired(() => setPracticalUploadOpen(true))} subjects={subjects} requireAuth={handleAuthRequired} />} />
+                            <Route path="feedback" element={<Feedback user={user} requireAuth={handleAuthRequired} />} />
+                            <Route path="community" element={<Community requireAuth={handleAuthRequired} />} />
+                            <Route path="profile" element={
+                                isAuthenticated ? (
+                                    <Profile onLogout={onLogout} />
+                                ) : (
+                                    <Navigate to="/dashboard" replace />
+                                )
+                            } />
                             <Route path="about-contact" element={<AboutContact />} />
                             <Route path="*" element={<Navigate to="" replace />} />
                         </Routes>
@@ -294,6 +342,11 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                 open={practicalUploadOpen}
                 onOpenChange={setPracticalUploadOpen}
                 uniqueSubjects={subjects}
+            />
+            <AuthModal 
+                isOpen={authModalOpen} 
+                onClose={() => setAuthModalOpen(false)} 
+                onAuth={onAuth} 
             />
             <BottomNavbar />
         </div >

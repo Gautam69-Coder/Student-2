@@ -4,7 +4,7 @@ import { fetchCommunityPosts, createCommunityPost, toggleCommunityLike, getMe } 
 import { useSocket } from "@/context/SocketContext";
 import { SEO } from "@/components/common/SEO";
 
-export function Community() {
+export function Community({ requireAuth }) {
     const { onlineUsers } = useSocket();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -40,41 +40,45 @@ export function Community() {
 
     const handleCreate = async (e) => {
         e.preventDefault();
-        if (!content.trim()) {
-            setError("Share something with the community first.");
-            return;
-        }
-        setCreating(true);
-        setError("");
-        try {
-            const res = await createCommunityPost({
-                title: title.trim() || undefined,
-                content: content.trim(),
-                username: currentUsername,
-            });
-            setPosts((prev) => [res.data, ...prev]);
-            setContent("");
-            setTitle("");
-        } catch (err) {
-            setError(err.response?.data?.msg || "Could not share your post. Try again.");
-        } finally {
-            setCreating(false);
-        }
+        requireAuth(async () => {
+            if (!content.trim()) {
+                setError("Share something with the community first.");
+                return;
+            }
+            setCreating(true);
+            setError("");
+            try {
+                const res = await createCommunityPost({
+                    title: title.trim() || undefined,
+                    content: content.trim(),
+                    username: currentUsername,
+                });
+                setPosts((prev) => [res.data, ...prev]);
+                setContent("");
+                setTitle("");
+            } catch (err) {
+                setError(err.response?.data?.msg || "Could not share your post. Try again.");
+            } finally {
+                setCreating(false);
+            }
+        });
     };
 
     const handleLike = async (postId) => {
-        try {
-            const res = await toggleCommunityLike(postId);
-            setPosts((prev) =>
-                prev.map((p) =>
-                    p._id === postId
-                        ? { ...p, likedBy: res.data.likedBy, likesCount: res.data.likesCount }
-                        : p
-                )
-            );
-        } catch {
-            // Non-blocking – ignore like failures silently
-        }
+        requireAuth(async () => {
+            try {
+                const res = await toggleCommunityLike(postId);
+                setPosts((prev) =>
+                    prev.map((p) =>
+                        p._id === postId
+                            ? { ...p, likedBy: res.data.likedBy, likesCount: res.data.likesCount }
+                            : p
+                    )
+                );
+            } catch {
+                // Non-blocking – ignore like failures silently
+            }
+        });
     };
 
     const formatDate = (date) => {

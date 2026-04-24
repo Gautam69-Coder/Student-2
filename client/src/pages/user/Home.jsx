@@ -11,7 +11,7 @@ import { toUpperName } from '../../Utils/ToUpperName';
 
 
 
-export function Home({ userName, subjects, practicals, subjectPracticals, loadingPracticals, stats = {} }) {
+export function Home({ userName, subjects, practicals, subjectPracticals, loadingPracticals, requireAuth, stats = {} }) {
     useTitle("Home");
     const navigate = useNavigate();
 
@@ -224,6 +224,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                             <PracticalCard
                                 key={practical._id || index}
                                 practical={practical}
+                                requireAuth={requireAuth}
                             />
                         ))
                     )}

@@ -6,14 +6,28 @@ import uploadMulter from '../middleware/multer.js';
 import { uploadCloudinary } from '../utils/uploadcloudinary.js';
 
 // Get User Notes (and Global Notes)
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const notes = await UserNote.find({
-            $or: [
-                { user: req.user.id },
-                { isGlobal: true }
-            ]
-        }).sort({ createdAt: -1 });
+        const token = req.header('x-auth-token') || req.cookies.token;
+        let query = { isGlobal: true };
+
+        if (token) {
+            try {
+                const jwt = (await import('jsonwebtoken')).default;
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                query = {
+                    $or: [
+                        { user: decoded.id },
+                        { isGlobal: true }
+                    ]
+                };
+            } catch (err) {
+                // If token invalid, still show global notes
+                console.error("Token invalid in public notes route");
+            }
+        }
+
+        const notes = await UserNote.find(query).sort({ createdAt: -1 });
         res.json(notes);
     } catch (err) {
         res.status(500).send('Server Error');

@@ -2,10 +2,9 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Heart, MessageSquare, Users, Send, Loader2 } from "lucide-react";
 import { fetchCommunityPosts, createCommunityPost, toggleCommunityLike, getMe } from "@/Api/api";
 import { useSocket } from "@/context/SocketContext";
-import { useTitle } from "@/hooks/useTitle";
+import { SEO } from "@/components/common/SEO";
 
 export function Community() {
-    useTitle("Community");
     const { onlineUsers } = useSocket();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -103,6 +102,11 @@ export function Community() {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <SEO 
+                title="Student Community — Ask & Share | Student Hub"
+                description="Join the Mumbai IT student community. Ask questions about VESIT notes, share MERN stack tips, and connect with other BSc IT students in India."
+                url="/dashboard/community"
+            />
             {/* Header */}
             <div className="glass-card rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>

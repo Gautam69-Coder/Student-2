@@ -1,8 +1,11 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { AuthSection } from '@/components/common/auth-section';
-import { userDetail } from '@/lib/user';
-import { NotFoundPage } from './Utils/Error';
+const AuthSection = lazy(() =>
+    import('@/components/common/auth-section').then(m => ({ default: m.AuthSection }))
+);
+const NotFoundPage = lazy(() => 
+    import('./Utils/Error').then(m => ({ default: m.NotFoundPage }))
+);
 import { ThemeProvider } from './context/ThemeContext';
 import { useLenis } from '@/hooks/useLenis';
 import { CyberLoader } from '@/components/common/cyber-loader';
@@ -23,6 +26,8 @@ const AdminPanel = lazy(() =>
 const AIAssistant = lazy(() =>
     import('@/components/common/ai-assistant').then(m => ({ default: m.AIAssistant }))
 );
+const BlogList = lazy(() => import('./pages/BlogList'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
 
 const PageLoader = () => (
     <div className="flex items-center justify-center h-screen bg-background">
@@ -141,7 +146,16 @@ function AppContent() {
                             </ProtectedRoute>
                         }
                     />
-                    <Route path="*" element={<NotFoundPage />} />
+                    <Route path="/blog" element={<BlogList />} />
+                    <Route path="/blog/:slug" element={<BlogPost />} />
+                    <Route
+                        path="*"
+                        element={
+                            <Suspense fallback={<PageLoader />}>
+                                <NotFoundPage />
+                            </Suspense>
+                        }
+                    />
                 </Routes>
             </Suspense>
             {isAuthenticated && (

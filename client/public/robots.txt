@@ -1,7 +1,5 @@
-# Updated 2026-02-05
 User-agent: *
 Allow: /
-
 Disallow: /admin
 
 Sitemap: https://student-2.pages.dev/sitemap.xml

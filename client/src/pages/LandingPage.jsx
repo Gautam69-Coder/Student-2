@@ -16,7 +16,7 @@ import {
     Star
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useTitle } from '@/hooks/useTitle';
+import { SEO } from '@/components/common/SEO';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 
 const FeatureCard = ({ icon: Icon, title, description, delay }) => (
@@ -48,10 +48,37 @@ const StatCard = ({ label, value, icon: Icon }) => (
 );
 
 export default function LandingPage() {
-    useTitle("Student Hub | Your Ultimate Learning Companion");
+    const homeSchema = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Student Hub",
+        "url": "https://student-2.pages.dev/",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://student-2.pages.dev/blog?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    };
+
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://student-2.pages.dev/"
+        }]
+    };
 
     return (
         <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 overflow-x-hidden">
+            <SEO 
+                title="Student Hub — Free MERN Notes, Practicals & Resources for IT Students"
+                description="Access premium VESIT notes, Mumbai IT student notes, and MERN stack practicals. The ultimate resource for BSc IT notes Mumbai and IT student resources India."
+                url="/"
+                schema={[homeSchema, breadcrumbSchema]}
+            />
             {/* Navigation */}
             <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
                 <div className="max-w-7xl mx-auto flex items-center justify-between glass py-3 px-6 rounded-2xl border border-white/20 dark:border-white/5 shadow-2xl backdrop-blur-xl">
@@ -60,18 +87,29 @@ export default function LandingPage() {
                             src="/logo.png"
                             alt="Student Hub Logo"
                             className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
                         />
                     </Link>
 
                     <div className="hidden md:flex items-center gap-8">
-                        {['Features', 'About', 'Contact'].map((item) => (
-                            <a
-                                key={item}
-                                href={`#${item.toLowerCase()}`}
-                                className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white transition-colors"
-                            >
-                                {item}
-                            </a>
+                        {['Features', 'Blog', 'About', 'Contact'].map((item) => (
+                            item === 'Blog' ? (
+                                <Link
+                                    key={item}
+                                    to="/blog"
+                                    className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white transition-colors"
+                                >
+                                    {item}
+                                </Link>
+                            ) : (
+                                <a
+                                    key={item}
+                                    href={`#${item.toLowerCase()}`}
+                                    className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white transition-colors"
+                                >
+                                    {item}
+                                </a>
+                            )
                         ))}
                     </div>
 
@@ -104,14 +142,14 @@ export default function LandingPage() {
                         </span>
 
                         <h1 className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-8 tracking-tight leading-[1.1]">
-                            Master Your Studies <br />
+                            Mumbai IT Student Notes & <br />
                             <span className="bg-linear-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent italic">
-                                Effortlessly
+                                MERN Stack Practicals
                             </span>
                         </h1>
 
                         <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed font-medium">
-                            The all-in-one platform for modern students. Organized practicals, previous year questions, and AI-powered assistance at your fingertips.
+                            The all-in-one platform for VESIT notes and BSc IT notes Mumbai. Organized practicals, previous year questions, and IT student resources India at your fingertips.
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -193,9 +231,9 @@ export default function LandingPage() {
             <section id="features" className="py-32 px-6 bg-slate-50/50 dark:bg-slate-900/20">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-20">
-                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6">Built For Tomorrow's Leaders</h2>
+                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6">VESIT Notes & Mumbai IT Resources</h2>
                         <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg">
-                            Powerful tools designed to simplify your academic life and help you excel in every subject.
+                            Powerful tools designed to simplify your BSc IT journey with Mumbai student notes and MERN stack practicals.
                         </p>
                     </div>
 
@@ -270,17 +308,24 @@ export default function LandingPage() {
             <footer className="py-12 px-6 border-t border-slate-100 dark:border-slate-900">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
                     <Link to="/" className="flex items-center gap-2">
-                        <img src="/logo.png" alt="Student Hub Logo" className="h-8 w-auto object-contain" />
+                        <img src="/logo.png" alt="Student Hub Logo" className="h-8 w-auto object-contain" loading="lazy" />
                     </Link>
 
                     <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                         &copy; 2026 Student Hub. Designed for excellence.
                     </p>
 
+                    <div className="flex flex-col md:flex-row items-center gap-8 text-sm font-medium">
+                        <Link to="/blog" className="text-slate-500 hover:text-indigo-600 transition-colors">Study Blog</Link>
+                        <Link to="/notes" className="text-slate-500 hover:text-indigo-600 transition-colors">VESIT Notes</Link>
+                        <Link to="/practicals" className="text-slate-500 hover:text-indigo-600 transition-colors">MERN Practicals</Link>
+                        <Link to="/community" className="text-slate-500 hover:text-indigo-600 transition-colors">Student Community</Link>
+                    </div>
+
                     <div className="flex items-center gap-6">
-                        <a href="#" className="text-slate-400 hover:text-indigo-600 transition-colors"><Github className="w-5 h-5" /></a>
-                        <a href="#" className="text-slate-400 hover:text-indigo-600 transition-colors"><Users className="w-5 h-5" /></a>
-                        <a href="#" className="text-slate-400 hover:text-indigo-600 transition-colors"><MessageSquare className="w-5 h-5" /></a>
+                        <a href="#" aria-label="Github Repository" className="text-slate-400 hover:text-indigo-600 transition-colors"><Github className="w-5 h-5" /></a>
+                        <a href="#" aria-label="Student Community" className="text-slate-400 hover:text-indigo-600 transition-colors"><Users className="w-5 h-5" /></a>
+                        <a href="#" aria-label="Contact Support" className="text-slate-400 hover:text-indigo-600 transition-colors"><MessageSquare className="w-5 h-5" /></a>
                     </div>
                 </div>
             </footer>

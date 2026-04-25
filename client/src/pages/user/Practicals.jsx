@@ -52,19 +52,18 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="sm:space-y-6 space-y-3 sm:p-4 p-2">
-            <SEO 
+            <SEO
                 title="BSc IT Practicals Solutions | Student Hub"
-                description="Comprehensive MERN stack practicals and BSc IT practical solutions for Mumbai students. Access verified code and implementation guides."
+                description="Comprehensive   and BSc IT practical solutions for Mumbai students. Access verified code and implementation guides."
                 url="/dashboard/practicals"
             />
             <div className="flex flex-col sm:gap-4 gap-2">
                 <div className="flex justify-between items-end">
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white w-full  tracking-tight ">MERN Stack Practicals & BSc IT Solutions</h2>
                     <button
                         className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all 
                        bg-white hover:dark:bg-white hover:dark:text-black dark:bg-slate-800 text-black dark:text-white shadow-md border border-slate-200 dark:border-slate-700
                         `}
-                        onClick={()=>{setPracticalUploadOpen(true)}}
+                        onClick={() => { setPracticalUploadOpen(true) }}
                     >
                         Add Practical
                     </button>

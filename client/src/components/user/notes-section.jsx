@@ -137,8 +137,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
             {/* Header / Tabs */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Mumbai IT Student Notes & Resources</h2>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Access your premium VESIT notes and shared study materials.</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">IT Student Notes & Resources</h2>
                 </div>
                 <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 sm:pb-0">
                     {sections.map((sec) => (

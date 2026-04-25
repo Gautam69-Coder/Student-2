@@ -18,9 +18,9 @@ This document summarizes the high-impact SEO improvements and new features imple
 
 ## ✍️ 2. Content & Keyword Optimization (Task 2)
 - **Keyword Integration:** Heading hierarchy (H1, H2) was updated across the platform to target:
-  - *"VESIT notes"*
+  - *"  notes"*
   - *"Mumbai IT student notes"*
-  - *"MERN stack practicals"*
+  - *" "*
   - *"BSc IT notes Mumbai"*
   - *"IT student resources India"*
 - **SEO Footer:** A new footer layout provides semantic internal linking, improving site crawling and "link juice" distribution.
@@ -28,7 +28,7 @@ This document summarizes the high-impact SEO improvements and new features imple
 
 ## 📚 3. New Feature: Blog Section (Task 3)
 - **New Routes:** `/blog` (Listing) and `/blog/:slug` (Individual Post).
-- **Seed Content:** Three 500+ word technical articles focused on student resources, MERN practicals, and VESIT study tips.
+- **Seed Content:** Three 500+ word technical articles focused on student resources, MERN practicals, and   study tips.
 - **Design:** Implemented with a "Cyber-Minimalism" glassmorphism card layout and responsive typography.
 - **Data Source:** Posts are managed via a central `blog-posts.json` for easy future updates.
 

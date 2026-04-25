@@ -17,7 +17,7 @@ export function Community({ requireAuth }) {
 
     useEffect(() => {
         getMe()
-            .then((res) => {setCurrentUserId(res.data._id || res.data.id);setCurrentUsername(res.data.username)})
+            .then((res) => { setCurrentUserId(res.data._id || res.data.id); setCurrentUsername(res.data.username) })
             .catch(() => setCurrentUserId(null));
     }, []);
 
@@ -106,9 +106,9 @@ export function Community({ requireAuth }) {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <SEO 
+            <SEO
                 title="Student Community — Ask & Share | Student Hub"
-                description="Join the Mumbai IT student community. Ask questions about VESIT notes, share MERN stack tips, and connect with other BSc IT students in India."
+                description="Join the Mumbai IT student community. Ask questions about   notes, share MERN stack tips, and connect with other BSc IT students in India."
                 url="/dashboard/community"
             />
             {/* Header */}
@@ -244,8 +244,8 @@ export function Community({ requireAuth }) {
                                     type="button"
                                     onClick={() => handleLike(post._id)}
                                     className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${post.isLiked
-                                            ? "border-rose-500/40 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400"
-                                            : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900"
+                                        ? "border-rose-500/40 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400"
+                                        : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900"
                                         }`}
                                 >
                                     <Heart

@@ -129,7 +129,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
                             <div>
                                 <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">You're exploring as a Guest</h2>
-                                <p className="text-slate-600 dark:text-slate-400 mt-1 max-w-lg">Unlock full access to 100+ Mumbai University notes, MERN stack practicals, and our student community.</p>
                             </div>
                             <button 
                                 onClick={() => setAuthModalOpen(true)}

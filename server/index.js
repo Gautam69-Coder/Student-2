@@ -172,7 +172,7 @@ app.use('/api/content', content);
 app.use('/api/notes', notes);
 app.use('/api/sections', sections);
 app.use('/api/practicals', practicals);
-app.use('/api/feedback',feedback);
+app.use('/api/feedback', feedback);
 app.use('/api/notifications', notification);
 app.use('/api/community', community);
 // app.use('/api/email', email);
@@ -180,9 +180,11 @@ app.use('/api/community', community);
 
 // Track user activity
 import activityTrack from './routes/activitytrack.js';
+import guestTrack from './routes/guesttrack.js';
 
 app.use('/api/hometracking', activityTrack);
 app.use('/api/trackingData', activityTrack);
+app.use('/api/guesttrack', guestTrack);
 
 app.get('/', (req, res) => {
     res.send('API is running with Socket.io...');

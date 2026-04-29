@@ -1,12 +1,13 @@
 
 import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Users, FileText, FlaskConical, Upload, BarChart3, LogOut, Shield, X, Sparkles, GraduationCap, MessageSquare, Mail, Bell } from "lucide-react"
-import { useLocation, Link } from "react-router-dom"
-import { useSocket } from "@/context/SocketContext"
+import { Users, FileText, FlaskConical, Upload, BarChart3, LogOut, Shield, X, Sparkles, GraduationCap, MessageSquare, Mail, Bell, MapPin } from 'lucide-react'
+import { useLocation, Link } from 'react-router-dom'
+import { useSocket } from '@/context/SocketContext'
 
 const navItems = [
     { id: "users", label: "Manage Users", icon: Users, badge: true },
+    { id: "guests", label: "Guest User Data", icon: MapPin },
     { id: "subjects", label: "Manage Subjects", icon: GraduationCap },
     { id: "content", label: "Content Manager", icon: FileText },
     { id: "practicals", label: "Add Practical", icon: FlaskConical },

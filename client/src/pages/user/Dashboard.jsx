@@ -36,13 +36,13 @@ import { AuthModal } from "@/components/common/auth-modal"
 export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
     useTitle("Dashboard");
     const { darkMode, toggleDarkMode } = useTheme();
-    const { 
-        user, 
-        subjects, 
-        practicals, 
-        notes, 
-        loading, 
-        refreshNotes 
+    const {
+        user,
+        subjects,
+        practicals,
+        notes,
+        loading,
+        refreshNotes
     } = useData();
 
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -100,6 +100,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
     const userName = user?.username || "Student";
     const role = user?.role || "user";
+    const isGuest = !isAuthenticated;
 
     // Limit content for guests
     const displayedNotes = isAuthenticated ? notes : notes.slice(-3).reverse();
@@ -121,7 +122,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
             <main className="flex-1 w-full max-w-8xl mx-auto pt-24 px-4 sm:px-8">
                 {!isAuthenticated && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="mb-8 p-6 rounded-3xl bg-linear-to-r from-indigo-500/10 via-purple-500/10 to-cyan-500/10 border border-indigo-500/20 backdrop-blur-sm relative overflow-hidden"
@@ -130,7 +131,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                             <div>
                                 <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">You're exploring as a Guest</h2>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => setAuthModalOpen(true)}
                                 className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-bold shadow-xl hover:scale-105 active:scale-95 transition-all whitespace-nowrap"
                             >
@@ -215,7 +216,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                             animate={{ opacity: 1, scale: 1, y: 0 }}
                                             exit={{ opacity: 0, scale: 0.95, y: 10 }}
                                             className="relative w-full max-w-4xl max-h-[85vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col"
-                                            onClick={(e) => e.stopPropagation()} 
+                                            onClick={(e) => e.stopPropagation()}
                                         >
                                             <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
                                                 <div>
@@ -281,6 +282,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                         practicals={displayedPracticals}
                                         loadingPracticals={loading.practicals}
                                         requireAuth={handleAuthRequired}
+                                        isGuest={isGuest}
                                         stats={{
                                             notesCount: notes.length,
                                             visitCount: user?.visitCount || 0,
@@ -342,10 +344,10 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                 onOpenChange={setPracticalUploadOpen}
                 uniqueSubjects={subjects}
             />
-            <AuthModal 
-                isOpen={authModalOpen} 
-                onClose={() => setAuthModalOpen(false)} 
-                onAuth={onAuth} 
+            <AuthModal
+                isOpen={authModalOpen}
+                onClose={() => setAuthModalOpen(false)}
+                onAuth={onAuth}
             />
             <BottomNavbar />
         </div >

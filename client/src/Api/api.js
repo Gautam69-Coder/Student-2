@@ -108,6 +108,8 @@ export const toggleCommunityLike = (id) => api.post(`/community/${id}/like`);
 
 // Tracking Api
 export const sendTrackerHome = (section) => api.post('/hometracking', { section: section })
+export const sendGuestTracker = (guestData) => api.post('/guesttrack', guestData)
+export const fetchGuestVisits = () => api.get('/guesttrack')
 export const getTrackerData = () => api.get('/trackingData')
 
 export default api;

@@ -6,20 +6,28 @@ import { PracticalCard } from '../../components/user/practical-card';
 import { Link, useNavigate } from 'react-router-dom';
 import { PracticalCardSkeleton } from '@/components/common/skeleton';
 import { useTitle } from '@/hooks/useTitle';
-import { sendTrackerHome } from "@/Api/api"
+import { sendTrackerHome, sendGuestTracker } from "@/Api/api"
 import { toUpperName } from '../../Utils/ToUpperName';
 
 
 
-export function Home({ userName, subjects, practicals, subjectPracticals, loadingPracticals, requireAuth, stats = {} }) {
+export function Home({ userName, subjects, practicals, subjectPracticals, loadingPracticals, requireAuth, stats = {}, isGuest = false }) {
     useTitle("Home");
     const navigate = useNavigate();
 
 
     const trackHome = async () => {
-        let section="home";
-        const track = await sendTrackerHome(section);
-        // console.log(track.data);
+        const section = "home";
+
+        if (isGuest) {
+            const language = navigator.language || navigator.userLanguage || 'en-US';
+            const country = language.includes('-') ? language.split('-')[1] : language;
+            const device = `${navigator.platform || 'Unknown Platform'} - ${navigator.userAgent}`;
+            await sendGuestTracker({ section, device, country, userAgent: navigator.userAgent });
+            return;
+        }
+
+        await sendTrackerHome(section);
     }
 
     useEffect(() => {

@@ -1,125 +1,99 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
+import { setUser as setReduxUser, logout as reduxLogout } from '@/store/slices/authSlice';
 import { fetchSections, fetchPracticals, fetchNotes } from '@/Api/api';
 import { userDetail } from '@/lib/user';
 
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
+    const queryClient = useQueryClient();
+    const dispatch = useDispatch();
     const [user, setUser] = useState(null);
-    const [subjects, setSubjects] = useState([]);
-    const [practicals, setPracticals] = useState([]);
-    const [notes, setNotes] = useState([]);
-    const [loading, setLoading] = useState({
-        user: true,
-        subjects: true,
-        practicals: true,
-        notes: true
-    });
-    const [refreshKeys, setRefreshKeys] = useState({
-        notes: 0,
-        practicals: 0,
-        subjects: 0
-    });
+    const [userLoading, setUserLoading] = useState(true);
 
-    const refreshNotes = useCallback(() => {
-        setRefreshKeys(prev => ({ ...prev, notes: prev.notes + 1 }));
-    }, []);
-
-    const refreshPracticals = useCallback(() => {
-        setRefreshKeys(prev => ({ ...prev, practicals: prev.practicals + 1 }));
-    }, []);
-
-    const refreshSubjects = useCallback(() => {
-        setRefreshKeys(prev => ({ ...prev, subjects: prev.subjects + 1 }));
-    }, []);
-
-    // Fetch User Profile
+    // Fetch User Profile (Keeping this manual as it relates to auth state)
     useEffect(() => {
         const loadUser = async () => {
             const authFlag = localStorage.getItem('isAuthenticated');
             if (!authFlag) {
-                setLoading(prev => ({ ...prev, user: false }));
+                setUserLoading(false);
                 return;
             }
             try {
                 const data = await userDetail();
                 setUser(data);
+                dispatch(setReduxUser(data));
             } catch (error) {
                 console.error("Error fetching user detail:", error);
             } finally {
-                setLoading(prev => ({ ...prev, user: false }));
+                setUserLoading(false);
             }
         };
         loadUser();
-    }, []);
+    }, [dispatch]);
 
-    // Fetch Subjects
-    useEffect(() => {
-        const loadSubjects = async () => {
-            setLoading(prev => ({ ...prev, subjects: true }));
-            try {
-                const res = await fetchSections();
-                setSubjects(res.data);
-            } catch (error) {
-                console.error("Error fetching subjects:", error);
-            } finally {
-                setLoading(prev => ({ ...prev, subjects: false }));
-            }
-        };
-        loadSubjects();
-    }, [user, refreshKeys.subjects]);
+    // Use React Query for Subjects
+    const { 
+        data: subjectsData, 
+        isLoading: subjectsLoading
+    } = useQuery({
+        queryKey: ['subjects'],
+        queryFn: async () => {
+            const res = await fetchSections();
+            return res.data;
+        },
+        enabled: !!user,
+    });
 
-    // Fetch Practicals
-    useEffect(() => {
-        const loadPracticals = async () => {
-            setLoading(prev => ({ ...prev, practicals: true }));
-            try {
-                const res = await fetchPracticals();
-                setPracticals(res.data);
-            } catch (error) {
-                console.error("Error fetching practicals:", error);
-            } finally {
-                setLoading(prev => ({ ...prev, practicals: false }));
-            }
-        };
-        loadPracticals();
-    }, [user, refreshKeys.practicals]);
+    // Use React Query for Practicals
+    const { 
+        data: practicalsData, 
+        isLoading: practicalsLoading
+    } = useQuery({
+        queryKey: ['practicals'],
+        queryFn: async () => {
+            const res = await fetchPracticals();
+            return res.data;
+        },
+        enabled: !!user,
+    });
 
-    // Fetch Notes
-    useEffect(() => {
-        const loadNotes = async () => {
-            setLoading(prev => ({ ...prev, notes: true }));
-            try {
-                const res = await fetchNotes();
-                setNotes(res.data);
-            } catch (error) {
-                console.error("Error fetching notes:", error);
-            } finally {
-                setLoading(prev => ({ ...prev, notes: false }));
-            }
-        };
-        loadNotes();
-    }, [user, refreshKeys.notes]);
+    // Use React Query for Notes
+    const { 
+        data: notesData, 
+        isLoading: notesLoading
+    } = useQuery({
+        queryKey: ['notes'],
+        queryFn: async () => {
+            const res = await fetchNotes();
+            return res.data;
+        },
+        enabled: !!user,
+    });
 
     const logout = () => {
         setUser(null);
-        setSubjects([]);
-        setPracticals([]);
-        setNotes([]);
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('token');
+        dispatch(reduxLogout());
+        queryClient.clear();
     };
 
     const value = {
         user,
         setUser,
-        subjects,
-        practicals,
-        notes,
-        loading,
-        refreshNotes,
-        refreshPracticals,
-        refreshSubjects,
+        subjects: subjectsData || [],
+        practicals: practicalsData || [],
+        notes: notesData || [],
+        loading: {
+            user: userLoading,
+            subjects: subjectsLoading,
+            practicals: practicalsLoading,
+            notes: notesLoading
+        },
+        refreshNotes: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
+        refreshPracticals: () => queryClient.invalidateQueries({ queryKey: ['practicals'] }),
+        refreshSubjects: () => queryClient.invalidateQueries({ queryKey: ['subjects'] }),
         logout
     };
 

@@ -1,26 +1,23 @@
-
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleDarkMode as reduxToggleDarkMode } from '@/store/slices/uiSlice';
 
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-    const [darkMode, setDarkMode] = useState(() => {
-        const saved = localStorage.getItem('theme');
-        return saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    });
+    const dispatch = useDispatch();
+    const darkMode = useSelector((state) => state.ui.darkMode);
 
     useEffect(() => {
         const root = window.document.documentElement;
         if (darkMode) {
             root.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
         } else {
             root.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
         }
     }, [darkMode]);
 
-    const toggleDarkMode = () => setDarkMode(!darkMode);
+    const toggleDarkMode = () => dispatch(reduxToggleDarkMode());
 
     return (
         <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { User, Mail, Shield, Calendar, MapPin, Briefcase, Camera, Edit2, LogOut, MessageSquare, Info, Lock, EyeClosed, Eye, EyeClosedIcon, EyeOff, ArrowRightIcon } from "lucide-react";
+import { User, Mail, Shield, Calendar, Edit2, LogOut, MessageSquare, Info, Lock, Eye, EyeOff } from "lucide-react";
 import { getMe } from "@/Api/api";
 import { useTitle } from "@/hooks/useTitle";
 import { userProfileUpdate } from "../../Api/api";

@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-// Redundant UI component imports removed as per request
 import {
     Users,
     FileText,
@@ -11,12 +9,10 @@ import {
     Check,
     X,
     Eye,
-    Edit3,
     HardDrive,
     Activity,
     GraduationCap,
     Trash,
-    CloudCog,
     Pen,
 } from "lucide-react"
 import { AdminSidebar } from "./admin-sidebar"
@@ -35,28 +31,8 @@ import {
     createPractical,
     updatePractical,
     deletePractical,
-    fetchNotes,
-    createNote,
-    updateNote,
-    deleteNote,
 } from "../../Api/api"
-import { Navigate, useNavigate } from "react-router-dom"
-
-
-
-
-const initialSubjects = [
-    { name: "Java Programming", code: "CS301", progress: 75, color: "#f97316" },
-    { name: "Scilab", code: "CS302", progress: 60, color: "#06b6d4" },
-    { name: "Data Structures", code: "CS303", progress: 45, color: "#8b5cf6" },
-    { name: "Web Development", code: "CS304", progress: 90, color: "#10b981" },
-]
-
-const pendingNotes = [
-    { id: 1, title: "Advanced Java Streams", author: "Rahul S.", subject: "Java", date: "Today" },
-    { id: 2, title: "Scilab Signal Processing", author: "Priya K.", subject: "Scilab", date: "Yesterday" },
-    { id: 3, title: "Graph Algorithms Notes", author: "Vikram T.", subject: "DSA", date: "2 days ago" },
-]
+import { useNavigate } from "react-router-dom"
 
 export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
     const [currentView, setCurrentView] = useState("users")
@@ -250,7 +226,7 @@ export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
                         <div className="flex items-center gap-3">
                             <ThemeToggle />
                             <button
-                                onClick={()=>{navigate("/dashboard");console.log("Helo")}}
+                                onClick={() => navigate("/dashboard")}
                                 className="inline-flex items-center justify-center rounded-lg gap-2 border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400"
                             >
                                 <GraduationCap className="w-4 h-4" />

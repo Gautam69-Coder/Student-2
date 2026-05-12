@@ -11,7 +11,7 @@ import { Link } from "react-router-dom"
 import { googleLogin } from "@/Api/api"
 import { getRedirectResult } from "firebase/auth";
 
-import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, Sparkles, CloudCog } from "lucide-react"
+import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, CloudCog } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 import { registerUser, loginUser } from "@/Api/api"
 import { useTitle } from "@/hooks/useTitle"
@@ -42,14 +42,11 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
         const handleRedirect = async () => {
             try {
                 const result = await getRedirectResult(auth);
-                console.log(auth)
-                console.log(result)
                 if (result) {
                     const user = result.user;
 
                     // 🔑 Get Firebase ID Token
                     const token = await user.getIdToken();
-                    console.log("Token", token);
 
                     // Send token to backend
                     const res = await googleLogin(token);
@@ -144,14 +141,6 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                 );
             }
 
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    const handleGoogleLoginMobile = async () => {
-        try {
-            await signInWithRedirect(auth, provider);
         } catch (err) {
             console.error(err);
         }

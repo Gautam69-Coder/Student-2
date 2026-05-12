@@ -87,7 +87,7 @@ export default function LandingPage() {
                             src="/logo.png"
                             alt="Student Hub Logo"
                             className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
-                            loading="lazy"
+                            loading="eager"
                         />
                     </Link>
 

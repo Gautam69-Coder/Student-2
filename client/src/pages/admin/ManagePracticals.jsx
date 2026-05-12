@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Trash, FlaskConical, Pen, Search, FileUp, X, Image as ImageIcon, FileText, Loader2 } from "lucide-react"
+import { Trash, FlaskConical, Pen, FileUp, X, Image as ImageIcon, FileText, Loader2 } from "lucide-react"
 import {
     createPractical,
     updatePractical,

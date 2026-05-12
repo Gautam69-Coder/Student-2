@@ -110,7 +110,6 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                 formData.append("fileIndexMap", JSON.stringify(fileIndexMap));
 
                 const res = await createPractical(formData);
-                console.log("Practical created:", res.data);
                 alert('Practical added successfully!');
             }
 

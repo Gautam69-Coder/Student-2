@@ -11,9 +11,9 @@ import { useLenis } from '@/hooks/useLenis';
 import { CyberLoader } from '@/components/common/cyber-loader';
 import { SocketProvider } from './context/SocketContext';
 import { DataProvider, useData } from './context/DataContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout as reduxLogout } from '@/store/slices/authSlice';
 import { ServerOffline } from '@/components/common/server-offline';
-import { message } from 'antd';
-import MotionFlipCard from './Utils/Test';
 
 // Lazy-load heavy route components — drastically reduces initial bundle
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -45,7 +45,9 @@ const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
 
 function AppContent() {
     useLenis();
-    const { user, loading: dataLoading, logout } = useData();
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.auth.user);
+    const { loading: dataLoading, logout: contextLogout } = useData();
     const [authViewState, setAuthViewState] = useState("login");
     const [isServerOffline, setIsServerOffline] = useState(false);
 
@@ -75,7 +77,8 @@ function AppContent() {
         } catch (err) {
             console.error("Logout failed", err);
         }
-        logout();
+        contextLogout();
+        dispatch(reduxLogout());
         setAuthViewState("login");
         navigate('/');
     };
@@ -96,7 +99,6 @@ function AppContent() {
         <div className="min-h-screen max-w-full sm:max-w-screen bg-background">
             <Suspense fallback={<PageLoader />}>
                 <Routes>
-                        <Route path='/test' element={<MotionFlipCard/>} />
                     <Route
                         path="/"
                         element={

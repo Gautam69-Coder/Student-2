@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Globe, Clock, MapPin, Activity } from "lucide-react";
+import { Globe, Activity } from "lucide-react";
 import { useTitle } from "@/hooks/useTitle";
 import { fetchGuestVisits } from "@/Api/api";
 

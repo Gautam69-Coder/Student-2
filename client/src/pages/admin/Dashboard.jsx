@@ -1,12 +1,16 @@
-
 import React, { useState, useEffect } from "react"
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import {
     fetchUsers,
     fetchContent,
-    fetchSections,
-    deleteUser
+    fetchSections
 } from "@/Api/api"
+
+const pendingNotes = [
+    { id: 1, title: "Advanced Java Streams", author: "Rahul S.", subject: "Java", date: "Today" },
+    { id: 2, title: "Scilab Signal Processing", author: "Priya K.", subject: "Scilab", date: "Yesterday" },
+    { id: 3, title: "Graph Algorithms Notes", author: "Vikram T.", subject: "DSA", date: "2 days ago" },
+]
 
 import { GraduationCap, Menu, X, Sun, Moon } from "lucide-react"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
@@ -24,29 +28,16 @@ import { ManageFeedback } from "./ManageFeedback"
 import { MessageSender } from "./MessageSender"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTitle } from "@/hooks/useTitle"
-import { Navigate, useNavigate } from "react-router-dom"
 
 
-const initialSubjects = [
-    { name: "Java Programming", code: "CS301", progress: 75, color: "#f97316" },
-    { name: "Scilab", code: "CS302", progress: 60, color: "#06b6d4" },
-    { name: "Data Structures", code: "CS303", progress: 45, color: "#8b5cf6" },
-    { name: "Web Development", code: "CS304", progress: 90, color: "#10b981" },
-]
 
-const pendingNotes = [
-    { id: 1, title: "Advanced Java Streams", author: "Rahul S.", subject: "Java", date: "Today" },
-    { id: 2, title: "Scilab Signal Processing", author: "Priya K.", subject: "Scilab", date: "Yesterday" },
-    { id: 3, title: "Graph Algorithms Notes", author: "Vikram T.", subject: "DSA", date: "2 days ago" },
-]
-
-export function AdminPanel({ userName, onLogout, onSwitchToStudent }) {
+export function AdminPanel({ userName, onLogout }) {
     useTitle("Admin Panel");
     const { darkMode, toggleDarkMode } = useTheme();
     const { onlineUsers, lastVisit, socket } = useSocket();
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
     const [users, setUsers] = useState([])
-    const [subjects, setSubjects] = useState(initialSubjects)
+    const [subjects, setSubjects] = useState([])
     const [uniqueSubjectSections, setUniqueSubjectSections] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const navigate = useNavigate();

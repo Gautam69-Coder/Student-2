@@ -1,13 +1,11 @@
-
 import React from "react"
 import { motion } from "framer-motion"
 import { ArrowUpRight, BookOpen } from "lucide-react"
 import { useEffect } from "react"
+import { useState } from "react"
 
 export function SubjectCard({ subject, index, onClick, subjectPracticals }) {
 
-    useEffect(() => {
-    }, [subjectPracticals]);
 
     return (
         <motion.div
@@ -39,7 +37,7 @@ export function SubjectCard({ subject, index, onClick, subjectPracticals }) {
                     <div className="flex items-center justify-between glass-card rounded-full p-2 sm:px-4 text-xs sm:text-sm font-bold group-hover:border-cyan-500/20 transition-all">
                         <span className="text-slate-500 dark:text-slate-400 sm:text-sm text-xs">Practicals</span>
                         <span className="text-slate-900 dark:text-white bg-cyan-500/10 px-2.5 py-0.5 rounded-full text-cyan-600 dark:text-cyan-400">
-                            {subjectPracticals[subject.name]?.length || 0}
+                            {subjectPracticals.map(i => i.section).filter(same => same === subject.name).length}
                         </span>
                     </div>
                 </div>

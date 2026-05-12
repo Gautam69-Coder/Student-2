@@ -1,24 +1,15 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react"
+import React, { useState, useMemo, useCallback } from "react"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import PracticalUpload from "../../components/user/practical-upload"
 import { Link } from "react-router-dom"
-import {
-    fetchSections,
-    fetchPracticals,
-    fetchNotes,
-} from "@/Api/api"
 
-
-import { Upload, Search, Command, Menu, Users, CloudCog, Code, FileText, Download, X, Bell } from "lucide-react"
-import { ThemeToggle } from "@/components/common/theme-toggle"
+import { Code, FileText, Download, X } from "lucide-react"
 import { BottomNavbar } from "@/components/user/bottom-navbar"
 import { UploadModal } from "@/components/user/upload-modal"
-import { userDetail } from "@/lib/user";
 import { useTheme } from "@/context/ThemeContext";
 import { useTitle } from "@/hooks/useTitle";
 import { useData } from "@/context/DataContext";
-import { toUpperName } from "@/Utils/ToUpperName";
 
 import { Home } from "./Home";
 import { Notes } from "./Notes";
@@ -28,7 +19,7 @@ import { Profile } from "./Profile";
 import { AboutContact } from "./AboutContact";
 import { Community } from "./Community";
 import { PracticalCard } from "@/components/user/practical-card";
-import Notification from "@/components/user/notification";
+ 
 
 import { StudentNavbar } from "@/components/user/student-navbar"
 import { AuthModal } from "@/components/common/auth-modal"
@@ -42,7 +33,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
         practicals,
         notes,
         loading,
-        refreshNotes
+        refreshNotes,
     } = useData();
 
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -77,6 +68,24 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
         document.body.removeChild(link);
     }, []);
 
+    const userName = user?.username || "Student";
+    const role = user?.role || "user";
+    const isGuest = !isAuthenticated;
+
+    // Limit content for guests - Memoized to prevent reference changes
+    const displayedNotes = useMemo(() => 
+        isAuthenticated ? notes : notes.slice(-3).reverse(),
+    [isAuthenticated, notes]);
+
+    const displayedPracticals = useMemo(() => 
+        isAuthenticated ? practicals : practicals.slice(-3).reverse(),
+    [isAuthenticated, practicals]);
+
+    const subjectPracticals = useMemo(() => {
+        if (!user) return [];
+        return practicals.filter(p => p.subject?._id === user.subject?._id);
+    }, [user, practicals]);
+
     const searchResults = useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [] };
 
@@ -86,25 +95,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
             practicals: displayedPracticals.filter(p => (p.questions[0]?.question)?.toLowerCase()?.includes(query) || (p.section)?.toLowerCase()?.includes(query)),
             notes: displayedNotes.filter(n => (n.title)?.toLowerCase()?.includes(query) || (n.content)?.toLowerCase()?.includes(query)),
         };
-    }, [searchQuery, subjects, practicals, notes]);
-
-    const subjectPracticals = useMemo(() => {
-        return practicals.reduce((acc, practical) => {
-            if (!acc[practical.section]) {
-                acc[practical.section] = [];
-            }
-            acc[practical.section].push(practical);
-            return acc;
-        }, {});
-    }, [practicals]);
-
-    const userName = user?.username || "Student";
-    const role = user?.role || "user";
-    const isGuest = !isAuthenticated;
-
-    // Limit content for guests
-    const displayedNotes = isAuthenticated ? notes : notes.slice(-3).reverse();
-    const displayedPracticals = isAuthenticated ? practicals : practicals.slice(-3).reverse();
+    }, [searchQuery, subjects, displayedPracticals, displayedNotes]);
 
     return (
         <div className="flex flex-col min-h-screen bg-background dark:bg-slate-950 transition-colors duration-300">

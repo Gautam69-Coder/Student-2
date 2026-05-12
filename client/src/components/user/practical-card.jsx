@@ -1,5 +1,5 @@
 
-import React, { useState, memo, useCallback, useMemo } from "react"
+import React, { useState, memo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     Code,
@@ -9,9 +9,6 @@ import {
     FileText,
     Download,
     ExternalLink,
-    Bookmark,
-    Terminal,
-    ChevronRight,
     Cpu
 } from "lucide-react"
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { submitFeedback,sendNotification } from '@/Api/api';
-import { Send, MessageSquare, AlertCircle, Sparkles, HelpCircle } from 'lucide-react';
+import { sendNotification } from '@/Api/api';
+import { Send, Bell, MessageSquare } from 'lucide-react';
 import { useTitle } from '@/hooks/useTitle';
 
 export const ManageNotification = () => {
@@ -11,8 +11,6 @@ export const ManageNotification = () => {
     });
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState({ type: '', message: '' });
-
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -36,37 +34,37 @@ export const ManageNotification = () => {
                 <div className="p-8">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="p-3 bg-slate-900 dark:bg-slate-800 rounded-xl">
-                            <MessageSquare className="w-6 h-6 text-white" />
+                            <Bell className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Share Your Feedback</h2>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Help us improve your experience with the student portal.</p>
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Broadcast Notification</h2>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Send a message to all registered students instantly.</p>
                         </div>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Title</label>
+                                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Notification Title</label>
                                 <input
                                     required
                                     type="text"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    placeholder="Send notification to all users"
+                                    placeholder="e.g. Server Maintenance or New Resource Uploaded"
                                     className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/5 dark:focus:ring-white/5 focus:border-slate-900 dark:focus:border-slate-500 transition-all bg-slate-50/50 dark:bg-slate-950/50 text-slate-900 dark:text-white"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Your Message</label>
+                            <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Notification Content</label>
                             <textarea
                                 required
                                 rows="5"
                                 value={formData.message}
                                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                placeholder="Tell us more about your notification..."
+                                placeholder="Describe the notification in detail..."
                                 className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/5 dark:focus:ring-white/5 focus:border-slate-900 dark:focus:border-slate-500 transition-all bg-slate-50/50 dark:bg-slate-950/50 text-slate-900 dark:text-white resize-none"
                             ></textarea>
                         </div>
@@ -82,7 +80,7 @@ export const ManageNotification = () => {
                             ) : (
                                 <>
                                     <Send className="w-5 h-5" />
-                                    Submit Feedback
+                                    Send Notification
                                 </>
                             )}
                         </button>
@@ -92,3 +90,4 @@ export const ManageNotification = () => {
         </div>
     );
 };
+

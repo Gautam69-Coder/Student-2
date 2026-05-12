@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { motion } from "framer-motion"
-import { Mail, Send, Users, User, Check, AlertCircle, Loader2 } from "lucide-react"
+import { Mail, Send, Users, Search, Check, AlertCircle, Loader2 } from "lucide-react"
 import { sendEmail } from "@/Api/api"
 import { useTitle } from "@/hooks/useTitle"
 
@@ -110,7 +110,7 @@ export function MessageSender({ users }) {
                                 Send to All Students
                             </button>
                             <div className="relative group">
-                                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 group-focus-within:text-slate-900 dark:group-focus-within:text-slate-100 transition-colors" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 group-focus-within:text-slate-900 dark:group-focus-within:text-slate-100 transition-colors" />
                                 <input
                                     type="text"
                                     placeholder="Search users..."
@@ -228,22 +228,3 @@ export function MessageSender({ users }) {
     )
 }
 
-function SearchIcon(props) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
-        </svg>
-    )
-}

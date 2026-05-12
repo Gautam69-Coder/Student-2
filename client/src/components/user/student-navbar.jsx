@@ -5,7 +5,6 @@ import { sendTrackerHome } from "../../Api/api"
 import {
     Home,
     FileText,
-    BookOpen,
     FlaskConical,
     LogOut,
     Search,
@@ -54,12 +53,10 @@ export function StudentNavbar({
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [moreMenuOpen, setMoreMenuOpen] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
     const [userData, setUserData] = useState([]);
 
     //useState for tacking navigation user
     const [track, setTrack] = useState(null);
-
 
     useEffect(() => {
         const handleScroll = () => {
@@ -68,7 +65,6 @@ export function StudentNavbar({
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
-
 
     const trackHome = useCallback(async (section) => {
         await sendTrackerHome(section);
@@ -85,18 +81,16 @@ export function StudentNavbar({
         }
     }, [track])
 
-
     const isActive = (path) => {
         if (path === "/dashboard") {
             return location.pathname === "/dashboard" || location.pathname === "/dashboard/";
         }
         return location.pathname.startsWith(path);
     };
+
     useEffect(() => {
-        // Fetch role once on mount only
         getMe()
             .then((response) => {
-                setIsAdmin(response.data.role === "admin" || response.data.role === "superadmin");
                 setUserData(response.data);
             })
             .catch((error) => {
@@ -286,7 +280,7 @@ export function StudentNavbar({
                             )}
                         </button>
 
-                        {isAdmin && (
+                        {(role === "admin" || role === "superadmin") && (
                             <Link
                                 to="/admin"
                                 className={`hidden lg:flex p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 transition-all ${isActive("/dashboard/profile")

@@ -1,7 +1,7 @@
 
 import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Upload, FileText, X, Check, Code, AlertCircle, Plus, ChevronDown, Layout, File, Image as ImageIcon, Section } from "lucide-react"
+import { Upload, FileText, X, Check, Code, Plus, ChevronDown, Layout, File, Image as ImageIcon } from "lucide-react"
 import { useState, useEffect } from "react"
 import { createNoteFile } from "../../Api/api"
 import { createNoteText } from "../../Api/api"
@@ -74,7 +74,6 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                 formData.append("file", fileUpload);
                 formData.append("title", noteData.title);
                 formData.append("section", noteData.section);
-                console.log("FileUpload : ",fileUpload)
                 const file = await createNoteFile(formData);
                 if (file.data.success) {
                     customMessage({ content: file.data.msg, type: "success" });
@@ -172,7 +171,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                                 <select
                                                     className="w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm appearance-none transition-all text-slate-900 dark:text-white"
                                                     name="section"
-                                                    onChange={(e) => { handleChanged(e); console.log(newSection) }}
+                                                    onChange={(e) => { handleChanged(e); }}
                                                     value={noteData.section}
                                                 >
                                                     {allSections.map((item, index) => {

@@ -4,7 +4,7 @@ export const Logo = () => {
     )
 }
 
-export const circleLogo = () => {
+export const CircleLogo = () => {
     return (
         <img className="h-8 w-auto rounded-full object-contain" src="/circle_logo.png" alt="Student Hub Circle Logo" />
     )

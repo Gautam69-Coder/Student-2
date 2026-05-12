@@ -29,7 +29,6 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
 
         await sendTrackerHome(section);
     }
-
     useEffect(() => {
         trackHome();
     }, [])
@@ -53,6 +52,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
     const visitCount = stats.visitCount ?? 0;
     const lastVisit = stats.lastVisit ? new Date(stats.lastVisit) : null;
 
+
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             {/* Welcome Banner - Ultra-Premium Glassmorphism */}
@@ -61,81 +61,67 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                 <div className="absolute top-0 right-0 w-96 h-96 bg-linear-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-linear-to-tr from-purple-500/10 via-cyan-500/10 to-transparent rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-                <div className="relative z-10">
-                    <div className="flex items-center gap-2 text-indigo-500 dark:text-indigo-400 mb-3">
-                        <Sparkles className="w-4 h-4" />
-                        <span className="text-sm font-bold uppercase tracking-wider">Good Morning</span>
-                    </div>
-                    <div className='sm:flex flex-wrap justify-between font-black mb-4 tracking-tight leading-tight'>
-                        <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
-                            Welcome back, <br />
-                            <span className="bg-linear-to-r from-blue-400 to-indigo-400 dark:from-blue-600 dark:to-indigo-600 bg-clip-text text-transparent">
-                                {toUpperName(userName)}!
-                            </span>
-                        </h1>
+                <div className="relative z-10 ">
+                    <div className='flex justify-between flex-wrap items-center'>
+                        <div className='sm:flex flex-wrap justify-between font-black mb-4 tracking-tight leading-tight'>
+                            <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
+                                Welcome back, <br />
+                                <span className="bg-linear-to-r from-blue-400 to-indigo-400 dark:from-blue-600 dark:to-indigo-600 bg-clip-text text-transparent">
+                                    {toUpperName(userName)}!
+                                </span>
+                            </h1>
 
-                        <div className='space-y-2 text-green-500 dark:text-green-400 text-sm font-medium '>
-                            <div>
-                                {new Date().toLocaleDateString('en-US', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                    year: 'numeric',
-                                    timeZone: 'Asia/Kolkata',
-                                })}
+                        </div>
+
+
+                        <div className="flex flex-wrap sm:gap-4 gap-3 ">
+                            <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
+                                <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">{subjects.length}</p>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Active Subjects</p>
                             </div>
-                            <div>
-                                {new Date().toLocaleTimeString('en-US', {
-                                    hour: 'numeric',
-                                    minute: 'numeric',
-                                    hour12: true,
-                                    timeZone: 'Asia/Kolkata',
-                                })}
+                            <div className="hidden sm:block w-px h-24 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
+                            <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
+                                <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">{totalQuestions}</p>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Total Questions</p>
+                            </div>
+                            <div className="hidden sm:block w-px h-24 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
+                            <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-lime-500/30 transition-all group">
+                                <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-lime-500 transition-colors">68%</p>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Progress</p>
                             </div>
                         </div>
                     </div>
-                    <p className="hidden md:block text-slate-600 dark:text-slate-300 max-w-xl text-base sm:text-lg leading-relaxed">
-                        You have <span className="text-indigo-600 dark:text-indigo-400 font-bold">{practicals.length} practical sets</span> with{" "}
-                        <span className="text-lime-500 dark:text-lime-400 font-bold">{totalQuestions} questions</span> ready to explore today.
-                    </p>
 
-                    <div className="flex flex-wrap sm:gap-4 gap-3 mt-8">
-                        <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
-                            <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">{subjects.length}</p>
-                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Active Subjects</p>
-                        </div>
-                        <div className="hidden sm:block w-px h-14 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
-                        <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
-                            <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">{totalQuestions}</p>
-                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Total Questions</p>
-                        </div>
-                        <div className="hidden sm:block w-px h-14 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
-                        <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-lime-500/30 transition-all group">
-                            <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-lime-500 transition-colors">68%</p>
-                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Progress</p>
-                        </div>
-                    </div>
+
 
                     {/* Quick actions */}
-                    <div className="mt-6 flex flex-wrap gap-3">
-                        <Link
-                            to="/dashboard/practicals"
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-bold shadow-md hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition-colors"
-                        >
-                            Browse Practicals
-                            <ArrowUpRight className="w-4 h-4" />
-                        </Link>
-                        <Link
-                            to="/dashboard/notes"
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                        >
-                            Open My Notes
-                        </Link>
-                        <Link
-                            to="/dashboard/community"
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
-                        >
-                            Ask Community
-                        </Link>
+                    <div className="mt-6 flex flex-wrap gap-3 justify-between">
+                        <div className='flex flex-wrap gap-3'>
+                            <Link
+                                to="/dashboard/practicals"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-bold shadow-md hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition-colors"
+                            >
+                                Browse Practicals
+                                <ArrowUpRight className="w-4 h-4" />
+                            </Link>
+                            <Link
+                                to="/dashboard/notes"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                            >
+                                Open My Notes
+                            </Link>
+                            <Link
+                                to="/dashboard/community"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
+                            >
+                                Ask Community
+                            </Link>
+                        </div>
+
+                        <p className="hidden md:block text-slate-600 dark:text-slate-300 max-w-xl text-base sm:text-lg leading-relaxed">
+                            You have <span className="text-indigo-600 dark:text-indigo-400 font-bold">{practicals.length} practical sets</span> with{" "}
+                            <span className="text-lime-500 dark:text-lime-400 font-bold">{totalQuestions} questions</span> ready to explore today.
+                        </p>
                     </div>
                 </div>
             </div>

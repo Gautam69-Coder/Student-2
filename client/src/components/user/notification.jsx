@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, LucideUtensilsCrossed } from "lucide-react";
+import { Bell } from "lucide-react";
 import { fetchNotifications, notificationStatusUpdate } from '@/Api/api';
 
 const NotificationPanel = () => {
     const [notifications, setNotifications] = useState([]);
-    const [isRead, setIsRead] = useState(false);
 
     useLayoutEffect(() => {
         const fetchNotificationsData = async () => {

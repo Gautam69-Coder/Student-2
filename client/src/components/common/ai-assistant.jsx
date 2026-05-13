@@ -47,28 +47,28 @@ export function AIAssistant() {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="fixed bottom-8 right-8 z-50 w-96 bg-white rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.08)] border-2"
+          className="fixed dark:bg-slate-800 dark:text-white dark:border-slate-800 bottom-8 right-8 z-50 w-96 bg-white rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.08)] border-2"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-5 border-b border-gray-100 bg-white">
+          <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-slate-600 dark:text-slate-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 text-sm">Study Assistant</h3>
+                <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Study Assistant</h3>
                 <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Online</p>
               </div>
             </div>
             <div className="flex gap-1">
               <button
-                className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-gray-50 text-slate-400 hover:text-slate-600 transition-colors"
+                className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-gray-50 hover:dark:bg-slate-800    text-slate-400 hover:text-slate-600 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 <Minimize2 className="w-3.5 h-3.5" />
               </button>
               <button
-                className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-gray-50 text-slate-400 hover:text-slate-600 transition-colors"
+                className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-gray-50  hover:dark:bg-slate-800    text-slate-400 hover:text-slate-600 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 <X className="w-3.5 h-3.5" />
@@ -77,7 +77,7 @@ export function AIAssistant() {
           </div>
 
           {/* Messages */}
-          <div className="h-80 overflow-y-auto p-5 space-y-4 bg-[#FCFAF8]">
+          <div className="h-80 overflow-y-auto p-5 space-y-4 bg-[#FCFAF8] dark:bg-slate-900 dark:text-white">
             {messages.map((msg, index) => (
               <motion.div
                 key={index}
@@ -87,8 +87,8 @@ export function AIAssistant() {
               >
                 <div
                   className={`max-w-[85%] px-5 py-3 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === "user"
-                    ? "bg-slate-900 text-white rounded-br-none"
-                    : "bg-white border border-gray-100 text-slate-600 rounded-bl-none"
+                    ? "bg-slate-900 dark:bg-slate-800 dark:text-white text-white rounded-br-none"
+                    : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-white border border-gray-100 text-slate-600 rounded-bl-none"
                     }`}
                 >
                   {msg.content}
@@ -98,7 +98,7 @@ export function AIAssistant() {
           </div>
 
           {/* Input */}
-          <div className="p-4 bg-white border-t border-gray-100">
+          <div className="p-4 bg-white border-t dark:border-slate-700 border-gray-100 dark:bg-slate-900 dark:text-white">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -106,7 +106,7 @@ export function AIAssistant() {
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 placeholder="Ask a question..."
-                className="flex-1 px-4 h-10 bg-gray-50 border border-gray-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-300 rounded-xl text-sm transition-all"
+                className="flex-1 px-4 h-10 bg-gray-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 border border-gray-200 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-300 rounded-xl text-sm transition-all"
               />
               <button
                 className="flex items-center justify-center w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-sm transition-colors active:scale-[0.98]"

@@ -55,14 +55,15 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            {/* Welcome Banner - Ultra-Premium Glassmorphism */}
-            <div className="relative overflow-hidden rounded-2xl glass-card sm:p-8 p-5">
-                {/* Simplified Gradient Background - Static */}
-                <div className="absolute top-0 right-0 w-96 h-96 bg-linear-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-linear-to-tr from-purple-500/10 via-cyan-500/10 to-transparent rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+            <div className='flex  justify-between gap-4 '>
 
-                <div className="relative z-10 ">
-                    <div className='flex justify-between flex-wrap items-center'>
+                {/* Welcome Banner - Ultra-Premium Glassmorphism */}
+                <div className="relative w-full overflow-hidden rounded-2xl glass-card sm:p-8 p-5">
+                    {/* Simplified Gradient Background - Static */}
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-linear-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-linear-to-tr from-purple-500/10 via-cyan-500/10 to-transparent rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+
+                    <div className="relative z-10 ">
                         <div className='sm:flex flex-wrap justify-between font-black mb-4 tracking-tight leading-tight'>
                             <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
                                 Welcome back, <br />
@@ -90,42 +91,89 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Progress</p>
                             </div>
                         </div>
-                    </div>
 
-
-
-                    {/* Quick actions */}
-                    <div className="mt-6 flex flex-wrap gap-3 justify-between">
-                        <div className='flex flex-wrap gap-3'>
-                            <Link
-                                to="/dashboard/practicals"
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-bold shadow-md hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition-colors"
-                            >
-                                Browse Practicals
-                                <ArrowUpRight className="w-4 h-4" />
-                            </Link>
-                            <Link
-                                to="/dashboard/notes"
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                            >
-                                Open My Notes
-                            </Link>
-                            <Link
-                                to="/dashboard/community"
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
-                            >
-                                Ask Community
-                            </Link>
-                        </div>
-
-                        <p className="hidden md:block text-slate-600 dark:text-slate-300 max-w-xl text-base sm:text-lg leading-relaxed">
+                        <p className="hidden md:block mt-8 text-slate-600 dark:text-slate-300 max-w-xl text-base sm:text-lg leading-relaxed">
                             You have <span className="text-indigo-600 dark:text-indigo-400 font-bold">{practicals.length} practical sets</span> with{" "}
                             <span className="text-lime-500 dark:text-lime-400 font-bold">{totalQuestions} questions</span> ready to explore today.
                         </p>
+
+
+                        {/* Quick actions */}
+                        <div className="mt-6 flex flex-wrap gap-3 justify-between">
+                            <div className='flex flex-wrap gap-3'>
+                                <Link
+                                    to="/dashboard/practicals"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-bold shadow-md hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition-colors"
+                                >
+                                    Browse Practicals
+                                    <ArrowUpRight className="w-4 h-4" />
+                                </Link>
+                                <Link
+                                    to="/dashboard/notes"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                >
+                                    Open My Notes
+                                </Link>
+                                <Link
+                                    to="/dashboard/community"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
+                                >
+                                    Ask Community
+                                </Link>
+                            </div>
+
+
+                        </div>
                     </div>
                 </div>
-            </div>
 
+                {/* Activity Overview */}
+                <div className=" glass-card rounded-2xl p-5 w-[25%] space-y-8">
+                    <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Notes Created
+                        </p>
+                        <p className="text-2xl font-black text-slate-900 dark:text-white">
+                            {notesCount}
+                        </p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                            Personal notes saved in your workspace.
+                        </p>
+                    </div>
+
+                    <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Visits
+                        </p>
+                        <p className="text-2xl font-black text-slate-900 dark:text-white">
+                            {visitCount}
+                        </p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                            Times you’ve logged into Student Hub.
+                        </p>
+                    </div>
+
+                    <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Last Active
+                        </p>
+                        <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                            {lastVisit
+                                ? lastVisit.toLocaleString('en-IN', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                })
+                                : 'First time here 🎉'}
+                        </p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                            Based on your recent login activity.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
             {/* Subjects Grid - Premium Glassmorphism */}
             <div className='glass-card rounded-2xl p-5'>
                 <div className="flex items-center justify-between mb-6">
@@ -150,51 +198,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                 </div>
             </div>
 
-            {/* Activity Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
-                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                        Notes Created
-                    </p>
-                    <p className="text-2xl font-black text-slate-900 dark:text-white">
-                        {notesCount}
-                    </p>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                        Personal notes saved in your workspace.
-                    </p>
-                </div>
 
-                <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
-                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                        Visits
-                    </p>
-                    <p className="text-2xl font-black text-slate-900 dark:text-white">
-                        {visitCount}
-                    </p>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                        Times you’ve logged into Student Hub.
-                    </p>
-                </div>
-
-                <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
-                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                        Last Active
-                    </p>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                        {lastVisit
-                            ? lastVisit.toLocaleString('en-IN', {
-                                day: 'numeric',
-                                month: 'short',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                            })
-                            : 'First time here 🎉'}
-                    </p>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                        Based on your recent login activity.
-                    </p>
-                </div>
-            </div>
 
             {/* Recent Practicals - Enhanced Data Density */}
             <div className='glass-card p-5 rounded-2xl'>

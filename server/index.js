@@ -166,6 +166,8 @@ import practicals from './routes/practicals.js';
 import feedback from './routes/feedback.js';
 import notification from './routes/notification.js';
 import community from './routes/community.js';
+import aiasistant from './routes/aiasistant.js'
+
 // import email from './routes/email.js';
 app.use('/api/auth', auth);
 app.use('/api/content', content);
@@ -175,6 +177,7 @@ app.use('/api/practicals', practicals);
 app.use('/api/feedback', feedback);
 app.use('/api/notifications', notification);
 app.use('/api/community', community);
+app.use('/api/aiassistant', aiasistant);
 // app.use('/api/email', email);
 
 

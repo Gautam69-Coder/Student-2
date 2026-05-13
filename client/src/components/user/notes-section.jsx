@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { deleteNote, makeNotePublic } from "@/Api/api";
 import { CodeModal } from "@/components/common/code-modal";
+import RippleLoader from "../nurui/ripple-loader";
 
 const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPublic, onSelect, onShowCode }) => {
     const isOwner = user?._id === note.user;
@@ -127,7 +128,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 className="w-10 h-10 text-slate-400 animate-spin" />
+            <RippleLoader />
             <p className="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Loading your notes...</p>
         </div>
     );
@@ -165,17 +166,17 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {sectionNotes.map((note) => (
-                                    <NoteCard 
-                                        key={note._id} 
-                                        note={note} 
-                                        user={user} 
-                                        copying={copying} 
-                                        onDelete={handleDelete} 
-                                        onCopy={handleCopy} 
-                                        onDownload={handleDownload} 
-                                        onPublic={handlePublic} 
-                                        onSelect={(n) => requireAuth(() => setSelectedNote(n))} 
-                                        onShowCode={(n) => requireAuth(() => { setSelectedNote(n); setShowCodeModal(true); })} 
+                                    <NoteCard
+                                        key={note._id}
+                                        note={note}
+                                        user={user}
+                                        copying={copying}
+                                        onDelete={handleDelete}
+                                        onCopy={handleCopy}
+                                        onDownload={handleDownload}
+                                        onPublic={handlePublic}
+                                        onSelect={(n) => requireAuth(() => setSelectedNote(n))}
+                                        onShowCode={(n) => requireAuth(() => { setSelectedNote(n); setShowCodeModal(true); })}
                                     />
                                 ))}
                             </div>
@@ -203,10 +204,10 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
                                 </div>
                             </div>
                             <div className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-950 p-6 flex justify-center">
-                                {selectedNote.fileType?.startsWith('image/') 
-                                    ? <img src={selectedNote.fileData} alt="" className="max-w-full max-h-full object-contain rounded-lg shadow-xl" /> 
-                                    : selectedNote.fileType === "application/pdf" 
-                                        ? <iframe src={selectedNote.fileData} className="w-full h-full rounded-lg border border-slate-200 dark:border-slate-700" title={selectedNote.title} /> 
+                                {selectedNote.fileType?.startsWith('image/')
+                                    ? <img src={selectedNote.fileData} alt="" className="max-w-full max-h-full object-contain rounded-lg shadow-xl" />
+                                    : selectedNote.fileType === "application/pdf"
+                                        ? <iframe src={selectedNote.fileData} className="w-full h-full rounded-lg border border-slate-200 dark:border-slate-700" title={selectedNote.title} />
                                         : null}
                             </div>
                         </motion.div>

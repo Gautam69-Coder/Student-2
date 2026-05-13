@@ -14,9 +14,6 @@ export function CodeModal({ isOpen, onClose, title, code }) {
         setTimeout(() => setCopied(false), 2000);
     };
 
-
-
-
     if (typeof document === 'undefined') return null;
 
     return ReactDOM.createPortal(

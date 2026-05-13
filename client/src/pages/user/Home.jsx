@@ -8,6 +8,8 @@ import { PracticalCardSkeleton } from '@/components/common/skeleton';
 import { useTitle } from '@/hooks/useTitle';
 import { sendTrackerHome, sendGuestTracker } from "@/Api/api"
 import { toUpperName } from '../../Utils/ToUpperName';
+import { AuroraText } from "/components/ui/aurora-text"
+import GradientText from "@/components/nurui/gradient-text";
 
 
 
@@ -68,7 +70,13 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                             <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
                                 Welcome back, <br />
                                 <span className="bg-linear-to-r from-blue-400 to-indigo-400 dark:from-blue-600 dark:to-indigo-600 bg-clip-text text-transparent">
-                                    {toUpperName(userName)}!
+                                    <GradientText
+                                        colors={["#3ca2fa", "#80eeb4", "#3ca2fa", "#80eeb4", "#3ca2fa"]}
+                                        animationSpeed={3}
+                                        showBorder={false}
+                                        className="text-6xl">
+                                        {toUpperName(userName)}!
+                                    </GradientText>
                                 </span>
                             </h1>
 

@@ -112,4 +112,7 @@ export const sendGuestTracker = (guestData) => api.post('/guesttrack', guestData
 export const fetchGuestVisits = () => api.get('/guesttrack')
 export const getTrackerData = () => api.get('/trackingData')
 
+//AI Assistant
+export const aiAssistant = (data) => api.post('/aiassistant', { message: data })
+
 export default api;

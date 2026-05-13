@@ -84,7 +84,7 @@ const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPu
     );
 });
 
-export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth }) {
+export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth = (cb) => cb && cb() }) {
     const [selectedNote, setSelectedNote] = useState(null);
     const [copying, setCopying] = useState(null);
     const [activeSection, setActiveSection] = useState("All");

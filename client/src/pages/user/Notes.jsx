@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { NotesSection } from '@/components/user/notes-section';
 import { SEO } from '@/components/common/SEO';
 
-export const Notes = memo(({ notes, user, loading, onRefresh }) => {
+export const Notes = memo(({ notes, user, loading, onRefresh, requireAuth }) => {
     return (
         <>
             <SEO
@@ -10,7 +10,7 @@ export const Notes = memo(({ notes, user, loading, onRefresh }) => {
                 description="Download high-quality IT notes and study material for Mumbai University IT students. Premium   notes and BSc IT notes Mumbai for all semesters."
                 url="/dashboard/notes"
             />
-            <NotesSection notes={notes} user={user} loading={loading} onRefresh={onRefresh} />
+            <NotesSection notes={notes} user={user} loading={loading} onRefresh={onRefresh} requireAuth={requireAuth} />
         </>
     );
 });

@@ -1,9 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-const AuthSection = lazy(() =>
-    import('@/components/common/auth-section').then(m => ({ default: m.AuthSection }))
-);
-const NotFoundPage = lazy(() => 
+const NotFoundPage = lazy(() =>
     import('./Utils/Error').then(m => ({ default: m.NotFoundPage }))
 );
 import { ThemeProvider } from './context/ThemeContext';
@@ -23,6 +20,8 @@ const StudentDashboard = lazy(() =>
 const AdminPanel = lazy(() =>
     import('@/pages/admin/Dashboard').then(m => ({ default: m.AdminPanel }))
 );
+const LoginPage = lazy(() => import('./pages/Login'));
+const SignupPage = lazy(() => import('./pages/Signup'));
 const AIAssistant = lazy(() =>
     import('@/components/common/ai-assistant').then(m => ({ default: m.AIAssistant }))
 );
@@ -48,7 +47,6 @@ function AppContent() {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
     const { loading: dataLoading, logout: contextLogout } = useData();
-    const [authViewState, setAuthViewState] = useState("login");
     const [isServerOffline, setIsServerOffline] = useState(false);
 
     const navigate = useNavigate();
@@ -66,8 +64,7 @@ function AppContent() {
 
     const handleAuth = async (role, name) => {
         localStorage.setItem('isAuthenticated', 'true');
-        // Reload to re-trigger context fetches and state updates
-        window.location.reload();
+        navigate(role === 'admin' ? '/admin' : '/dashboard');
     };
 
     const handleLogout = async () => {
@@ -79,7 +76,6 @@ function AppContent() {
         }
         contextLogout();
         dispatch(reduxLogout());
-        setAuthViewState("login");
         navigate('/');
     };
 
@@ -111,20 +107,44 @@ function AppContent() {
                     />
 
                     <Route
+                        path="/login"
+                        element={
+                            isAuthenticated ? (
+                                <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />
+                            ) : (
+                                <LoginPage onAuth={handleAuth} />
+                            )
+                        }
+                    />
+
+                    <Route
+                        path="/signup"
+                        element={
+                            isAuthenticated ? (
+                                <Navigate to={userRole === 'admin' ? "/admin" : "/dashboard"} replace />
+                            ) : (
+                                <SignupPage onAuth={handleAuth} />
+                            )
+                        }
+                    />
+
+                    <Route
                         path="/dashboard/*"
                         element={
-                            <StudentDashboard
-                                userName={currentUser || "Student"}
-                                onLogout={handleLogout}
-                                onAuth={handleAuth}
-                            />
+                            <ProtectedRoute isAuthenticated={isAuthenticated} redirectPath="/login">
+                                <StudentDashboard
+                                    userName={currentUser || "Student"}
+                                    onLogout={handleLogout}
+                                    onAuth={handleAuth}
+                                />
+                            </ProtectedRoute>
                         }
                     />
 
                     <Route
                         path="/admin/*"
                         element={
-                            <ProtectedRoute isAuthenticated={isAuthenticated}>
+                            <ProtectedRoute isAuthenticated={isAuthenticated} redirectPath="/login">
                                 <AdminPanel
                                     userName={currentUser || "Admin"}
                                     onLogout={handleLogout}

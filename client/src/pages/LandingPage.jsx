@@ -73,7 +73,7 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 overflow-x-hidden">
-            <SEO 
+            <SEO
                 title="Student Hub — Free MERN Notes, Practicals & Resources for IT Students"
                 description="Access premium  notes, IT student notes. The ultimate resource for BSc IT notes and IT student resources India."
                 url="/"
@@ -116,10 +116,10 @@ export default function LandingPage() {
                     <div className="flex items-center gap-4">
                         <ThemeToggle />
                         <Link
-                            to="/dashboard"
+                            to="/signup"
                             className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-lg"
                         >
-                            Explore Dashboard <ArrowRight className="w-4 h-4" />
+                            Sign Up <ArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
                 </div>
@@ -154,7 +154,7 @@ export default function LandingPage() {
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <Link
-                                to="/dashboard"
+                                to="/login"
                                 className="group relative px-8 py-4 rounded-2xl bg-indigo-600 text-white font-bold text-lg overflow-hidden shadow-[0_0_40px_rgba(79,70,229,0.3)] hover:shadow-[0_0_60px_rgba(79,70,229,0.5)] transition-all"
                             >
                                 <span className="relative z-10 flex items-center gap-2">

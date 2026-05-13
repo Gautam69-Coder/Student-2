@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { User, Mail, Shield, Calendar, Edit2, LogOut, MessageSquare, Info, Lock, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Shield, Calendar, Edit2, MapPin, ArrowRight, LogOut, MessageSquare, Info, Lock, Eye, EyeOff } from "lucide-react";
 import { getMe } from "@/Api/api";
 import { useTitle } from "@/hooks/useTitle";
 import { userProfileUpdate } from "../../Api/api";
@@ -35,16 +35,16 @@ export function Profile({ onLogout }) {
 
     useEffect(() => {
         fetchUserData();
+    }, []);
 
+    useEffect(() => {
         setUserDetail({
             username: user?.username || "",
             email: user?.email || "",
             password: "",
             confirmPassword: "",
-        })
-
-
-    }, [flipped]);
+        });
+    }, [user, flipped]);
 
     if (loading) {
         return (
@@ -109,14 +109,15 @@ export function Profile({ onLogout }) {
             >
                 <div className="perspective w-full h-full">
                     <motion.div
-                        className="relative w-full sm:h-[122vh] h-[155vh]"
+                        className="relative w-full min-h-[90vh] sm:min-h-[95vh]"
                         animate={{ rotateY: flipped ? 180 : 0 }}
                         transition={{ duration: 0.6 }}
                         style={{ transformStyle: "preserve-3d" }}
                     >
                         {/* Card Front - Profile info */}
                         <div
-                            className="absolute inset-0 backface-hidden bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800">
+                            className="absolute inset-0 bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800"
+                            style={{ backfaceVisibility: 'hidden' }}>
 
                             {/* Header/Cover */}
                             <div className="h-32 bg-slate-900 dark:bg-slate-950 relative">
@@ -194,7 +195,8 @@ export function Profile({ onLogout }) {
 
                         {/* Card Back - Edit Profile */}
                         <div
-                            className="absolute inset-0 rotate-y-180 backface-hidden bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800">
+                            className="absolute inset-0 bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800"
+                            style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
                             {/* Header/Cover */}
                             <div className="h-32 bg-slate-900  dark:bg-slate-950 relative">
                                 <div className="absolute  -bottom-12 left-8 p-1 bg-white dark:bg-slate-900 rounded-2xl shadow-lg dark:shadow-none">
@@ -213,7 +215,7 @@ export function Profile({ onLogout }) {
                                         onClick={() => { setFlipped(!flipped) }}
                                     >
                                         Back
-                                        <ArrowRightIcon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                        <ArrowRight className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                                     </button>
                                 </div>
                             </div>
@@ -318,14 +320,6 @@ export function Profile({ onLogout }) {
                                     >
                                         Submit
                                     </button>
-                                </div>
-                                <div className="mt-12">
-                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6 font-serif">Academic Details</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <StatCard label="Total Practicals" value="24" />
-                                        <StatCard label="Notes Shared" value="12" />
-                                        <StatCard label="Visit Count" value={user.visitCount || 0} />
-                                    </div>
                                 </div>
                             </div>
                         </div>

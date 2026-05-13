@@ -19,10 +19,9 @@ import { Profile } from "./Profile";
 import { AboutContact } from "./AboutContact";
 import { Community } from "./Community";
 import { PracticalCard } from "@/components/user/practical-card";
- 
+
 
 import { StudentNavbar } from "@/components/user/student-navbar"
-import { AuthModal } from "@/components/common/auth-modal"
 
 export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
     useTitle("Dashboard");
@@ -38,7 +37,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
     const [practicalUploadOpen, setPracticalUploadOpen] = useState(false);
-    const [authModalOpen, setAuthModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedNote, setSelectedNote] = useState(null);
     const [isBell, setisBell] = useState(false);
@@ -48,12 +46,12 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
     const handleAuthRequired = useCallback((action) => {
         if (!isAuthenticated) {
-            setAuthModalOpen(true);
+            navigate('/login');
             return false;
         }
         if (action) action();
         return true;
-    }, [isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
     const handleNoteCreated = useCallback(() => {
         refreshNotes();
@@ -73,13 +71,13 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
     const isGuest = !isAuthenticated;
 
     // Limit content for guests - Memoized to prevent reference changes
-    const displayedNotes = useMemo(() => 
+    const displayedNotes = useMemo(() =>
         isAuthenticated ? notes : notes.slice(-3).reverse(),
-    [isAuthenticated, notes]);
+        [isAuthenticated, notes]);
 
-    const displayedPracticals = useMemo(() => 
+    const displayedPracticals = useMemo(() =>
         isAuthenticated ? practicals : practicals.slice(-3).reverse(),
-    [isAuthenticated, practicals]);
+        [isAuthenticated, practicals]);
 
     const subjectPracticals = useMemo(() => {
         if (!user) return [];
@@ -123,7 +121,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                 <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">You're exploring as a Guest</h2>
                             </div>
                             <button
-                                onClick={() => setAuthModalOpen(true)}
+                                onClick={() => navigate('/login')}
                                 className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-bold shadow-xl hover:scale-105 active:scale-95 transition-all whitespace-nowrap"
                             >
                                 Get Full Access
@@ -334,11 +332,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                 open={practicalUploadOpen}
                 onOpenChange={setPracticalUploadOpen}
                 uniqueSubjects={subjects}
-            />
-            <AuthModal
-                isOpen={authModalOpen}
-                onClose={() => setAuthModalOpen(false)}
-                onAuth={onAuth}
             />
             <BottomNavbar />
         </div >

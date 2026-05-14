@@ -1,8 +1,7 @@
 import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShineBorder } from "/components/ui/shine-border"
-import { aiAssistant } from "../../api/api.js"
-import GlowingCard from "@/components/nurui/glowing-card";
+import { aiAssistant } from "@/Api/api"
 
 import { Sparkles, X, Send, Minimize2, PencilLine, Maximize2, CloudFog } from "lucide-react"
 

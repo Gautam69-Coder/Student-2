@@ -2,6 +2,11 @@ import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShineBorder } from "/components/ui/shine-border"
 import { aiAssistant } from "@/Api/api"
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import { Sparkles, X, Send, Minimize2, PencilLine, Maximize2, CloudFog } from "lucide-react"
 
@@ -20,27 +25,23 @@ export function AIAssistant() {
 
   React.useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages]);
 
-  const handleAssistant = async () => {
-    const res = await aiAssistant(message);
-    console.log(res.data)
-  }
+
 
   const handleSend = async () => {
     if (!message.trim()) return
+
     setMessages([...messages, { role: "user", content: message }])
     setMessage("")
-    console.log(message)
+
     const res = await aiAssistant(message);
-    console.log(res.data)
+
     // Simulate AI response
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: res.data },
-      ])
-    }, 1000)
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: res.data },
+    ])
   }
 
   return (
@@ -113,7 +114,32 @@ export function AIAssistant() {
                     : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-white border border-gray-100 text-slate-600 rounded-bl-none"
                     }`}
                 >
-                  {msg.content}
+
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
+                    components={{
+                      code({ node, inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return !inline && match ? (
+                          <SyntaxHighlighter style={oneDark} language={match[1]} PreTag="div">
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code style={{
+                            background: '#2a2a3a',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '0.85em'
+                          }}>
+                            {children}
+                          </code>
+                        );
+                      }
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
                 </div>
               </motion.div>
             ))}

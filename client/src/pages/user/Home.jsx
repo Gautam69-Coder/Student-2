@@ -136,7 +136,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                 </div>
 
                 {/* Activity Overview */}
-                <div className=" glass-card rounded-2xl p-5 w-full flex sm:block sm:w-[25%] mt-6 sm:mt-0 gap-4 space-y-8">
+                <div className=" rounded-2xl  w-full flex sm:block sm:w-[25%] mt-6 sm:mt-0 gap-4 sm:space-y-8">
                     <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
                         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                             Notes Created

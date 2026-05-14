@@ -56,7 +56,7 @@ export function AIAssistant() {
               scale: { duration: 0.2 }
             }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-2xl bg-slate-900 shadow-[0_4px_20px_rgba(15,23,42,0.15)] flex items-center justify-center hover:bg-slate-800 transition-colors"
+            className="fixed sm:bottom-8 bottom-25 sm:right-8 right-4 z-50 w-14 h-14 rounded-2xl bg-slate-900 shadow-[0_4px_20px_rgba(15,23,42,0.15)] flex items-center justify-center hover:bg-slate-800 transition-colors"
           >
             <PencilLine className="w-6 h-6 text-white" />
           </motion.button>
@@ -67,7 +67,7 @@ export function AIAssistant() {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className={`fixed dark:bg-slate-800 dark:text-white dark:border-slate-800 bottom-8 right-8 z-50 bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border-2 transition-all flex flex-col ${isMaximized ? "w-[90vw] h-[90vh] bottom-[5vh] right-[5vw]" : "w-96"
+          className={`fixed dark:bg-slate-800 dark:text-white dark:border-slate-800 sm:bottom-8 bottom-25 sm:right-8 right-4 z-50 bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border-2 transition-all flex flex-col ${isMaximized ? "w-[90vw] transition-all h-[80vh] sm:bottom-[5vh] bottom-[10vh] right-[5vw]" : "sm:w-96 w-[93%]"
             }`}
         >
           {/* Header */}

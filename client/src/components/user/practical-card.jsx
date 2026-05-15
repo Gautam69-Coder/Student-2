@@ -1,8 +1,8 @@
 
 import React, { useState, memo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-// import { R
-// ainbowButton } from "/components/ui/rainbow-button"
+import { ShimmerButton } from "/components/ui/shimmer-button";
+import {AICodeHelper} from  "./ai-code-helper"
 import {
     Code,
     Copy,
@@ -20,7 +20,8 @@ import "highlight.js/styles/atom-one-dark.css"
 
 const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth }) {
     const [copied, setCopied] = useState(false)
-    const [showModal, setShowModal] = useState(false)
+    const [showModal, setShowModal] = useState(false);
+    const [showModalCodeHelper, setShowModalCodeHelper] = useState(false);
 
     const handleCopy = useCallback(() => {
         requireAuth(() => {
@@ -34,7 +35,17 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
         requireAuth(() => {
             setShowModal(true)
         });
-    }, [requireAuth])
+    }, [requireAuth]);
+
+    const handleOpenCodeHelper = useCallback(() => {
+        requireAuth(() => {
+            setShowModalCodeHelper(true)
+        });
+    }, [requireAuth]);
+
+    const handleCloseCodeHelper = useCallback(() => {
+        setShowModalCodeHelper(false)
+    }, [])
 
     const handleCloseModal = useCallback(() => {
         setShowModal(false)
@@ -69,6 +80,15 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                     </div>
 
                     <div className="flex  items-center gap-2 self-end sm:self-start">
+                        <button
+                        onClick={()=>{
+                            handleOpenCodeHelper()
+                        }}
+                        >
+                            <ShimmerButton>
+                                AI Assistant
+                            </ShimmerButton>
+                        </button>
                         <button
                             className="h-9 px-4 flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/20 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 border border-slate-200 dark:border-slate-700/50 hover:border-cyan-500/30 transition-all duration-300 font-bold text-xs"
                             onClick={handleOpenModal}
@@ -194,6 +214,15 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                 onClose={handleCloseModal}
                 title={question.question}
                 code={question.code}
+                section={question.section}
+            />
+
+            <AICodeHelper
+                isOpen={showModalCodeHelper}
+                onClose={handleCloseCodeHelper}
+                title={question.question}
+                code={question.code}
+                section={question.section}
             />
         </div>
     )

@@ -4,15 +4,32 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check } from "lucide-react";
 import Highlight from "react-highlight";
 import "highlight.js/styles/atom-one-dark.css"
+import { ShimmerButton } from "/components/ui/shimmer-button"
+import { useCallback } from "react";
+import { AICodeHelper } from "../user/ai-code-helper";
 
-export function CodeModal({ isOpen, onClose, title, code }) {
+
+export function CodeModal({ isOpen, onClose, title, code ,section}) {
     const [copied, setCopied] = useState(false);
+    const [showModalCodeHelper, setShowModalCodeHelper] = useState(false);
+
 
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
+
+
+    const handleOpenCodeHelper = useCallback(() => {
+        setShowModalCodeHelper(true)
+    }, []);
+
+    const handleCloseCodeHelper = useCallback(() => {
+        setShowModalCodeHelper(false)
+    }, [])
+
+
 
     if (typeof document === 'undefined') return null;
 
@@ -39,6 +56,16 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">Code Preview</h3>
                                     <div className="flex items-center gap-2">
                                         <button
+                                            onClick={() => {
+                                                handleOpenCodeHelper()
+                                            }}
+                                        >
+                                            <ShimmerButton>
+                                                AI Assistant
+                                            </ShimmerButton>
+                                        </button>
+
+                                        <button
                                             onClick={handleCopy}
                                             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-bold transition-all"
                                         >
@@ -64,6 +91,14 @@ export function CodeModal({ isOpen, onClose, title, code }) {
                             </div>
                         </div>
                     </motion.div>
+                    <AICodeHelper
+                        isOpen={showModalCodeHelper}
+                        onClose={handleCloseCodeHelper}
+                        title={title}
+                        code={code}
+                        section={section}
+                    />
+
                 </div>
             )}
         </AnimatePresence>,

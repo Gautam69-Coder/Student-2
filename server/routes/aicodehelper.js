@@ -1,6 +1,7 @@
 import express from "express";
 import auth from '../middleware/auth.js';
 import Groq from "groq-sdk";
+import { systemPrompt } from "../utils/systemprompt.js"; 
 
 const router = express.Router();
 
@@ -8,15 +9,21 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 router.post("/", auth, async (req, res) => {
     try {
-        const { message } = req.body;
-        console.log(message)
+        const {context} = req.body;
+        console.log(context)
+
+        const prompt = systemPrompt(context.message, context.code,context.section,context.question);
         
         //Ai result;
         const completion = await groq.chat.completions.create({
             messages: [
                 {
+                    role: "system",
+                    content: `${prompt}`,
+                },
+                {
                     role: "user",
-                    content: `${message}`,
+                    content: `${context.message}`,
                 },
             ],
             model: "openai/gpt-oss-20b",

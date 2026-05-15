@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { PracticalCard } from '../../components/user/practical-card';
 import { SEO } from '@/components/common/SEO';
+import { ShimmerButton } from "/components/ui/shimmer-button"
 
 export function Practicals({ practicals, subjects, setPracticalUploadOpen, requireAuth }) {
     const location = useLocation();

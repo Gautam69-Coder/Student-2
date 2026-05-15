@@ -114,28 +114,85 @@ export function AIAssistant() {
                     : "bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-white border border-gray-100 text-slate-600 rounded-bl-none"
                     }`}
                 >
-
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     rehypePlugins={[rehypeRaw]}
                     components={{
-                      code({ node, inline, className, children, ...props }) {
+                      // Headings
+                      h1: ({ node, children }) => <h1 className="text-lg font-bold mt-3 mb-2">{children}</h1>,
+                      h2: ({ node, children }) => <h2 className="text-base font-bold mt-2 mb-2">{children}</h2>,
+                      h3: ({ node, children }) => <h3 className="text-sm font-bold mt-2 mb-2">{children}</h3>,
+
+                      // Paragraphs with proper spacing
+                      p: ({ node, children }) => <p className="mb-2 leading-relaxed">{children}</p>,
+
+                      // Lists
+                      ul: ({ node, children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                      ol: ({ node, children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                      li: ({ node, children }) => <li className="text-sm">{children}</li>,
+
+                      // Links
+                      a: ({ node, href, children }) => (
+                        <a href={href} className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">
+                          {children}
+                        </a>
+                      ),
+
+                      // Emphasis
+                      strong: ({ node, children }) => <strong className="font-bold">{children}</strong>,
+                      em: ({ node, children }) => <em className="italic">{children}</em>,
+
+                      // Blockquotes
+                      blockquote: ({ node, children }) => (
+                        <blockquote className="border-l-4 border-blue-400 pl-3 italic my-2 text-gray-300">
+                          {children}
+                        </blockquote>
+                      ),
+
+                      // Code blocks
+                      code({ node, className, children, ...props }) {
                         const match = /language-(\w+)/.exec(className || '');
-                        return !inline && match ? (
-                          <SyntaxHighlighter style={oneDark} language={match[1]} PreTag="div">
+                        const isInline = !match;
+
+                        return !isInline ? (
+                          <SyntaxHighlighter
+                            {...props}
+                            style={oneDark}
+                            language={match[1]}
+                            PreTag="div"
+                            customStyle={{
+                              borderRadius: '8px',
+                              padding: '12px',
+                              fontSize: '13px',
+                              margin: '10px 0',
+                              backgroundColor: '#1e1e2e',
+                              border: '1px solid #404050',
+                            }}
+                          >
                             {String(children).replace(/\n$/, '')}
                           </SyntaxHighlighter>
                         ) : (
-                          <code style={{
-                            background: '#2a2a3a',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            fontSize: '0.85em'
-                          }}>
+                          <code
+                            {...props}
+                            style={{
+                              backgroundColor: '#2a2a3a',
+                              color: '#ff79c6',
+                              padding: '3px 8px',
+                              borderRadius: '4px',
+                              fontSize: '0.9em',
+                              fontFamily: 'monospace',
+                            }}
+                          >
                             {children}
                           </code>
                         );
-                      }
+                      },
+
+                      // Line breaks
+                      br: () => <br className="my-1" />,
+
+                      // Horizontal line
+                      hr: () => <hr className="my-3 border-gray-300 dark:border-slate-600" />,
                     }}
                   >
                     {msg.content}

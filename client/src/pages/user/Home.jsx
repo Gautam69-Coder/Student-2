@@ -8,9 +8,9 @@ import { PracticalCardSkeleton } from '@/components/common/skeleton';
 import { useTitle } from '@/hooks/useTitle';
 import { sendTrackerHome, sendGuestTracker } from "@/Api/api"
 import { toUpperName } from '../../Utils/ToUpperName';
-import { AuroraText } from "/components/ui/aurora-text"
+import { NumberTicker } from "/components/ui/number-ticker"
 import GradientText from "@/components/nurui/gradient-text";
-
+import SlideInView from '../../components/ui/slideIn';
 
 
 export function Home({ userName, subjects, practicals, subjectPracticals, loadingPracticals, requireAuth, stats = {}, isGuest = false }) {
@@ -75,7 +75,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                                         animationSpeed={3}
                                         showBorder={false}
                                         className="text-6xl">
-                                        {toUpperName(userName)}!
+                                        <SlideInView text={toUpperName(userName)}/>
                                     </GradientText>
                                 </span>
                             </h1>
@@ -85,17 +85,29 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
 
                         <div className="flex flex-wrap sm:gap-4 gap-3 ">
                             <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
-                                <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">{subjects.length}</p>
+                                <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">
+                                    <NumberTicker
+                                        value={subjects.length}
+                                    />
+                                </p>
                                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Active Subjects</p>
                             </div>
                             <div className="hidden sm:block w-px h-24 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
                             <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
-                                <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">{totalQuestions}</p>
+                                <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">
+                                    <NumberTicker
+                                        value={totalQuestions}
+                                    />
+                                </p>
                                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Total Questions</p>
                             </div>
                             <div className="hidden sm:block w-px h-24 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
                             <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-lime-500/30 transition-all group">
-                                <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-lime-500 transition-colors">68%</p>
+                                <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-lime-500 transition-colors">
+                                    <NumberTicker
+                                        value={68}
+                                    />
+                                </p>
                                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Progress</p>
                             </div>
                         </div>

@@ -9,7 +9,7 @@ import { useCallback } from "react";
 import { AICodeHelper } from "../user/ai-code-helper";
 
 
-export function CodeModal({ isOpen, onClose, title, code ,section}) {
+export function CodeModal({ isOpen, onClose, title, code, section }) {
     const [copied, setCopied] = useState(false);
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false);
 
@@ -59,8 +59,9 @@ export function CodeModal({ isOpen, onClose, title, code ,section}) {
                                             onClick={() => {
                                                 handleOpenCodeHelper()
                                             }}
+                                            className="hidden sm:block"
                                         >
-                                            <ShimmerButton>
+                                            <ShimmerButton className={"py-2"}>
                                                 AI Assistant
                                             </ShimmerButton>
                                         </button>
@@ -85,6 +86,16 @@ export function CodeModal({ isOpen, onClose, title, code ,section}) {
                         </div>
                         <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 sm:p-8" data-lenis-prevent>
                             <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm bg-[#0d1117]">
+                                <button
+                                    onClick={() => {
+                                        handleOpenCodeHelper()
+                                    }}
+                                    className="absolute right-4"
+                                >
+                                    <ShimmerButton className={"text-[10px] py-2"}>
+                                        AI Assistant
+                                    </ShimmerButton>
+                                </button>
                                 <Highlight className="javascript">
                                     {code}
                                 </Highlight>

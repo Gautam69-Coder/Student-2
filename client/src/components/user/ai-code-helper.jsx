@@ -83,7 +83,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
     return ReactDOM.createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center px-2 sm:px-6">
+                <div className="fixed  inset-0 z-50 flex items-center justify-center px-2 sm:px-6">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -95,7 +95,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-9xl bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-10 border dark:border-slate-800"
+                        className="relative w-full h-[80vh] sm:h-full max-w-9xl bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-10 border dark:border-slate-800"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900">

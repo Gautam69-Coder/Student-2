@@ -2,7 +2,7 @@
 import React, { useState, memo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShimmerButton } from "/components/ui/shimmer-button";
-import {AICodeHelper} from  "./ai-code-helper"
+import { AICodeHelper } from "./ai-code-helper"
 import {
     Code,
     Copy,
@@ -81,11 +81,12 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
 
                     <div className="flex  items-center gap-2 self-end sm:self-start">
                         <button
-                        onClick={()=>{
-                            handleOpenCodeHelper()
-                        }}
+                            onClick={() => {
+                                handleOpenCodeHelper()
+                            }}
+                            className="hidden sm:block"
                         >
-                            <ShimmerButton>
+                            <ShimmerButton className={"py-2"}>
                                 AI Assistant
                             </ShimmerButton>
                         </button>
@@ -121,16 +122,30 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                 {/* Cyber IDE Container */}
                 <div className="relative group/code rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-2xl shadow-black/5">
                     <div className="flex items-center justify-between px-4 py-2 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-white/5">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-between gap-2 w-full">
                             <div className="flex gap-1.5">
                                 <div className="w-2.5 h-2.5 rounded-full bg-red-400/50"></div>
                                 <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/50"></div>
                                 <div className="w-2.5 h-2.5 rounded-full bg-green-400/50"></div>
                             </div>
 
+                            <button
+                                onClick={() => {
+                                    handleOpenCodeHelper()
+                                }}
+                                className="sm:hidden block"
+                            >
+                                <ShimmerButton className={"text-[10px] py-2"}>
+                                    AI Assistant
+                                </ShimmerButton>
+                            </button>
+                            
+
                         </div>
 
                     </div>
+
+
 
                     <div
                         className=" bg-[#0d1117] hover:overflow-y-auto sm:hover:overflow-y-auto overscroll-contain"
@@ -140,6 +155,8 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                             {question.code}
                         </Highlight>
                     </div>
+
+
 
                     {/* Floating Glow */}
                     <div className="absolute inset-0 pointer-events-none opacity-0 group-hover/code:opacity-100 bg-linear-to-tr from-cyan-500/5 via-transparent to-transparent transition-opacity duration-700" />
@@ -203,6 +220,8 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                     <Download className="w-4 h-4" />
                                     View File
                                 </button>
+
+
                             </div>
                         )}
                     </div>
@@ -241,6 +260,7 @@ export const PracticalCard = memo(function PracticalCard({ practical, requireAut
                             {practical.section}
                         </span>
                     )}
+
                 </div>
 
                 {/* Content Section */}

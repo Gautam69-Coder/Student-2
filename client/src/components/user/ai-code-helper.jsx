@@ -54,9 +54,6 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
 
             // Call the AI code helper API
             const res = await aiCodeHelper(context);
-
-            console.log(res.data)
-
             // Simulate bot response
             setTimeout(() => {
                 const botMessage = {

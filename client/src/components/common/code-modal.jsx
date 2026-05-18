@@ -90,7 +90,7 @@ export function CodeModal({ isOpen, onClose, title, code, section }) {
                                     onClick={() => {
                                         handleOpenCodeHelper()
                                     }}
-                                    className="absolute right-4"
+                                    className="absolute right-4 sm:hidden block"
                                 >
                                     <ShimmerButton className={"text-[10px] py-2"}>
                                         AI Assistant

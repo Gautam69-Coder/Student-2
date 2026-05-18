@@ -6,14 +6,19 @@ const router = express.Router();
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+
+let saveMemory = []
 router.post("/", auth, async (req, res) => {
     try {
         const { message } = req.body;
-        console.log(message)
-        
+        saveMemory.push(message);
         //Ai result;
         const completion = await groq.chat.completions.create({
             messages: [
+                {
+                    role: "system",
+                    content: `you can also remember by previous messages then answer my next question: ${saveMemory}`,
+                },
                 {
                     role: "user",
                     content: `${message}`,
@@ -21,13 +26,12 @@ router.post("/", auth, async (req, res) => {
             ],
             model: "openai/gpt-oss-20b",
         });
-        console.log(completion.choices[0]?.message?.content);
 
-        const result=completion.choices[0]?.message?.content
+        const result = completion.choices[0]?.message?.content
 
         res.json(result);
     } catch (error) {
-        console.log("Error",error)
+        console.log("Error", error)
     }
 })
 

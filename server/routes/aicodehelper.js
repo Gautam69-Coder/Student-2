@@ -7,10 +7,13 @@ const router = express.Router();
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+
+let saveMemory = []
+
 router.post("/", auth, async (req, res) => {
     try {
         const {context} = req.body;
-        console.log(context)
+        saveMemory.push(context.message);
 
         const prompt = systemPrompt(context.message, context.code,context.section,context.question);
         
@@ -19,7 +22,7 @@ router.post("/", auth, async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: `${prompt}`,
+                    content: `you can also remember by previous messages then answer my next question: ${saveMemory} Here is the system prompt for you: ${prompt}`,    
                 },
                 {
                     role: "user",
@@ -28,7 +31,6 @@ router.post("/", auth, async (req, res) => {
             ],
             model: "openai/gpt-oss-20b",
         });
-        console.log(completion.choices[0]?.message?.content);
 
         const result=completion.choices[0]?.message?.content
 

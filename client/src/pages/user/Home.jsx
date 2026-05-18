@@ -74,7 +74,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                                         colors={["#3ca2fa", "#80eeb4", "#3ca2fa", "#80eeb4", "#3ca2fa"]}
                                         animationSpeed={3}
                                         showBorder={false}
-                                        className="text-6xl">
+                                        className="text-4xl">
                                         <SlideInView text={toUpperName(userName)}/>
                                     </GradientText>
                                 </span>

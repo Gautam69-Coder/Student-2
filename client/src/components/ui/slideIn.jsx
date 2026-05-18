@@ -20,7 +20,7 @@ const SlideInText = ({text}) => {
 };
 
 const SlideInView = ({text}) => {
-    return <div className="flex flex-col items-center justify-center font-sans p-4">
+    return <div className="flex flex-col items-center justify-center font-sans">
         <SlideInText text={text} />
     </div>;
 };

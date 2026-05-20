@@ -165,7 +165,7 @@ html.lenis body {
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
   --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
+  /* --color-muted-foreground: hsl(var(--muted-foreground)); */
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
   --color-destructive: hsl(var(--destructive));
@@ -481,10 +481,10 @@ h6 {
   letter-spacing: -0.02em;
 }
 
-p {
+/* p {
   @apply text-muted-foreground leading-relaxed;
   font-family: var(--font-sans);
-}
+} */
 
 /* Neon Accent Utilities */
 .neon-text {

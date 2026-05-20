@@ -3,9 +3,8 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { User, Mail, Shield, Calendar, Edit2, MapPin, ArrowRight, LogOut, MessageSquare, Info, Lock, Eye, EyeOff } from "lucide-react";
-import { getMe } from "@/Api/api";
+import { getMe,userProfileUpdate } from "@/Api/api";
 import { useTitle } from "@/hooks/useTitle";
-import { userProfileUpdate } from "../../Api/api";
 import { customMessage } from "../../Utils/customMessage"
 
 export function Profile({ onLogout }) {
@@ -124,7 +123,7 @@ export function Profile({ onLogout }) {
                                 <div className="absolute -bottom-12 left-8 p-1 bg-white dark:bg-slate-900 rounded-2xl shadow-lg dark:shadow-none">
                                     {user.avatar ? (
                                         <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
-                                            <img src={user.avatar} className=" text-slate-400 dark:text-slate-500" />
+                                            <img src={user?.avatar} className=" text-slate-400 dark:text-slate-500" />
                                         </div>
                                     ) : (
                                         <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">

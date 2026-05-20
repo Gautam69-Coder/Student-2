@@ -57,15 +57,15 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <div className='sm:flex block  justify-between gap-4 '>
+            <div className='sm:flex block   justify-between gap-4 '>
 
                 {/* Welcome Banner - Ultra-Premium Glassmorphism */}
-                <div className="relative w-full overflow-hidden rounded-2xl glass-card sm:p-8 p-5">
+                <div className="relative w-full   overflow-hidden rounded-2xl glass-card sm:p-8 p-5">
                     {/* Simplified Gradient Background - Static */}
                     <div className="absolute top-0 right-0 w-96 h-96 bg-linear-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-linear-to-tr from-purple-500/10 via-cyan-500/10 to-transparent rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-                    <div className="relative z-10 ">
+                    <div className="relative z-10  ">
                         <div className='sm:flex flex-wrap justify-between font-black mb-4 tracking-tight leading-tight'>
                             <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
                                 Welcome back, <br />

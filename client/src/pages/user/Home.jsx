@@ -60,7 +60,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
             <div className='sm:flex block   justify-between gap-4 '>
 
                 {/* Welcome Banner - Ultra-Premium Glassmorphism */}
-                <div className="relative w-full   overflow-hidden rounded-2xl glass-card sm:p-8 p-5">
+                <div className="relative w-full   overflow-hidden rounded-[10px] glass-card sm:p-8 p-5">
                     {/* Simplified Gradient Background - Static */}
                     <div className="absolute top-0 right-0 w-96 h-96 bg-linear-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-linear-to-tr from-purple-500/10 via-cyan-500/10 to-transparent rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
@@ -84,7 +84,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
 
 
                         <div className="flex flex-wrap sm:gap-4 gap-3 ">
-                            <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
+                            <div className="flex flex-col glass-card p-4 rounded-[10px] min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
                                 <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">
                                     <NumberTicker
                                         value={subjects.length}
@@ -93,7 +93,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Active Subjects</p>
                             </div>
                             <div className="hidden sm:block w-px h-24 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
-                            <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
+                            <div className="flex flex-col glass-card p-4 rounded-[10px] min-w-[110px] items-center sm:items-start hover:border-indigo-500/30 transition-all group">
                                 <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">
                                     <NumberTicker
                                         value={totalQuestions}
@@ -102,7 +102,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">Total Questions</p>
                             </div>
                             <div className="hidden sm:block w-px h-24 bg-linear-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent" />
-                            <div className="flex flex-col glass-card p-4 rounded-xl min-w-[110px] items-center sm:items-start hover:border-lime-500/30 transition-all group">
+                            <div className="flex flex-col glass-card p-4 rounded-[10px] min-w-[110px] items-center sm:items-start hover:border-lime-500/30 transition-all group">
                                 <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white group-hover:text-lime-500 transition-colors">
                                     <NumberTicker
                                         value={68}
@@ -123,20 +123,20 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                             <div className='flex flex-wrap gap-3'>
                                 <Link
                                     to="/dashboard/practicals"
-                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-bold shadow-md hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition-colors"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-[10px] bg-slate-900 text-white text-sm font-bold shadow-md hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition-colors"
                                 >
                                     Browse Practicals
                                     <ArrowUpRight className="w-4 h-4" />
                                 </Link>
                                 <Link
                                     to="/dashboard/notes"
-                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-[10px] bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                                 >
                                     Open My Notes
                                 </Link>
                                 <Link
                                     to="/dashboard/community"
-                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-[10px] bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
                                 >
                                     Ask Community
                                 </Link>
@@ -148,8 +148,8 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                 </div>
 
                 {/* Activity Overview */}
-                <div className=" rounded-2xl  w-full flex sm:block sm:w-[25%] mt-6 sm:mt-0 gap-4 sm:space-y-8">
-                    <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
+                <div className=" rounded-[10px]  w-full flex sm:block sm:w-[15%] mt-6 sm:mt-0 gap-4 sm:space-y-6">
+                    <div className="glass-card rounded-[10px] p-4 flex flex-col gap-1">
                         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                             Notes Created
                         </p>
@@ -161,7 +161,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                         </p>
                     </div>
 
-                    <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
+                    <div className="glass-card rounded-[10px] p-4 flex flex-col gap-1">
                         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                             Visits
                         </p>
@@ -173,7 +173,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
                         </p>
                     </div>
 
-                    <div className="glass-card rounded-2xl p-4 flex flex-col gap-1">
+                    <div className="glass-card rounded-[10px] p-4 flex flex-col gap-1">
                         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                             Last Active
                         </p>
@@ -195,12 +195,12 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
 
             </div>
             {/* Subjects Grid - Premium Glassmorphism */}
-            <div className='glass-card rounded-2xl p-5'>
+            <div className='glass-card rounded-[10px] p-5'>
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Current Subjects</h2>
                     <Link
                         to="/dashboard/practicals"
-                        className="group flex items-center justify-center text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 gap-1 px-4 py-2 glass-card rounded-lg transition-all"
+                        className="group flex items-center justify-center text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 gap-1 px-4 py-2 glass-card rounded-[10px] transition-all"
                     >
                         View All <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </Link>
@@ -221,7 +221,7 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
 
 
             {/* Recent Practicals - Enhanced Data Density */}
-            <div className='glass-card p-5 rounded-2xl'>
+            <div className='glass-card p-5 rounded-[10px]'>
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Recent Practicals</h2>
                     <Link

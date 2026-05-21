@@ -102,11 +102,11 @@ export function StudentNavbar({
     return (
         <nav
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-                ? "py-2 px-4 sm:px-8"
-                : "py-4 px-4 sm:px-8"
+                ? "py-2 px-4 sm:px-3"
+                : "py-4 px-4 sm:px-3"
                 }`}
         >
-            <div className={` shadow-md shadow-teal-300 dark:shadow-black mx-auto rounded-2xl transition-all duration-300 ${scrolled
+            <div className={` shadow-md shadow-teal-300 dark:shadow-black mx-auto rounded-[10px] transition-all duration-300 ${scrolled
                 ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-lg border border-white/20 dark:border-slate-800/50"
                 : "bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border border-white/10 dark:border-slate-800/30"
                 }`}>
@@ -124,7 +124,7 @@ export function StudentNavbar({
                             <Link
                                 key={item.id}
                                 to={item.path}
-                                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 ${isActive(item.path)
+                                className={`px-4 py-2 rounded-[10px] text-sm font-medium transition-all duration-200 flex items-center gap-2 ${isActive(item.path)
                                     ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md"
                                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                                     }`}
@@ -163,7 +163,7 @@ export function StudentNavbar({
                                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 p-2 z-20"
+                                            className="absolute right-0 mt-4 w-48 bg-white dark:bg-slate-900  shadow-xl border rounded-[10px] border-slate-100 dark:border-slate-800 p-2 z-20"
                                         >
                                             {moreItems.map((item) => (
                                                 <Link
@@ -174,7 +174,7 @@ export function StudentNavbar({
                                                         setTrack(item.path)
                                                     }}
                                                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive(item.path)
-                                                        ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
+                                                        ? "bg-slate-100 rounded-lg dark:bg-slate-800 text-slate-900 dark:text-white "
                                                         : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                                                         }`}
                                                 >
@@ -209,7 +209,7 @@ export function StudentNavbar({
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search everything..."
-                                className="w-full h-10 pl-10 pr-10 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-900/5 dark:focus:ring-white/5 rounded-xl text-sm transition-all"
+                                className="w-full h-10 pl-10 pr-10 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-900/5 dark:focus:ring-white/5 rounded-[10px] text-sm transition-all"
                             />
                             {searchQuery && (
                                 <button
@@ -228,7 +228,7 @@ export function StudentNavbar({
                             {(role === "admin" || role === "superadmin") && (
                                 <button
                                     onClick={onSwitchToAdmin}
-                                    className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400"
+                                    className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400"
                                     title="Admin Panel"
                                 >
                                     <Users className="w-5 h-5" />
@@ -238,18 +238,18 @@ export function StudentNavbar({
                         </div>
                         <button
                             onClick={() => setUploadModalOpen(true)}
-                            className="hidden md:flex items-center gap-2 bg-slate-900 dark:bg-white  text-white dark:text-slate-900 px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:opacity-90 active:scale-95 transition-all"
+                            className="hidden md:flex items-center gap-2 bg-slate-900 dark:bg-white  text-white dark:text-slate-900 px-4 py-2 rounded-[10px] text-sm font-bold shadow-md hover:opacity-90 active:scale-95 transition-all"
                         >
                             <Upload className="w-4 h-4" />
                             Share
                         </button>
 
-                        <ThemeToggle />
+                        <ThemeToggle className="rounded-[10px]"/>
 
                         <div className="relative">
                             <button
                                 onClick={() => setisBell(!isBell)}
-                                className={`p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 transition-all ${isBell
+                                className={`p-2 rounded-[10px] border border-slate-200 dark:border-slate-800 transition-all ${isBell
                                     ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
                                     : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
                                     }`}
@@ -266,14 +266,14 @@ export function StudentNavbar({
                         {/* Profile Link for Desktop */}
                         <button
                             onClick={() => requireAuth(() => navigate("/dashboard/profile"))}
-                            className={`hidden lg:flex ${userData.avatar ? null : "p-2.5 rounded-xl border border-slate-200 dark:border-slate-800"} transition-all ${isActive("/dashboard/profile")
+                            className={`hidden lg:flex ${userData.avatar ? null : "p-2 rounded-[10px] border border-slate-200 dark:border-slate-800"} transition-all ${isActive("/dashboard/profile")
                                 ? "rounded-[15px] bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
                                 : " rounded-[15px] hover:shadow-blue-700 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
                                 }`}
                         >
                             {userData.avatar ? (
-                                <img height={38} width={38}
-                                    className="rounded-[15px]"
+                                <img height={34} width={34}
+                                    className="rounded-[10px]"
                                     src={userData.avatar} alt={userData?.avatar} />
                             ) : (
                                 <User className="w-5 h-5" />
@@ -283,7 +283,7 @@ export function StudentNavbar({
                         {(role === "admin" || role === "superadmin") && (
                             <Link
                                 to="/admin"
-                                className={`hidden lg:flex p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 transition-all ${isActive("/dashboard/profile")
+                                className={`hidden lg:flex p-2 rounded-[10px] border border-slate-200 dark:border-slate-800 transition-all ${isActive("/dashboard/profile")
                                     ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
                                     : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
                                     }`}

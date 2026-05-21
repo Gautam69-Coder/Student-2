@@ -109,29 +109,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                 requireAuth={handleAuthRequired}
             />
 
-            <main className="flex-1 w-full max-w-8xl mx-auto pt-24 px-4 sm:px-8">
-                {!isAuthenticated && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mb-8 p-6 rounded-3xl bg-linear-to-r from-indigo-500/10 via-purple-500/10 to-cyan-500/10 border border-indigo-500/20 backdrop-blur-sm relative overflow-hidden"
-                    >
-                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-                            <div>
-                                <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">You're exploring as a Guest</h2>
-                            </div>
-                            <button
-                                onClick={() => navigate('/login')}
-                                className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-bold shadow-xl hover:scale-105 active:scale-95 transition-all whitespace-nowrap"
-                            >
-                                Get Full Access
-                            </button>
-                        </div>
-                        {/* Decorative blobs */}
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
-                    </motion.div>
-                )}
+            <main className="flex-1 w-full max-w-8xl mx-auto pt-24 px-4 sm:px-4">
+            
                 <div className="pb-24 lg:pb-8">
                     {searchQuery ? (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">

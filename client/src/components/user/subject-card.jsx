@@ -1,8 +1,6 @@
 import React from "react"
 import { motion } from "framer-motion"
 import { ArrowUpRight, BookOpen } from "lucide-react"
-import { useEffect } from "react"
-import { useState } from "react"
 
 export function SubjectCard({ subject, index, onClick, subjectPracticals }) {
 
@@ -14,7 +12,7 @@ export function SubjectCard({ subject, index, onClick, subjectPracticals }) {
             transition={{ delay: index * 0.08, duration: 0.4 }}
             whileHover={{ y: -6, scale: 1.02 }}
             onClick={onClick}
-            className="group glass-card rounded-2xl interactive-card cursor-pointer sm:p-5 p-3 relative overflow-hidden"
+            className="group glass-card rounded-[10px] interactive-card cursor-pointer sm:p-5 p-3 relative overflow-hidden"
         >
             {/* Neon Glow Effect on Hover */}
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-blue-500/0 to-purple-500/0 group-hover:from-cyan-500/5 group-hover:via-blue-500/5 group-hover:to-purple-500/5 transition-all duration-500 pointer-events-none" />
@@ -34,7 +32,7 @@ export function SubjectCard({ subject, index, onClick, subjectPracticals }) {
                 </h3>
 
                 <div className="space-y-2">
-                    <div className="flex items-center justify-between glass-card rounded-full p-2 sm:px-4 text-xs sm:text-sm font-bold group-hover:border-cyan-500/20 transition-all">
+                    <div className="flex items-center justify-between glass-card rounded-[10px] p-2 sm:px-4 text-xs sm:text-sm font-bold group-hover:border-cyan-500/20 transition-all">
                         <span className="text-slate-500 dark:text-slate-400 sm:text-sm text-xs">Practicals</span>
                         <span className="text-slate-900 dark:text-white bg-cyan-500/10 px-2.5 py-0.5 rounded-full text-cyan-600 dark:text-cyan-400">
                             {subjectPracticals.map(i => i.section).filter(same => same === subject.name).length}

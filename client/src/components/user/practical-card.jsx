@@ -253,11 +253,11 @@ export const PracticalCard = memo(function PracticalCard({ practical, requireAut
         <div className="relative h-full">
             {/* Removed expensive background glow animation */}
 
-            <div className="max-w-sm sm:max-w-full  relative h-full glass-card rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
+            <div className="max-w-sm sm:max-w-full  relative h-full  rounded-[10px] overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
                 {/* Header Section */}
-                <div className="flex items-center sm:flex-row sm:items-center justify-between sm:p-4 p-2 sm:px-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
+                <div className="flex items-center sm:flex-row sm:items-center justify-between sm:p-4 p-2 sm:px-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
                     {practical.section && (
-                        <span className="px-3 py-1 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest border border-cyan-500/20">
+                        <span className="px-3 py-1 rounded-[10px] bg-cyan-500/10 dark:bg-cyan-500/20 text-[10px] sm:text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest border border-cyan-500/20">
                             {practical.section}
                         </span>
                     )}

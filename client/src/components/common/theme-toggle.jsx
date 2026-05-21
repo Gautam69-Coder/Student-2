@@ -10,7 +10,7 @@ export function ThemeToggle({ className = "" }) {
     return (
         <button
             onClick={toggleDarkMode}
-            className={`relative flex items-center justify-center p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm ${className}`}
+            className={`relative flex items-center justify-center p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm ${className}`}
             title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
             <AnimatePresence mode="wait">

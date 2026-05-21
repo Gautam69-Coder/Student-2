@@ -52,16 +52,16 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
     }
 
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="sm:space-y-6 space-y-3 sm:p-4 p-2">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="sm:space-y-6 space-y-3 sm:p-4 ">
             <SEO
                 title="BSc IT Practicals Solutions | Student Hub"
                 description="Comprehensive   and BSc IT practical solutions for Mumbai students. Access verified code and implementation guides."
                 url="/dashboard/practicals"
             />
             <div className="flex flex-col sm:gap-4 gap-2">
-                <div className="flex justify-between items-end">
+                <div className="flex justify-end">
                     <button
-                        className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all 
+                        className={`px-4 py-2 rounded-[10px] text-sm font-medium whitespace-nowrap transition-all 
                        bg-white hover:dark:bg-white hover:dark:text-black dark:bg-slate-800 text-black dark:text-white shadow-md border border-slate-200 dark:border-slate-700
                         `}
                         onClick={() => { setPracticalUploadOpen(true) }}
@@ -73,14 +73,14 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                 <div className="flex flex-col gap-3">
                     {/* Subject Filters */}
                     {subjects.length > 0 && (
-                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide border dark:border-slate-800 rounded-2xl p-2 bg-white dark:bg-slate-900">
+                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide border dark:border-slate-800 rounded-[10px] p-2 bg-white dark:bg-slate-900 ">
                             {subjects.map((subject, index) => {
                                 const subjectName = subject.name || subject;
                                 return (
                                     <button
                                         key={index}
                                         onClick={() => { setSelectedSubject(subjectName); }}
-                                        className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedSubject === subjectName
+                                        className={`px-4 py-2 rounded-[10px] text-sm font-medium whitespace-nowrap transition-all ${selectedSubject === subjectName
                                             ? "bg-white dark:bg-slate-800 text-black dark:text-white shadow-md border border-slate-200 dark:border-slate-700"
                                             : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
                                             }`}
@@ -94,8 +94,8 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
 
                     {/* Practical Number Filters */}
                     {uniquePracticalNumbers.length > 0 && (
-                        <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 scrollbar-hide items-center">
-                            <div className=" text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase mr-2 ">Practical No:</div>
+                        <div className="flex flex-wrap  gap-2 overflow-x-auto pb-2 scrollbar-hide items-center">
+                            <div className=" sm:text-[15px] text-[12px]  font-semibold text-slate-400 dark:text-slate-400 uppercase mr-2 ">Practical No:</div>
                             {uniquePracticalNumbers.map((num, index) => (
                                 <button
                                     key={index}

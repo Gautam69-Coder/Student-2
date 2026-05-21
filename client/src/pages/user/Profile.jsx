@@ -101,21 +101,21 @@ export function Profile({ onLogout }) {
     }
 
     return (
-        <div className="max-w-4xl mx-auto py-8 px-4 ">
+        <div className="max-w-4xl mx-auto sm:py-8 sm:px-4  ">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
             >
                 <div className="perspective w-full h-full">
                     <motion.div
-                        className="relative w-full min-h-[90vh] sm:min-h-[95vh]"
+                        className={`relative w-full ${flipped ? "min-h-[90vh] sm:min-h-[95vh]" : "min-h-[150vh] sm:min-h-[120vh]"} `}
                         animate={{ rotateY: flipped ? 180 : 0 }}
                         transition={{ duration: 0.6 }}
                         style={{ transformStyle: "preserve-3d" }}
                     >
                         {/* Card Front - Profile info */}
                         <div
-                            className="absolute inset-0 bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800"
+                            className="absolute inset-0  bg-white dark:bg-slate-900 rounded-[10px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800"
                             style={{ backfaceVisibility: 'hidden' }}>
 
                             {/* Header/Cover */}
@@ -194,7 +194,7 @@ export function Profile({ onLogout }) {
 
                         {/* Card Back - Edit Profile */}
                         <div
-                            className="absolute inset-0 bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800"
+                            className="absolute inset-0 bg-white dark:bg-slate-900 rounded-[10px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800"
                             style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
                             {/* Header/Cover */}
                             <div className="h-32 bg-slate-900  dark:bg-slate-950 relative">

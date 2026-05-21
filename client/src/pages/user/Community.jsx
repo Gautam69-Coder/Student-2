@@ -112,7 +112,7 @@ export function Community({ requireAuth }) {
                 url="/dashboard/community"
             />
             {/* Header */}
-            <div className="glass-card rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="glass-card rounded-[10px] p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2 text-indigo-500 dark:text-indigo-400 mb-1">
                         <MessageSquare className="w-4 h-4" />
@@ -127,7 +127,7 @@ export function Community({ requireAuth }) {
                         Post quick updates, doubts, or tips for your batchmates. Keep it respectful and helpful.
                     </p>
                 </div>
-                <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-900 dark:bg-slate-950 text-white">
+                <div className="flex items-center gap-3 px-4 py-3 rounded-[10px] bg-slate-900 dark:bg-slate-950 text-white">
                     <div className="p-2 rounded-xl bg-slate-800/80">
                         <Users className="w-5 h-5" />
                     </div>
@@ -148,7 +148,7 @@ export function Community({ requireAuth }) {
             {/* Create Post */}
             <form
                 onSubmit={handleCreate}
-                className="glass-card rounded-2xl p-5 space-y-3"
+                className="glass-card rounded-[10px] p-5 space-y-3"
             >
                 <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
@@ -200,14 +200,14 @@ export function Community({ requireAuth }) {
             {/* Posts List */}
             <div className="space-y-3">
                 {loading ? (
-                    <div className="glass-card rounded-2xl p-6 flex items-center justify-center">
+                    <div className="glass-card rounded-[10px] p-6 flex items-center justify-center">
                         <div className="flex items-center gap-3 text-slate-500">
                             <Loader2 className="w-4 h-4 animate-spin" />
                             <span className="text-sm font-medium">Loading community posts...</span>
                         </div>
                     </div>
                 ) : enrichedPosts.length === 0 ? (
-                    <div className="glass-card rounded-2xl p-6 text-center">
+                    <div className="glass-card rounded-[10px] p-6 text-center">
                         <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
                             No posts yet.
                         </p>
@@ -219,7 +219,7 @@ export function Community({ requireAuth }) {
                     enrichedPosts.map((post) => (
                         <article
                             key={post._id}
-                            className="glass-card rounded-2xl p-4 border border-slate-100 dark:border-slate-800"
+                            className="glass-card rounded-[10px] p-4 border border-slate-100 dark:border-slate-800"
                         >
                             <div className="flex items-start justify-between gap-3">
                                 <div>

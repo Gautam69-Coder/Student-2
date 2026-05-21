@@ -1,17 +1,32 @@
 import express from "express";
 import auth from '../middleware/auth.js';
 import Groq from "groq-sdk";
+import AICodeHelperMemoery from "../models/AICodeHelperMemoery.js";
 
 const router = express.Router();
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-
-let saveMemory = []
 router.post("/", auth, async (req, res) => {
     try {
         const { message } = req.body;
-        saveMemory.push(message);
+
+        const memory = await AICodeHelperMemoery.findOneAndUpdate(
+            { userId: req.user.id },
+            {
+                $push: {
+                    messages: {
+                        $each: [message],
+                        $slice: -10
+                    }
+                },
+            },
+            { upsert: true },
+            { new: true }
+        )
+
+        const saveMemory = memory?.messages?.join("\n")
+
         //Ai result;
         const completion = await groq.chat.completions.create({
             messages: [

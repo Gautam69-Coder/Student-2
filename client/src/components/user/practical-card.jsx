@@ -18,7 +18,7 @@ import { CodeModal } from "@/components/common/code-modal"
 import Highlight from "react-highlight"
 import "highlight.js/styles/atom-one-dark.css"
 
-const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth }) {
+const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth,section }) {
     const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false);
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false);
@@ -49,7 +49,8 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
 
     const handleCloseModal = useCallback(() => {
         setShowModal(false)
-    }, [])
+    }, []);
+
 
     return (
         <div
@@ -241,7 +242,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                 onClose={handleCloseCodeHelper}
                 title={question.question}
                 code={question.code}
-                section={question.section}
+                section={section}
             />
         </div>
     )
@@ -266,7 +267,7 @@ export const PracticalCard = memo(function PracticalCard({ practical, requireAut
                 {/* Content Section */}
                 <div>
                     {practical.questions.map((question, index) => (
-                        <QuestionBlock key={index} question={question} index={index} requireAuth={requireAuth} />
+                        <QuestionBlock key={index} question={question} index={index} requireAuth={requireAuth} section={practical.section}/>
                     ))}
                 </div>
 

@@ -195,9 +195,32 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
 
             </div>
             {/* Subjects Grid - Premium Glassmorphism */}
-            <div className='glass-card rounded-[10px] p-5'>
+            <div className='glass-card sm:block hidden rounded-[10px] p-5'>
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Current Subjects</h2>
+                    <Link
+                        to="/dashboard/practicals"
+                        className="group flex items-center justify-center text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 gap-1 px-4 py-2 glass-card rounded-[10px] transition-all"
+                    >
+                        View All <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </Link>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 sm:gap-5 gap-3">
+                    {subjects.map((subject, index) => (
+                        <SubjectCard
+                            key={subject.name || subject._id || index}
+                            subject={subject}
+                            index={index}
+                            subjectPracticals={subjectPracticals}
+                            onClick={() => handleSubjectClick(subject)}
+                        />
+                    ))}
+                </div>
+            </div>
+
+             <div className='block sm:hidden rounded-[10px]'>
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-black border glass-card p-2 rounded-[10px] text-slate-900 dark:text-white tracking-tight">Current Subjects</h2>
                     <Link
                         to="/dashboard/practicals"
                         className="group flex items-center justify-center text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 gap-1 px-4 py-2 glass-card rounded-[10px] transition-all"
@@ -221,12 +244,40 @@ export function Home({ userName, subjects, practicals, subjectPracticals, loadin
 
 
             {/* Recent Practicals - Enhanced Data Density */}
-            <div className='glass-card p-5 rounded-[10px]'>
+            <div className='glass-card sm:block hidden p-5 rounded-[10px]'>
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Recent Practicals</h2>
                     <Link
                         to="/dashboard/practicals"
                         className="group flex items-center justify-center text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 gap-1 px-4 py-2 glass-card rounded-lg transition-all"
+                    >
+                        View All <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </Link>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    {loadingPracticals ? (
+                        <>
+                            <PracticalCardSkeleton />
+                            <PracticalCardSkeleton />
+                        </>
+                    ) : (
+                        recentPracticals.map((practical, index) => (
+                            <PracticalCard
+                                key={practical._id || index}
+                                practical={practical}
+                                requireAuth={requireAuth}
+                            />
+                        ))
+                    )}
+                </div>
+            </div>
+
+             <div className='sm:hidden block rounded-[10px]'>
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-black glass-card rounded-[10px] p-2 text-slate-900 dark:text-white tracking-tight">Recent Practicals</h2>
+                    <Link
+                        to="/dashboard/practicals"
+                        className="group flex items-center justify-center text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 gap-1 px-4 py-2 glass-card rounded-[10px] transition-all"
                     >
                         View All <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </Link>

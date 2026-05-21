@@ -10,6 +10,7 @@ import { customMessage } from "../../Utils/customMessage"
 import { Link } from "react-router-dom"
 import { googleLogin } from "@/Api/api"
 import { getRedirectResult } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, CloudCog } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
@@ -38,6 +39,8 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
     const [adminSecret, setAdminSecret] = useState("")
     const [currentQuote] = useState(quotes[Math.floor(Math.random() * quotes.length)])
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         const handleRedirect = async () => {
             try {
@@ -50,6 +53,7 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
 
                     // Send token to backend
                     const res = await googleLogin(token);
+
 
                     if (token) {
                         localStorage.setItem('token', token);
@@ -126,11 +130,13 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
             // Send token to backend
             const res = await googleLogin(token);
 
+            console.log(res.data);
+
             if (token) {
                 localStorage.setItem('token', token);
             }
             localStorage.setItem('isAuthenticated', 'true');
-
+            
             if (res.data.user) {
                 onAuth(res.data.user.role, res.data.user.username);
                 customMessage(

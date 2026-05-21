@@ -10,7 +10,7 @@ export const Notes = memo(({ notes, user, loading, onRefresh, requireAuth }) => 
                 description="Download high-quality IT notes and study material for Mumbai University IT students. Premium   notes and BSc IT notes Mumbai for all semesters."
                 url="/dashboard/notes"
             />
-            <NotesSection notes={notes} us  er={user} loading={loading} onRefresh={onRefresh} requireAuth={requireAuth} />
+            <NotesSection notes={notes} user={user} loading={loading} onRefresh={onRefresh} requireAuth={requireAuth} />
         </>
     );
 });

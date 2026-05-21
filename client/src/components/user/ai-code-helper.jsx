@@ -97,28 +97,30 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                         className="relative w-full h-[80vh] sm:h-full max-w-9xl bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-10 border dark:border-slate-800"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+                        <div className="flex  items-center justify-between p-4 sm:p-6 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900">
                             <div>
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-white">AI Code Helper</h3>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">{title}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={handleCopy}
-                                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-bold transition-all"
-                                >
-                                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-                                    {copied ? "Copied!" : "Copy"}
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setMessages([{ id: 1, text: "Hello! I'm your AI Code Helper. Ask me anything about this code.", sender: "bot" }])
-                                        onClose()
-                                    }}
-                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
+                                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">AI Code Helper</h3>
+                                <div className="flex justify-center items-center mb-2">
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1 line-clamp-1">{title}</p>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={handleCopy}
+                                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-bold transition-all"
+                                        >
+                                            {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                                            {copied ? "Copied!" : "Copy"}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setMessages([{ id: 1, text: "Hello! I'm your AI Code Helper. Ask me anything about this code.", sender: "bot" }])
+                                                onClose()
+                                            }}
+                                            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                                        >
+                                            <X className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -224,9 +226,9 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                                     }}
                                                 >
 
-                                                   
-                                                        {message.text}
-                                                    
+
+                                                    {message.text}
+
                                                 </ReactMarkdown>
                                             </div>
                                         </motion.div>

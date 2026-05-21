@@ -10,9 +10,12 @@ import RippleLoader from "../nurui/ripple-loader";
 
 const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPublic, onSelect, onShowCode }) => {
     const isOwner = user?._id === note.user;
-    const hasFile = note.fileData !== "NAN";
+    const hasFile = note.fileType !== "NAN";
     const isImage = note.fileType?.startsWith('image/');
     const isPdf = note.fileType === "application/pdf";
+
+    // console.log("NOtes : ", note)
+
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group flex flex-col h-full overflow-hidden">
@@ -26,7 +29,10 @@ const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPu
                         <h3 className="font-bold text-slate-900 dark:text-white truncate text-base">{note.title}</h3>
                     </div>
                     {isOwner && (
-                        <button onClick={(e) => { e.stopPropagation(); onDelete(note._id); }} className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-400 hover:text-red-600 transition-all">
+                        <button 
+                        onClick={(e) => { e.stopPropagation();
+                         onDelete(note._id); }} 
+                         className="p-1.5 rounded-lg  opacity-100  hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-400 hover:text-red-600 transition-all">
                             <Trash2 className="w-4 h-4" />
                         </button>
                     )}
@@ -73,7 +79,17 @@ const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPu
                 <div className="flex gap-2">
                     {hasFile ? (
                         <>
-                            {isPdf && <button onClick={() => onSelect(note)} className="flex-1 flex justify-center items-center gap-2 py-2 border dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800"><Eye className="w-4 h-4" /> Open</button>}
+                            {isPdf &&
+                                <button
+                                    className="flex-1 flex justify-center items-center gap-2 py-2 border dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800"
+                                    onClick={() => {
+                                        onSelect(note);
+                                        console.log(note);
+                                    }}
+                                >
+                                    <Eye className="w-4 h-4" />
+                                    Open
+                                </button>}
                             <button onClick={() => onDownload(note)} className="flex-1 flex justify-center items-center gap-2 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-700 shadow-sm"><Download className="w-4 h-4" /> Download</button>
                         </>
                     ) : (
@@ -96,6 +112,10 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
         (acc[note.section || "General"] ||= []).push(note);
         return acc;
     }, {}), [notes]);
+
+    // console.log("User : ",user);
+
+
 
     const sections = useMemo(() => ["All", ...Object.keys(groupedNotes)], [groupedNotes]);
     const filteredGroups = useMemo(() => Object.entries(groupedNotes).filter(([sec]) => activeSection === "All" || activeSection === sec), [groupedNotes, activeSection]);
@@ -192,7 +212,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
 
             {/* File Modal */}
             <AnimatePresence>
-                {selectedNote && selectedNote.fileData !== "NAN" && (
+                {selectedNote && selectedNote.fileType !== "NAN" && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedNote(null)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]" />
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-5xl h-[90vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-100 dark:border-slate-800">
@@ -205,9 +225,17 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
                             </div>
                             <div className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-950 p-6 flex justify-center">
                                 {selectedNote.fileType?.startsWith('image/')
-                                    ? <img src={selectedNote.fileData} alt="" className="max-w-full max-h-full object-contain rounded-lg shadow-xl" />
+                                    ? <img
+                                        src={selectedNote.fileData}
+                                        alt=""
+                                        className="max-w-full max-h-full object-contain rounded-lg shadow-xl"
+                                    />
                                     : selectedNote.fileType === "application/pdf"
-                                        ? <iframe src={selectedNote.fileData} className="w-full h-full rounded-lg border border-slate-200 dark:border-slate-700" title={selectedNote.title} />
+                                        ? <iframe
+                                            src={selectedNote.fileData}
+                                            className="w-full h-full rounded-lg border border-slate-200 dark:border-slate-700"
+                                            title={selectedNote.title}
+                                        />
                                         : null}
                             </div>
                         </motion.div>

@@ -51,9 +51,10 @@ router.post('/file', auth, uploadMulter.single("file"), async (req, res) => {
         const { title, section } = req.body
         const filePath = req.file.path;
         const file = req.file
-
+        
         //Upload file to cloudinary 
-        const uploadFile = await uploadCloudinary(filePath)
+        const uploadFile = await uploadCloudinary(filePath);
+
         const newNote = new UserNote({
             user: req.user.id,
             title,

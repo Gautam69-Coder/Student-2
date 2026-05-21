@@ -1,6 +1,6 @@
 import express from 'express';
 import auth from '../middleware/auth.js';
-import jwt from 'jsonwebtoken';
+import jwt, { decode } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import admin from '../config/fireBaseAdmin.js';
@@ -124,42 +124,42 @@ router.post("/google", async (req, res) => {
         // ✅ Verify Firebase token
 
         const decoded = await admin.auth().verifyIdToken(token);
+        console.log(decoded)
+        const { user_id, email, name, picture } = decoded;
 
-        const { uid, email, name, picture } = decoded;
 
         // 🔍 Check if user exists
-        let user = await User.findOne({ email });
+        const user = await User.findOne({ email });
         let isGoogleUser = true;
 
-        if (!user) {
-            user = await User.create({
-                name,
-                email,
-                avatar: picture,
-                uid,
-                isGoogleUser
-            });
-        } else {
-            user = await User.findOneAndUpdate(
-                { email },
-                {
-                    $set: {
-                        name,
-                        avatar: picture,
-                        uid,
-                        isGoogleUser
-                    }
-                },
-                { new: true }
-            );
-        }
 
-        
+        const newUser = await User.findOneAndUpdate(
+            { email },
+            {
+                $set: {
+                    avatar: picture,
+                    username : name,
+                    uid: user_id,
+                    isGoogleUser: true
+                },
+
+               
+            },
+            {
+                upsert: true,
+                new: true
+            }
+        );
+
+        console.log("New User : ",newUser);
+
+
         res.json({
             message: "Login successful",
-            user,
+            newUser,
         });
     } catch (err) {
+        console.log("Google Login Problem",error)
         res.status(401).json({ error: "Invalid token" });
     }
 });

@@ -18,7 +18,7 @@ import { CodeModal } from "@/components/common/code-modal"
 import Highlight from "react-highlight"
 import "highlight.js/styles/atom-one-dark.css"
 
-const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth,section }) {
+const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth, section }) {
     const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false);
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false);
@@ -140,7 +140,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                     AI Assistant
                                 </ShimmerButton>
                             </button>
-                            
+
 
                         </div>
 
@@ -202,7 +202,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex items-center justify-between p-4 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-white/5 group/file hover:border-cyan-500/50 transition-colors">
+                            <div className="flex flex-wrap text-center items-center justify-between p-4 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-white/5 group/file hover:border-cyan-500/50 transition-colors">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-500">
                                         <FileText className="w-6 h-6" />
@@ -216,10 +216,12 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                 </div>
                                 <button
                                     onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
-                                    className="h-10 px-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                    className="h-10 px-5 w-full text-center mt-4 sm:mt-0  sm:w-fit bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
                                 >
-                                    <Download className="w-4 h-4" />
-                                    View File
+                                    <div className="flex items-center justify-center w-full ">
+                                        <Download className="w-4 h-4" />
+                                        View File
+                                    </div>
                                 </button>
 
 
@@ -267,7 +269,7 @@ export const PracticalCard = memo(function PracticalCard({ practical, requireAut
                 {/* Content Section */}
                 <div>
                     {practical.questions.map((question, index) => (
-                        <QuestionBlock key={index} question={question} index={index} requireAuth={requireAuth} section={practical.section}/>
+                        <QuestionBlock key={index} question={question} index={index} requireAuth={requireAuth} section={practical.section} />
                     ))}
                 </div>
 

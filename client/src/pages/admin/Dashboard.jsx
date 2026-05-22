@@ -93,11 +93,11 @@ export function AdminPanel({ userName, onLogout }) {
                 onLogout={onLogout}
             />
 
-            <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : "ml-0"}`}>
+            <main className={`flex-1 w-full transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : "ml-0"}`}>
                 {/* Header */}
                 <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-[#E5E5E5] dark:border-slate-800 transition-colors">
-                    <div className="flex items-center justify-between sm:px-8 px-4 py-5">
-                        <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-between sm:px-8 px-2  py-5">
+                        <div className="flex items-center sm:gap-4 gap-2 ">
                             <button
                                 onClick={() => setSidebarOpen(true)}
                                 className="p-2 rounded-[10px] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors lg:hidden"
@@ -105,7 +105,7 @@ export function AdminPanel({ userName, onLogout }) {
                                 <Menu className="w-6 h-6 text-slate-600 dark:text-slate-400" />
                             </button>
                             <div>
-                                <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Admin Command Center</h1>
+                                <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Admin Command </h1>
                                 <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Welcome back, {userName}</p>
                             </div>
                         </div>
@@ -134,7 +134,7 @@ export function AdminPanel({ userName, onLogout }) {
                     </div>
                 </header>
 
-                <div className="sm:p-8 p-4 max-w-7xl mx-auto overflow-hidden relative">
+                <div className="sm:p-8  mx-auto overflow-hidden relative">
                     <Routes>
                         <Route path="/" element={<ManageUsers users={users} setUsers={setUsers} subjects={subjects} />} />
                         <Route path="subjects" element={<ManageSubjects subjects={subjects} uniqueSubjectSections={uniqueSubjectSections} setUniqueSubjectSections={setUniqueSubjectSections} />} />

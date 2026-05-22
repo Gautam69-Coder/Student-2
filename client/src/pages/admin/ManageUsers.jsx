@@ -77,12 +77,12 @@ export function ManageUsers({ users, setUsers, subjects }) {
     }
 
     return (
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
+        <motion.div  variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 p-4 pt-4">
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
+                className="grid  grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
             >
                 <StatsCard title="Total Users" value={users.length} change="+12%" icon={Users} color="#0f172a" />
                 <StatsCard title="Online Now" value={onlineUsers.length} change="Live" icon={Activity} color="#10b981" />
@@ -90,14 +90,14 @@ export function ManageUsers({ users, setUsers, subjects }) {
                 <StatsCard title="Content Items" value={subjects.length} change="+24" icon={FileText} color="#06b6d4" />
             </motion.div>
             <motion.div variants={itemVariants} className="flex items-center flex-wrap gap-3 justify-between">
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Manage Users</h2>
-                <div className="flex gap-3">
+                <h2 className="text-2xl  font-bold text-slate-900 dark:text-white tracking-tight">Manage Users</h2>
+                <div className="flex flex-wrap justify-between w-full sm:mt-6 mt-4  gap-3">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                         <input
                             type="text"
                             placeholder="Search users..."
-                            className="w-64 pl-10 pr-4 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-[10px] text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            className="sm:w-[60vw]   pl-10 pr-4 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-[10px] text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         />
                     </div>
                     <select

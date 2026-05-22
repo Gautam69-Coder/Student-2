@@ -83,7 +83,7 @@ export function MessageSender({ users }) {
     return (
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 max-w-5xl mx-auto">
             <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg bg-slate-900 dark:bg-slate-100">
+                <div className="p-2 rounded-[10px] bg-slate-900 dark:bg-slate-100">
                     <Mail className="w-5 h-5 text-white dark:text-slate-900" />
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Message Sender</h2>
@@ -94,14 +94,14 @@ export function MessageSender({ users }) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Recipient Selection */}
                 <div className="lg:col-span-1 space-y-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-[600px]">
+                    <div className="bg-white dark:bg-slate-900 rounded-[10px] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-[600px]">
                         <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
                             <h3 className="font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                                 <Users className="w-4 h-4" /> Recipients
                             </h3>
                             <button
                                 onClick={handleToggleAll}
-                                className={`w-full py-2 px-4 rounded-lg text-sm font-semibold transition-all mb-4 flex items-center justify-center gap-2 ${isAllUsers
+                                className={`w-full py-2 px-4 rounded-[10px] text-sm font-semibold transition-all mb-4 flex items-center justify-center gap-2 ${isAllUsers
                                     ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-md"
                                     : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-600 shadow-sm"
                                     }`}
@@ -116,7 +116,7 @@ export function MessageSender({ users }) {
                                     placeholder="Search users..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                    className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[10px] text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                 />
                             </div>
                         </div>
@@ -130,13 +130,13 @@ export function MessageSender({ users }) {
                                         key={user._id}
                                         onClick={() => handleToggleUser(user.email)}
                                         disabled={isAllUsers}
-                                        className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-all ${selectedUsers.includes(user.email)
+                                        className={`w-full flex items-center justify-between p-3 rounded-[10px] text-left transition-all ${selectedUsers.includes(user.email)
                                             ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 shadow-sm"
                                             : "hover:bg-slate-50 dark:hover:bg-slate-800"
                                             } ${isAllUsers ? "opacity-50 grayscale cursor-not-allowed" : ""}`}
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${selectedUsers.includes(user.email) ? "bg-blue-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                                            <div className={`w-8 h-8 rounded-[10px] flex items-center justify-center text-xs font-bold ${selectedUsers.includes(user.email) ? "bg-blue-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                                                 }`}>
                                                 {user.username.charAt(0).toUpperCase()}
                                             </div>
@@ -159,12 +159,12 @@ export function MessageSender({ users }) {
 
                 {/* Right Column: Compose Message */}
                 <div className="lg:col-span-2">
-                    <form onSubmit={handleSend} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-6">
+                    <form onSubmit={handleSend} className="bg-white dark:bg-slate-900 rounded-[10px] border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-6">
                         {status && (
                             <motion.div
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className={`p-4 rounded-lg flex items-center gap-3 ${status.type === 'success'
+                                className={`p-4 rounded-[10px] flex items-center gap-3 ${status.type === 'success'
                                     ? "bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/30 text-green-700 dark:text-green-400"
                                     : "bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-700 dark:text-red-400"
                                     }`}
@@ -181,7 +181,7 @@ export function MessageSender({ users }) {
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
                                 placeholder="E.g. New Practical Uploaded: Java Programming"
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-400/20 dark:focus:ring-slate-100/10 transition-all font-medium placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[10px] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-400/20 dark:focus:ring-slate-100/10 transition-all font-medium placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                 required
                             />
                         </div>
@@ -193,7 +193,7 @@ export function MessageSender({ users }) {
                                 value={body}
                                 onChange={(e) => setBody(e.target.value)}
                                 placeholder="Write your message here..."
-                                className="w-full px-4 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-400/20 dark:focus:ring-slate-100/10 transition-all font-medium resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                className="w-full px-4 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[10px] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-400/20 dark:focus:ring-slate-100/10 transition-all font-medium resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                 required
                             />
                         </div>
@@ -206,7 +206,7 @@ export function MessageSender({ users }) {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="flex items-center gap-2 px-8 py-3 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-white transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+                                className="flex items-center gap-2 px-8 py-3 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-[10px] font-bold hover:bg-slate-800 dark:hover:bg-white transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
                             >
                                 {loading ? (
                                     <>

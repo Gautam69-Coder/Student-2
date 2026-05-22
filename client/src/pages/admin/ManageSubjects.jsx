@@ -48,7 +48,7 @@ export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubje
 
             <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
                 {/* Add Subject Form */}
-                <motion.div variants={itemVariants} className="lg:col-span-1 border border-[#E5E5E5] dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm h-fit">
+                <motion.div variants={itemVariants} className="lg:col-span-1 border border-[#E5E5E5] dark:border-slate-800 bg-white dark:bg-slate-900 rounded-[10px] p-6 shadow-sm h-fit">
                     <h3 className="font-bold text-slate-900 dark:text-white mb-6">Add New Subject</h3>
                     <div className="space-y-5">
                         <div className="space-y-2">
@@ -58,14 +58,14 @@ export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubje
                                 placeholder="e.g. Machine Learning"
                                 value={newSubject}
                                 onChange={(e) => setNewSubject(e.target.value)}
-                                className="w-full px-3 h-10 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                className="w-full px-3 h-10 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-[10px] text-sm transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                             />
                         </div>
 
 
                         <button
                             onClick={() => handleAddSection(newSubject)}
-                            className="w-full bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 font-medium rounded-lg h-11 mt-2 transition-colors active:scale-[0.98]"
+                            className="w-full bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 font-medium rounded-[10px] h-11 mt-2 transition-colors active:scale-[0.98]"
                         >
                             Create Subject
                         </button>
@@ -73,7 +73,7 @@ export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubje
                 </motion.div>
 
                 {/* Subjects List */}
-                <motion.div variants={itemVariants} className="lg:col-span-2 border border-[#E5E5E5] dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm">
+                <motion.div variants={itemVariants} className="lg:col-span-2 border border-[#E5E5E5] dark:border-slate-800 bg-white dark:bg-slate-900 rounded-[10px] overflow-hidden shadow-sm">
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
@@ -92,7 +92,7 @@ export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubje
                                     <td className="px-6 py-4">
                                         <div className="flex justify-end gap-2">
                                             <button
-                                                className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                                className="flex items-center justify-center w-8 h-8 rounded-[10px] text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                                 onClick={() => handleDeleteSection(sub._id)}
                                             >
                                                 <Trash className="w-4 h-4" />

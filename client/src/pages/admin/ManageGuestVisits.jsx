@@ -30,7 +30,7 @@ export function ManageGuestVisits() {
             className="space-y-6"
         >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[10px] p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-4">
                         <Activity className="w-5 h-5 text-slate-900 dark:text-white" />
                         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Guest Visit Tracker</h2>
@@ -38,7 +38,7 @@ export function ManageGuestVisits() {
                     <p className="text-4xl font-black text-slate-900 dark:text-white">{totalGuests}</p>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">Guest visit records stored in the database.</p>
                 </div>
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[10px] p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-4">
                         <Globe className="w-5 h-5 text-slate-900 dark:text-white" />
                         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Countries</h2>
@@ -46,7 +46,7 @@ export function ManageGuestVisits() {
                     <p className="text-4xl font-black text-slate-900 dark:text-white">{countries.length}</p>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">Unique countries detected from guest visitors.</p>
                 </div>
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[10px] p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-4">
                         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Latest Device</h2>
                     </div>
@@ -55,7 +55,7 @@ export function ManageGuestVisits() {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[10px] overflow-hidden shadow-sm">
                 <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">Guest User Saved Data</h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">All guest visit events with saved date, time, device and country data.</p>

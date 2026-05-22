@@ -74,7 +74,7 @@ export function AdminSidebar({ isOpen, setIsOpen, onLogout }) {
                                             key={item.id}
                                             to={linkPath}
                                             onClick={() => window.innerWidth < 1024 && setIsOpen(false)}
-                                            className={`group relative w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium ${isActive
+                                            className={`group relative w-full flex items-center gap-3 px-4 py-3 rounded-[10px] transition-all duration-200 font-medium ${isActive
                                                 ? "bg-white text-slate-900 shadow-md dark:bg-slate-800 dark:text-white"
                                                 : "text-slate-400 hover:text-white hover:bg-slate-800 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800"
                                                 }`}
@@ -96,7 +96,7 @@ export function AdminSidebar({ isOpen, setIsOpen, onLogout }) {
                             <div className="pt-6 border-t border-slate-800 mt-auto">
                                 <button
                                     onClick={onLogout}
-                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-all duration-200 font-medium"
+                                    className="w-full flex items-center gap-3 px-4 py-3 rounded-[10px] text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-all duration-200 font-medium"
                                 >
                                     <LogOut className="w-5 h-5" />
                                     <span>Sign Out</span>

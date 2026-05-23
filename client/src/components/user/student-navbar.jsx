@@ -37,6 +37,43 @@ const moreItems = [
     { id: "about-contact", label: "About & Contact", icon: Info, path: "/dashboard/about-contact" },
 ]
 
+const mobileMenuVariants = {
+    hidden: { 
+        opacity: 0, 
+        height: 0,
+        y: -15,
+        transition: {
+            height: { duration: 0.25, ease: "easeInOut" },
+            opacity: { duration: 0.15 },
+            y: { duration: 0.15 },
+            staggerChildren: 0.03,
+            staggerDirection: -1
+        }
+    },
+    visible: { 
+        opacity: 1, 
+        height: "auto",
+        y: 0,
+        transition: {
+            height: { duration: 0.3, ease: "easeOut" },
+            opacity: { duration: 0.2 },
+            y: { duration: 0.2 },
+            staggerChildren: 0.05,
+            delayChildren: 0.05
+        }
+    }
+};
+
+const mobileItemVariants = {
+    hidden: { opacity: 0, x: -10, y: -5 },
+    visible: { 
+        opacity: 1, 
+        x: 0, 
+        y: 0,
+        transition: { type: "spring", stiffness: 300, damping: 25 }
+    }
+};
+
 export function StudentNavbar({
     searchQuery,
     setSearchQuery,
@@ -100,7 +137,10 @@ export function StudentNavbar({
 
 
     return (
-        <nav
+        <motion.nav
+            initial={{ y: -80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 120, damping: 20 }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
                 ? "py-2 px-4 sm:px-3"
                 : "py-4 px-4 sm:px-3"
@@ -120,22 +160,33 @@ export function StudentNavbar({
 
                     {/* Desktop Navigation */}
                     <div className="hidden lg:flex items-center gap-1 mx-4">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.id}
-                                to={item.path}
-                                className={`px-4 py-2 rounded-[10px] text-sm font-medium transition-all duration-200 flex items-center gap-2 ${isActive(item.path)
-                                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md"
-                                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        {navItems.map((item) => {
+                            const active = isActive(item.path);
+                            return (
+                                <Link
+                                    key={item.id}
+                                    to={item.path}
+                                    className={`relative px-4 py-2 rounded-[10px] text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                                        active
+                                            ? "text-white dark:text-slate-900 shadow-md"
+                                            : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
                                     }`}
-                                onClick={() => {
-                                    setTrack(item.path)
-                                }}
-                            >
-                                <item.icon className="w-4 h-4" />
-                                {item.label}
-                            </Link>
-                        ))}
+                                    onClick={() => {
+                                        setTrack(item.path)
+                                    }}
+                                >
+                                    {active && (
+                                        <motion.div
+                                            layoutId="activeTab"
+                                            className="absolute inset-0 bg-slate-900 dark:bg-white rounded-[10px] z-0"
+                                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                                        />
+                                    )}
+                                    <item.icon className={`w-4 h-4 z-10 ${active ? "text-white dark:text-slate-900" : ""}`} />
+                                    <span className={`z-10 ${active ? "text-white dark:text-slate-900" : ""}`}>{item.label}</span>
+                                </Link>
+                            );
+                        })}
 
                         {/* More Menu Dropdown */}
                         <div className="relative">
@@ -308,14 +359,15 @@ export function StudentNavbar({
             <AnimatePresence>
                 {mobileMenuOpen && (
                     <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
+                        variants={mobileMenuVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
                         className="lg:hidden mt-2 max-w-7xl mx-auto overflow-hidden rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 shadow-2xl"
                     >
                         <div className="p-4 space-y-2">
                             {/* Search for Mobile */}
-                            <div className="sm:hidden relative mb-4">
+                            <motion.div variants={mobileItemVariants} className="sm:hidden relative mb-4">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input
                                     type="text"
@@ -324,12 +376,11 @@ export function StudentNavbar({
                                     placeholder="Search..."
                                     className="w-full h-10 pl-10 pr-4 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-sm"
                                 />
-                            </div>
+                            </motion.div>
 
                             {[...navItems, ...moreItems].map((item) => (
-                                <>
+                                <motion.div key={item.id} variants={mobileItemVariants}>
                                     <Link
-                                        key={item.id}
                                         to={item.path}
                                         onClick={() => setMobileMenuOpen(false)}
                                         className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-colors ${isActive(item.path)
@@ -340,77 +391,78 @@ export function StudentNavbar({
                                         <item.icon className="w-5 h-5" />
                                         <span className="font-semibold">{item.label}</span>
                                     </Link>
-                                </>
-
-
-
+                                </motion.div>
                             ))}
-                            <button
-                                onClick={() => {
-                                    setMobileMenuOpen(false);
-                                    requireAuth(() => navigate("/dashboard/profile"));
-                                }}
-                                className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-colors ${isActive("/dashboard/profile")
-                                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
-                                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-                                    }`}
-                            >
-                                {userData.avatar ? (
-                                    <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
-                                        <img src={userData.avatar} className=" text-slate-400 dark:text-slate-500" />
-                                    </div>
-                                ) : (
-                                    <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
-                                        <User className="w-12 h-12 text-slate-400 dark:text-slate-500" />
-                                    </div>
-                                )}
-                                <span className="font-semibold">Profile</span>
-                            </button>
-
-
-                            <div className="h-px bg-slate-100 dark:bg-slate-800 my-2" />
-
-
-
-
-                            <button
-                                onClick={() => {
-                                    setMobileMenuOpen(false);
-                                    setUploadModalOpen(true);
-                                }}
-                                className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-                            >
-                                <Upload className="w-5 h-5" />
-                                <span className="font-semibold">Share Notes</span>
-                            </button>
-
-                            {(role === "admin" || role === "superadmin") && (
+                            <motion.div variants={mobileItemVariants}>
                                 <button
                                     onClick={() => {
-                                        navigate("/admin");
                                         setMobileMenuOpen(false);
+                                        requireAuth(() => navigate("/dashboard/profile"));
+                                    }}
+                                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-colors ${isActive("/dashboard/profile")
+                                        ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                        }`}
+                                >
+                                    {userData.avatar ? (
+                                        <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                                            <img src={userData.avatar} className=" text-slate-400 dark:text-slate-500" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                                            <User className="w-12 h-12 text-slate-400 dark:text-slate-500" />
+                                        </div>
+                                    )}
+                                    <span className="font-semibold">Profile</span>
+                                </button>
+                            </motion.div>
+
+                            <motion.div variants={mobileItemVariants} className="h-px bg-slate-100 dark:bg-slate-800 my-2" />
+
+                            <motion.div variants={mobileItemVariants}>
+                                <button
+                                    onClick={() => {
+                                        setMobileMenuOpen(false);
+                                        setUploadModalOpen(true);
                                     }}
                                     className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                                 >
-                                    <Users className="w-5 h-5" />
-                                    <span className="font-semibold">Admin</span>
+                                    <Upload className="w-5 h-5" />
+                                    <span className="font-semibold">Share Notes</span>
                                 </button>
+                            </motion.div>
+
+                            {(role === "admin" || role === "superadmin") && (
+                                <motion.div variants={mobileItemVariants}>
+                                    <button
+                                        onClick={() => {
+                                            navigate("/admin");
+                                            setMobileMenuOpen(false);
+                                        }}
+                                        className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    >
+                                        <Users className="w-5 h-5" />
+                                        <span className="font-semibold">Admin</span>
+                                    </button>
+                                </motion.div>
                             )}
 
-                            <button
-                                onClick={() => {
-                                    setMobileMenuOpen(false);
-                                    onLogout();
-                                }}
-                                className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                            >
-                                <LogOut className="w-5 h-5" />
-                                <span className="font-semibold">Sign Out</span>
-                            </button>
+                            <motion.div variants={mobileItemVariants}>
+                                <button
+                                    onClick={() => {
+                                        setMobileMenuOpen(false);
+                                        onLogout();
+                                    }}
+                                    className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                >
+                                    <LogOut className="w-5 h-5" />
+                                    <span className="font-semibold">Sign Out</span>
+                                </button>
+                            </motion.div>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
-        </nav >
+        </motion.nav>
     )
 }

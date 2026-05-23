@@ -29,10 +29,12 @@ const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPu
                         <h3 className="font-bold text-slate-900 dark:text-white truncate text-base">{note.title}</h3>
                     </div>
                     {isOwner && (
-                        <button 
-                        onClick={(e) => { e.stopPropagation();
-                         onDelete(note._id); }} 
-                         className="p-1.5 rounded-lg  opacity-100  hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-400 hover:text-red-600 transition-all">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete(note._id);
+                            }}
+                            className="p-1.5 rounded-lg  opacity-100  hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-400 hover:text-red-600 transition-all">
                             <Trash2 className="w-4 h-4" />
                         </button>
                     )}
@@ -80,16 +82,27 @@ const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPu
                     {hasFile ? (
                         <>
                             {isPdf &&
-                                <button
-                                    className="flex-1 flex justify-center items-center gap-2 py-2 border dark:border-slate-700 rounded-[10px] text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800"
-                                    onClick={() => {
-                                        onSelect(note);
-                                        console.log(note);
-                                    }}
-                                >
-                                    <Eye className="w-4 h-4" />
-                                    Open
-                                </button>}
+                                <>
+                                    <button
+                                        className="flex-1 hidden sm:flex justify-center items-center gap-2 py-2 border dark:border-slate-700 rounded-[10px] text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800"
+                                        onClick={() => {
+                                            onSelect(note);
+                                        }}
+                                    >
+                                        <Eye className="w-4 h-4" />
+                                        Open
+                                    </button>
+                                    <button
+                                        className="flex-1 sm:hidden flex justify-center items-center gap-2 py-2 border dark:border-slate-700 rounded-[10px] text-sm font-semibold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800"
+                                        onClick={() => {
+                                            window.open(note.fileData, '_blank')
+                                        }}
+                                    >
+                                        <Eye className="w-4 h-4" />
+                                    View File
+                                    </button>
+                                </>
+                            }
                             <button onClick={() => onDownload(note)} className="flex-1 flex justify-center items-center gap-2 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-[10px] text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-700 shadow-sm"><Download className="w-4 h-4" /> Download</button>
                         </>
                     ) : (
@@ -163,7 +176,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
                 <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 sm:pb-0">
                     {sections.map((sec) => (
                         <button key={sec} onClick={() => setActiveSection(sec)} className={`px-4 py-2 rounded-[10px] text-sm font-medium whitespace-nowrap transition-all ${activeSection === sec ? "bg-slate-900 dark:bg-slate-800 text-white shadow-md" : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"}`}>
-                            {sec} 
+                            {sec}
                         </button>
                     ))}
                 </div>

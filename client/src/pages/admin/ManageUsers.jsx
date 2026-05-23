@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { Users, Activity, HardDrive, FileText, Search, Trash, Clock } from "lucide-react"
 import { StatsCard } from "@/components/admin/stats-card"
 import { updateUserRole, deleteUser } from "@/Api/api"
-import { getTrackerData } from "../../Api/api"
+import { getTrackerData } from "@/Api/api"
 import { useSocket } from "@/context/SocketContext"
 import { useTitle } from "@/hooks/useTitle"
 
@@ -12,8 +12,11 @@ export function ManageUsers({ users, setUsers, subjects }) {
     useTitle("Manage Users");
     const [filterRole, setFilterRole] = useState("all")
     const [currentPage, setCurrentPage] = useState(1);
+    const [search, setSearch] = useState("")
+    const [isSearch, setIsSearch] = useState(false);
     const itemsPerPage = 8;
-    const { onlineUsers } = useSocket()
+    const { onlineUsers } = useSocket();
+
 
     const handleDeleteUser = (userId) => {
         if (!window.confirm("Are you sure you want to delete this user?")) return
@@ -44,11 +47,19 @@ export function ManageUsers({ users, setUsers, subjects }) {
         ? users
         : users.filter(user => user.role === filterRole)
 
+    // const searchUser = users.find(u=> u == search);
+    const searchUser = users.filter(i => {
+        const username = i.username.toLowerCase().split(' ');
+        return username.some(word => word.includes(search.toLowerCase()))
+    })
+
+    // console.log(users)  
+
 
     // Pagination Logic
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = search.length > 1 ? searchUser : filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
     const paginate = (pageNumber) => {
@@ -77,7 +88,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
     }
 
     return (
-        <motion.div  variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 p-4 pt-4">
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 p-4 pt-4">
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
@@ -96,8 +107,18 @@ export function ManageUsers({ users, setUsers, subjects }) {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                         <input
                             type="text"
+                            value={search}
                             placeholder="Search users..."
                             className="sm:w-[60vw]   pl-10 pr-4 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-[10px] text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+
+                            onChange={(e) => {
+                                setSearch(e.target.value)
+                                console.log(e.target.value)
+                            }
+                            }
+                            onClick={() => {
+                                setIsSearch(true);
+                            }}
                         />
                     </div>
                     <select

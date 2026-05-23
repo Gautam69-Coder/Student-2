@@ -26,6 +26,7 @@ export function Profile({ onLogout }) {
         getMe().then(res => {
             setUser(res.data);
             setLoading(false);
+            console.log(res.data)
         }).catch(err => {
             console.error(err);
             setLoading(false);
@@ -121,9 +122,9 @@ export function Profile({ onLogout }) {
                             {/* Header/Cover */}
                             <div className="h-32 bg-slate-900 dark:bg-slate-950 relative">
                                 <div className="absolute -bottom-12 left-8 p-1 bg-white dark:bg-slate-900 rounded-2xl shadow-lg dark:shadow-none">
-                                    {user?.avatar ? (
+                                    {user.avatar ? (
                                         <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
-                                            <img src={`${user?.avatar}`} className=" text-slate-400 dark:text-slate-500" />
+                                            <img src={user?.avatar} className=" text-slate-400 dark:text-slate-500" />
                                         </div>
                                     ) : (
                                         <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">

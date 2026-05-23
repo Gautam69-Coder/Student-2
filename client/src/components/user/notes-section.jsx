@@ -7,6 +7,7 @@ import {
 import { deleteNote, makeNotePublic } from "@/Api/api";
 import { CodeModal } from "@/components/common/code-modal";
 import RippleLoader from "../nurui/ripple-loader";
+import AddSections from "./add-sections";
 
 const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPublic, onSelect, onShowCode }) => {
     const isOwner = user?._id === note.user;
@@ -99,7 +100,7 @@ const NoteCard = memo(({ note, user, copying, onDelete, onCopy, onDownload, onPu
                                         }}
                                     >
                                         <Eye className="w-4 h-4" />
-                                    View File
+                                        View File
                                     </button>
                                 </>
                             }
@@ -119,6 +120,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
     const [copying, setCopying] = useState(null);
     const [activeSection, setActiveSection] = useState("All");
     const [showCodeModal, setShowCodeModal] = useState(false);
+    const [showAddSection, setShowAddSection] = useState(false);
 
     // Grouping notes efficiently
     const groupedNotes = useMemo(() => notes.reduce((acc, note) => {
@@ -171,7 +173,13 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
             {/* Header / Tabs */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">IT Student Notes & Resources</h2>
+                    <button className={`px-4 py-2 rounded-[10px] text-sm font-medium whitespace-nowrap transition-all bg-slate-900 hover:dark:bg-slate-300 dark:bg-white dark:text-black text-white shadow-md`}
+                        onClick={() => {
+                            setShowAddSection(true);
+                        }}
+                    >
+                        Add Section
+                    </button>
                 </div>
                 <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 sm:pb-0">
                     {sections.map((sec) => (
@@ -221,6 +229,10 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
             {/* Code Modal */}
             {showCodeModal && selectedNote && (
                 <CodeModal isOpen={showCodeModal} onClose={() => { setShowCodeModal(false); setSelectedNote(null); }} title={selectedNote.title} code={selectedNote.content} />
+            )}
+
+            {showAddSection && (
+                <AddSections isOpen={showAddSection} onClose={() => { setShowAddSection(false) }} />
             )}
 
             {/* File Modal */}

@@ -19,9 +19,7 @@ import { useSocket } from "@/context/SocketContext"
 import { ManageUsers } from "./ManageUsers"
 import { ManageGuestVisits } from "./ManageGuestVisits"
 import { ManageSubjects } from "./ManageSubjects"
-import { ManageContent } from "./ManageContent"
 import { ManagePracticals } from "./ManagePracticals"
-import { ManagePYQs } from "./ManagePYQs"
 import { ManageNotification } from "./ManageNotification"
 import { AnalyticsDashboard } from "./AnalyticsDashboard"
 import { ManageFeedback } from "./ManageFeedback"
@@ -56,7 +54,8 @@ export function AdminPanel({ userName, onLogout }) {
 
         const section = fetchSections();
         section.then((res) => {
-            setUniqueSubjectSections(res.data)
+            setUniqueSubjectSections(res.data);
+            console.log("setUniqueSubjectSections : ",res.data);
         });
     }, [])
 
@@ -138,9 +137,7 @@ export function AdminPanel({ userName, onLogout }) {
                     <Routes>
                         <Route path="/" element={<ManageUsers users={users} setUsers={setUsers} subjects={subjects} />} />
                         <Route path="subjects" element={<ManageSubjects subjects={subjects} uniqueSubjectSections={uniqueSubjectSections} setUniqueSubjectSections={setUniqueSubjectSections} />} />
-                        <Route path="content" element={<ManageContent pendingNotes={pendingNotes} />} />
                         <Route path="practicals" element={<ManagePracticals uniqueSubjectSections={uniqueSubjectSections} />} />
-                        <Route path="pyqs" element={<ManagePYQs />} />
                         <Route path="guests" element={<ManageGuestVisits />} />
                         <Route path="analytics" element={<AnalyticsDashboard users={users} />} />
                         <Route path="feedback" element={<ManageFeedback />} />

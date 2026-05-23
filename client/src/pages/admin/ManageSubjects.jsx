@@ -9,6 +9,9 @@ export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubje
     useTitle("Manage Subjects");
     const [newSubject, setNewSubject] = useState("")
 
+    // console.log(subjects)
+    // console.log(uniqueSubjectSections)
+
     const handleAddSection = async (sectionName) => {
         try {
             const res = await createSection(sectionName);

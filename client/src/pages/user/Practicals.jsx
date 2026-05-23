@@ -4,12 +4,17 @@ import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { PracticalCard } from '../../components/user/practical-card';
 import { SEO } from '@/components/common/SEO';
-import { ShimmerButton } from "/components/ui/shimmer-button"
+import AddSections from '@/components/user/add-sections';
 
 export function Practicals({ practicals, subjects, setPracticalUploadOpen, requireAuth }) {
     const location = useLocation();
     const [selectedSubject, setSelectedSubject] = useState("");
     const [selectedPracticalNo, setSelectedPracticalNo] = useState("");
+    const [showAddSection, setShowAddSection] = useState(false);
+    const [uniqueSubjectSections, setUniqueSubjectSections] = useState(subjects);
+
+
+
 
     // Set default subject when subjects load or when navigating from Home
     useEffect(() => {
@@ -59,7 +64,19 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                 url="/dashboard/practicals"
             />
             <div className="flex flex-col sm:gap-4 gap-2">
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-2">
+                    <div>
+                        <button
+                            className={`px-4 py-2 rounded-[10px] text-sm font-medium whitespace-nowrap transition-all 
+                       bg-white hover:dark:bg-white hover:dark:text-black dark:bg-slate-800 text-black dark:text-white shadow-md border border-slate-200 dark:border-slate-700
+                        `}
+                            onClick={() => {
+                                setShowAddSection(true);
+                            }}
+                        >
+                            Add Section
+                        </button>
+                    </div>
                     <button
                         className={`px-4 py-2 rounded-[10px] text-sm font-medium whitespace-nowrap transition-all 
                        bg-white hover:dark:bg-white hover:dark:text-black dark:bg-slate-800 text-black dark:text-white shadow-md border border-slate-200 dark:border-slate-700
@@ -131,6 +148,16 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                     </div>
                 )
             }
+
+            {showAddSection && (
+                <AddSections
+                    isOpen={showAddSection}
+                    onClose={() => { setShowAddSection(false) }}
+                    uniqueSubjectSections={uniqueSubjectSections}
+                    subjects={practicals}
+                    setUniqueSubjectSections={setUniqueSubjectSections}
+                />
+            )}
         </motion.div >
     );
 }

@@ -36,7 +36,7 @@ const PageLoader = () => (
 
 // Helper component for protected routes
 const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
-    if (!isAuthenticated) {
+    if (localStorage.getItem("isAuthenticated") !== "true") {
         return <Navigate to={redirectPath} replace />;
     }
     return children;
@@ -63,8 +63,11 @@ function AppContent() {
     };
 
     const handleAuth = async (role, name) => {
-        localStorage.setItem('isAuthenticated', 'true');
-        navigate(role === 'admin' ? '/admin' : '/dashboard');
+        const auth= localStorage.setItem('isAuthenticated', 'true');
+        // navigate(role === 'admin' || 'superadmin' ? '/admin' : '/dashboard');
+        console.log(auth)
+        navigate('/dashboard');
+        console.log(role)
     };
 
     const handleLogout = async () => {
@@ -131,7 +134,7 @@ function AppContent() {
                     <Route
                         path="/dashboard/*"
                         element={
-                            <ProtectedRoute isAuthenticated={isAuthenticated} redirectPath="/login">
+                            <ProtectedRoute isAuthenticated={isAuthenticated} redirectPath="/">
                                 <StudentDashboard
                                     userName={currentUser || "Student"}
                                     onLogout={handleLogout}

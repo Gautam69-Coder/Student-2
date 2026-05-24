@@ -136,7 +136,7 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                 localStorage.setItem('token', token);
             }
             localStorage.setItem('isAuthenticated', 'true');
-            
+
             if (res.data.user) {
                 onAuth(res.data.user.role, res.data.user.username);
                 customMessage(
@@ -153,13 +153,8 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
     };
 
     return (
-        <div className={`${isModal ? "w-full" : "min-h-screen flex"} bg-[#FCFAF8] dark:bg-slate-950 transition-colors duration-300 relative`}>
+        <div className={`${isModal ? "w-full" : "min-h-screen flex"} overflow-hidden transition-colors duration-300 relative`}>
             {/* Theme Toggle Button */}
-            {!isModal && (
-                <div className="absolute top-6 right-6 z-50">
-                    <ThemeToggle />
-                </div>
-            )}
 
             {/* Left Side - Quote Section (Minimal Pattern) */}
             {!isModal && (
@@ -167,7 +162,7 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-white dark:bg-slate-900 border-r border-[#E5E5E5] dark:border-slate-800"
+                    className="hidden lg:flex lg:w-1/2 relative overflow-hidden  "
                 >
                     <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: darkMode ? "radial-gradient(#fff 1px, transparent 1px)" : "radial-gradient(#000 1px, transparent 1px)", backgroundSize: "32px 32px" }}></div>
 
@@ -185,7 +180,7 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                                 />
                             </Link>
 
-                            <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-slate-900 dark:text-white mb-8 font-serif italic">
+                            <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-slate-900 dark:text-white  mb-4 font-serif italic">
                                 "{currentQuote.text}"
                             </blockquote>
                             <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-medium">— {currentQuote.author}</p>
@@ -195,16 +190,16 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
             )}
 
             {/* Right Side - Auth Form */}
-            <div className={`${isModal ? "w-full" : "w-full lg:w-1/2"} flex items-center justify-center p-6 lg:p-12`}>
+            <div className={`${isModal ? "w-full" : "w-full lg:w-1/2"} flex items-center justify-center  lg:p-2`}>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="w-full max-w-md"
+                    className="w-[90vw] sm:max-w-lg  "
                 >
                     {/* Paper Card */}
-                    <div className="bg-white dark:bg-slate-900 rounded-xl p-10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800">
-                        <div className="text-center mb-8">
+                    <div className=" glass-card rounded-xl sm:p-10 py-10 px-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800">
+                        <div className="text-center  mb-4">
                             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
                                 {authState === "login" ? "Welcome Back" : "Create Account"}
                             </h1>
@@ -216,7 +211,7 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                         </div>
 
                         {/* Role Toggle */}
-                        <div className="flex gap-2 p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/50 mb-8">
+                        <div className="flex gap-2 p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/50  mb-4">
                             <button
                                 onClick={() => setRole("student")}
                                 className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${role === "student"
@@ -294,57 +289,59 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                                 </div>
                             </div>
 
-                            <div>
-                                <label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    Password
-                                </label>
-                                <div className="relative mt-2">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
-                                    <input
-                                        id="password"
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="••••••••"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full h-11 pl-10 pr-10 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                                        required
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                                    >
-                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                    </button>
+                            <div className={`${authState === "signup" && role === "admin" ? "sm:flex gap-4" : null}`}>
+                                <div >
+                                    <label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Password
+                                    </label>
+                                    <div className="relative mt-2">
+                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                        <input
+                                            id="password"
+                                            type={showPassword ? "text" : "password"}
+                                            placeholder="••••••••"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="w-full h-11 pl-10 pr-10 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <AnimatePresence>
-                                {authState === "signup" && role === "admin" && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        exit={{ opacity: 0, height: 0 }}
-                                        className="overflow-hidden"
-                                    >
-                                        <label htmlFor="adminSecret" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            Admin Secret Key
-                                        </label>
-                                        <div className="relative mt-2">
-                                            <CloudCog className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
-                                            <input
-                                                id="adminSecret"
-                                                type="password"
-                                                placeholder="Enter admin secret"
-                                                value={adminSecret}
-                                                onChange={(e) => setAdminSecret(e.target.value)}
-                                                className="w-full h-11 pl-10 pr-4 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                                                required={role === "admin"}
-                                            />
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                                <AnimatePresence>
+                                    {authState === "signup" && role === "admin" && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "auto" }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            className="overflow-hidden"
+                                        >
+                                            <label htmlFor="adminSecret" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                                Admin Secret Key
+                                            </label>
+                                            <div className="relative mt-2">
+                                                <CloudCog className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                                <input
+                                                    id="adminSecret"
+                                                    type="password"
+                                                    placeholder="Enter admin secret"
+                                                    value={adminSecret}
+                                                    onChange={(e) => setAdminSecret(e.target.value)}
+                                                    className="w-full h-11 pl-10 pr-4 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                                    required={role === "admin"}
+                                                />
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
 
                             {loading ? (
                                 <div className="flex justify-center">
@@ -364,13 +361,13 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                                     <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-white dark:bg-slate-900 px-2 text-slate-400 font-medium">Or continue with</span>
+                                    <span className="  px-2 text-slate-300 font-medium">Or continue with</span>
                                 </div>
                             </div>
 
                             <button
                                 type="button"
-                                className="w-full inline-flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 h-11 rounded-lg font-medium transition-all shadow-sm"
+                                className="w-full inline-flex items-center justify-center   dark:border-slate-800 bg-slate-50 dark:bg-white-800 dark:hover:glass-card  dark:text-black h-11 rounded-lg font-bold transition-all shadow-sm"
                                 onClick={() => { handleGoogleLogin() }}
                             >
                                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">

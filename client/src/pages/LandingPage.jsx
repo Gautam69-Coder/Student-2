@@ -51,7 +51,7 @@ export default function LandingPage() {
     const homeSchema = {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "name": "Student Hub",
+        "name": "Velorah",
         "url": "https://student-2.pages.dev/",
         "potentialAction": {
             "@type": "SearchAction",
@@ -72,263 +72,289 @@ export default function LandingPage() {
     };
 
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 overflow-x-hidden">
+        <div
+            className="min-h-screen relative overflow-hidden"
+            style={{
+                '--background': '201 100% 13%',
+                '--foreground': '0 0% 100%',
+                '--muted-foreground': '240 4% 66%',
+                '--primary': '0 0% 100%',
+                '--primary-foreground': '0 0% 4%',
+                '--secondary': '0 0% 10%',
+                '--accent': '0 0% 10%',
+                '--border': '0 0% 18%',
+                '--input': '0 0% 18%'
+            }}
+        >
             <SEO
-                title="Student Hub — Free MERN Notes, Practicals & Resources for IT Students"
-                description="Access premium  notes, IT student notes. The ultimate resource for BSc IT notes and IT student resources India."
+                title="Student Notes Management System"
+                description="Student Hub — Student Notes Management System"
                 url="/"
                 schema={[homeSchema, breadcrumbSchema]}
             />
-            {/* Navigation */}
-            <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
-                <div className="max-w-7xl mx-auto flex items-center justify-between glass py-3 px-6 rounded-2xl border border-white/20 dark:border-white/5 shadow-2xl backdrop-blur-xl">
-                    <Link to="/" className="flex items-center gap-2 group">
-                        <img
-                            src="/logo.png"
-                            alt="Student Hub Logo"
-                            className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
-                            loading="eager"
-                        />
+
+            {/* Fonts + cinematic background */}
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+            <link
+                href="https://fonts.googleapis.com/css2?family=Instrumental+Serif:wght@400&family=Inter:wght@400;500&display=swap"
+                rel="stylesheet"
+            />
+
+            {/* Fullscreen looping video background */}
+            <div className="absolute inset-0 z-0 bg-[hsl(var(--background))]">
+                <video
+                    className="absolute inset-0 w-full h-full object-cover z-0"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="auto"
+                    src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4"
+                />
+
+                {/* subtle readability fade; no blobs/overlays */}
+                <div
+                    className="absolute inset-0"
+                    style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.45), rgba(0,0,0,0.55))' }}
+                />
+            </div>
+
+            {/* Glassmorphic Navigation */}
+            <nav className="relative z-10 flex row justify-between px-8 py-6 max-w-7xl mx-auto">
+                <Link to="/" className="flex items-center gap-3">
+                    <img
+                        src="/circle_logo.png"
+                        alt="Student Hub Circle Logo"
+                        className="h-10 w-10 object-contain"
+                        loading="eager"
+                    />
+                    <span
+                        className="text-3xl tracking-tight"
+                        style={{ fontFamily: "'Instrument Serif', serif", color: 'hsl(var(--foreground))' }}
+                    >
+                        Student Hub<sup className="text-xs">®</sup>
+                    </span>
+                </Link>
+
+                <div className="hidden md:flex items-center gap-8" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    <Link
+                        to="/"
+                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
+                        style={{ color: 'hsl(var(--foreground))' }}
+                    >
+                        Home
                     </Link>
-
-                    <div className="hidden md:flex items-center gap-8">
-                        {['Features', 'Blog', 'About', 'Contact'].map((item) => (
-                            item === 'Blog' ? (
-                                <Link
-                                    key={item}
-                                    to="/blog"
-                                    className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white transition-colors"
-                                >
-                                    {item}
-                                </Link>
-                            ) : (
-                                <a
-                                    key={item}
-                                    href={`#${item.toLowerCase()}`}
-                                    className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white transition-colors"
-                                >
-                                    {item}
-                                </a>
-                            )
-                        ))}
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <ThemeToggle />
-                        <Link
-                            to="/signup"
-                            className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-lg"
-                        >
-                            Sign Up <ArrowRight className="w-4 h-4" />
-                        </Link>
-                    </div>
+                    <Link
+                        to="/studio"
+                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
+                    >
+                        Studio
+                    </Link>
+                    <a
+                        href="#about"
+                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
+                    >
+                        About
+                    </a>
+                    <Link
+                        to="/journal"
+                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
+                    >
+                        Journal
+                    </Link>
+                    <a
+                        href="#reach-us"
+                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
+                    >
+                        Reach Us
+                    </a>
                 </div>
+
+                <Link
+                    to="/signup"
+                    className="liquid-glass rounded-full px-6 py-2.5 text-sm"
+                    style={{ color: 'hsl(var(--foreground))' }}
+                >
+                    Begin Journey
+                </Link>
             </nav>
 
             {/* Hero Section */}
-            <section className="relative pt-40 pb-20 px-6">
-                {/* Decorative Gradients */}
-                <div className="absolute top-20 left-1/2 -translate-x-1/2 w-full max-w-6xl aspect-square bg-indigo-600/10 dark:bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none" />
-                <div className="absolute top-40 right-0 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+            <section
+                className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-32 pb-28 py-[90px]"
+            >
+                <h1
+                    className="text-5xl sm:text-7xl md:text-8xl leading-[0.95] tracking-[-2.46px] max-w-7xl font-normal"
+                    style={{ fontFamily: "'Instrument Serif', serif", color: 'hsl(var(--foreground))' }}
+                >
+                    Where dreams rise through the silence.
+                </h1>
 
-                <div className="max-w-7xl mx-auto text-center relative z-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-widest mb-8 border border-indigo-500/20">
-                            <Star className="w-3.2 h-3.2 fill-current" /> High-Performance Learning
-                        </span>
+                <p
+                    className="text-muted-foreground text-base sm:text-lg max-w-2xl mt-8 leading-relaxed"
+                    style={{ color: 'hsl(var(--muted-foreground))' }}
+                >
+                    Student Notes Management System — organize your notes, manage practicals, and study with focused clarity.
+                </p>
 
-                        <h1 className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-8 tracking-tight leading-[1.1]">
-                            IT Student Notes & <br />
-                            <span className="bg-linear-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent italic">
-                                Practicals
-                            </span>
-                        </h1>
+                <Link
+                    to="/signup"
+                    className="liquid-glass rounded-full px-14 py-5 text-base text-foreground mt-12 hover:scale-[1.03] cursor-pointer"
+                    style={{ color: 'hsl(var(--foreground))' }}
+                >
+                    Begin Journey
+                </Link>
+            </section>
 
-                        <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed font-medium">
-                            The all-in-one platform for  notes and BSc IT notes Mumbai. Organized practicals, previous year questions, and IT student resources India at your fingertips.
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Link
-                                to="/login"
-                                className="group relative px-8 py-4 rounded-2xl bg-indigo-600 text-white font-bold text-lg overflow-hidden shadow-[0_0_40px_rgba(79,70,229,0.3)] hover:shadow-[0_0_60px_rgba(79,70,229,0.5)] transition-all"
-                            >
-                                <span className="relative z-10 flex items-center gap-2">
-                                    Start Learning Now <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </span>
-                                <div className="absolute inset-0 bg-linear-to-r from-indigo-600 to-violet-600 opacity-100 group-hover:scale-105 transition-transform" />
-                            </Link>
-
-                            <a
-                                href="#features"
-                                className="px-8 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold text-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
-                            >
-                                Explore Features
-                            </a>
+            {/* Content Sections */}
+            <main className="relative z-10 pb-10">
+                <section className="px-6 pt-10" aria-label="Notes and resources">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl md:text-5xl font-black text-slate-100 dark:text-white mb-6">
+                                Notes &amp; IT Resources
+                            </h2>
+                            <p className="text-slate-300 dark:text-slate-300/90 max-w-2xl mx-auto text-lg">
+                                Powerful tools designed to simplify your BSc IT journey with student notes and resources.
+                            </p>
                         </div>
-                    </motion.div>
 
-                    {/* Stats */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.8, duration: 0.8 }}
-                        className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto"
-                    >
-                        <StatCard icon={Users} label="Active Students" value="10k+" />
-                        <StatCard icon={BookOpen} label="Study Materials" value="500+" />
-                        <StatCard icon={Trophy} label="Completion Rate" value="94%" />
-                        <StatCard icon={Zap} label="Speed Boost" value="3x" />
-                    </motion.div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
+                                    <Code2 className="w-7 h-7 text-indigo-500" />
+                                </div>
+                                <h3 className="text-xl font-bold mb-3 text-slate-100">Interactive Practicals</h3>
+                                <p className="text-slate-300 leading-relaxed">
+                                    Access a library of programming practicals with clean code previews and multi-language support.
+                                </p>
+                            </div>
 
-                    {/* App Showcase Preview */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 100 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1, duration: 1 }}
-                        className="mt-32 relative mx-auto max-w-5xl group"
-                    >
-                        <div className="absolute -inset-1 bg-linear-to-r from-indigo-500 to-purple-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                        <div className="relative glass-card rounded-3xl p-4 overflow-hidden shadow-2xl border-white/40 dark:border-white/10">
-                            <div className="bg-slate-50 dark:bg-slate-950/50 rounded-2xl aspect-video flex items-center justify-center relative overflow-hidden">
-                                {/* Simulated App Interface Elements */}
-                                <div className="absolute top-8 left-8 right-8 bottom-8 grid grid-cols-12 gap-6 opacity-40">
-                                    <div className="col-span-3 space-y-4">
-                                        <div className="h-24 bg-indigo-500/10 rounded-xl" />
-                                        <div className="h-48 bg-slate-500/10 rounded-xl" />
-                                    </div>
-                                    <div className="col-span-6 space-y-6">
-                                        <div className="h-12 bg-indigo-500/20 rounded-xl w-3/4" />
-                                        <div className="h-64 bg-slate-500/10 rounded-2xl" />
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="h-32 bg-purple-500/10 rounded-xl" />
-                                            <div className="h-32 bg-cyan-500/10 rounded-xl" />
-                                        </div>
-                                    </div>
-                                    <div className="col-span-3 space-y-4">
-                                        <div className="h-64 bg-slate-500/10 rounded-xl" />
-                                        <div className="h-12 bg-lime-500/10 rounded-xl" />
-                                    </div>
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
+                                    <Sparkles className="w-7 h-7 text-indigo-500" />
                                 </div>
-                                <div className="relative z-10 flex flex-col items-center">
-                                    <div className="w-20 h-20 rounded-3xl bg-indigo-600 shadow-[0_0_30px_rgba(79,70,229,0.5)] flex items-center justify-center mb-6">
-                                        <Sparkles className="w-10 h-10 text-white animate-pulse" />
-                                    </div>
-                                    <h4 className="text-2xl font-black text-slate-900 dark:text-white">Seamless Dashboard</h4>
-                                    <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2">v2.0 Cyber-Minimalism</p>
+                                <h3 className="text-xl font-bold mb-3 text-slate-100">AI Assistant</h3>
+                                <p className="text-slate-300 leading-relaxed">
+                                    Stuck on a problem? Our integrated AI assistant helps you understand complex concepts instantly.
+                                </p>
+                            </div>
+
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
+                                    <Zap className="w-7 h-7 text-indigo-500" />
                                 </div>
+                                <h3 className="text-xl font-bold mb-3 text-slate-100">Instant PYQs</h3>
+                                <p className="text-slate-300 leading-relaxed">
+                                    Never miss important questions with our curated collection of previous year examination papers.
+                                </p>
+                            </div>
+
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
+                                    <ShieldCheck className="w-7 h-7 text-indigo-500" />
+                                </div>
+                                <h3 className="text-xl font-bold mb-3 text-slate-100">Secure Dashboard</h3>
+                                <p className="text-slate-300 leading-relaxed">
+                                    Personalized study experience with progress tracking and secure user authentication.
+                                </p>
+                            </div>
+
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
+                                    <MessageSquare className="w-7 h-7 text-indigo-500" />
+                                </div>
+                                <h3 className="text-xl font-bold mb-3 text-slate-100">Expert Support</h3>
+                                <p className="text-slate-300 leading-relaxed">
+                                    Direct communication channels with administrators for feedback and technical support.
+                                </p>
+                            </div>
+
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
+                                    <BookOpen className="w-7 h-7 text-indigo-500" />
+                                </div>
+                                <h3 className="text-xl font-bold mb-3 text-slate-100">Study Resources</h3>
+                                <p className="text-slate-300 leading-relaxed">
+                                    Learn with organized materials, notes, and guided resources—built for deep study and faster revision.
+                                </p>
                             </div>
                         </div>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Features Section */}
-            <section id="features" className="py-32 px-6 bg-slate-50/50 dark:bg-slate-900/20">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-20">
-                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6"> Notes & IT Resources</h2>
-                        <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg">
-                            Powerful tools designed to simplify your BSc IT journey with student notes and .
-                        </p>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <FeatureCard
-                            icon={Code2}
-                            title="Interactive Practicals"
-                            description="Access a library of programming practicals with clean code previews and multi-language support."
-                            delay={0.1}
-                        />
-                        <FeatureCard
-                            icon={Sparkles}
-                            title="AI Assistant"
-                            description="Stuck on a problem? Our integrated AI assistant helps you understand complex concepts instantly."
-                            delay={0.2}
-                        />
-                        <FeatureCard
-                            icon={Zap}
-                            title="Instant PYQs"
-                            description="Never miss important questions with our curated collection of previous year examination papers."
-                            delay={0.3}
-                        />
-                        <FeatureCard
-                            icon={ShieldCheck}
-                            title="Secure Dashboard"
-                            description="Personalized study experience with progress tracking and secure user authentication."
-                            delay={0.4}
-                        />
-                        <FeatureCard
-                            icon={MessageSquare}
-                            title="Expert Support"
-                            description="Direct communication channels with administrators for feedback and technical support."
-                            delay={0.5}
-                        />
-                        <FeatureCard
-                            icon={Github}
-                            title="Open Source"
-                            description="Built with the latest technologies like React, Vite, and Tailwind for maximum performance."
-                            delay={0.6}
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* CTA Section */}
-            <section className="py-20 px-6">
-                <div className="max-w-6xl mx-auto relative group">
-                    <div className="absolute -inset-1 bg-linear-to-r from-indigo-600 to-purple-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-                    <div className="relative glass-card bg-slate-900 dark:bg-slate-900/40 rounded-[2.5rem] p-12 md:p-20 text-center overflow-hidden">
-                        {/* Abstract Background for CTA */}
-                        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.15),transparent)]"></div>
-
-                        <div className="relative z-10">
-                            <h2 className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tight">
-                                Ready To Transform <br /> Your Grades?
-                            </h2>
-                            <p className="text-slate-400 text-lg md:text-xl mb-12 max-w-2xl mx-auto">
-                                Join thousands of students who are already using Student Hub to ace their exams and manage their academic journey.
-                            </p>
-                            <Link
-                                to="/dashboard"
-                                className="inline-flex items-center gap-2 px-10 py-5 rounded-2xl bg-white text-slate-900 font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl"
-                            >
-                                Get Started Free <ArrowRight className="w-6 h-6" />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                </section>
+            </main>
 
             {/* Footer */}
-            <footer className="py-12 px-6 border-t border-slate-100 dark:border-slate-900">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-                    <Link to="/" className="flex items-center gap-2">
-                        <img src="/logo.png" alt="Student Hub Logo" className="h-8 w-auto object-contain" loading="lazy" />
-                    </Link>
-
-                    <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-                        &copy; 2026 Student Hub. Designed for excellence.
-                    </p>
-
-                    <div className="flex flex-col md:flex-row items-center gap-8 text-sm font-medium">
-                        <Link to="/blog" className="text-slate-500 hover:text-indigo-600 transition-colors">Study Blog</Link>
-                        <Link to="/notes" className="text-slate-500 hover:text-indigo-600 transition-colors"> Notes</Link>
-                        <Link to="/practicals" className="text-slate-500 hover:text-indigo-600 transition-colors">MERN Practicals</Link>
-                        <Link to="/community" className="text-slate-500 hover:text-indigo-600 transition-colors">Student Community</Link>
+            <footer
+                className="relative z-10 border-t"
+                style={{ borderColor: 'hsl(var(--border))' }}
+            >
+                <div
+                    className="max-w-7xl mx-auto px-8 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8"
+                >
+                    <div className="flex items-center gap-3">
+                        <img
+                            src="/circle_logo.png"
+                            alt="Student Hub Circle Logo"
+                            className="h-10 w-10 object-contain"
+                            loading="lazy"
+                        />
+                        <div>
+                            <div
+                                className="text-lg"
+                                style={{ fontFamily: "'Instrument Serif', serif", color: 'hsl(var(--foreground))' }}
+                            >
+                                Student Hub
+                            </div>
+                            <div className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                                Student Notes Management System
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="flex items-center gap-6">
-                        <a href="#" aria-label="Github Repository" className="text-slate-400 hover:text-indigo-600 transition-colors"><Github className="w-5 h-5" /></a>
-                        <a href="#" aria-label="Student Community" className="text-slate-400 hover:text-indigo-600 transition-colors"><Users className="w-5 h-5" /></a>
-                        <a href="#" aria-label="Contact Support" className="text-slate-400 hover:text-indigo-600 transition-colors"><MessageSquare className="w-5 h-5" /></a>
+                    <div
+                        className="flex flex-wrap gap-x-8 gap-y-3 text-sm"
+                        style={{ color: 'hsl(var(--muted-foreground))' }}
+                    >
+                        <a
+                            className="hover:text-[hsl(var(--foreground))] transition-colors"
+                            href="#"
+                        >
+                            Home
+                        </a>
+                        <Link
+                            className="hover:text-[hsl(var(--foreground))] transition-colors"
+                            to="/studio"
+                        >
+                            Studio
+                        </Link>
+                        <a
+                            className="hover:text-[hsl(var(--foreground))] transition-colors"
+                            href="#about"
+                        >
+                            About
+                        </a>
+                        <Link
+                            className="hover:text-[hsl(var(--foreground))] transition-colors"
+                            to="/journal"
+                        >
+                            Journal
+                        </Link>
+                        <a
+                            className="hover:text-[hsl(var(--foreground))] transition-colors"
+                            href="#reach-us"
+                        >
+                            Reach Us
+                        </a>
+                    </div>
+
+                    <div className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                        © {new Date().getFullYear()} Student Hub. All rights reserved.
                     </div>
                 </div>
             </footer>
         </div>
     );
 }
+

@@ -172,15 +172,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
         <div className="space-y-8 pb-10">
             {/* Header / Tabs */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <button className={`px-4 py-2 rounded-[10px] text-sm font-medium whitespace-nowrap transition-all bg-slate-900 hover:dark:bg-slate-300 dark:bg-white dark:text-black text-white shadow-md`}
-                        onClick={() => {
-                            setShowAddSection(true);
-                        }}
-                    >
-                        Add Section
-                    </button>
-                </div>
+                
                 <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 sm:pb-0">
                     {sections.map((sec) => (
                         <button key={sec} onClick={() => setActiveSection(sec)} className={`px-4 py-2 rounded-[10px] text-sm font-medium whitespace-nowrap transition-all ${activeSection === sec ? "bg-slate-900 dark:bg-slate-800 text-white shadow-md" : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"}`}>

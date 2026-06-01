@@ -76,7 +76,7 @@ const CodeEditor = () => {
       <div className=" mx-auto  ">
         <div className="glass-card rounded-3xl overflow-hidden">
           {/* Top bar */}
-          <div className="flex items-center justify-between gap-4 px-5 py-4 border-b border-white/10">
+          <div className="flex flex-wrap  items-center justify-between gap-4 px-5 py-4 border-b border-white/10">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-[#0b1220] border border-white/10 flex items-center justify-center neon-glow">
                 <div className="w-3 h-3 rounded-full bg-cyan-400" />
@@ -148,16 +148,7 @@ const CodeEditor = () => {
                       </section>
                     ))}
 
-                    <section>
-                      <h3 className="text-sm font-bold text-cyan-300 mb-2">
-                        Constraints
-                      </h3>
-                      <ul className="list-disc ml-5 text-sm text-slate-300 space-y-2">
-                        <li>2 ≤ nums.length ≤ 10^4</li>
-                        <li>-10^9 ≤ nums[i] ≤ 10^9</li>
-                        <li>-10^9 ≤ target ≤ 10^9</li>
-                      </ul>
-                    </section>
+                    
                   </div>
                 </div>
               </div>

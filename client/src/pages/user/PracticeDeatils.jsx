@@ -35,66 +35,71 @@ const HeroCard = ({ data, language }) => {
                     }}
                 />
 
-                <div className="relative z-10 flex items-start justify-between gap-8 h-full">
+                <div className="relative z-10 flex flex-col lg:flex-row lg:items-start justify-between gap-8 h-full">
                     {/* Left section */}
-                    <div className="min-w-0">
-                        <div className="flex items-start gap-5">
-                            <div className="w-12 h-12 rounded-xl bg-sky-200/15 border border-sky-200/20 flex items-center justify-center">
-                                {/* Simple C++ mark */}
-                                <div className="w-8 h-8  flex items-center justify-center">
-                                    <span className="text-sky-100 font-black text-sm">C++</span>
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-start gap-4 sm:gap-5 flex-wrap">
+                            <div className="px-2 h-12 rounded-xl bg-sky-200/15 border border-sky-200/20 flex items-center justify-center">
+                                <div className="h-8 flex items-center font-bold uppercase justify-center">
+                                    <span className="text-sky-100 font-black text-sm">
+                                        {language}
+                                    </span>
                                 </div>
                             </div>
 
-                            <div className="pt-1">
-
-                                <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
-                                    Practice {language.toUpperCase() || 'N/A'}
+                            <div className="pt-1 min-w-0">
+                                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white break-words">
+                                    Practice {language?.toUpperCase() || "N/A"}
                                 </h1>
                             </div>
                         </div>
 
                         <p className="mt-4 text-slate-300 text-sm sm:text-[15px] leading-6 max-w-[650px]">
-                            {data?.description || 'N/A'}
+                            {data?.description || "N/A"}
                         </p>
 
                         {/* Stats row */}
-                        <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
+                        <div className="mt-6 flex flex-wrap items-center gap-x-4 sm:gap-x-8 gap-y-3">
                             <div className="flex items-center gap-2">
                                 <BookOpen className="w-4 h-4 text-slate-300" />
-                                <span className="text-white font-semibold">22 Lessons</span>
+                                <span className="text-white font-semibold">
+                                    22 Lessons
+                                </span>
                             </div>
+
                             <div className="flex items-center gap-2">
                                 <Clock3 className="w-4 h-4 text-slate-300" />
-                                <span className="text-white font-semibold">10 Hours</span>
+                                <span className="text-white font-semibold">
+                                    10 Hours
+                                </span>
                             </div>
+
                             <div className="flex items-center gap-2">
                                 <ArrowUpRight className="w-4 h-4 text-slate-300" />
-                                <span className="text-white font-semibold">{data?.problems || 'N/A'}</span>
+                                <span className="text-white font-semibold">
+                                    {data?.problems || "N/A"}
+                                </span>
                             </div>
+
                             <div className="flex items-center gap-2">
                                 <Users className="w-4 h-4 text-slate-300" />
-                                <span className="text-white font-semibold">{data?.learners || 'N/A'}</span>
+                                <span className="text-white font-semibold">
+                                    {data?.learners || "N/A"}
+                                </span>
                             </div>
+
                             <div className="flex items-center gap-2">
                                 <span className="w-4 h-4 rounded-full bg-white/15 border border-white/15 inline-block" />
-                                <span className="text-white font-semibold">{data?.level || 'N/A'} Level</span>
+                                <span className="text-white font-semibold">
+                                    {data?.level || "N/A"} Level
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     {/* Right side badges + button */}
-                    <div className="flex flex-col items-end gap-4">
+                    <div className="flex flex-col items-start lg:items-end gap-4 w-full lg:w-auto">
                         <div className="relative">
-                            {/* <div className="absolute right-0 -top-3 translate-x-1">
-                                <div className="flex items-center gap-2 bg-white/90 border border-white/40 text-blue-700 rounded-xl px-4 py-2 shadow-md">
-                                    <Certificate className="w-4 h-4" />
-                                    <span className="text-sm font-semibold whitespace-nowrap">
-                                        Certification Available
-                                    </span>
-                                </div>
-                            </div> */}
-
                             <div className="flex items-center gap-2 bg-yellow-400/90 border border-yellow-300/40 text-yellow-900 rounded-xl px-4 py-2 shadow-md">
                                 <Star className="w-4 h-4" />
                                 <span className="text-sm font-semibold whitespace-nowrap">
@@ -104,7 +109,7 @@ const HeroCard = ({ data, language }) => {
                         </div>
 
                         {/* Progress */}
-                        <div className="w-[320px] max-w-[65vw]">
+                        <div className="w-full sm:w-[320px] max-w-full">
                             <div className="flex items-center justify-between">
                                 <div className="text-slate-200 text-sm">
                                     Your Progress :
@@ -113,13 +118,14 @@ const HeroCard = ({ data, language }) => {
                                     </span>
                                 </div>
                             </div>
+
                             <div className="mt-3 h-2 w-full rounded-full bg-slate-900/70 overflow-hidden">
                                 <div className="h-full w-[0%] bg-blue-500/40 transition-all" />
                             </div>
                         </div>
 
                         <button
-                            className="mt-1 inline-flex items-center justify-center bg-blue-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-blue-700 transform transition-transform hover:scale-[1.03] active:scale-[0.99]"
+                            className="mt-1 w-full sm:w-auto inline-flex items-center justify-center bg-blue-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-blue-700 transform transition-transform hover:scale-[1.03] active:scale-[0.99]"
                         >
                             Start Learning
                         </button>
@@ -206,13 +212,13 @@ const ProblemTable = ({ data, language }) => {
                             {/* Question */}
                             <td className="px-6 py-5">
                                 <button
-                                    onClick={() =>{
+                                    onClick={() => {
                                         navigate(`/dashboard/code-editor/${encodeURIComponent(String(language).toLowerCase())}/${encodeURIComponent(String(p._id).toLowerCase())
                                             }`)
                                         console.log(p._id)
                                     }
-                                        
-                                        }
+
+                                    }
                                     className="text-blue-400 cursor-pointer hover:text-blue-300 hover:underline font-medium text-left">
                                     {p.question}
                                 </button>

@@ -12,7 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout as reduxLogout } from '@/store/slices/authSlice';
 import { ServerOffline } from '@/components/common/server-offline';
 
-// Lazy-load heavy route components — drastically reduces initial bundle
+// Lazy-load heavy ka use for  route components —  reduces initial bundle size
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const StudentDashboard = lazy(() =>
     import('@/pages/user/Dashboard').then(m => ({ default: m.StudentDashboard }))

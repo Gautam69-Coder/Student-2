@@ -17,6 +17,7 @@ import {
     MessageSquare,
     Info,
     ChevronDown,
+    Code2
 } from "lucide-react"
 import { useLocation, Link, useNavigate } from "react-router-dom"
 import { Logo } from "../logo/logo"
@@ -28,6 +29,7 @@ const navItems = [
     { id: "home", label: "Home", icon: Home, path: "/dashboard" },
     { id: "notes", label: "Notes", icon: FileText, path: "/dashboard/notes" },
     { id: "practicals", label: "Practicals", icon: FlaskConical, path: "/dashboard/practicals" },
+    { id: "practice", label: "Practice", icon: Code2, path: "/dashboard/coding-practice" },
     { id: "community", label: "Community", icon: Users, path: "/dashboard/community" },
 
 ]

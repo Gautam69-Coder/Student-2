@@ -112,8 +112,12 @@ export const sendGuestTracker = (guestData) => api.post('/guesttrack', guestData
 export const fetchGuestVisits = () => api.get('/guesttrack')
 export const getTrackerData = () => api.get('/trackingData')
 
+// Coding Practice Tracks
+export const fetchCodingPractices = () => api.get('/coding-practices');
+
 //AI Assistant
 export const aiAssistant = (data) => api.post('/aiassistant', { message: data })
 export const aiCodeHelper = (context) => api.post('/aicodehelper', { context })
+
 
 export default api;

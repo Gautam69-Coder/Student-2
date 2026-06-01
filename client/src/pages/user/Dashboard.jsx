@@ -19,7 +19,9 @@ import { Profile } from "./Profile";
 import { AboutContact } from "./AboutContact";
 import { Community } from "./Community";
 import { PracticalCard } from "@/components/user/practical-card";
-
+import { CodingPractice } from "./CodingPractice";
+import CodeEditor from "./CodeEditor";
+import PracticeDeatils from "./PracticeDeatils";
 
 import { StudentNavbar } from "@/components/user/student-navbar"
 
@@ -110,7 +112,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
             />
 
             <main className="flex-1 w-full max-w-8xl mx-auto pt-24 px-4 sm:px-4">
-            
+
                 <div className="pb-24 lg:pb-8">
                     {searchQuery ? (
                         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -271,14 +273,18 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                             <Route path="practicals" element={<Practicals practicals={displayedPracticals} setPracticalUploadOpen={() => handleAuthRequired(() => setPracticalUploadOpen(true))} subjects={subjects} requireAuth={handleAuthRequired} />} />
                             <Route path="feedback" element={<Feedback user={user} requireAuth={handleAuthRequired} />} />
                             <Route path="community" element={<Community requireAuth={handleAuthRequired} />} />
+                            <Route path="coding-practice" element={<CodingPractice user={user} />} />
+                            <Route path="coding-practice/:language" element={<PracticeDeatils />} />
                             <Route path="profile" element={
                                 isAuthenticated ? (
+
                                     <Profile onLogout={onLogout} />
                                 ) : (
                                     <Navigate to="/dashboard" replace />
                                 )
                             } />
                             <Route path="about-contact" element={<AboutContact />} />
+                            <Route path="code-editor/:language/:problemId" element={<CodeEditor />} />
                             <Route path="*" element={<Navigate to="" replace />} />
                         </Routes>
                     )}

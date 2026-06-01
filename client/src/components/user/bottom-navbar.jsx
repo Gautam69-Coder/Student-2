@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Home, FileText, FlaskConical, User, Users } from 'lucide-react';
+import { Home, FileText, FlaskConical, User, Users, Code2 } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -8,6 +8,7 @@ const navItems = [
     { id: "home", label: "Home", icon: Home },
     { id: "notes", label: "Notes", icon: FileText },
     { id: "practicals", label: "Practicals", icon: FlaskConical },
+    { id: "coding-practice", label: "Practice", icon: Code2 },
     { id: "community", label: "Community", icon: Users },
     { id: "profile", label: "Profile", icon: User },
 ];

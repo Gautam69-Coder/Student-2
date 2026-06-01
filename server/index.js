@@ -167,7 +167,8 @@ import feedback from './routes/feedback.js';
 import notification from './routes/notification.js';
 import community from './routes/community.js';
 import aiasistant from './routes/aiasistant.js'
-import aicodehelper from  "./routes/aicodehelper.js"
+import aicodehelper from "./routes/aicodehelper.js"
+import codingPractices from './routes/codingPractices.js';
 
 // import email from './routes/email.js';
 app.use('/api/auth', auth);
@@ -180,7 +181,9 @@ app.use('/api/notifications', notification);
 app.use('/api/community', community);
 app.use('/api/aiassistant', aiasistant);
 app.use('/api/aicodehelper', aicodehelper);
+app.use('/api/coding-practices', codingPractices);
 // app.use('/api/email', email);
+
 
 
 // Track user activity
@@ -190,6 +193,7 @@ import guestTrack from './routes/guesttrack.js';
 app.use('/api/hometracking', activityTrack);
 app.use('/api/trackingData', activityTrack);
 app.use('/api/guesttrack', guestTrack);
+
 
 app.get('/', (req, res) => {
     res.send('API is running with Socket.io...');

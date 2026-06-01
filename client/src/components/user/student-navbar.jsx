@@ -297,7 +297,6 @@ export function StudentNavbar({
                             Share
                         </button>
 
-                        <ThemeToggle className="rounded-[10px]"/>
 
                         <div className="relative">
                             <button

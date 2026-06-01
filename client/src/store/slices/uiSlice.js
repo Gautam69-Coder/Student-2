@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    darkMode: localStorage.getItem('darkMode') === 'true',
+    // Force dark theme only (remove white/light theme)
+    darkMode: true,
     sidebarOpen: false,
     modals: {
         auth: false,

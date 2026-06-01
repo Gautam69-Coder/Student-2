@@ -10,11 +10,8 @@ export function ThemeProvider({ children }) {
 
     useEffect(() => {
         const root = window.document.documentElement;
-        if (darkMode) {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
-        }
+        // Force dark theme only
+        root.classList.add('dark');
     }, [darkMode]);
 
     const toggleDarkMode = () => dispatch(reduxToggleDarkMode());

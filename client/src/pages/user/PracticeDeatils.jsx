@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchCodingPractices } from '@/api/api';
+import { fetchCodingPractices } from '@/Api/api';
 import { useNavigate } from "react-router-dom";
 
 import {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as icons from 'simple-icons';
-import { fetchCodingPractices } from '@/api/api';
+import { fetchCodingPractices } from '@/Api/api';
 
 const CodingPractice = () => {
     const navigate = useNavigate();

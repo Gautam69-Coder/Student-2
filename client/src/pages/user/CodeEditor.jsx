@@ -3,7 +3,7 @@ import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { fetchCodingPractices } from '@/api/api';
+import { fetchCodingPractices } from '@/Api/api';
 import { useEffect } from "react";
 
 

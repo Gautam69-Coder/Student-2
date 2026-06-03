@@ -28,7 +28,6 @@ import {
 import { theme } from "@/lib/theme";
 import { BarChart, Bar, XAxis, ResponsiveContainer, Cell } from "recharts";
 import { getMe,userProfileUpdate } from "@/Api/api";
-import { toUpperName } from "../../utils/ToUpperName";
 import { Link } from "react-router-dom";
 
 

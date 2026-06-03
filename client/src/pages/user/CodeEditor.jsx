@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchCodingPractices } from "@/api/api";
+import { fetchCodingPractices } from "@/Api/api";
 import { theme } from "@/lib/theme";
 import { ArrowLeft, ArrowUpRight, AlertCircle, Code2, Play, Send, Sparkles, SquareCode } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";

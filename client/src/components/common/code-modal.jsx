@@ -1,107 +1,153 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, Check } from "lucide-react";
+import { X, Copy, Check, Sparkles, Code2 } from "lucide-react";
 import Highlight from "react-highlight";
-import "highlight.js/styles/atom-one-dark.css"
-import { ShimmerButton } from "/components/ui/shimmer-button"
-import { useCallback } from "react";
+import "highlight.js/styles/atom-one-dark.css";
+import { ShimmerButton } from "/components/ui/shimmer-button";
 import { AICodeHelper } from "../user/ai-code-helper";
-
+import { Card, CardContent } from "/components/ui/card";
+import { theme } from "@/lib/theme";
 
 export function CodeModal({ isOpen, onClose, title, code, section }) {
     const [copied, setCopied] = useState(false);
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false);
 
-
-    const handleCopy = () => {
-        navigator.clipboard.writeText(code);
+    const handleCopy = useCallback(() => {
+        navigator.clipboard.writeText(code || "");
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-    };
-
+    }, [code]);
 
     const handleOpenCodeHelper = useCallback(() => {
-        setShowModalCodeHelper(true)
+        setShowModalCodeHelper(true);
     }, []);
 
     const handleCloseCodeHelper = useCallback(() => {
-        setShowModalCodeHelper(false)
-    }, [])
+        setShowModalCodeHelper(false);
+    }, []);
 
-
-
-    if (typeof document === 'undefined') return null;
+    if (typeof document === "undefined") return null;
 
     return ReactDOM.createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6">
+                <div className="fixed inset-0 backdrop-blur-sm  z-50 flex items-center justify-center px-4 sm:px-6">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                        className="absolute inset-0 "
+                        style={{ background: "rgba(17,17,19,0.25)" }}
                         onClick={onClose}
                     />
+
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] z-10 border dark:border-slate-800"
+                        className="relative w-full max-w-5xl max-h-[88vh] z-10 overflow-hidden rounded-2xl border shadow-2xl flex flex-col"
+                        style={{
+                            background: theme.colors.white,
+                            borderColor: theme.colors.lightGray,
+                        }}
                     >
-                        <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">
-                            <div className="w-full">
-                                <div className="flex justify-between items-center mb-4 ">
-                                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">Code Preview</h3>
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={() => {
-                                                handleOpenCodeHelper()
-                                            }}
-                                            className="hidden sm:block"
-                                        >
-                                            <ShimmerButton className={"py-2"}>
-                                                AI Assistant
-                                            </ShimmerButton>
-                                        </button>
-
-                                        <button
-                                            onClick={handleCopy}
-                                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-bold transition-all"
-                                        >
-                                            {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-                                            {copied ? "Copied!" : "Copy"}
-                                        </button>
-                                        <button
-                                            onClick={onClose}
-                                            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-                                        >
-                                            <X className="w-5 h-5" />
-                                        </button>
+                        <div
+                            className="flex items-start justify-between gap-4 p-5 sm:p-6 border-b"
+                            style={{ borderColor: theme.colors.lightGray }}
+                        >
+                            <div className="min-w-0">
+                                <div className="flex items-center gap-3">
+                                    <div
+                                        className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
+                                        style={{ background: theme.colors.limeDim }}
+                                    >
+                                        <Code2 className="w-5 h-5" style={{ color: theme.colors.dark }} />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <h3 className="text-xl font-black" style={{ color: theme.colors.dark }}>
+                                            Code Preview
+                                        </h3>
+                                        <p className="text-sm font-medium mt-1 truncate" style={{ color: theme.colors.darkGray }}>
+                                            {title}
+                                        </p>
                                     </div>
                                 </div>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">{title}</p>
+                            </div>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                    onClick={handleOpenCodeHelper}
+                                    className="hidden sm:inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-colors border hover:bg-slate-50"
+                                    style={{
+                                        background: theme.colors.white,
+                                        color: theme.colors.dark,
+                                        borderColor: theme.colors.lightGray,
+                                    }}
+                                >
+                                    <Sparkles className="w-4 h-4" />
+                                    AI Assistant
+                                </button>
+
+                                <button
+                                    onClick={handleCopy}
+                                    className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-colors border hover:bg-slate-50"
+                                    style={{
+                                        background: theme.colors.white,
+                                        color: theme.colors.dark,
+                                        borderColor: theme.colors.lightGray,
+                                    }}
+                                >
+                                    {copied ? (
+                                        <Check className="w-4 h-4" style={{ color: "#16A34A" }} />
+                                    ) : (
+                                        <Copy className="w-4 h-4" />
+                                    )}
+                                    {copied ? "Copied!" : "Copy"}
+                                </button>
+
+                                <button
+                                    onClick={onClose}
+                                    className="p-2 rounded-xl transition-colors border hover:bg-slate-50"
+                                    style={{
+                                        background: theme.colors.white,
+                                        color: theme.colors.darkGray,
+                                        borderColor: theme.colors.lightGray,
+                                    }}
+                                    aria-label="Close code preview"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
                             </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 sm:p-8" data-lenis-prevent>
-                            <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm bg-[#0d1117]">
-                                <button
-                                    onClick={() => {
-                                        handleOpenCodeHelper()
-                                    }}
-                                    className="absolute right-4 sm:hidden block"
-                                >
-                                    <ShimmerButton className={"text-[10px] py-2"}>
+
+                        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8" data-lenis-prevent>
+                            <Card
+                                className="rounded-2xl overflow-hidden border-0"
+                                style={{
+                                    background: "#0d1117",
+                                    boxShadow: "0 10px 0 rgba(17,17,19,0.08)",
+                                }}
+                            >
+                                <CardContent className="p-0 relative">
+                                    <button
+                                        onClick={handleOpenCodeHelper}
+                                        className="sm:hidden absolute right-4 top-4 z-10 inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] font-bold transition-colors border"
+                                        style={{
+                                            background: theme.colors.white,
+                                            color: theme.colors.dark,
+                                            borderColor: theme.colors.lightGray,
+                                        }}
+                                    >
+                                        <Sparkles className="w-3.5 h-3.5" />
                                         AI Assistant
-                                    </ShimmerButton>
-                                </button>
-                                <Highlight className="javascript">
-                                    {code}
-                                </Highlight>
-                            </div>
+                                    </button>
+                                    <Highlight className="javascript">{code}</Highlight>
+                                </CardContent>
+                            </Card>
                         </div>
                     </motion.div>
+
                     <AICodeHelper
                         isOpen={showModalCodeHelper}
                         onClose={handleCloseCodeHelper}
@@ -109,7 +155,6 @@ export function CodeModal({ isOpen, onClose, title, code, section }) {
                         code={code}
                         section={section}
                     />
-
                 </div>
             )}
         </AnimatePresence>,

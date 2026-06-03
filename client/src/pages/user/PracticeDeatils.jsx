@@ -1,290 +1,445 @@
-import React, { useMemo } from "react";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { fetchCodingPractices } from '@/Api/api';
-import { useNavigate } from "react-router-dom";
-
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { fetchCodingPractices } from "@/Api/api";
+import { theme } from "@/lib/theme";
 import {
     ArrowUpRight,
-    ChevronUp,
-    // Certificate,
-    Star,
-    Clock3,
     BookOpen,
+    Circle,
+    Code2,
+    Clock3,
+    ListChecks,
+    Sparkles,
+    Star,
     Users,
+    CheckCircle2,
+    AlertCircle,
 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
+import { Progress } from "/components/ui/progress";
+import { DashboardLayout } from "@/components/dashboard/layout";
 
-const HeroCard = ({ data, language }) => {
-
+function StatPill({ icon: Icon, label, value }) {
     return (
-        <div className="w-full">
+        <div
+            className="flex items-center gap-3 rounded-2xl border px-4 py-3"
+            style={{
+                background: theme.colors.white,
+                borderColor: theme.colors.lightGray,
+                boxShadow: "0 8px 0 rgba(17,17,19,0.05)",
+            }}
+        >
             <div
-                className="relative overflow-hidden rounded-3xl p-8  shadow-lg"
-                style={{
-                    background:
-                        "linear-gradient(135deg, #2563eb 0%, rgba(37,99,235,0.35) 18%, rgba(31,35,45,1) 65%, rgba(17,24,39,1) 100%)",
-                }}
+                className="h-10 w-10 rounded-xl flex items-center justify-center"
+                style={{ background: theme.colors.limeDim }}
             >
-                {/* Grid overlay pattern */}
-                <div
-                    className="absolute inset-0 opacity-30 pointer-events-none"
-                    style={{
-                        backgroundImage:
-                            "linear-gradient(rgba(148,163,184,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.35) 1px, transparent 1px)",
-                        backgroundSize: "46px 46px",
-                    }}
-                />
-
-                <div className="relative z-10 flex flex-col lg:flex-row lg:items-start justify-between gap-8 h-full">
-                    {/* Left section */}
-                    <div className="min-w-0 flex-1">
-                        <div className="flex items-start gap-4 sm:gap-5 flex-wrap">
-                            <div className="px-2 h-12 rounded-xl bg-sky-200/15 border border-sky-200/20 flex items-center justify-center">
-                                <div className="h-8 flex items-center font-bold uppercase justify-center">
-                                    <span className="text-sky-100 font-black text-sm">
-                                        {language}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="pt-1 min-w-0">
-                                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white break-words">
-                                    Practice {language?.toUpperCase() || "N/A"}
-                                </h1>
-                            </div>
-                        </div>
-
-                        <p className="mt-4 text-slate-300 text-sm sm:text-[15px] leading-6 max-w-[650px]">
-                            {data?.description || "N/A"}
-                        </p>
-
-                        {/* Stats row */}
-                        <div className="mt-6 flex flex-wrap items-center gap-x-4 sm:gap-x-8 gap-y-3">
-                            <div className="flex items-center gap-2">
-                                <BookOpen className="w-4 h-4 text-slate-300" />
-                                <span className="text-white font-semibold">
-                                    22 Lessons
-                                </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <Clock3 className="w-4 h-4 text-slate-300" />
-                                <span className="text-white font-semibold">
-                                    10 Hours
-                                </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <ArrowUpRight className="w-4 h-4 text-slate-300" />
-                                <span className="text-white font-semibold">
-                                    {data?.problems || "N/A"}
-                                </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <Users className="w-4 h-4 text-slate-300" />
-                                <span className="text-white font-semibold">
-                                    {data?.learners || "N/A"}
-                                </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <span className="w-4 h-4 rounded-full bg-white/15 border border-white/15 inline-block" />
-                                <span className="text-white font-semibold">
-                                    {data?.level || "N/A"} Level
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right side badges + button */}
-                    <div className="flex flex-col items-start lg:items-end gap-4 w-full lg:w-auto">
-                        <div className="relative">
-                            <div className="flex items-center gap-2 bg-yellow-400/90 border border-yellow-300/40 text-yellow-900 rounded-xl px-4 py-2 shadow-md">
-                                <Star className="w-4 h-4" />
-                                <span className="text-sm font-semibold whitespace-nowrap">
-                                    4.5 (25.9k+)
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Progress */}
-                        <div className="w-full sm:w-[320px] max-w-full">
-                            <div className="flex items-center justify-between">
-                                <div className="text-slate-200 text-sm">
-                                    Your Progress :
-                                    <span className="ml-2 text-green-400 font-semibold">
-                                        0% Completed
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="mt-3 h-2 w-full rounded-full bg-slate-900/70 overflow-hidden">
-                                <div className="h-full w-[0%] bg-blue-500/40 transition-all" />
-                            </div>
-                        </div>
-
-                        <button
-                            className="mt-1 w-full sm:w-auto inline-flex items-center justify-center bg-blue-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-blue-700 transform transition-transform hover:scale-[1.03] active:scale-[0.99]"
-                        >
-                            Start Learning
-                        </button>
-
-                        <div className="text-slate-200/60 text-xs font-medium">
-                            {/* spacing filler for alignment */}
-                        </div>
-                    </div>
-                </div>
+                <Icon size={18} color={theme.colors.dark} />
             </div>
-        </div>
-    );
-};
-
-const CourseSection = () => {
-    return (
-        <div className="mt-6 rounded-3xl bg-slate-900/40 border border-slate-700/50 overflow-hidden shadow-sm">
-            <div className="h-[120px] bg-transparent p-6 flex items-start justify-between">
-                <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-slate-950/70 border border-slate-700/60 flex items-center justify-center text-white font-bold">
-                        1
-                    </div>
-
-                    <div>
-                        <h2 className="text-white font-extrabold text-xl">
-                            Output & Basic math operators
-                        </h2>
-                        <p className="mt-1 text-slate-400 text-sm max-w-[640px]">
-                            Practice problems using C++ related to output and output on multiple lines
-                        </p>
-                        <div className="mt-3 text-white font-bold">
-                            <span className="text-white/90">0%</span> Solved
-                        </div>
-                    </div>
+            <div className="min-w-0">
+                <div className="text-[12px] font-medium" style={{ color: theme.colors.darkGray }}>
+                    {label}
                 </div>
-
-                <div className="text-slate-300/80">
-                    <ChevronUp className="w-5 h-5" />
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const ProblemTable = ({ data, language }) => {
-
-    const navigate = useNavigate();
-    const problems = data?.problemList || [];
-
-    return (
-        <div className="mt-6 rounded-3xl bg-slate-900/40 border border-slate-700/50 overflow-hidden shadow-sm">
-
-            <table className="w-full overflow-hidden rounded-2xl border border-slate-700 bg-slate-900">
-                <thead>
-                    <tr className="border-b border-slate-700 bg-slate-800/50">
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300 w-16">
-                            Sr. No.
-                        </th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-slate-300">
-                            Question
-                        </th>
-
-                        <th className="px-6 py-4 text-center text-sm font-semibold text-slate-300 w-28">
-                            Status
-                        </th>
-
-                        <th className="px-6 py-4 text-right text-sm font-semibold text-slate-300 w-32">
-                            Difficulty
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody className="divide-y divide-slate-700/50 w-full">
-                    {problems.map((p, index) => (
-                        <tr
-                            key={index}
-                            className="border-b border-slate-800  hover:bg-slate-800/40 transition-colors"
-                        >
-
-                            <td className="px-6 py-5 text-sm font-medium text-slate-400">
-                                {index + 1}
-                            </td>
-
-                            {/* Question */}
-                            <td className="px-6 py-5">
-                                <button
-                                    onClick={() => {
-                                        navigate(`/dashboard/code-editor/${encodeURIComponent(String(language).toLowerCase())}/${encodeURIComponent(String(p._id).toLowerCase())
-                                            }`)
-                                        console.log(p._id)
-                                    }
-
-                                    }
-                                    className="text-blue-400 cursor-pointer hover:text-blue-300 hover:underline font-medium text-left">
-                                    {p.question}
-                                </button>
-                            </td>
-
-                            {/* Status */}
-                            <td className="px-6 py-5 text-center">
-                                <div className="inline-flex h-5 w-5 rounded-full border border-slate-500" />
-                            </td>
-
-                            {/* Difficulty */}
-                            <td className="px-6 py-5 text-right">
-                                <span
-                                    className={`px-3 py-1 rounded-full text-xs font-semibold
-                        ${p.difficulty === "Easy"
-                                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                            : p.difficulty === "Medium"
-                                                ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
-                                                : "bg-red-500/10 text-red-400 border border-red-500/20"
-                                        }`}
-                                >
-                                    {p.difficulty}
-                                </span>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div >
-    );
-};
-
-
-export default function PracticeDeatils() {
-    const { language } = useParams();
-    const [data, setData] = useState([]);
-
-    const fetchData = async () => {
-        try {
-            const res = await fetchCodingPractices();
-            // console.log(res.data)
-            const filterLanguage = res.data.find(
-                item => item.language.toLowerCase() === language.toLowerCase()
-            );
-            setData(filterLanguage || {});
-        } catch (e) {
-            console.error("Error fetching coding practices:", e);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, [language]);
-
-    return (
-        <div className="py-2">
-            <div className=" mx-auto ">
-                <div className="rounded-2xl">
-                    <div className=" rounded-3xl p-4 ">
-                        <HeroCard data={data} language={language} />
-                        <CourseSection />
-                        <ProblemTable data={data} language={language} />
-                    </div>
+                <div className="text-[15px] font-bold truncate" style={{ color: theme.colors.dark }}>
+                    {value}
                 </div>
             </div>
         </div>
     );
 }
 
+function InfoChip({ icon: Icon, label }) {
+    return (
+        <div
+            className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold"
+            style={{
+                background: theme.colors.white,
+                borderColor: theme.colors.lightGray,
+                color: theme.colors.dark,
+            }}
+        >
+            <Icon className="w-4 h-4" style={{ color: theme.colors.dark }} />
+            <span>{label}</span>
+        </div>
+    );
+}
+
+function ProblemDifficulty({ difficulty }) {
+    const variant =
+        difficulty === "Easy"
+            ? {
+                  bg: "rgba(16,185,129,0.12)",
+                  border: "rgba(16,185,129,0.30)",
+                  text: "#059669",
+              }
+            : difficulty === "Medium"
+                ? {
+                      bg: "rgba(245,158,11,0.12)",
+                      border: "rgba(245,158,11,0.30)",
+                      text: "#D97706",
+                  }
+                : {
+                      bg: "rgba(239,68,68,0.12)",
+                      border: "rgba(239,68,68,0.30)",
+                      text: "#DC2626",
+                  };
+
+    return (
+        <span
+            className="inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold"
+            style={{
+                background: variant.bg,
+                borderColor: variant.border,
+                color: variant.text,
+            }}
+        >
+            {difficulty || "Unknown"}
+        </span>
+    );
+}
+
+function ProblemRow({ problem, index, language, navigate }) {
+    return (
+        <tr className="border-t border-slate-100 hover:bg-lime-50/60 transition-colors">
+            <td className="px-4 sm:px-6 py-4 align-middle text-sm font-bold text-slate-500">
+                {index + 1}
+            </td>
+            <td className="px-4 sm:px-6 py-4 align-middle">
+                <button
+                    onClick={() =>
+                        navigate(
+                            `/dashboard/code-editor/${encodeURIComponent(String(language).toLowerCase())}/${encodeURIComponent(
+                                String(problem?._id || "").toLowerCase()
+                            )}`
+                        )
+                    }
+                    className="text-left font-semibold text-slate-900 hover:text-lime-700 hover:underline underline-offset-4 transition-colors"
+                >
+                    {problem?.question || "Untitled question"}
+                </button>
+                {problem?.description && (
+                    <div className="mt-1 text-xs sm:text-sm text-slate-500 line-clamp-2">
+                        {problem.description}
+                    </div>
+                )}
+            </td>
+            <td className="px-4 sm:px-6 py-4 align-middle text-center">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 bg-slate-50">
+                    <Circle className="w-3 h-3 text-slate-300" />
+                </span>
+            </td>
+            <td className="px-4 sm:px-6 py-4 align-middle text-right">
+                <ProblemDifficulty difficulty={problem?.difficulty} />
+            </td>
+        </tr>
+    );
+}
+
+export default function PracticeDeatils() {
+    const { language } = useParams();
+    const navigate = useNavigate();
+    const [data, setData] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let mounted = true;
+
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const res = await fetchCodingPractices();
+                const list = Array.isArray(res?.data) ? res.data : [];
+                const currentLanguage = String(language || "").toLowerCase();
+
+                const filtered = list.find(
+                    (item) => String(item?.language || "").toLowerCase() === currentLanguage
+                );
+
+                if (mounted) setData(filtered || {});
+            } catch (error) {
+                console.error("Error fetching coding practices:", error);
+                if (mounted) setData({});
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        };
+
+        fetchData();
+        return () => {
+            mounted = false;
+        };
+    }, [language]);
+
+    const problems = useMemo(() => data?.problemList || [], [data]);
+
+    const stats = useMemo(
+        () => [
+            { icon: BookOpen, label: "Lessons", value: "22+" },
+            { icon: Clock3, label: "Duration", value: "10 Hours" },
+            { icon: ListChecks, label: "Problems", value: `${problems.length || 0}` },
+            { icon: Users, label: "Learners", value: data?.learners || "N/A" },
+        ],
+        [data?.learners, problems.length]
+    );
+
+    const completedCount = 0;
+    const progressValue = problems.length ? Math.round((completedCount / problems.length) * 100) : 0;
+
+    const startLearning = () => {
+        const firstProblem = problems[0];
+        if (!firstProblem?._id) return;
+        navigate(
+            `/dashboard/code-editor/${encodeURIComponent(String(language).toLowerCase())}/${encodeURIComponent(
+                String(firstProblem._id).toLowerCase()
+            )}`
+        );
+    };
+
+    return (
+        <DashboardLayout>
+        <div
+            
+        >
+            <div className="mx-auto max-w-7xl space-y-4 sm:space-y-6">
+                <Card
+                    className="rounded-2xl overflow-hidden"
+                    style={{
+                        background: theme.colors.white,
+                        borderColor: theme.colors.lightGray,
+                    }}
+                >
+                    <CardContent className="p-6 sm:p-8 lg:p-10">
+                        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+                            <div className="min-w-0 flex-1">
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <span
+                                        className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-black uppercase tracking-[0.18em]"
+                                        style={{
+                                            background: theme.colors.lime,
+                                            color: theme.colors.dark,
+                                            borderColor: theme.colors.lime,
+                                        }}
+                                    >
+                                        <Sparkles className="w-4 h-4" />
+                                        {language || "Language"}
+                                    </span>
+
+                                    <span
+                                        className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold"
+                                        style={{
+                                            background: theme.colors.white,
+                                            color: theme.colors.dark,
+                                            borderColor: theme.colors.lightGray,
+                                        }}
+                                    >
+                                        <Code2 className="w-4 h-4" />
+                                        Practice Path
+                                    </span>
+                                </div>
+
+                                <h1
+                                    className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black leading-tight"
+                                    style={{ color: theme.colors.dark }}
+                                >
+                                    Practice {String(language || "N/A").toUpperCase()}
+                                </h1>
+
+                                <p
+                                    className="mt-4 max-w-3xl text-sm sm:text-base leading-7"
+                                    style={{ color: theme.colors.darkGray }}
+                                >
+                                    {data?.description ||
+                                        "Sharpen your fundamentals, solve real problems, and build confidence with structured practice."}
+                                </p>
+
+                                <div className="mt-6 flex flex-wrap gap-3">
+                                    <InfoChip icon={BookOpen} label="Lessons" />
+                                    <InfoChip icon={Clock3} label="10 Hours" />
+                                    <InfoChip icon={ListChecks} label={`${problems.length || 0} Problems`} />
+                                    <InfoChip icon={Users} label={data?.learners || "Learners"} />
+                                    <InfoChip icon={Circle} label={`${data?.level || "All"} Level`} />
+                                </div>
+
+                                <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                                    {stats.map((stat) => (
+                                        <StatPill
+                                            key={stat.label}
+                                            icon={stat.icon}
+                                            label={stat.label}
+                                            value={stat.value}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="w-full lg:w-[330px] shrink-0">
+                                <div
+                                    className="rounded-2xl border p-5"
+                                    style={{
+                                        background: theme.colors.white,
+                                        borderColor: theme.colors.lightGray,
+                                        boxShadow: "0 10px 0 rgba(17,17,19,0.06)",
+                                    }}
+                                >
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-2">
+                                            <Star className="w-4 h-4" style={{ color: theme.colors.lime }} />
+                                            <span className="text-sm font-bold" style={{ color: theme.colors.dark }}>
+                                                4.5
+                                            </span>
+                                            <span className="text-xs" style={{ color: theme.colors.darkGray }}>
+                                                (25.9k+)
+                                            </span>
+                                        </div>
+                                        <span
+                                            className="text-[11px] px-2.5 py-1 rounded-full font-bold"
+                                            style={{
+                                                background: theme.colors.limeDim,
+                                                color: theme.colors.dark,
+                                            }}
+                                        >
+                                            Trending
+                                        </span>
+                                    </div>
+
+                                    <div className="mt-5">
+                                        <div className="flex items-center justify-between text-sm">
+                                            <span style={{ color: theme.colors.darkGray }}>Your Progress</span>
+                                            <span className="font-bold" style={{ color: theme.colors.dark }}>
+                                                {progressValue}% Completed
+                                            </span>
+                                        </div>
+
+                                        <div className="mt-3">
+                                            <Progress
+                                                value={progressValue}
+                                                style={{
+                                                    height: 10,
+                                                    borderRadius: 999,
+                                                    backgroundColor: theme.colors.softGray,
+                                                    color: theme.colors.lime,
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={startLearning}
+                                        disabled={!problems.length}
+                                        className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black transition-transform hover:scale-[1.01] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                                        style={{
+                                            background: theme.colors.lime,
+                                            color: theme.colors.dark,
+                                            boxShadow: "0 8px 0 rgba(17,17,19,0.18)",
+                                        }}
+                                    >
+                                        Start Learning
+                                        <ArrowUpRight className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                >
+                    <Card
+                        className="rounded-2xl"
+                        style={{
+                            background: theme.colors.white,
+                            borderColor: theme.colors.lightGray,
+                            boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
+                        }}
+                    >
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center"
+                                    style={{ background: theme.colors.limeDim }}
+                                >
+                                    <ListChecks className="w-5 h-5" style={{ color: theme.colors.dark }} />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-[16px] sm:text-[18px] font-bold" style={{ color: theme.colors.dark }}>
+                                        Practice Problems
+                                    </CardTitle>
+                                    <div className="text-[13px] font-medium" style={{ color: theme.colors.darkGray }}>
+                                        Choose a question to open the code editor
+                                    </div>
+                                </div>
+                            </div>
+                        </CardHeader>
+
+                        <CardContent className="pt-0">
+                            {loading ? (
+                                <div
+                                    className="rounded-2xl border p-6 text-center font-semibold"
+                                    style={{
+                                        background: theme.colors.white,
+                                        borderColor: theme.colors.lightGray,
+                                        color: theme.colors.darkGray,
+                                    }}
+                                >
+                                    Loading practice problems...
+                                </div>
+                            ) : problems.length ? (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full min-w-[720px] border-separate border-spacing-0">
+                                        <thead>
+                                            <tr style={{ background: theme.colors.softGray }}>
+                                                <th className="px-4 sm:px-6 py-4 text-left text-sm font-bold" style={{ color: theme.colors.darkGray }}>
+                                                    Sr. No.
+                                                </th>
+                                                <th className="px-4 sm:px-6 py-4 text-left text-sm font-bold" style={{ color: theme.colors.darkGray }}>
+                                                    Question
+                                                </th>
+                                                <th className="px-4 sm:px-6 py-4 text-center text-sm font-bold" style={{ color: theme.colors.darkGray }}>
+                                                    Status
+                                                </th>
+                                                <th className="px-4 sm:px-6 py-4 text-right text-sm font-bold" style={{ color: theme.colors.darkGray }}>
+                                                    Difficulty
+                                                </th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {problems.map((problem, index) => (
+                                                <ProblemRow
+                                                    key={problem?._id || index}
+                                                    problem={problem}
+                                                    index={index}
+                                                    language={language}
+                                                    navigate={navigate}
+                                                />
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="rounded-2xl border p-10 text-center" style={{ borderColor: theme.colors.lightGray }}>
+                                    <div
+                                        className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl"
+                                        style={{ background: theme.colors.limeDim }}
+                                    >
+                                        <AlertCircle className="w-6 h-6" style={{ color: theme.colors.dark }} />
+                                    </div>
+                                    <div className="text-lg font-bold" style={{ color: theme.colors.dark }}>
+                                        No problems available for this practice set
+                                    </div>
+                                    <div className="mt-1 text-sm" style={{ color: theme.colors.darkGray }}>
+                                        This language does not currently have any practice questions.
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </motion.div>
+            </div>
+        </div>
+        </DashboardLayout>
+    );
+}

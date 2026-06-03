@@ -95,7 +95,7 @@ function AppContent() {
     const currentUser = user?.username;
 
     return (
-        <div className="min-h-screen max-w-full sm:max-w-screen bg-background">
+        <div className="min-h-screen max-w-full sm:max-w-screen ">
             <Suspense fallback={<PageLoader />}>
                 <Routes>
                     <Route

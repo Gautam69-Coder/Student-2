@@ -1,55 +1,99 @@
-import React, { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from "framer-motion"
-import { X, Trash, FlaskConical, FileUp, FileText, Image as ImageIcon, Loader2 } from "lucide-react"
-import { createPractical, updatePractical } from "@/Api/api"
-import { getLenis } from "@/hooks/useLenis"
-import { useData } from "@/context/DataContext"
+import React, { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Trash, FlaskConical, FileUp, FileText, Image as ImageIcon, Loader2, Sparkles, Plus, Layers } from "lucide-react";
+import { createPractical, updatePractical } from "@/Api/api";
+import { getLenis } from "@/hooks/useLenis";
+import { useData } from "@/context/DataContext";
+import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
+import { theme } from "@/lib/theme";
 
-const EMPTY_QUESTION = () => ({ question: '', code: '', file: null });
+const EMPTY_QUESTION = () => ({ question: "", code: "", file: null });
+
+function StatTile({ label, value }) {
+    return (
+        <div
+            className="rounded-2xl border px-4 py-3"
+            style={{
+                background: theme.colors.softGray,
+                borderColor: theme.colors.lightGray,
+            }}
+        >
+            <div className="text-[12px] font-medium" style={{ color: theme.colors.darkGray }}>
+                {label}
+            </div>
+            <div className="text-lg font-bold mt-1" style={{ color: theme.colors.dark }}>
+                {value}
+            </div>
+        </div>
+    );
+}
+
+function PanelHeader({ title, subtitle, icon: Icon }) {
+    return (
+        <div className="flex items-start gap-3">
+            <div
+                className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: theme.colors.limeDim }}
+            >
+                <Icon className="w-5 h-5" style={{ color: theme.colors.dark }} />
+            </div>
+            <div className="min-w-0">
+                <CardTitle className="text-[16px] sm:text-[18px] font-bold" style={{ color: theme.colors.dark }}>
+                    {title}
+                </CardTitle>
+                <p className="text-[13px] font-medium mt-1" style={{ color: theme.colors.darkGray }}>
+                    {subtitle}
+                </p>
+            </div>
+        </div>
+    );
+}
 
 const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
     const { refreshPracticals } = useData();
 
     const [newPractical, setNewPractical] = useState({
-        practicalNumber: '',
-        section: '',
-        questions: [EMPTY_QUESTION()]
+        practicalNumber: "",
+        section: "",
+        questions: [EMPTY_QUESTION()],
     });
     const [editPracticalId, setEditPracticalId] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // ─── Lenis: stop smooth-scroll while modal is open ───────────────────────────
     useEffect(() => {
         const lenis = getLenis();
         if (open) {
             lenis?.stop();
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = "hidden";
         } else {
             lenis?.start();
-            document.body.style.overflow = '';
+            document.body.style.overflow = "";
         }
         return () => {
             getLenis()?.start();
-            document.body.style.overflow = '';
+            document.body.style.overflow = "";
         };
     }, [open]);
 
+    const questionCount = useMemo(() => newPractical.questions.length, [newPractical.questions.length]);
+    const subjectCount = useMemo(() => uniqueSubjects?.length || 0, [uniqueSubjects]);
+
     const handleAddQuestion = () => {
-        setNewPractical(prev => ({
+        setNewPractical((prev) => ({
             ...prev,
-            questions: [...prev.questions, EMPTY_QUESTION()]
+            questions: [...prev.questions, EMPTY_QUESTION()],
         }));
     };
 
     const handleRemoveQuestion = (index) => {
-        setNewPractical(prev => ({
+        setNewPractical((prev) => ({
             ...prev,
-            questions: prev.questions.filter((_, i) => i !== index)
+            questions: prev.questions.filter((_, i) => i !== index),
         }));
     };
 
     const handleFieldChange = (index, field, value) => {
-        setNewPractical(prev => {
+        setNewPractical((prev) => {
             const updated = [...prev.questions];
             updated[index] = { ...updated[index], [field]: value };
             return { ...prev, questions: updated };
@@ -58,48 +102,54 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
 
     const handleFileChange = (index, e) => {
         const file = e.target.files?.[0] ?? null;
-        handleFieldChange(index, 'file', file);
+        handleFieldChange(index, "file", file);
     };
 
     const handleRemoveFile = (index) => {
-        handleFieldChange(index, 'file', null);
+        handleFieldChange(index, "file", null);
+    };
+
+    const resetForm = () => {
+        setNewPractical({
+            practicalNumber: "",
+            section: "",
+            questions: [EMPTY_QUESTION()],
+        });
+        setEditPracticalId(null);
     };
 
     const handleAddPractical = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
-        setIsSubmitting(true);
 
+        setIsSubmitting(true);
         try {
             if (editPracticalId) {
-                // Update doesn't touch files for now – send JSON
                 const payload = {
                     practicalNumber: newPractical.practicalNumber,
                     section: newPractical.section,
-                    questions: newPractical.questions.map(q => ({
+                    questions: newPractical.questions.map((q) => ({
                         question: q.question,
-                        code: q.code
-                    }))
+                        code: q.code,
+                    })),
                 };
+
                 await updatePractical(editPracticalId, payload);
-                setEditPracticalId(null);
             } else {
                 const formData = new FormData();
                 formData.append("practicalNumber", newPractical.practicalNumber);
                 formData.append("section", newPractical.section);
 
-                // Strip the File object before JSON-serialising questions
-                const questionsPayload = newPractical.questions.map(q => ({
+                const questionsPayload = newPractical.questions.map((q) => ({
                     question: q.question,
                     code: q.code,
                     fileUrl: null,
                     filePublicId: null,
                     fileName: q.file?.name ?? null,
-                    fileType: q.file?.type ?? null
+                    fileType: q.file?.type ?? null,
                 }));
                 formData.append("questions", JSON.stringify(questionsPayload));
 
-                // Collect files + their question indices
                 const fileIndexMap = [];
                 newPractical.questions.forEach((q, index) => {
                     if (q.file) {
@@ -109,267 +159,452 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
                 });
                 formData.append("fileIndexMap", JSON.stringify(fileIndexMap));
 
-                const res = await createPractical(formData);
-                alert('Practical added successfully!');
+                await createPractical(formData);
             }
 
-            refreshPracticals();
-            // Reset form
-            setNewPractical({ practicalNumber: '', section: '', questions: [EMPTY_QUESTION()] });
+            await refreshPracticals();
+            resetForm();
             onOpenChange(false);
+            alert(editPracticalId ? "Practical updated successfully!" : "Practical added successfully!");
         } catch (error) {
-            console.error('Error adding practical:', error);
-            alert('Failed to add practical. Please try again.');
+            console.error("Error adding practical:", error);
+            alert("Failed to add practical. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    const handleClose = () => {
+        resetForm();
+        onOpenChange(false);
+    };
+
+    if (typeof document === "undefined") return null;
+
     return (
         <AnimatePresence>
             {open && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-hidden">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={() => onOpenChange(false)}
-                        className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] dark:bg-slate-900/60"
+                        onClick={handleClose}
+                        className="absolute inset-0"
+                        style={{ background: "rgba(17,17,19,0.30)" }}
                     />
 
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        initial={{ opacity: 0, scale: 0.96, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                        className="relative z-10 w-full max-w-5xl h-[90vh] flex flex-col"
+                        exit={{ opacity: 0, scale: 0.96, y: 10 }}
+                        className="relative z-10 w-full max-w-6xl h-[90vh] flex flex-col rounded-2xl border shadow-2xl overflow-hidden"
+                        style={{
+                            background: theme.colors.white,
+                            borderColor: theme.colors.lightGray,
+                        }}
                     >
                         <div
-                            data-lenis-prevent
-                            className="
-                                bg-white dark:bg-slate-900
-                                rounded-xl border border-[#E5E5E5] dark:border-slate-800
-                                shadow-sm sm:p-8 p-4
-                                h-full overflow-y-auto overflow-x-hidden
-                                overscroll-contain
-                                [&::-webkit-scrollbar]:hidden
-                                [-ms-overflow-style:none]
-                                [scrollbar-width:none]
-                            "
+                            className="flex items-start justify-between gap-4 p-4 sm:p-6 border-b"
+                            style={{ borderColor: theme.colors.lightGray }}
                         >
-                            <div className="flex justify-between mb-5">
-                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
-                                    Add New Practical
-                                </h2>
-                                <button
-                                    onClick={() => onOpenChange(false)}
-                                    className="p-1.5 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-all"
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div
+                                    className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
+                                    style={{ background: theme.colors.limeDim }}
                                 >
-                                    <X className="w-5 h-5" />
-                                </button>
+                                    <FlaskConical className="w-5 h-5" style={{ color: theme.colors.dark }} />
+                                </div>
+                                <div className="min-w-0">
+                                    <h2 className="text-xl sm:text-2xl font-black" style={{ color: theme.colors.dark }}>
+                                        Add New Practical
+                                    </h2>
+                                    <p className="text-sm font-medium mt-1" style={{ color: theme.colors.darkGray }}>
+                                        Build practical questions, starter code, and optional file references
+                                    </p>
+                                </div>
                             </div>
 
-                            <form onSubmit={handleAddPractical}>
-                                <div className="bg-white dark:bg-slate-900 rounded-xl sm:p-8 sm:border border-[#E5E5E5] dark:border-slate-800 shadow-sm">
-                                    <div className="space-y-6">
-                                        {/* Subject + Practical Number */}
-                                        <div className="flex justify-between w-full gap-4">
-                                            <div className="w-full">
-                                                <label htmlFor="practical-subject" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                    Subject
-                                                </label>
-                                                <select
-                                                    id="practical-subject"
-                                                    className="mt-2 w-full px-4 h-11 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg appearance-none cursor-pointer text-slate-900 dark:text-white"
-                                                    value={newPractical.section}
-                                                    onChange={e => setNewPractical(prev => ({ ...prev, section: e.target.value }))}
-                                                    required
-                                                >
-                                                    <option value="">Select subject</option>
-                                                    {uniqueSubjects.map((section) => (
-                                                        <option key={section._id} value={section.name}>
-                                                            {section.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                            <button
+                                onClick={handleClose}
+                                className="p-2 rounded-xl border transition-colors hover:bg-slate-50 shrink-0"
+                                style={{
+                                    background: theme.colors.white,
+                                    borderColor: theme.colors.lightGray,
+                                    color: theme.colors.darkGray,
+                                }}
+                                aria-label="Close practical upload modal"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6" data-lenis-prevent>
+                            <form onSubmit={handleAddPractical} className="space-y-6">
+                                <div className="grid grid-cols-1 xl:grid-cols-5 gap-4 sm:gap-6">
+                                    <Card
+                                        className="xl:col-span-2 rounded-2xl"
+                                        style={{
+                                            background: theme.colors.white,
+                                            borderColor: theme.colors.lightGray,
+                                            boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
+                                        }}
+                                    >
+                                        <CardHeader className="pb-3">
+                                            <PanelHeader
+                                                icon={Sparkles}
+                                                title="Practical Details"
+                                                subtitle="Choose the subject and number for the new practical"
+                                            />
+                                        </CardHeader>
+                                        <CardContent className="pt-0">
+                                            <div className="space-y-5">
+                                                <div>
+                                                    <label
+                                                        htmlFor="practical-subject"
+                                                        className="block text-sm font-semibold mb-2"
+                                                        style={{ color: theme.colors.dark }}
+                                                    >
+                                                        Subject
+                                                    </label>
+                                                    <select
+                                                        id="practical-subject"
+                                                        className="w-full px-4 h-12 rounded-xl border outline-none transition-colors appearance-none cursor-pointer"
+                                                        value={newPractical.section}
+                                                        onChange={(e) =>
+                                                            setNewPractical((prev) => ({ ...prev, section: e.target.value }))
+                                                        }
+                                                        required
+                                                        style={{
+                                                            background: theme.colors.softGray,
+                                                            borderColor: theme.colors.lightGray,
+                                                            color: theme.colors.dark,
+                                                        }}
+                                                    >
+                                                        <option value="">Select subject</option>
+                                                        {uniqueSubjects.map((section) => (
+                                                            <option key={section._id} value={section.name}>
+                                                                {section.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                <div>
+                                                    <label
+                                                        htmlFor="practical-number"
+                                                        className="block text-sm font-semibold mb-2"
+                                                        style={{ color: theme.colors.dark }}
+                                                    >
+                                                        Practical No
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="practical-number"
+                                                        value={newPractical.practicalNumber}
+                                                        onChange={(e) =>
+                                                            setNewPractical((prev) => ({
+                                                                ...prev,
+                                                                practicalNumber: e.target.value,
+                                                            }))
+                                                        }
+                                                        placeholder="e.g. 1, 2A, 3..."
+                                                        className="w-full px-4 h-12 rounded-xl border outline-none transition-colors"
+                                                        required
+                                                        style={{
+                                                            background: theme.colors.softGray,
+                                                            borderColor: theme.colors.lightGray,
+                                                            color: theme.colors.dark,
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <StatTile label="Questions" value={questionCount} />
+                                                    <StatTile label="Subjects" value={subjectCount} />
+                                                </div>
                                             </div>
+                                        </CardContent>
+                                    </Card>
 
-                                            <div className="w-full">
-                                                <label htmlFor="practical-number" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                    Practical No
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id="practical-number"
-                                                    value={newPractical.practicalNumber}
-                                                    onChange={e => setNewPractical(prev => ({ ...prev, practicalNumber: e.target.value }))}
-                                                    placeholder="e.g. 1, 2A, 3..."
-                                                    className="mt-2 w-full px-4 h-11 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Questions */}
-                                        <div className="border-blue-400/50 border-dashed border rounded-lg p-4 space-y-8 bg-blue-50/10 dark:bg-blue-900/10">
-                                            {newPractical.questions.map((question, index) => (
-                                                <React.Fragment key={index}>
-                                                    <div className="space-y-4">
-                                                        {/* Question input */}
-                                                        <div>
-                                                            <div className="flex justify-between w-full">
-                                                                <label htmlFor={`practical-question-${index}`} className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                                    Question {index + 1}
-                                                                </label>
-                                                                {newPractical.questions.length > 1 && (
-                                                                    <Trash
-                                                                        className="w-4 h-4 text-red-500 cursor-pointer hover:text-red-700 dark:hover:text-red-400"
-                                                                        onClick={() => handleRemoveQuestion(index)}
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                            <input
-                                                                type="text"
-                                                                id={`practical-question-${index}`}
-                                                                value={question.question}
-                                                                onChange={(e) => handleFieldChange(index, 'question', e.target.value)}
-                                                                required
-                                                                placeholder="Write the practical question/problem statement..."
-                                                                className="mt-2 w-full px-4 h-11 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                                                            />
-                                                        </div>
-
-                                                        {/* Code textarea */}
-                                                        <div>
-                                                            <label htmlFor={`practical-code-${index}`} className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                                Code Template
-                                                            </label>
-                                                            <textarea
-                                                                id={`practical-code-${index}`}
-                                                                value={question.code}
-                                                                onChange={(e) => handleFieldChange(index, 'code', e.target.value)}
-                                                                required
-                                                                placeholder="// Starter code for students..."
-                                                                className="mt-2 w-full px-4 py-3 bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 font-mono text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg min-h-40 transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                                                            />
-                                                        </div>
-
-                                                        {/* File upload */}
-                                                        <div className="mt-2 text-slate-700 dark:text-slate-300">
-                                                            <label className="text-sm font-medium block mb-2">
-                                                                Reference Image or File (Optional)
-                                                            </label>
-
-                                                            {!question.file ? (
-                                                                <div className="flex items-center justify-center w-full">
-                                                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 dark:border-slate-800 border-dashed rounded-xl cursor-pointer bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all">
-                                                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                                            <FileUp className="w-8 h-8 mb-3 text-slate-400 dark:text-slate-500" />
-                                                                            <p className="mb-2 text-sm text-slate-500 dark:text-slate-400 font-medium">Click to upload reference</p>
-                                                                            <p className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider">Images, PDFs, or Code files</p>
-                                                                        </div>
-                                                                        <input
-                                                                            type="file"
-                                                                            className="hidden"
-                                                                            accept="image/*,application/pdf,.txt,.js,.py,.java,.cpp,.c,.cs,.html,.css"
-                                                                            onChange={(e) => handleFileChange(index, e)}
-                                                                        />
-                                                                    </label>
-                                                                </div>
-                                                            ) : (
-                                                                <div className="flex items-center gap-4 p-4 bg-slate-900 dark:bg-slate-950 border border-slate-800 rounded-xl relative group">
-                                                                    <div className="p-2.5 bg-slate-800 dark:bg-slate-900 rounded-lg text-white">
-                                                                        {question.file.type?.startsWith('image/') ? (
-                                                                            <ImageIcon className="w-5 h-5" />
-                                                                        ) : (
-                                                                            <FileText className="w-5 h-5" />
+                                    <Card
+                                        className="xl:col-span-3 rounded-2xl overflow-hidden"
+                                        style={{
+                                            background: theme.colors.white,
+                                            borderColor: theme.colors.lightGray,
+                                            boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
+                                        }}
+                                    >
+                                        <CardHeader className="pb-3">
+                                            <PanelHeader
+                                                icon={Layers}
+                                                title="Questions"
+                                                subtitle="Add one or more questions with starter code and optional file attachments"
+                                            />
+                                        </CardHeader>
+                                        <CardContent className="pt-0">
+                                            <div
+                                                className="rounded-2xl border p-4 sm:p-5"
+                                                style={{
+                                                    background: theme.colors.softGray,
+                                                    borderColor: theme.colors.lightGray,
+                                                }}
+                                            >
+                                                <div className="space-y-5">
+                                                    {newPractical.questions.map((question, index) => (
+                                                        <React.Fragment key={index}>
+                                                            <div className="space-y-4">
+                                                                <div>
+                                                                    <div className="flex items-center justify-between gap-3 mb-2">
+                                                                        <label
+                                                                            htmlFor={`practical-question-${index}`}
+                                                                            className="text-sm font-semibold"
+                                                                            style={{ color: theme.colors.dark }}
+                                                                        >
+                                                                            Question {index + 1}
+                                                                        </label>
+                                                                        {newPractical.questions.length > 1 && (
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => handleRemoveQuestion(index)}
+                                                                                className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold border transition-colors hover:bg-red-50"
+                                                                                style={{
+                                                                                    background: theme.colors.white,
+                                                                                    borderColor: theme.colors.lightGray,
+                                                                                    color: "#DC2626",
+                                                                                }}
+                                                                            >
+                                                                                <Trash className="w-4 h-4" />
+                                                                                Remove
+                                                                            </button>
                                                                         )}
                                                                     </div>
-                                                                    <div className="flex-1 min-w-0">
-                                                                        <p className="text-sm font-bold text-white truncate">
-                                                                            {question.file.name}
-                                                                        </p>
-                                                                        <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-0.5">
-                                                                            {(question.file.type || 'file').split('/')[1] ?? question.file.name.split('.').pop()}
-                                                                        </p>
-                                                                    </div>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => handleRemoveFile(index)}
-                                                                        className="p-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all"
-                                                                    >
-                                                                        <X className="w-4 h-4" />
-                                                                    </button>
+                                                                    <input
+                                                                        type="text"
+                                                                        id={`practical-question-${index}`}
+                                                                        value={question.question}
+                                                                        onChange={(e) =>
+                                                                            handleFieldChange(index, "question", e.target.value)
+                                                                        }
+                                                                        required
+                                                                        placeholder="Write the practical question/problem statement..."
+                                                                        className="w-full px-4 h-12 rounded-xl border outline-none transition-colors"
+                                                                        style={{
+                                                                            background: theme.colors.white,
+                                                                            borderColor: theme.colors.lightGray,
+                                                                            color: theme.colors.dark,
+                                                                        }}
+                                                                    />
+                                                                </div>
 
-                                                                    {/* Hover image preview for images */}
-                                                                    {question.file.type?.startsWith('image/') && (
-                                                                        <div className="absolute -top-32 left-0 w-32 h-32 rounded-lg border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                                                                            <img
-                                                                                src={URL.createObjectURL(question.file)}
-                                                                                alt="Preview"
-                                                                                className="w-full h-full object-cover bg-white"
+                                                                <div>
+                                                                    <label
+                                                                        htmlFor={`practical-code-${index}`}
+                                                                        className="block text-sm font-semibold mb-2"
+                                                                        style={{ color: theme.colors.dark }}
+                                                                    >
+                                                                        Code Template
+                                                                    </label>
+                                                                    <textarea
+                                                                        id={`practical-code-${index}`}
+                                                                        value={question.code}
+                                                                        onChange={(e) => handleFieldChange(index, "code", e.target.value)}
+                                                                        required
+                                                                        placeholder="// Starter code for students..."
+                                                                        className="w-full px-4 py-3 rounded-xl border outline-none transition-colors min-h-44 font-mono text-sm"
+                                                                        style={{
+                                                                            background: theme.colors.white,
+                                                                            borderColor: theme.colors.lightGray,
+                                                                            color: theme.colors.dark,
+                                                                        }}
+                                                                    />
+                                                                </div>
+
+                                                                <div>
+                                                                    <label
+                                                                        className="block text-sm font-semibold mb-2"
+                                                                        style={{ color: theme.colors.dark }}
+                                                                    >
+                                                                        Reference Image or File (Optional)
+                                                                    </label>
+
+                                                                    {!question.file ? (
+                                                                        <label
+                                                                            className="flex flex-col items-center justify-center w-full h-32 rounded-2xl border-2 border-dashed cursor-pointer transition-colors hover:bg-slate-50"
+                                                                            style={{
+                                                                                background: theme.colors.white,
+                                                                                borderColor: theme.colors.lightGray,
+                                                                            }}
+                                                                        >
+                                                                            <FileUp className="w-8 h-8 mb-3" style={{ color: theme.colors.darkGray }} />
+                                                                            <p className="text-sm font-semibold" style={{ color: theme.colors.dark }}>
+                                                                                Click to upload reference
+                                                                            </p>
+                                                                            <p className="text-xs mt-1 uppercase tracking-wider" style={{ color: theme.colors.darkGray }}>
+                                                                                Images, PDFs, or code files
+                                                                            </p>
+                                                                            <input
+                                                                                type="file"
+                                                                                className="hidden"
+                                                                                accept="image/*,application/pdf,.txt,.js,.py,.java,.cpp,.c,.cs,.html,.css"
+                                                                                onChange={(e) => handleFileChange(index, e)}
                                                                             />
+                                                                        </label>
+                                                                    ) : (
+                                                                        <div
+                                                                            className="flex items-center gap-4 p-4 rounded-2xl border relative group"
+                                                                            style={{
+                                                                                background: theme.colors.white,
+                                                                                borderColor: theme.colors.lightGray,
+                                                                            }}
+                                                                        >
+                                                                            <div
+                                                                                className="p-2.5 rounded-xl flex items-center justify-center"
+                                                                                style={{ background: theme.colors.limeDim }}
+                                                                            >
+                                                                                {question.file.type?.startsWith("image/") ? (
+                                                                                    <ImageIcon className="w-5 h-5" style={{ color: theme.colors.dark }} />
+                                                                                ) : (
+                                                                                    <FileText className="w-5 h-5" style={{ color: theme.colors.dark }} />
+                                                                                )}
+                                                                            </div>
+
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <p className="text-sm font-bold truncate" style={{ color: theme.colors.dark }}>
+                                                                                    {question.file.name}
+                                                                                </p>
+                                                                                <p className="text-[10px] uppercase font-black tracking-widest mt-0.5" style={{ color: theme.colors.darkGray }}>
+                                                                                    {(question.file.type || "file").split("/")[1] ??
+                                                                                        question.file.name.split(".").pop()}
+                                                                                </p>
+                                                                            </div>
+
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => handleRemoveFile(index)}
+                                                                                className="p-2 rounded-xl border transition-colors hover:bg-red-50"
+                                                                                style={{
+                                                                                    background: theme.colors.white,
+                                                                                    borderColor: theme.colors.lightGray,
+                                                                                    color: "#DC2626",
+                                                                                }}
+                                                                                aria-label="Remove attached file"
+                                                                            >
+                                                                                <X className="w-4 h-4" />
+                                                                            </button>
+
+                                                                            {question.file.type?.startsWith("image/") && (
+                                                                                <div className="absolute -top-32 left-0 w-32 h-32 rounded-xl border overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
+                                                                                    style={{
+                                                                                        background: theme.colors.white,
+                                                                                        borderColor: theme.colors.lightGray,
+                                                                                    }}
+                                                                                >
+                                                                                    <img
+                                                                                        src={URL.createObjectURL(question.file)}
+                                                                                        alt="Preview"
+                                                                                        className="w-full h-full object-cover"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
                                                                         </div>
                                                                     )}
                                                                 </div>
+                                                            </div>
+
+                                                            {index < newPractical.questions.length - 1 && (
+                                                                <hr style={{ borderColor: theme.colors.lightGray }} />
                                                             )}
-                                                        </div>
-                                                    </div>
-                                                    {index < newPractical.questions.length - 1 && (
-                                                        <hr className="border-slate-100 dark:border-slate-800 my-2" />
-                                                    )}
-                                                </React.Fragment>
-                                            ))}
+                                                        </React.Fragment>
+                                                    ))}
 
-                                            <button
-                                                className="w-full bg-slate-900 dark:bg-slate-100 mt-4 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]"
-                                                onClick={handleAddQuestion}
-                                                type="button"
-                                            >
-                                                + Add Question
-                                            </button>
-                                        </div>
-
-                                        {/* Submit */}
-                                        <div className="flex gap-4">
-                                            <button
-                                                type="submit"
-                                                disabled={isSubmitting}
-                                                className="w-full bg-slate-900 dark:bg-slate-100 mt-4 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
-                                            >
-                                                {isSubmitting ? (
-                                                    <>
-                                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                                        Uploading...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <FlaskConical className="w-4 h-4" />
-                                                        {editPracticalId ? 'Update Practical' : 'Add Practical'}
-                                                    </>
-                                                )}
-                                            </button>
-                                            {editPracticalId && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setNewPractical({ practicalNumber: '', section: '', questions: [EMPTY_QUESTION()] });
-                                                        setEditPracticalId(null);
-                                                    }}
-                                                    className="w-fit px-4 bg-blue-500 mt-4 hover:bg-blue-600 text-white font-medium rounded-lg h-12 flex items-center justify-center gap-2 transition-all active:scale-[0.99]"
-                                                >
-                                                    <FlaskConical className="w-4 h-4" /> Cancel
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
+                                                    <button
+                                                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black transition-transform active:scale-[0.99] border"
+                                                        onClick={handleAddQuestion}
+                                                        type="button"
+                                                        style={{
+                                                            background: theme.colors.white,
+                                                            color: theme.colors.dark,
+                                                            borderColor: theme.colors.lightGray,
+                                                        }}
+                                                    >
+                                                        <Plus className="w-4 h-4" />
+                                                        Add Question
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
                                 </div>
+
+                                <Card
+                                    className="rounded-2xl"
+                                    style={{
+                                        background: theme.colors.white,
+                                        borderColor: theme.colors.lightGray,
+                                        boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
+                                    }}
+                                >
+                                    <CardContent className="p-4 sm:p-6">
+                                        <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                                            <div>
+                                                <div className="text-sm font-bold" style={{ color: theme.colors.dark }}>
+                                                    Ready to save?
+                                                </div>
+                                                <div className="text-sm mt-1" style={{ color: theme.colors.darkGray }}>
+                                                    Review the practical, then upload it to the dashboard.
+                                                </div>
+                                            </div>
+
+                                            <div className="flex gap-3">
+                                                {editPracticalId && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={resetForm}
+                                                        className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-bold border transition-colors hover:bg-slate-50"
+                                                        style={{
+                                                            background: theme.colors.white,
+                                                            color: theme.colors.dark,
+                                                            borderColor: theme.colors.lightGray,
+                                                        }}
+                                                    >
+                                                        Cancel Edit
+                                                    </button>
+                                                )}
+
+                                                <button
+                                                    type="submit"
+                                                    disabled={isSubmitting}
+                                                    className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black transition-transform active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                                                    style={{
+                                                        background: theme.colors.lime,
+                                                        color: theme.colors.dark,
+                                                        boxShadow: "0 8px 0 rgba(17,17,19,0.14)",
+                                                    }}
+                                                >
+                                                    {isSubmitting ? (
+                                                        <>
+                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                            Uploading...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <FlaskConical className="w-4 h-4" />
+                                                            {editPracticalId ? "Update Practical" : "Add Practical"}
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             </form>
                         </div>
                     </motion.div>
                 </div>
             )}
         </AnimatePresence>
-    )
-}
+    );
+};
 
-export default PracticalUpload
+export default PracticalUpload;

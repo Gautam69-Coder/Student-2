@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils"
 export function ShineBorder({
   borderWidth = 2,
   duration = 14,
-  shineColor = "#000000",
+  // use CSS variable so shine adapts to theme (light/dark)
+  shineColor = "rgba(var(--rgb-white), 0.06)",
   className,
   style,
   ...props
@@ -22,9 +23,8 @@ export function ShineBorder({
           "--border-width": `${borderWidth}px`,
           "--duration": `${duration}s`,
 
-          backgroundImage: `radial-gradient(transparent,transparent, ${
-            Array.isArray(shineColor) ? shineColor.join(",") : shineColor
-          },transparent,transparent)`,
+          backgroundImage: `radial-gradient(transparent,transparent, ${Array.isArray(shineColor) ? shineColor.join(",") : shineColor
+            },transparent,transparent)`,
 
           backgroundSize: "300% 300%",
           mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,

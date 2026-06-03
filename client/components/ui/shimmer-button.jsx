@@ -4,11 +4,12 @@ import { cn } from "@/lib/utils"
 
 export const ShimmerButton = React.forwardRef((
   {
-    shimmerColor = "#ffffff",
+    // use CSS RGB variable so we can control alpha consistently from CSS
+    shimmerColor = "rgba(var(--rgb-white), 1)",
     shimmerSize = "0.05em",
     shimmerDuration = "3s",
     borderRadius = "100px",
-    background = "rgba(0, 0, 0, 1)",
+    background = "var(--color-card)",
     className,
     children,
     ...props
@@ -50,13 +51,13 @@ export const ShimmerButton = React.forwardRef((
       <div
         className={cn(
           "absolute inset-0 size-full",
-          "rounded-2xl px-4 py-1.5 text-sm font-medium shadow-[inset_0_-8px_10px_#ffffff1f]",
+          "rounded-2xl px-4 py-1.5 text-sm font-medium shadow-[inset_0_-8px_10px_rgba(var(--rgb-white),0.12)]",
           // transition
           "transform-gpu transition-all duration-300 ease-in-out",
           // on hover
-          "group-hover:shadow-[inset_0_-6px_10px_#ffffff3f]",
+          "group-hover:shadow-[inset_0_-6px_10px_rgba(var(--rgb-white),0.24)]",
           // on click
-          "group-active:shadow-[inset_0_-10px_10px_#ffffff3f]"
+          "group-active:shadow-[inset_0_-10px_10px_rgba(var(--rgb-white),0.24)]"
         )} />
       {/* backdrop */}
       <div

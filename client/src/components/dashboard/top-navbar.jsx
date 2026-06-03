@@ -12,6 +12,7 @@ export function TopNavBar({
     isBell,
     setisBell,
     Notification,
+    onLogout
 }) {
     const [showProfile, setShowProfile] = useState(false);
 
@@ -88,6 +89,7 @@ export function TopNavBar({
                             />
                             <button
                                 className="w-full text-left px-4 py-2 hover:bg-red-50 transition-colors text-red-500"
+                                onClick={()=>{onLogout()}}
                             >
                                 Sign Out
                             </button>

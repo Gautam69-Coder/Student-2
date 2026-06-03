@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Bell,
     CheckCircle2,
@@ -18,6 +18,13 @@ import {
     Info,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
+
+import {
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+    // ChartConfig
+} from "/components/ui/chart";
 import { Progress } from "/components/ui/progress";
 import { Separator } from "/components/ui/separator";
 import {
@@ -26,8 +33,8 @@ import {
     DashStatCard,
 } from "@/components/dashboard";
 import { theme } from "@/lib/theme";
-import { BarChart, Bar, XAxis, ResponsiveContainer, Cell } from "recharts";
-import { getMe,userProfileUpdate } from "@/Api/api";
+import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
+import { getMe, userProfileUpdate } from "@/Api/api";
 import { Link } from "react-router-dom";
 
 
@@ -161,6 +168,23 @@ export default function StudyOverview() {
         { label: "💬 Ask Community", path: "/community" },
         { label: "⚡ Start Practice", path: "/practice" },
     ];
+
+    const chartData = [
+        { month: "Monday", desktop: 186 },
+        { month: "Tuesday", desktop: 305 },
+        { month: "Wednesday", desktop: 237 },
+        { month: "Thursday", desktop: 73 },
+        { month: "Friday", desktop: 209 },
+        { month: "Saturday", desktop: 214 },
+        
+    ]
+
+    const chartConfig = {
+        desktop: {
+            label: "Desktop",
+            color: "var(--chart-1)",
+        },
+    };
 
     return (
         <DashboardLayout
@@ -319,29 +343,42 @@ export default function StudyOverview() {
                             Study sessions per day
                         </div>
 
-                        <div className="mt-6" style={{ height: "160px" }}>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={activityData} margin={{ top: 0, right: 0, left: -30, bottom: 0 }}>
-                                    <XAxis
-                                        dataKey="day"
-                                        stroke={theme.colors.darkGray}
-                                        style={{ fontSize: "12px" }}
-                                    />
-                                    <Bar dataKey="sessions" radius={[4, 4, 0, 0]} width={28}>
-                                        {activityData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
+                        <div className="my-6" style={{ height: "160px" }}>
+                            <ChartContainer config={chartConfig}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={chartData}>
+                                        <CartesianGrid vertical={false} />
+
+                                        <XAxis
+                                            dataKey="month"
+                                            tickLine={false}
+                                            tickMargin={10}
+                                            axisLine={false}
+                                            tickFormatter={(value) => value.slice(0, 3)}
+                                        />
+
+                                        <ChartTooltip
+                                            cursor={false}
+                                            content={<ChartTooltipContent />}
+                                        />
+
+                                        <Bar
+                                            dataKey="desktop"
+                                            fill={theme.colors.lime}
+                                            radius={8}
+                                        />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </ChartContainer>
                         </div>
 
                         <div
-                            className="text-[12px] font-medium text-center mt-4"
+                            className="text-[12px] font-medium text-center mt-30"
                             style={{ color: theme.colors.darkGray }}
                         >
                             Avg 5.1 sessions/day · Best: Thursday
                         </div>
+
                     </div>
                 </Card>
             </div>

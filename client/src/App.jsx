@@ -64,10 +64,8 @@ function AppContent() {
 
     const handleAuth = async (role, name) => {
         const auth= localStorage.setItem('isAuthenticated', 'true');
-        // navigate(role === 'admin' || 'superadmin' ? '/admin' : '/dashboard');
-        console.log(auth)
         navigate('/dashboard');
-        console.log(role)
+        window.location.reload()
     };
 
     const handleLogout = async () => {

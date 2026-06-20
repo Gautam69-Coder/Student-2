@@ -14,7 +14,7 @@ const pendingNotes = [
 
 import { GraduationCap, Menu, X, Sun, Moon } from "lucide-react"
 import { AdminSidebar } from "@/components/layout/admin-sidebar"
-import { useTheme } from "@/context/ThemeContext"
+
 import { useSocket } from "@/context/SocketContext"
 import { ManageUsers } from "./ManageUsers"
 import { ManageGuestVisits } from "./ManageGuestVisits"
@@ -55,7 +55,7 @@ export function AdminPanel({ userName, onLogout }) {
         const section = fetchSections();
         section.then((res) => {
             setUniqueSubjectSections(res.data);
-            console.log("setUniqueSubjectSections : ",res.data);
+            console.log("setUniqueSubjectSections : ", res.data);
         });
     }, [])
 

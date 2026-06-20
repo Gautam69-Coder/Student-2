@@ -7,7 +7,7 @@ import { Link } from "react-router-dom"
 import { Code, FileText, Download, X, HomeIcon } from "lucide-react"
 import { BottomNavbar } from "@/components/layout/bottom-navbar"
 import { UploadModal } from "@/components/features/notes/upload-modal"
-import { useTheme } from "@/context/ThemeContext";
+    ;
 import { useTitle } from "@/hooks/useTitle";
 import { useData } from "@/context/DataContext";
 

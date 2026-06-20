@@ -6,7 +6,7 @@ import { useTheme } from "../../context/ThemeContext"
 import { signInWithRedirect } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
-import { customMessage } from "../../Utils/customMessage"
+import { customMessage } from "@/Utils/customMessage"
 import { Link } from "react-router-dom"
 import { googleLogin } from "@/Api/api"
 import { getRedirectResult } from "firebase/auth";

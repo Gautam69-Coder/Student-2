@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { User, Mail, Shield, Calendar, Edit2, MapPin, ArrowRight, LogOut, MessageSquare, Info, Lock, Eye, EyeOff } from "lucide-react";
 import { getMe, userProfileUpdate } from "@/Api/api";
 import { useTitle } from "@/hooks/useTitle";
-import { customMessage } from "../../Utils/customMessage"
+import { customMessage } from "@/Utils/customMessage"
 import { DashboardLayout } from "@/components/layout/layout";
 import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
 import { DashboardSidebar } from "@/components/layout/sidebar";

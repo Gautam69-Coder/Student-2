@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
 import { Progress } from "/components/ui/progress";
 import { DashboardLayout } from "@/components/layout/layout";
 import { updateProblemStatus } from "@/Api/api";
-import { customMessage } from "../../utils/customMessage";
+import { customMessage } from "@/Utils/customMessage";
 import { codeChecker } from "@/Api/api";
 
 function Badge({ children, variant = "neutral" }) {

@@ -5,7 +5,7 @@ import { Upload, FileText, X, Check, Code, Plus, ChevronDown, Layout, File, Imag
 import { useState, useEffect } from "react"
 import { createNoteFile } from "@/Api/api"
 import { createNoteText } from "@/Api/api"
-import { customMessage } from "../../../utils/customMessage"
+import { customMessage } from "@/Utils/customMessage"
 import { fetchNotes } from "@/Api/api"
 import { DotLoader } from "../../../Utils/loaders.jsx"
 
@@ -256,7 +256,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                             >
                                 {
                                     loading ? (
-                                        <DotLoader size="10px" color={"white"}/>
+                                        <DotLoader size="10px" color={"white"} />
                                     ) : (
                                         <>
                                             <Upload className="w-4 h-4" />

@@ -1,8 +1,7 @@
-
 import React, { useState, memo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShimmerButton } from "/components/ui/shimmer-button";
-import { AICodeHelper } from "./ai-code-helper"
+import { AICodeHelper } from "../coding/ai-code-helper";
 import {
     Code,
     Copy,
@@ -14,7 +13,7 @@ import {
     Cpu
 } from "lucide-react"
 
-import { CodeModal } from "@/components/common/code-modal"
+import { CodeModal } from "@/components/features/coding/code-modal"
 import Highlight from "react-highlight"
 import "highlight.js/styles/atom-one-dark.css"
 

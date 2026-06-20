@@ -20,9 +20,9 @@ import {
     Code2
 } from "lucide-react"
 import { useLocation, Link, useNavigate } from "react-router-dom"
-import { Logo } from "../logo/logo"
+import { Logo } from "../common/logo/logo";
 import { ThemeToggle } from "../common/theme-toggle"
-import Notification from "./notification"
+import Notification from "../common/notification"
 import { getMe } from "../../Api/api"
 
 const navItems = [

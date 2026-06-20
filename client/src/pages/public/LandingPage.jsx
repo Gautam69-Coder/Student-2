@@ -216,7 +216,7 @@ export default function LandingPage() {
                                 Notes &amp; IT Resources
                             </h2>
                             <p className="text-slate-300 dark:text-slate-300/90 max-w-2xl mx-auto text-lg">
-                                Powerful tools designed to simplify your BSc IT journey with student notes and resources.
+                                Powerful tools designed to simplify your   journey with student notes and resources.
                             </p>
                         </div>
 

@@ -2,10 +2,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
-import { PracticalCard } from '../../components/user/practical-card';
+import { PracticalCard } from '../../components/features/practicals/practical-card';
 import { SEO } from '@/components/common/SEO';
-import AddSections from '@/components/user/add-sections';
-import { DashboardLayout, DashboardSidebar } from '@/components/dashboard';
+import AddSections from '@/components/features/notes/add-sections';
+import { DashboardLayout } from "@/components/layout/layout";
+import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
+import { DashboardSidebar } from "@/components/layout/sidebar";
 import { FileText, Users, MessageSquare, FlaskConical, Code2, Info, Home } from 'lucide-react';
 import { theme } from '@/lib/theme';
 
@@ -75,31 +77,31 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full">
             <SEO
-                title="BSc IT Practicals Solutions | Student Hub"
-                description="Comprehensive and BSc IT practical solutions for Mumbai students. Access verified code and implementation guides."
+                title="  Practicals Solutions | Student Hub"
+                description="Comprehensive and   practical solutions for Mumbai students. Access verified code and implementation guides."
                 url="/dashboard/practicals"
             />
             <DashboardLayout
-                // sidebar={
-                //     <DashboardSidebar
-                //         navItems={navItems}
-                //         userName="Student Name"
-                //         userEmail="student@email.com"
-                //         searchQuery={searchQuery}
-                //         setSearchQuery={setSearchQuery}
-                //         isBell={isBell}
-                //         setisBell={setIsBell}
-                //     />
-                // }
-                // topNavProps={{
-                //     userName: "Lucas Bennett",
-                //     userEmail: "bennett02@gmail.com",
-                //     userAvatar: "https://i.pravatar.cc/150?img=33",
-                //     searchQuery: searchQuery,
-                //     setSearchQuery: setSearchQuery,
-                //     isBell: isBell,
-                //     setisBell: setIsBell,
-                // }}
+            // sidebar={
+            //     <DashboardSidebar
+            //         navItems={navItems}
+            //         userName="Student Name"
+            //         userEmail="student@email.com"
+            //         searchQuery={searchQuery}
+            //         setSearchQuery={setSearchQuery}
+            //         isBell={isBell}
+            //         setisBell={setIsBell}
+            //     />
+            // }
+            // topNavProps={{
+            //     userName: "Lucas Bennett",
+            //     userEmail: "bennett02@gmail.com",
+            //     userAvatar: "https://i.pravatar.cc/150?img=33",
+            //     searchQuery: searchQuery,
+            //     setSearchQuery: setSearchQuery,
+            //     isBell: isBell,
+            //     setisBell: setIsBell,
+            // }}
             >
                 <div className="space-y-6">
                     {/* Home-like Header Card */}

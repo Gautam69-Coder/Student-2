@@ -3,7 +3,9 @@ import { Heart, MessageSquare, Users, Send, Loader2, Home, FileText, FlaskConica
 import { fetchCommunityPosts, createCommunityPost, toggleCommunityLike, getMe } from "@/Api/api";
 import { useSocket } from "@/context/SocketContext";
 import { SEO } from "@/components/common/SEO";
-import { DashboardLayout, DashboardSidebar } from "@/components/dashboard";
+import { DashboardLayout } from "@/components/layout/layout";
+import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
+import { DashboardSidebar } from "@/components/layout/sidebar";
 import { theme } from "@/lib/theme";
 
 export function Community({ requireAuth }) {
@@ -120,30 +122,30 @@ export function Community({ requireAuth }) {
 
     return (
         <DashboardLayout
-            // sidebar={
-            //     <DashboardSidebar
-            //         navItems={navItems}
-            //         userName="Student Name"
-            //         userEmail="student@email.com"
-            //         searchQuery={searchQuery}
-            //         setSearchQuery={setSearchQuery}
-            //         isBell={isBell}
-            //         setisBell={setIsBell}
-            //     />
-            // }
-            // topNavProps={{
-            //     userName: "Lucas Bennett",
-            //     userEmail: "bennett02@gmail.com",
-            //     userAvatar: "https://i.pravatar.cc/150?img=33",
-            //     searchQuery: searchQuery,
-            //     setSearchQuery: setSearchQuery,
-            //     isBell: isBell,
-            //     setisBell: setIsBell,
-            // }}
+        // sidebar={
+        //     <DashboardSidebar
+        //         navItems={navItems}
+        //         userName="Student Name"
+        //         userEmail="student@email.com"
+        //         searchQuery={searchQuery}
+        //         setSearchQuery={setSearchQuery}
+        //         isBell={isBell}
+        //         setisBell={setIsBell}
+        //     />
+        // }
+        // topNavProps={{
+        //     userName: "Lucas Bennett",
+        //     userEmail: "bennett02@gmail.com",
+        //     userAvatar: "https://i.pravatar.cc/150?img=33",
+        //     searchQuery: searchQuery,
+        //     setSearchQuery: setSearchQuery,
+        //     isBell: isBell,
+        //     setisBell: setIsBell,
+        // }}
         >
             <SEO
                 title="Student Community — Ask & Share | Student Hub"
-                description="Join the Mumbai IT student community. Ask questions about notes, share MERN stack tips, and connect with other BSc IT students in India."
+                description="Join the Mumbai IT student community. Ask questions about notes, share MERN stack tips, and connect with other   students in India."
                 url="/dashboard/community"
             />
             <div className="space-y-6">

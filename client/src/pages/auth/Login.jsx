@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AuthSection } from "@/components/common/auth-section";
+import { AuthSection } from "@/components/features/auth/auth-section";
 import { useTitle } from "@/hooks/useTitle";
 
 export default function LoginPage({ onAuth }) {

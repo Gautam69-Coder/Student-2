@@ -3,11 +3,11 @@ import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Upload, FileText, X, Check, Code, Plus, ChevronDown, Layout, File, Image as ImageIcon } from "lucide-react"
 import { useState, useEffect } from "react"
-import { createNoteFile } from "../../Api/api"
-import { createNoteText } from "../../Api/api"
-import { customMessage } from "../../Utils/customMessage.jsx"
-import { fetchNotes } from "../../Api/api"
-import { DotLoader } from "../../Utils/loaders.jsx"
+import { createNoteFile } from "@/Api/api"
+import { createNoteText } from "@/Api/api"
+import { customMessage } from "../../../utils/customMessage"
+import { fetchNotes } from "@/Api/api"
+import { DotLoader } from "../../../Utils/loaders.jsx"
 
 export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 

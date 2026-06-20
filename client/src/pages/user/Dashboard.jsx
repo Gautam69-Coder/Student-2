@@ -1,35 +1,33 @@
 import React, { useState, useMemo, useCallback } from "react"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import PracticalUpload from "../../components/user/practical-upload"
+import PracticalUpload from "../../components/features/practicals/practical-upload"
 import { Link } from "react-router-dom"
 
-import { Code, FileText, Download, X,HomeIcon } from "lucide-react"
-import { BottomNavbar } from "@/components/user/bottom-navbar"
-import { UploadModal } from "@/components/user/upload-modal"
+import { Code, FileText, Download, X, HomeIcon } from "lucide-react"
+import { BottomNavbar } from "@/components/layout/bottom-navbar"
+import { UploadModal } from "@/components/features/notes/upload-modal"
 import { useTheme } from "@/context/ThemeContext";
 import { useTitle } from "@/hooks/useTitle";
 import { useData } from "@/context/DataContext";
 
 import { Home } from "./Home";
-import StudyOverview from "./StudyOverview";
 import { Notes } from "./Notes";
 import { Practicals } from "./Practicals";
 import { Feedback } from "./Feedback";
 import { Profile } from "./Profile";
 import { AboutContact } from "./AboutContact";
 import { Community } from "./Community";
-import { PracticalCard } from "@/components/user/practical-card";
+import { PracticalCard } from "@/components/features/practicals/practical-card";
 import { CodingPractice } from "./CodingPractice";
 import CodeEditor from "./CodeEditor";
 import PracticeDeatils from "./PracticeDeatils";
 
-import { StudentNavbar } from "@/components/user/student-navbar"
-import { TopNavBar } from "../../components/dashboard/top-navbar";
-import {
-    DashboardSidebar,
-    DashStatCard,
-} from "@/components/dashboard";
+import { StudentNavbar } from "@/components/layout/student-navbar";
+import { TopNavBar } from "../../components/layout/top-navbar";
+import { DashboardSidebar } from "@/components/layout/sidebar";
+import { DashStatCard, DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
+import { DashboardLayout } from "@/components/layout/layout";
 
 import {
     Bell,
@@ -126,7 +124,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
     }, [searchQuery, subjects, displayedPracticals, displayedNotes]);
 
     const navItems = [
-        { label: "Home", path: "/dashboard", icon:  HomeIcon},
+        { label: "Home", path: "/dashboard", icon: HomeIcon },
         { label: "Notes", path: "/dashboard/notes", icon: FileText },
         { label: "Practicals", path: "/dashboard/practicals", icon: FlaskConical },
         { label: "Practice", path: "/dashboard/coding-practice", icon: Code2 },
@@ -184,131 +182,144 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                         <div className="">
 
                             {searchQuery ? (
-                                <div className="space-y-8  animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <div className="flex items-center justify-between">
-                                        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-                                            Search Results for "{searchQuery}"
-                                        </h2>
-                                        <button
-                                            onClick={() => setSearchQuery("")}
-                                            className="text-sm text-slate-500 hover:text-slate-900 font-medium"
-                                        >
-                                            Clear Search
-                                        </button>
-                                    </div>
-
-                                    {/* Practicals Results */}
-                                    {searchResults.practicals.length > 0 && (
-                                        <div className="space-y-4">
-                                            <h3 className="text-lg  font-semibold text-slate-700">Practicals</h3>
-                                            <div className="gap-6 w-full grid grid-cols-1">
-                                                {searchResults.practicals.map((practical, index) => (
-                                                    <div key={index}>
-                                                        <PracticalCard
-                                                            practical={practical}
-                                                        />
-                                                    </div>
-                                                ))}
+                                <DashboardLayout>
+                                    <div className="space-y-8  animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                        <div className="flex items-center justify-between gap-4">
+                                            <div>
+                                                <div className="text-[22px] font-bold" style={{ color: "#0f172a" }}>
+                                                    Study
+                                                </div>
+                                                <div className="text-[13px] font-medium" style={{ color: "#64748b", marginTop: 4 }}>
+                                                    Search results for "{searchQuery}"
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
 
-                                    {/* Notes Results */}
-                                    {searchResults.notes.length > 0 && (
-                                        <div className="space-y-4">
-                                            <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">My Notes</h3>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                                {searchResults.notes.map((note, index) => (
-                                                    <div
-                                                        key={note._id}
-                                                        className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:shadow-md transition-all"
-                                                        onClick={() => setSelectedNote(note)}
-                                                    >
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
-                                                                <Code className="w-5 h-5 text-slate-900 dark:text-white" />
+                                            <button
+                                                onClick={() => setSearchQuery("")}
+                                                className="text-sm font-bold"
+                                                style={{ color: "#84cc16" }}
+                                            >
+                                                Clear
+                                            </button>
+                                        </div>
+
+
+                                        {/* Practicals Results */}
+                                        {searchResults.practicals.length > 0 && (
+                                            <div className="space-y-4">
+                                                <h3 className="text-lg font-bold" style={{ color: "#0f172a" }}>
+                                                    Practicals
+                                                </h3>
+                                                <div className="gap-6 w-full grid grid-cols-1">
+
+                                                    {searchResults.practicals.map((practical, index) => (
+                                                        <div key={index}>
+                                                            <PracticalCard
+                                                                practical={practical}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Notes Results */}
+                                        {searchResults.notes.length > 0 && (
+                                            <div className="space-y-4">
+                                                <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">My Notes</h3>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                                    {searchResults.notes.map((note, index) => (
+                                                        <div
+                                                            key={note._id}
+                                                            className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer hover:shadow-md transition-all"
+                                                            onClick={() => setSelectedNote(note)}
+                                                        >
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+                                                                    <Code className="w-5 h-5 text-slate-900 dark:text-white" />
+                                                                </div>
+                                                                <div>
+                                                                    <h4 className="font-bold text-slate-900 dark:text-white">{note.title}</h4>
+                                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                                        {new Date(note.createdAt).toLocaleDateString()}
+                                                                    </p>
+                                                                </div>
                                                             </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {selectedNote && (
+                                            <AnimatePresence>
+                                                <motion.div
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    exit={{ opacity: 0 }}
+                                                    className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
+                                                    onClick={() => setSelectedNote(null)}
+                                                >
+                                                    <motion.div
+                                                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                                                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                                        className="relative w-full max-w-4xl max-h-[85vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
                                                             <div>
-                                                                <h4 className="font-bold text-slate-900 dark:text-white">{note.title}</h4>
-                                                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                                                    {new Date(note.createdAt).toLocaleDateString()}
+                                                                <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedNote.title}</h2>
+                                                                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                                                    {selectedNote.section} • Created on {new Date(selectedNote.createdAt).toLocaleDateString()}
                                                                 </p>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {selectedNote && (
-                                        <AnimatePresence>
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
-                                                onClick={() => setSelectedNote(null)}
-                                            >
-                                                <motion.div
-                                                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                                                    className="relative w-full max-w-4xl max-h-[85vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
-                                                        <div>
-                                                            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedNote.title}</h2>
-                                                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                                                                {selectedNote.section} • Created on {new Date(selectedNote.createdAt).toLocaleDateString()}
-                                                            </p>
-                                                        </div>
-                                                        <div className="flex items-center gap-2">
-                                                            <button
-                                                                onClick={() => handleDownload(selectedNote)}
-                                                                className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-400 rounded-lg text-sm font-medium transition-all"
-                                                            >
-                                                                <Download className="w-4 h-4" />
-                                                                Download {selectedNote.fileName}
-                                                            </button>
-                                                            <button
-                                                                onClick={() => setSelectedNote(null)}
-                                                                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                                                            >
-                                                                <X className="w-5 h-5 text-slate-400" />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex-1 overflow-auto bg-slate-50 dark:bg-black p-6 flex items-center justify-center">
-                                                        {selectedNote.fileType?.startsWith('image/') ? (
-                                                            <img src={selectedNote.fileData} alt={selectedNote.title} className="max-w-full max-h-full object-contain rounded-lg shadow-xl" />
-                                                        ) : (
-                                                            <div className="text-center p-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                                                                <FileText className="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
-                                                                <p className="text-slate-600 dark:text-slate-300 font-bold mb-2">Full File Preview Unavailable</p>
-                                                                <p className="text-slate-400 dark:text-slate-500 text-sm mb-6">This {selectedNote.fileType?.split('/')[1] || 'file'} type cannot be displayed in-browser.</p>
+                                                            <div className="flex items-center gap-2">
                                                                 <button
                                                                     onClick={() => handleDownload(selectedNote)}
-                                                                    className="px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+                                                                    className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-400 rounded-lg text-sm font-medium transition-all"
                                                                 >
-                                                                    Download to View
+                                                                    <Download className="w-4 h-4" />
+                                                                    Download {selectedNote.fileName}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => setSelectedNote(null)}
+                                                                    className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                                                                >
+                                                                    <X className="w-5 h-5 text-slate-400" />
                                                                 </button>
                                                             </div>
-                                                        )}
-                                                    </div>
+                                                        </div>
+
+                                                        <div className="flex-1 overflow-auto bg-slate-50 dark:bg-black p-6 flex items-center justify-center">
+                                                            {selectedNote.fileType?.startsWith('image/') ? (
+                                                                <img src={selectedNote.fileData} alt={selectedNote.title} className="max-w-full max-h-full object-contain rounded-lg shadow-xl" />
+                                                            ) : (
+                                                                <div className="text-center p-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                                                                    <FileText className="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
+                                                                    <p className="text-slate-600 dark:text-slate-300 font-bold mb-2">Full File Preview Unavailable</p>
+                                                                    <p className="text-slate-400 dark:text-slate-500 text-sm mb-6">This {selectedNote.fileType?.split('/')[1] || 'file'} type cannot be displayed in-browser.</p>
+                                                                    <button
+                                                                        onClick={() => handleDownload(selectedNote)}
+                                                                        className="px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+                                                                    >
+                                                                        Download to View
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </motion.div>
                                                 </motion.div>
-                                            </motion.div>
-                                        </AnimatePresence>
-                                    )}
-                                    {searchQuery && Object.values(searchResults).every(arr => arr.length === 0) && (
-                                        <div className="text-center py-12">
-                                            <h3 className="text-lg font-medium text-slate-900">No results found</h3>
-                                            <p className="text-slate-500 mt-1">Try adjusting your search terms</p>
-                                        </div>
-                                    )}
-                                </div>
+                                            </AnimatePresence>
+                                        )}
+                                        {searchQuery && Object.values(searchResults).every(arr => arr.length === 0) && (
+                                            <div className="text-center py-12">
+                                                <h3 className="text-lg font-medium text-slate-900">No results found</h3>
+                                                <p className="text-slate-500 mt-1">Try adjusting your search terms</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </DashboardLayout>
                             ) : (
                                 <Routes>
                                     <Route

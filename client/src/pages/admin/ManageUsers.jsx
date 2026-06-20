@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Users, Activity, HardDrive, FileText, Search, Trash, Clock } from "lucide-react"
-import { StatsCard } from "@/components/admin/stats-card"
+import { StatsCard } from "@/components/widgets/stats-card"
 import { updateUserRole, deleteUser } from "@/Api/api"
 import { getTrackerData } from "@/Api/api"
 import { useSocket } from "@/context/SocketContext"

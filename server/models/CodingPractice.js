@@ -75,6 +75,11 @@ const CodingPracticeSchema = new mongoose.Schema(
             default: false
         },
 
+        totalProblems: {
+            type: Number,
+            default: 0,
+        },
+
         problemList: [ProblemSchema]
     },
     { timestamps: true }

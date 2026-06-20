@@ -6,7 +6,9 @@ import { User, Mail, Shield, Calendar, Edit2, MapPin, ArrowRight, LogOut, Messag
 import { getMe, userProfileUpdate } from "@/Api/api";
 import { useTitle } from "@/hooks/useTitle";
 import { customMessage } from "../../Utils/customMessage"
-import { DashboardLayout } from "@/components/dashboard";
+import { DashboardLayout } from "@/components/layout/layout";
+import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
+import { DashboardSidebar } from "@/components/layout/sidebar";
 
 export function Profile({ onLogout }) {
     useTitle("Profile");

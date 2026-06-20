@@ -17,8 +17,8 @@ import {
     Filter,
 } from "lucide-react";
 import { deleteNote, makeNotePublic } from "@/Api/api";
-import { CodeModal } from "@/components/common/code-modal";
-import RippleLoader from "../nurui/ripple-loader";
+import { CodeModal } from "@/components/features/coding/code-modal";
+import RippleLoader from "../../ui/nurui/ripple-loader";
 import AddSections from "./add-sections";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
 import { theme } from "@/lib/theme";

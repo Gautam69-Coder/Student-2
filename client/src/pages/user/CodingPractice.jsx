@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as icons from 'simple-icons';
 import { fetchCodingPractices } from '@/Api/api';
-import { DashboardLayout, DashboardSidebar } from '@/components/dashboard';
+import { DashboardLayout } from "@/components/layout/layout";
+import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
+import { DashboardSidebar } from "@/components/layout/sidebar";
 import { Home, FileText, FlaskConical, Code2, Users, MessageSquare, Info } from 'lucide-react';
 import { theme } from '@/lib/theme';
 
@@ -11,18 +13,7 @@ const CodingPractice = () => {
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [isBell, setIsBell] = useState(false);
-
-    const navItems = [
-        { label: "Home", icon: Home, path: "/dashboard" },
-        { label: "Notes", icon: FileText, path: "/dashboard/notes" },
-        { label: "Practicals", icon: FlaskConical, path: "/dashboard/practicals" },
-        { label: "Practice", icon: Code2, path: "/dashboard/coding-practice", active: true },
-        { label: "Community", icon: Users, path: "/dashboard/community" },
-        { label: "Feedback", icon: MessageSquare, path: "/dashboard/feedback" },
-        { label: "About", icon: Info, path: "/dashboard/about" },
-    ];
+    
 
     useEffect(() => {
         let isMounted = true;

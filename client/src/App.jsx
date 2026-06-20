@@ -13,20 +13,20 @@ import { logout as reduxLogout } from '@/store/slices/authSlice';
 import { ServerOffline } from '@/components/common/server-offline';
 
 // Lazy-load heavy ka use for  route components —  reduces initial bundle size
-const LandingPage = lazy(() => import('./pages/LandingPage'));
+const LandingPage = lazy(() => import('./pages/public/LandingPage'));
 const StudentDashboard = lazy(() =>
     import('@/pages/user/Dashboard').then(m => ({ default: m.StudentDashboard }))
 );
 const AdminPanel = lazy(() =>
     import('@/pages/admin/Dashboard').then(m => ({ default: m.AdminPanel }))
 );
-const LoginPage = lazy(() => import('./pages/Login'));
-const SignupPage = lazy(() => import('./pages/Signup'));
+const LoginPage = lazy(() => import('./pages/auth/Login'));
+const SignupPage = lazy(() => import('./pages/auth/Signup'));
 const AIAssistant = lazy(() =>
     import('@/components/common/ai-assistant').then(m => ({ default: m.AIAssistant }))
 );
-const BlogList = lazy(() => import('./pages/BlogList'));
-const BlogPost = lazy(() => import('./pages/BlogPost'));
+const BlogList = lazy(() => import('./pages/blog/BlogList'));
+const BlogPost = lazy(() => import('./pages/blog/BlogPost'));
 
 const PageLoader = () => (
     <div className="flex items-center justify-center h-screen bg-background">

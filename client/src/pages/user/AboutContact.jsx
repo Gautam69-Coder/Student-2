@@ -2,7 +2,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Globe, Send, Info, PhoneCall } from "lucide-react";
-import { DashboardLayout } from "@/components/dashboard";
+import { DashboardLayout } from "@/components/layout/layout";
+import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
+import { DashboardSidebar } from "@/components/layout/sidebar";
 import { useTitle } from "@/hooks/useTitle";
 import { theme } from "@/lib/theme"
 

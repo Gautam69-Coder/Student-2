@@ -3,7 +3,7 @@ import { LayoutGroup, motion } from "framer-motion";
 import { theme } from "@/lib/theme";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Bell, LogOut, Upload, Search, X } from "lucide-react";
-import { Logo } from "../logo/logo"; 
+import { Logo } from "../common/logo/logo"; 
 
 export function DashboardSidebar({
     navItems,

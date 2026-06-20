@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { submitFeedback } from "@/Api/api";
-import { DashboardLayout } from "@/components/dashboard";
+import { DashboardLayout } from "@/components/layout/layout";
+import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
+import { DashboardSidebar } from "@/components/layout/sidebar";
 import {
     Send, MessageSquare, AlertCircle, Sparkles, HelpCircle,
     Bug,

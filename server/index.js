@@ -169,6 +169,8 @@ import community from './routes/community.js';
 import aiasistant from './routes/aiasistant.js'
 import aicodehelper from "./routes/aicodehelper.js"
 import codingPractices from './routes/codingPractices.js';
+import stats from './routes/stats.js';
+import codechecker from './routes/codechecker.js'
 
 // import email from './routes/email.js';
 app.use('/api/auth', auth);
@@ -182,7 +184,10 @@ app.use('/api/community', community);
 app.use('/api/aiassistant', aiasistant);
 app.use('/api/aicodehelper', aicodehelper);
 app.use('/api/coding-practices', codingPractices);
+app.use('/api/stats', stats);
 // app.use('/api/email', email);
+app.use('/api/code-checker',codechecker)
+
 
 
 

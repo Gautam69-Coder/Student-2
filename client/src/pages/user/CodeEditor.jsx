@@ -7,8 +7,10 @@ import { theme } from "@/lib/theme";
 import { ArrowLeft, ArrowUpRight, AlertCircle, Code2, Play, Send, Sparkles, SquareCode } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
 import { Progress } from "/components/ui/progress";
-import { DashboardLayout } from "@/components/dashboard/layout";
-
+import { DashboardLayout } from "@/components/layout/layout";
+import { updateProblemStatus } from "@/Api/api";
+import { customMessage } from "../../utils/customMessage";
+import { codeChecker } from "@/Api/api";
 
 function Badge({ children, variant = "neutral" }) {
     const variants = {
@@ -72,6 +74,7 @@ export default function CodeEditor() {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState({});
     const [fetching, setFetching] = useState(true);
+    const [submitLaoding, setSubmitLaoding] = useState(false);
 
     const [code, setCode] = useState(`function solve() {
   console.log("Hello World");
@@ -94,6 +97,7 @@ export default function CodeEditor() {
                 const filterProblem = filterLanguage?.problemList?.find(
                     (problem) => String(problem?._id) === String(problemId)
                 );
+
 
                 if (mounted) setData(filterProblem || {});
             } catch (error) {
@@ -128,6 +132,8 @@ export default function CodeEditor() {
             );
 
             setOutput(response.data.stdout || response.data.stderr || "No output");
+
+            // console.log(response.data)
         } catch (error) {
             setOutput("Error running code");
             console.error(error);
@@ -136,6 +142,40 @@ export default function CodeEditor() {
         }
     };
 
+
+    const handleSubmit = async () => {
+        await runCode();
+        console.log(typeof code)
+        const question = data?.question || "helo";
+        const output = data.examples[0].output
+
+        // Check user submited code 
+        const check = await codeChecker({ question, code, output });
+        if (check.data === "true") {
+            setSubmitLaoding(true);
+            try {
+                const day = new Date().toLocaleString('en-US', { weekday: 'long' });
+                const updateStatus = await updateProblemStatus({ problemId, language, day });
+                console.log(updateStatus.data);
+                if (updateStatus.data.success === true) {
+                    return customMessage({
+                        type: "success",
+                        content: `Your code is submited`
+                    });
+                }
+            }
+            catch (err) {
+                console.error(err)
+            }
+        }
+        else {
+            return customMessage({
+                type: "error",
+                content: `Your code is not correct`
+            });
+        }
+    }
+
     const goBack = () => {
         navigate(`/dashboard/coding-practice/${encodeURIComponent(String(language || "").toLowerCase())}`);
     };
@@ -143,7 +183,8 @@ export default function CodeEditor() {
     return (
         <DashboardLayout>
             <div >
-                <div className="mx-auto max-w-7xl space-y-4 sm:space-y-6">
+                <div className="mx-auto  space-y-4 sm:space-y-6">
+                    {/* Question Card */}
                     <Card
                         className="rounded-2xl"
                         style={{
@@ -152,7 +193,7 @@ export default function CodeEditor() {
                             boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
                         }}
                     >
-                        <CardContent className="p-6 sm:p-8 lg:p-10">
+                        <CardContent className="p-6 sm:px-6">
                             <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
                                 <div className="min-w-0 flex-1">
                                     <div className="flex flex-wrap items-center gap-3">
@@ -198,23 +239,7 @@ export default function CodeEditor() {
                                         <Badge>{loading ? "Running..." : "Ready to code"}</Badge>
                                     </div>
 
-                                    <div className="mt-6 max-w-xl">
-                                        <div className="flex items-center justify-between text-sm mb-2">
-                                            <span style={{ color: theme.colors.darkGray }}>Workspace progress</span>
-                                            <span className="font-bold" style={{ color: theme.colors.dark }}>
-                                                {completion}% Completed
-                                            </span>
-                                        </div>
-                                        <Progress
-                                            value={completion}
-                                            style={{
-                                                height: 10,
-                                                borderRadius: 999,
-                                                backgroundColor: theme.colors.softGray,
-                                                color: theme.colors.lime,
-                                            }}
-                                        />
-                                    </div>
+                                  
                                 </div>
 
                                 <div className="w-full xl:w-[320px] shrink-0">
@@ -280,6 +305,9 @@ export default function CodeEditor() {
                                                 color: theme.colors.dark,
                                                 borderColor: theme.colors.lightGray,
                                             }}
+                                            onClick={() => {
+                                                handleSubmit();
+                                            }}
                                         >
                                             <Send className="w-4 h-4" />
                                             Submit
@@ -289,6 +317,7 @@ export default function CodeEditor() {
                             </div>
                         </CardContent>
                     </Card>
+
 
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                         <Card
@@ -374,12 +403,39 @@ export default function CodeEditor() {
                                 boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
                             }}
                         >
-                            <CardHeader className="pb-2">
+                            <CardHeader className="pb-2 flex justify-between items-center ">
                                 <PanelTitle
                                     icon={ArrowUpRight}
                                     title="Code Editor"
                                     subtitle="Write your solution and check the output below."
                                 />
+                                <button
+                                    onClick={runCode}
+                                    disabled={loading}
+                                    className="mt-5 w-fit inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black transition-transform hover:scale-[1.01] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                                    style={{
+                                        background: theme.colors.lime,
+                                        color: theme.colors.dark,
+                                        boxShadow: "0 8px 0 rgba(17,17,19,0.18)",
+                                    }}
+                                >
+                                    <Play className="w-4 h-4" />
+                                    Run Code
+                                </button>
+                                <button
+                                    className="mt-3 w-fit inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black border transition-colors hover:bg-slate-50"
+                                    style={{
+                                        background: theme.colors.white,
+                                        color: theme.colors.dark,
+                                        borderColor: theme.colors.lightGray,
+                                    }}
+                                    onClick={() => {
+                                        handleSubmit();
+                                    }}
+                                >
+                                    <Send className="w-4 h-4" />
+                                    Submit
+                                </button>
                             </CardHeader>
                             <CardContent className="pt-0">
                                 <div className="rounded-2xl overflow-hidden border" style={{ borderColor: theme.colors.lightGray }}>
@@ -394,7 +450,7 @@ export default function CodeEditor() {
                                             fontSize: 15,
                                             automaticLayout: true,
                                             scrollBeyondLastLine: false,
-                                            padding: { top: 16, bottom: 16 },
+                                            padding: { top: 25, bottom: 16, },
                                             fontFamily: "JetBrains Mono, monospace",
                                             wordWrap: "on",
                                             renderLineHighlight: "line",

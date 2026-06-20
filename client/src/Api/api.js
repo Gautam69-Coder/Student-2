@@ -114,9 +114,18 @@ export const getTrackerData = () => api.get('/trackingData')
 
 // Coding Practice Tracks
 export const fetchCodingPractices = () => api.get('/coding-practices');
+export const updateProblemStatus = (data) => api.put('/coding-practices/update-problem-status', { data });
+export const fetchUserProgress = () => api.get('/coding-practices/user-progress')
+
+// Dashboard stats
+export const fetchDashboardStats = () => api.get('/stats/dashboard')
 
 //AI Assistant
 export const aiAssistant = (data) => api.post('/aiassistant', { message: data })
+
+//AI code Checker 
+export const codeChecker = (data) => api.post('/code-checker', { data })
+
 export const aiCodeHelper = (context) => api.post('/aicodehelper', { context })
 
 

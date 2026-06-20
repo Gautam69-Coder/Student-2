@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { DotLoader } from "@/Utils/loaders"
-import { useTheme } from "../../context/ThemeContext"
+import { useTheme } from "@/Context/ThemeContext"
 import { signInWithRedirect } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";

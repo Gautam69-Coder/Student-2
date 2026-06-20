@@ -5,7 +5,7 @@ import { DotLoader } from "@/Utils/loaders"
 import { useTheme } from "@/Context/ThemeContext"
 import { signInWithRedirect } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
-import { auth, provider } from "../../firebase";
+import { auth, provider } from "../../../firebase";
 import { customMessage } from "@/Utils/customMessage"
 import { Link } from "react-router-dom"
 import { googleLogin } from "@/Api/api"

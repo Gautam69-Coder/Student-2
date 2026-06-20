@@ -20,7 +20,6 @@ import {
     Icon,
 } from "lucide-react";
 import { Card, CardTitle } from "/components/ui/card";
-import { fetchCodingPractices } from "@/Api/api";
 
 import {
     ChartContainer,
@@ -37,6 +36,11 @@ import { theme } from "@/lib/theme";
 import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
 import { getMe, userProfileUpdate, fetchUserProgress } from "@/Api/api";
 import { Link } from "react-router-dom";
+import {
+    fetchPracticals,
+    fetchNotes
+
+} from "@/Api/api";
 
 
 function SubjectProgressRow({ name, progress, done, total, Icon }) {
@@ -88,17 +92,26 @@ function SubjectProgressRow({ name, progress, done, total, Icon }) {
 }
 
 export function Home() {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [isBell, setIsBell] = useState(false);
+
     const [userData, setUserData] = useState(null);
     const [userProgress, setUserProgress] = useState(null);
     const [chartData, setChartData] = useState(null);
+    const [practicalSections, setPracticalSections] = useState(null);
+    const [noteSections, setNoteSections] = useState(null);
+    const [totalPracticals, setTotalPracticals] = useState(null);
+    const [platformVisits, setPlatformVisits] = useState(null);
+    const [totalNotes, setTotalNotes] = useState(null);
+    const [privateNotes, setPrivateNotes] = useState(null);
+    const [publicNotes, setPublicNotes] = useState(null);
+    const [recentNotes, setRecentNotes] = useState(null);
+
 
     // Fetch user data on component mount
     const fetchUserData = async () => {
         try {
             const userData = await getMe();
             setUserData(userData.data);
+            setPlatformVisits(userData.data.visitCount);
         } catch (error) {
             console.error("Error fetching user data:", error);
         }
@@ -108,7 +121,6 @@ export function Home() {
     const fetchUserProgressData = async () => {
         try {
             const progressData = await fetchUserProgress();
-            console.log(progressData.data.data)
             setUserProgress(progressData.data.data);
             setChartData(progressData.data.data.map(item => ({
                 day: item?.day,
@@ -119,10 +131,47 @@ export function Home() {
         }
     }
 
+    const fetchPracticalsSections = async () => {
+        const res = await fetchPracticals();
+        const practicals = res.data;
+        const sections = [...new Set(practicals.map(p => p.section))];
+        setPracticalSections(sections);
+    }
+
+    const fetchNotesSections = async () => {
+        const res = await fetchNotes();
+        const note = res.data;
+        const sections = [...new Set(note.map(n => n.section))];
+        console.log(note);
+        setNoteSections(sections);
+
+        // Recently added notes
+        setRecentNotes(res.data.slice(0, 4));
+    }
+
+    const fetchTotalPracticals = async () => {
+        const res = await fetchPracticals();
+        setTotalPracticals(res.data);
+    }
+
+    const fetchTotalNotes = async () => {
+        const res = await fetchNotes();
+        setTotalNotes(res.data.length || 0);
+        setPrivateNotes(res.data.filter(note => note.isGlobal === true).length);
+        setPublicNotes(res.data.filter(note => note.isGlobal === false).length);
+    }
+
 
     useEffect(() => {
         fetchUserData();
         fetchUserProgressData();
+
+        // Fetch practical sections, note sections, total practicals, platform visits, total notes, private notes, and public notes here
+        fetchPracticalsSections();
+        fetchNotesSections();
+        fetchTotalPracticals();
+        fetchTotalNotes();
+
     }, []);
 
     const stats = {
@@ -132,22 +181,7 @@ export function Home() {
         visits: { value: "7,958", trend: "+9% this week", icon: TrendingUp },
     };
 
-    const subjects = [
-        { name: "Scilab", progress: 80, done: 8, total: 10, icon: Zap },
-        { name: "Java", progress: 65, done: 6, total: 9, icon: BookOpen },
-        { name: "CN", progress: 55, done: 5, total: 9, icon: Clock },
-        { name: "Figma", progress: 40, done: 4, total: 10, icon: Bell },
-    ];
 
-    const activityData = [
-        { day: "Mon", sessions: 4, fill: theme.colors.lightGray },
-        { day: "Tue", sessions: 7, fill: theme.colors.lime },
-        { day: "Wed", sessions: 3, fill: theme.colors.lightGray },
-        { day: "Thu", sessions: 9, fill: theme.colors.lime },
-        { day: "Fri", sessions: 6, fill: theme.colors.lime },
-        { day: "Sat", sessions: 2, fill: theme.colors.lightGray },
-        { day: "Sun", sessions: 5, fill: theme.colors.lime },
-    ];
 
     const recentNotesList = [
         {
@@ -202,35 +236,30 @@ export function Home() {
         >
             {/* Stat cards row */}
             <div className="flex items-center justify-between gap-4">
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                     <DashStatCard
                         icon={stats.subjects.icon}
-                        title="Active Subjects"
-                        value={stats.subjects.value}
+                        title="Practicals Sections"
+                        value={practicalSections?.length || 0}
                         trend={stats.subjects.trend}
                     />
                     <DashStatCard
                         icon={stats.subjects.icon}
-                        title="Active Subjects"
-                        value={stats.subjects.value}
+                        title="Note Sections"
+                        value={noteSections?.length || 0}
                         trend={stats.subjects.trend}
                     />
-                    <DashStatCard
-                        icon={stats.practicals.icon}
-                        title="Total Practicals"
-                        value={stats.practicals.value}
-                        trend={stats.practicals.trend}
-                    />
+
                     <DashStatCard
                         icon={stats.notes.icon}
-                        title="Notes Saved"
-                        value={stats.notes.value}
+                        title="Total Practicals"
+                        value={totalPracticals?.length || 0}
                         trend={stats.notes.trend}
                     />
                     <DashStatCard
                         icon={stats.visits.icon}
                         title="Platform Visits"
-                        value={stats.visits.value}
+                        value={platformVisits || 0}
                         trend={stats.visits.trend}
                     />
                 </div>
@@ -243,8 +272,32 @@ export function Home() {
                             color: theme.colors.dark,
                         }}
                     >
-                        <p className="mx-5"><BookOpen color="#6d51fb" /></p>
-                        Notes saved 500+
+                        Notes saved
+                        <p className="mx-2 text-[#6d51fb]"> {totalNotes}</p>
+                    </div>
+
+                    <div
+                        className="h-12 p-2 w-60 rounded-xl border transition-all flex items-center justify-between font-bold text-sm hover:border-lime-400"
+                        style={{
+                            borderColor: theme.colors.lightGray,
+                            background: theme.colors.white,
+                            color: theme.colors.dark,
+                        }}
+                    >
+                        Private Note
+                        <p className="mx-2 text-[#6d51fb]"> {privateNotes}</p>
+                    </div>
+
+                    <div
+                        className="h-12 p-2 w-60 rounded-xl border transition-all flex items-center justify-between font-bold text-sm hover:border-lime-400"
+                        style={{
+                            borderColor: theme.colors.lightGray,
+                            background: theme.colors.white,
+                            color: theme.colors.dark,
+                        }}
+                    >
+                        Public Note
+                        <p className="mx-2 text-[#6d51fb]"> {publicNotes}</p>
                     </div>
                 </div>
             </div>
@@ -305,7 +358,7 @@ export function Home() {
                         </div>
 
                         <div className="mt-6 space-y-0">
-                            {recentNotesList.map((note, idx) => (
+                            {recentNotes?.map((note, idx) => (
                                 <div key={idx} className="py-4">
                                     <div className="flex items-start gap-3">
                                         <div
@@ -320,7 +373,7 @@ export function Home() {
                                                 flexShrink: 0,
                                             }}
                                         >
-                                            {note.subject}
+                                            {note.section}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div
@@ -333,7 +386,7 @@ export function Home() {
                                                 className="text-[11px] font-medium"
                                                 style={{ color: theme.colors.darkGray, marginTop: 2 }}
                                             >
-                                                {note.ts}
+                                                {note.updatedAt ? new Date(note.updatedAt).toLocaleDateString() : "Unknown date"}
                                             </div>
                                         </div>
                                     </div>
@@ -386,7 +439,7 @@ export function Home() {
                                             tickLine={false}
                                             tickMargin={10}
                                             axisLine={false}
-                                        tickFormatter={(value) => value.slice(0, 3)}
+                                            tickFormatter={(value) => value.slice(0, 3)}
                                         />
 
                                         <ChartTooltip

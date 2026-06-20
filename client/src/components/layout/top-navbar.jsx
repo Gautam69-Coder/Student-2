@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Bell, ChevronDown, Search, X } from "lucide-react";
+import { Bell, ChevronDown, Search, X, Shield } from "lucide-react";
 import { theme } from "@/lib/theme";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +16,7 @@ export function TopNavBar({
 }) {
     const [showProfile, setShowProfile] = useState(false);
 
-    const navigate= useNavigate();
+    const navigate = useNavigate();
 
     return (
         <div
@@ -71,7 +71,7 @@ export function TopNavBar({
                             <button
                                 className="w-full text-left px-4 py-2 hover:bg-slate-100 transition-colors"
                                 style={{ color: theme.colors.dark }}
-                                onClick={()=>{
+                                onClick={() => {
                                     navigate("/dashboard/profile")
                                 }}
                             >
@@ -89,7 +89,7 @@ export function TopNavBar({
                             />
                             <button
                                 className="w-full text-left px-4 py-2 hover:bg-red-50 transition-colors text-red-500"
-                                onClick={()=>{onLogout()}}
+                                onClick={() => { onLogout() }}
                             >
                                 Sign Out
                             </button>
@@ -119,7 +119,7 @@ export function TopNavBar({
             </div>
 
             {/* Notification Bell - Right */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center  gap-3">
                 <div className="relative">
                     <button
                         onClick={() => setisBell?.(!isBell)}
@@ -134,6 +134,14 @@ export function TopNavBar({
                             className="absolute top-1 right-1 w-2 h-2 rounded-full"
                             style={{ background: theme.colors.lime }}
                         />
+                    </button>
+
+                    <button className="text-black mx-5 shadow-lg border border-yellow-100 bg-white p-2 rounded-2xl"
+                    onClick={()=>{
+                        navigate("/admin")
+                    }}
+                    >
+                        <Shield size={20} />
                     </button>
 
                     {isBell && Notification && (
@@ -153,6 +161,9 @@ export function TopNavBar({
                             </div>
                         </>
                     )}
+
+
+
                 </div>
             </div>
         </div>

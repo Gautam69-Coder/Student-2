@@ -62,10 +62,10 @@ export function DashStatCard({ icon: Icon, title, value, trend, variant = "prima
         <Icon size={18} color={theme.colors.dark} />
       </div>
 
-      <TrendBadge
+      {/* <TrendBadge
         text={trend}
         variant={trend.includes("-") ? "danger" : "success"}
-      />
+      /> */}
     </div>
 
     <CardTitle

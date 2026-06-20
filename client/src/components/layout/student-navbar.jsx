@@ -17,7 +17,8 @@ import {
     MessageSquare,
     Info,
     ChevronDown,
-    Code2
+    Code2,
+    Shield
 } from "lucide-react"
 import { useLocation, Link, useNavigate } from "react-router-dom"
 import { Logo } from "../common/logo/logo";
@@ -313,6 +314,7 @@ export function StudentNavbar({
                                     <Notification />
                                 </div>
                             )}
+                            
                         </div>
 
                         {/* Profile Link for Desktop */}

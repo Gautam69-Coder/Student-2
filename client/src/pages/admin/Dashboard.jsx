@@ -12,10 +12,10 @@ const pendingNotes = [
     { id: 3, title: "Graph Algorithms Notes", author: "Vikram T.", subject: "DSA", date: "2 days ago" },
 ]
 
-import { GraduationCap, Menu, X, Sun, Moon } from "lucide-react"
+import { GraduationCap, Menu, X } from "lucide-react"
 import { AdminSidebar } from "@/components/layout/admin-sidebar"
-
 import { useSocket } from "@/context/SocketContext"
+
 import { ManageUsers } from "./ManageUsers"
 import { ManageGuestVisits } from "./ManageGuestVisits"
 import { ManageSubjects } from "./ManageSubjects"
@@ -27,14 +27,12 @@ import { MessageSender } from "./MessageSender"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTitle } from "@/hooks/useTitle"
 
-
-
 export function AdminPanel({ userName, onLogout }) {
     useTitle("Admin Panel");
-    const { darkMode, toggleDarkMode } = useTheme();
+    // Theme toggle removed from admin
     const { onlineUsers, lastVisit, socket } = useSocket();
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
-    const [users, setUsers] = useState([])
+    const [users, setUsers] = useState([]);
     const [subjects, setSubjects] = useState([])
     const [uniqueSubjectSections, setUniqueSubjectSections] = useState([]);
     const [notifications, setNotifications] = useState([]);
@@ -85,7 +83,7 @@ export function AdminPanel({ userName, onLogout }) {
     }, [lastVisit]);
 
     return (
-        <div className={`flex min-h-screen transition-colors duration-300 ${darkMode ? "bg-slate-950" : "bg-[#FCFAF8]"}`}>
+        <div className={`flex min-h-screen transition-colors duration-300 bg-[#FCFAF8] dark:bg-slate-950`}>
             <AdminSidebar
                 isOpen={sidebarOpen}
                 setIsOpen={setSidebarOpen}
@@ -114,13 +112,7 @@ export function AdminPanel({ userName, onLogout }) {
                                 <span className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider">{onlineUsers.length} Online</span>
                             </div>
 
-                            <button
-                                onClick={toggleDarkMode}
-                                className="p-2 rounded-[10px] text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-all"
-                                title="Toggle Theme"
-                            >
-                                {darkMode ? <Sun className="w-5 h-5 text-orange-400" /> : <Moon className="w-5 h-5" />}
-                            </button>
+
 
                             <button
                                 onClick={() => { navigate("/dashboard"); }}

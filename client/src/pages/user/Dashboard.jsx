@@ -52,7 +52,6 @@ import {
 export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
     useTitle("Dashboard");
     // Theme toggle is disabled (dark mode only enforced by ThemeContext)
-    useTheme();
 
     const {
         user,

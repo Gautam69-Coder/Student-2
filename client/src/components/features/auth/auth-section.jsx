@@ -27,7 +27,6 @@ const quotes = [
 
 export function AuthSection({ authState, setAuthState, onAuth, isModal = false }) {
     useTitle(authState === "login" ? "Login" : "Sign Up");
-    const { darkMode, toggleDarkMode } = useTheme()
     const [role, setRole] = useState("user")
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState("")

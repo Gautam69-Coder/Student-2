@@ -5,11 +5,10 @@ import { Sun, Moon } from "lucide-react"
 import { useTheme } from "../../context/ThemeContext"
 
 export function ThemeToggle({ className = "" }) {
-    const { darkMode, toggleDarkMode } = useTheme()
+    // const { darkMode, toggleDarkMode } = useTheme()
 
     return (
         <button
-            onClick={toggleDarkMode}
             className={`relative flex items-center justify-center p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:bg-slate-800 transition-all shadow-sm ${className}`}
             title={"Dark mode"}
         >

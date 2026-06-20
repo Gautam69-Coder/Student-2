@@ -13,7 +13,6 @@ import { getRedirectResult } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, CloudCog } from "lucide-react"
-import { ThemeToggle } from "./theme-toggle"
 import { registerUser, loginUser } from "@/Api/api"
 import { useTitle } from "@/hooks/useTitle"
 

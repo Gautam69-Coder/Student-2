@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo,useCallback } from "react";
 import {
     Bell,
     CheckCircle2,
@@ -39,7 +39,6 @@ import { Link } from "react-router-dom";
 import {
     fetchPracticals,
     fetchNotes
-
 } from "@/Api/api";
 import { DotLoader } from "@/Utils/loaders";
 
@@ -97,29 +96,36 @@ export function Home() {
     const [userData, setUserData] = useState(null);
     const [userProgress, setUserProgress] = useState(null);
     const [chartData, setChartData] = useState(null);
-    const [practicalSections, setPracticalSections] = useState(null);
-    const [noteSections, setNoteSections] = useState(null);
-    const [totalPracticals, setTotalPracticals] = useState(null);
-    const [platformVisits, setPlatformVisits] = useState(null);
-    const [totalNotes, setTotalNotes] = useState(null);
-    const [privateNotes, setPrivateNotes] = useState(null);
-    const [publicNotes, setPublicNotes] = useState(null);
-    const [recentNotes, setRecentNotes] = useState(null);
-
     const [loading, setLoading] = useState(false);
+    const [dashboardStats, setDashboardStats] = useState({
+        practicalSections: 0,
+        noteSections: 0,
+        totalPracticals: 0,
+        platformVisits: 0,
+        totalNotes: 0,
+        privateNotes: 0,
+        publicNotes: 0,
+        recentNotes: [],
+    });
 
-
+    const [sectionData, setSectionsData] = useState({
+        practicalSections: 0,
+        notesSections: 0,
+    })
 
     // Fetch user data on component mount
-    const fetchUserData = async () => {
+    const fetchUserData = useCallback(async () => {
         try {
             const userData = await getMe();
             setUserData(userData.data);
-            setPlatformVisits(userData.data.visitCount);
+            setDashboardStats(prev => ({
+                ...prev,
+                platformVisits: userData.data.visitCount
+            }))
         } catch (error) {
             console.error("Error fetching user data:", error);
         }
-    };
+    }, []);
 
     //Fetch user progress data
     const fetchUserProgressData = async () => {
@@ -138,21 +144,24 @@ export function Home() {
     const fetchPracticalsSectionsAndTotalPracticals = async () => {
         const res = await fetchPracticals();
         const practicals = res.data;
-        const sections = [...new Set(practicals.map(p => p.section))];
-        setPracticalSections(sections);
-        setTotalPracticals(practicals);
+        setDashboardStats(prev => ({
+            ...prev,
+            practicalSections: [...new Set(practicals.map(p => p.section))].length,
+            totalPracticals: practicals.length,
+        }));
     }
 
     const fetchNotesSectionsAndTotalNotes = async () => {
         const res = await fetchNotes();
-        const note = res.data;
-        const sections = [...new Set(note.map(n => n.section))];
-
-        setNoteSections(sections);
-        setTotalNotes(res.data.length || 0);
-        setPrivateNotes(res.data.filter(note => note.isGlobal === true).length);
-        setPublicNotes(res.data.filter(note => note.isGlobal === false).length);
-        setRecentNotes(res.data.slice(0, 4));
+        const notes = res.data;
+        setDashboardStats(prev => ({
+            ...prev,
+            noteSections: [...new Set(notes.map(n => n.section))].length,
+            totalNotes: notes.length,
+            privateNotes: notes.filter(n => n.isGlobal).length,
+            publicNotes: notes.filter(n => !n.isGlobal).length,
+            recentNotes: notes.slice(0, 4),
+        }));
     }
 
     useEffect(() => {
@@ -174,7 +183,7 @@ export function Home() {
         };
 
         loadDashboard();
-    }, []);
+    }, [fetchPracticals]);
 
     const recentNotesList = [
         {
@@ -255,7 +264,7 @@ export function Home() {
 
     return (
         <DashboardLayout
-        
+
         >
             {/* Stat cards row */}
             <div className="flex items-center sm:flex-nowrap flex-wrap justify-between gap-4 ">
@@ -263,26 +272,26 @@ export function Home() {
                     <DashStatCard
                         icon={stats.subjects.icon}
                         title="Practicals Sections"
-                        value={practicalSections?.length || 0}
+                        value={dashboardStats.practicalSections || 0}
                         trend={stats.subjects.trend}
                     />
                     <DashStatCard
                         icon={stats.subjects.icon}
                         title="Note Sections"
-                        value={noteSections?.length || 0}
+                        value={dashboardStats.noteSections || 0}
                         trend={stats.subjects.trend}
                     />
 
                     <DashStatCard
                         icon={stats.notes.icon}
                         title="Total Practicals"
-                        value={totalPracticals?.length || 0}
+                        value={dashboardStats.totalPracticals || 0}
                         trend={stats.notes.trend}
                     />
                     <DashStatCard
                         icon={stats.visits.icon}
                         title="Platform Visits"
-                        value={platformVisits || 0}
+                        value={dashboardStats.platformVisits || 0}
                         trend={stats.visits.trend}
                     />
                 </div>
@@ -296,7 +305,7 @@ export function Home() {
                         }}
                     >
                         Notes saved
-                         <p className="mx-2 text-[#6d51fb]"> {totalNotes}</p>
+                        <p className="mx-2 text-[#6d51fb]"> {dashboardStats.totalNotes}</p>
                     </div>
 
                     <div
@@ -308,7 +317,7 @@ export function Home() {
                         }}
                     >
                         Private Note
-                        <p className="mx-2 text-[#6d51fb]"> {privateNotes}</p>
+                        <p className="mx-2 text-[#6d51fb]"> {dashboardStats.privateNotes}</p>
                     </div>
 
                     <div
@@ -320,7 +329,7 @@ export function Home() {
                         }}
                     >
                         Public Note
-                        <p className="mx-2 text-[#6d51fb]"> {publicNotes}</p>
+                        <p className="mx-2 text-[#6d51fb]"> {dashboardStats.publicNotes}</p>
                     </div>
                 </div>
             </div>
@@ -381,7 +390,7 @@ export function Home() {
                         </div>
 
                         <div className="mt-6 space-y-0">
-                            {recentNotes?.map((note, idx) => (
+                            {dashboardStats.recentNotes?.map((note, idx) => (
                                 <div key={idx} className="py-4">
                                     <div className="flex items-start gap-3">
                                         <div

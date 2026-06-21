@@ -162,7 +162,6 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                     transition={{ duration: 0.6 }}
                     className="hidden lg:flex lg:w-1/2 relative overflow-hidden  "
                 >
-                    <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: darkMode ? "radial-gradient(#fff 1px, transparent 1px)" : "radial-gradient(#000 1px, transparent 1px)", backgroundSize: "32px 32px" }}></div>
 
                     <div className="relative z-10 flex flex-col justify-center px-12 lg:px-16 w-full">
                         <motion.div

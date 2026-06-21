@@ -255,9 +255,10 @@ export function Home() {
 
     return (
         <DashboardLayout
+        
         >
             {/* Stat cards row */}
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center sm:flex-nowrap flex-wrap justify-between gap-4 ">
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                     <DashStatCard
                         icon={stats.subjects.icon}

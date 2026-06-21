@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
     Bell,
     CheckCircle2,
@@ -31,7 +31,7 @@ import { Progress } from "/components/ui/progress";
 import { Separator } from "/components/ui/separator";
 import { DashboardLayout } from "@/components/layout/layout";
 import { DashStatCard, DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
-import { DashboardSidebar } from "@/components/layout/sidebar";
+import RippleLoader from "../../components/ui/nurui/ripple-loader";
 import { theme } from "@/lib/theme";
 import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
 import { getMe, userProfileUpdate, fetchUserProgress } from "@/Api/api";
@@ -41,6 +41,7 @@ import {
     fetchNotes
 
 } from "@/Api/api";
+import { DotLoader } from "@/Utils/loaders";
 
 
 function SubjectProgressRow({ name, progress, done, total, Icon }) {
@@ -105,6 +106,9 @@ export function Home() {
     const [publicNotes, setPublicNotes] = useState(null);
     const [recentNotes, setRecentNotes] = useState(null);
 
+    const [loading, setLoading] = useState(false);
+
+
 
     // Fetch user data on component mount
     const fetchUserData = async () => {
@@ -131,57 +135,46 @@ export function Home() {
         }
     }
 
-    const fetchPracticalsSections = async () => {
+    const fetchPracticalsSectionsAndTotalPracticals = async () => {
         const res = await fetchPracticals();
         const practicals = res.data;
         const sections = [...new Set(practicals.map(p => p.section))];
         setPracticalSections(sections);
+        setTotalPracticals(practicals);
     }
 
-    const fetchNotesSections = async () => {
+    const fetchNotesSectionsAndTotalNotes = async () => {
         const res = await fetchNotes();
         const note = res.data;
         const sections = [...new Set(note.map(n => n.section))];
-        console.log(note);
+
         setNoteSections(sections);
-
-        // Recently added notes
-        setRecentNotes(res.data.slice(0, 4));
-    }
-
-    const fetchTotalPracticals = async () => {
-        const res = await fetchPracticals();
-        setTotalPracticals(res.data);
-    }
-
-    const fetchTotalNotes = async () => {
-        const res = await fetchNotes();
         setTotalNotes(res.data.length || 0);
         setPrivateNotes(res.data.filter(note => note.isGlobal === true).length);
         setPublicNotes(res.data.filter(note => note.isGlobal === false).length);
+        setRecentNotes(res.data.slice(0, 4));
     }
 
-
     useEffect(() => {
-        fetchUserData();
-        fetchUserProgressData();
+        const loadDashboard = async () => {
+            try {
+                setLoading(true);
 
-        // Fetch practical sections, note sections, total practicals, platform visits, total notes, private notes, and public notes here
-        fetchPracticalsSections();
-        fetchNotesSections();
-        fetchTotalPracticals();
-        fetchTotalNotes();
+                await Promise.all([
+                    fetchUserData(),
+                    fetchUserProgressData(),
+                    fetchPracticalsSectionsAndTotalPracticals(),
+                    fetchNotesSectionsAndTotalNotes(),
+                ]);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
+        loadDashboard();
     }, []);
-
-    const stats = {
-        subjects: { value: 4, trend: "+12% this week", icon: LayoutGrid },
-        practicals: { value: 23, trend: "+7% this week", icon: CheckCircle2 },
-        notes: { value: "500+", trend: "+18% this week", icon: FileText },
-        visits: { value: "7,958", trend: "+9% this week", icon: TrendingUp },
-    };
-
-
 
     const recentNotesList = [
         {
@@ -231,6 +224,35 @@ export function Home() {
         },
     };
 
+    const stats = {
+        subjects: {
+            icon: BookOpen,
+            trend: "up",
+        },
+        notes: {
+            icon: FileText,
+            trend: "up",
+        },
+        visits: {
+            icon: HomeIcon,
+            trend: "down",
+        },
+
+    };
+
+    if (loading) {
+        return (
+            <DashboardLayout>
+                <div className="flex flex-col items-center justify-center py-20 gap-4">
+                    <RippleLoader />
+                    <p className="font-medium tracking-tight" style={{ color: theme.colors.darkGray }}>
+                        Loading your dashborad...
+                    </p>
+                </div>
+            </DashboardLayout>
+        )
+    }
+
     return (
         <DashboardLayout
         >
@@ -273,7 +295,7 @@ export function Home() {
                         }}
                     >
                         Notes saved
-                        <p className="mx-2 text-[#6d51fb]"> {totalNotes}</p>
+                         <p className="mx-2 text-[#6d51fb]"> {totalNotes}</p>
                     </div>
 
                     <div

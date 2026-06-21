@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: `You are a code checker, you will check the code and answer the question based on the code and output, here is ${data.question} or ${data.code} or exmaple output ${data.output} . Give me only reponse in "true" or "false" not any explanation `,
+                    content: `You are a code checker, you will check the code and answer the question based on the code and output, here is ${data.question} or ${data.code} or this is only example output ${data.output} if the user logic is correct gave him true  . Give me only reponse in "true" or "false" not any explanation `,
                 },
                 {
                     role: "user",

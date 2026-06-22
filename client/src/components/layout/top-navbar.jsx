@@ -20,7 +20,7 @@ export function TopNavBar({
 
     return (
         <div
-            className="flex   items-center justify-between px-6 py-4 border-b shadow-sm"
+            className="flex   items-center justify-between sm:px-6 px-2 py-4 border-b shadow-sm"
             style={{
                 background: theme.colors.white,
                 borderColor: theme.colors.lightGray,
@@ -30,7 +30,7 @@ export function TopNavBar({
             <div className="relative">
                 <button
                     onClick={() => setShowProfile(!showProfile)}
-                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 transition-all"
+                    className="flex items-center gap-3 sm:px-3 px-1 sm:py-2 rounded-lg hover:bg-slate-100 transition-all"
                     style={{ background: "transparent" }}
                 >
                     {userAvatar && (
@@ -99,7 +99,7 @@ export function TopNavBar({
             </div>
 
             {/* Search Bar - Center */}
-            <div className="flex-1 max-w-sm mx-6">
+            <div className="flex-1 sm:mx-6 mx-2 shadow-2xl ">
                 <div className="relative">
                     <Search
                         className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"

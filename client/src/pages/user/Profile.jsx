@@ -1,14 +1,31 @@
 
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { User, Mail, Shield, Calendar, Edit2, MapPin, ArrowRight, LogOut, MessageSquare, Info, Lock, Eye, EyeOff } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+    User,
+    Mail,
+    Shield,
+    Calendar,
+    Edit2,
+    MapPin,
+    LogOut,
+    MessageSquare,
+    Info,
+    Lock,
+    Eye,
+    EyeOff,
+    Save,
+    ArrowRight 
+} from "lucide-react";
 import { getMe, userProfileUpdate } from "@/Api/api";
 import { useTitle } from "@/hooks/useTitle";
-import { customMessage } from "@/Utils/customMessage"
+import { customMessage } from "@/Utils/customMessage";
 import { DashboardLayout } from "@/components/layout/layout";
-import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
-import { DashboardSidebar } from "@/components/layout/sidebar";
+import { Card, CardTitle } from "../../../components/ui/card";
+import { Progress } from "../../../components/ui/progress";
+import { theme } from "@/lib/theme";
+
 
 export function Profile({ onLogout }) {
     useTitle("Profile");
@@ -29,7 +46,6 @@ export function Profile({ onLogout }) {
         getMe().then(res => {
             setUser(res.data);
             setLoading(false);
-            console.log(res.data)
         }).catch(err => {
             console.error(err);
             setLoading(false);

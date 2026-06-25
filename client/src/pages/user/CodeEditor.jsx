@@ -145,12 +145,17 @@ export default function CodeEditor() {
 
     const handleSubmit = async () => {
         await runCode();
-        console.log(typeof code)
-        const question = data?.question || "helo";
+        const question = data?.question || "hello";
         const output = data.examples[0].output
 
         // Check user submited code 
         const check = await codeChecker({ question, code, output });
+        if (check.data.message) {
+            return customMessage({
+                type: "error",
+                content: `${check.data.message} !`
+            });
+        }
         if (check.data === "true") {
             setSubmitLaoding(true);
             try {
@@ -239,7 +244,7 @@ export default function CodeEditor() {
                                         <Badge>{loading ? "Running..." : "Ready to code"}</Badge>
                                     </div>
 
-                                  
+
                                 </div>
 
                                 <div className="w-full xl:w-[320px] shrink-0">

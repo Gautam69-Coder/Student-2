@@ -104,8 +104,6 @@ function ProblemRow({ problem, index, language, navigate, completedProblems }) {
     const isCompleted = completedProblems[0]?.includes(
         problem._id.toString()
     );
-
-    console.log(isCompleted);
     // const completedProblemsId =  completedProblems.map(i=>i);
     return (
         <tr className="border-t border-slate-100 hover:bg-lime-50/60 transition-colors">

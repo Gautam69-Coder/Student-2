@@ -12,9 +12,7 @@ import Highlight from "react-highlight";
 import { aiCodeHelper } from "@/Api/api";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
 import { theme } from "@/lib/theme";
-
-
-
+import { customMessage } from "@/Utils/customMessage";
 
 function PanelTitle({ title, subtitle }) {
     return (
@@ -168,6 +166,12 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
 
         try {
             const res = await aiCodeHelper(context);
+            if (res.data.message) {
+                return customMessage({
+                    type: "error",
+                    content: `${res.data.message} !`
+                });
+            }
             setTimeout(() => {
                 const botMessage = {
                     id: messages.length + 2,
@@ -175,7 +179,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                     sender: "bot",
                 };
                 setMessages((prev) => [...prev, botMessage]);
-            }, 800);
+            }, 100);
         } catch (error) {
             console.error(error);
             setMessages((prev) => [

@@ -127,5 +127,8 @@ export const aiCodeHelper = (context) => api.post('/aicodehelper', { context })
 //AI code Checker 
 export const codeChecker = (data) => api.post('/code-checker', { data })
 
+// Save User AI Api Key 
+export const saveApiKey = (data) => api.post('/save-apikey', { data })
+
 
 export default api;

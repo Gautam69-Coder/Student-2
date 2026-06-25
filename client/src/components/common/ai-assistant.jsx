@@ -10,6 +10,7 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Sparkles, X, Send, Minimize2, PencilLine, Maximize2, CloudFog } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
 import { theme } from "@/lib/theme";
+import { customMessage } from "@/Utils/customMessage";
 
 function MarkdownContent({ content, role }) {
     return (
@@ -116,7 +117,16 @@ export function AIAssistant() {
 
         try {
             const res = await aiAssistant(message);
+            if (res.data.message) {
+                setMessages((prev) => [...prev, { role: "assistant", content: res.data.message }]);
+                return customMessage({
+                    type: "error",
+                    content: `${res.data.message} !`
+                });
+            }
             setMessages((prev) => [...prev, { role: "assistant", content: res.data }]);
+
+
         } catch (error) {
             console.error(error);
             setMessages((prev) => [

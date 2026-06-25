@@ -342,7 +342,7 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
 
                             {loading ? (
                                 <div className="flex justify-center">
-                                    <DotLoader size={20} color={darkMode ? "white" : "black"} />
+                                    <DotLoader size={20} color={ "black"} />
                                 </div>
                             ) : (
                                 <button

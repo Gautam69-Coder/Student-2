@@ -3,7 +3,7 @@ import auth from '../middleware/auth.js';
 import UserNote from '../models/UserNote.js';
 const router = express.Router();
 import uploadMulter from '../middleware/multer.js';
-import { uploadCloudinary } from '../utils/uploadcloudinary.js';
+import { uploadCloudinary } from '../utils/uploadCloudinary.js';
 
 // Get User Notes (and Global Notes)
 router.get('/', async (req, res) => {

@@ -3,7 +3,7 @@ import auth from '../middleware/auth.js';
 import jwt, { decode } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
-import admin from '../config/fireBaseAdmin.js';
+import admin from '../config/firebase.js';
 
 const router = express.Router();
 // Register
@@ -52,14 +52,14 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-
+        console.log(password)
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
-        // console.log("User :", user)
+        console.log("User :", user)
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
-
+        
         // Increment visit count
         user.visitCount = (user.visitCount || 0) + 1;
         await user.save();

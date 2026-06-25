@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import admin from '../config/fireBaseAdmin.js';
+import admin from '../config/firebase.js';
 import User from '../models/User.js';
 
 const auth = async (req, res, next) => {

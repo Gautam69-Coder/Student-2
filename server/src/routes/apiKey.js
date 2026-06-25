@@ -5,25 +5,31 @@ import auth from "../middleware/auth.js"
 
 const router = express.Router();
 
-router.post("/save-api", auth, (req, res) => {
+router.post("/", auth, async (req, res) => {
     try {
-        const { apiKey } = req.body;
+        const { data } = req.body;
         const userId = req.user.id;
 
-        if (!apiKey) {
+        if (!data.apiKeyInput) {
             return res.json({ error: "Api key is undefined" })
         }
 
-        const encrypted = encrypt(apiKey);
+        const encrypted = encrypt(data.apiKeyInput);
 
-        const saveApiKey = await User.findByOneAndUpdate(
-            { userId },
+        const saveApiKey = await User.findByIdAndUpdate(
+            userId,
             {
-                $set: { apiKey }
+                $set: {
+                    apiKey: encrypted.encryptedData,
+                    iv: encrypted.iv
+                }
             },
             { upsert: true },
             { new: true }
         );
+        res.json({
+            message: "Api key safely Save"
+        })
     }
     catch (error) {
         console.error(error);

@@ -54,6 +54,12 @@ const UserSchema = new mongoose.Schema({
             ref: 'Practical'
         }
     ],
+    apiKey: {
+        type: String
+    },
+    iv: {
+        type: String
+    }
 });
 
 export default mongoose.model('User', UserSchema);

@@ -2,7 +2,7 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import Practical from '../models/Practical.js';
 import uploadMulter from '../middleware/multer.js';
-import { uploadCloudinary } from '../utils/uploadcloudinary.js';
+import { uploadCloudinary } from '../utils/uploadCloudinary.js';
 
 const router = express.Router();
 

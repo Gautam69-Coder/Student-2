@@ -1,4 +1,4 @@
-import { formatAIResponse } from "./formating-ai-response.js";
+import { formatAIResponse } from "./formatAIResponse.js";
 
 export const systemPrompt = (message, code, section, question) => {
     return `

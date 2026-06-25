@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // uploads folder path
-const uploadPath = path.join(__dirname, "../uploads")
+const uploadPath = path.join(__dirname, "../../uploads")
 
 // create uploads folder if not exists
 if (!fs.existsSync(uploadPath)) {

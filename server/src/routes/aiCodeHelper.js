@@ -1,17 +1,28 @@
 import express from "express";
 import auth from '../middleware/auth.js';
 import Groq from "groq-sdk";
-import { systemPrompt } from "../utils/systemprompt.js";
-import AIMemory from "../models/AICodeHelperMemoery.js";
+import { systemPrompt } from "../utils/systemPrompt.js";
+import AIMemory from "../models/AICodeHelperMemory.js";
+import { decrypt } from "../utils/crypto.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 router.post("/", auth, async (req, res) => {
     try {
         const { context } = req.body;
         const userId = req.user.id;
+
+        const user = await User.findById(req.user.id);
+        if (!user.apiKey && !user.iv) {
+            return res.json({ message: "Please add your api key" })
+        }
+        const apiKey = decrypt(
+            user.apiKey,
+            user.iv
+        );
+        const groq = new Groq({ apiKey: apiKey });
         // console.log(req.user)
 
         const memory = await AIMemory.findOneAndUpdate(
@@ -19,8 +30,8 @@ router.post("/", auth, async (req, res) => {
             {
                 $push: {
                     messages: {
-                        $each : [context.message],
-                        $slice : -10
+                        $each: [context.message],
+                        $slice: -10
                     }
                 },
                 question: context.question,

@@ -1,16 +1,29 @@
 import express from 'express';
 import auth from '../middleware/auth.js';
 import Groq from "groq-sdk";
+import User from '../models/User.js';
+import { decrypt } from '../utils/crypto.js';
 
 const router = express.Router();
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-router.post('/', async (req, res) => {
+router.post('/',auth, async (req, res) => {
     try {
-        const { data} = req.body ;
+        const { data } = req.body;
         console.log(data.question)
         console.log(data.output)
+
+        const user = await User.findById(req.user.id);
+
+        if (!user.apiKey && !user.iv) {
+            return res.json({ message: "Please add your api key" })
+        }
+
+        const apiKey = decrypt(
+            user.apiKey,
+            user.iv
+        );
+        const groq = new Groq({ apiKey: apiKey });
 
         const completion = await groq.chat.completions.create({
             messages: [

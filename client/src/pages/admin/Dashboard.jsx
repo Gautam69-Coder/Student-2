@@ -41,7 +41,7 @@ export function AdminPanel({ userName, onLogout }) {
     useEffect(() => {
         const user = fetchUsers();
         user.then((res) => {
-            setUsers(res.data);
+            setUsers(res.data.data);
             // console.log("Fetched users:", res.data);
         });
 
@@ -53,7 +53,6 @@ export function AdminPanel({ userName, onLogout }) {
         const section = fetchSections();
         section.then((res) => {
             setUniqueSubjectSections(res.data);
-            console.log("setUniqueSubjectSections : ", res.data);
         });
     }, [])
 

@@ -1,4 +1,3 @@
-
 import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Upload, FileText, X, Check, Code, Plus, ChevronDown, Layout, File, Image as ImageIcon } from "lucide-react"
@@ -8,10 +7,14 @@ import { createNoteText } from "@/Api/api"
 import { customMessage } from "@/Utils/customMessage"
 import { fetchNotes } from "@/Api/api"
 import { DotLoader } from "@/Utils/loaders.jsx"
+import { theme } from "@/lib/theme"
+import {useData} from "@/Context/DataContext"
 
 export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 
-    const [fileType, setfileType] = useState("text");
+    const {notes} = useData();
+
+    const [fileType, setFileType] = useState("text");
     const [newSection, setNewSection] = useState(true);
     const [noteData, setNoteData] = useState({
         title: "",
@@ -28,18 +31,19 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 
     const loadSections = async () => {
         try {
-            const res = await fetchNotes();
-            const sections = res.data.map(item => item.section);
+            
+            const sections = notes.map(item => item.section);
             setallSections([...new Set(sections)]);
         } catch (err) {
             console.error("Failed to load sections", err);
+            customMessage({ content: "Failed to load sections", type: "error" });
         }
     }
 
     // Only fetch sections when the modal actually opens
     useEffect(() => {
         if (open) loadSections();
-    }, [open]);
+    }, [open])
 
     const handleFileUpload = (e) => {
         setFileUpload(e.target.files[0])
@@ -62,6 +66,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                 }
             } catch (err) {
                 console.error("Note not uploaded", err);
+                customMessage({ content: "Note not uploaded", type: "error" });
                 setLoading(false);
             }
         }
@@ -85,6 +90,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                 }
             } catch (err) {
                 console.error("File not uploaded", err);
+                customMessage({ content: "File not uploaded", type: "error" });
                 setLoading(false);
             }
         }
@@ -100,6 +106,8 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
             setNewSection(true);
         }
     }
+
+    if (!open) return null;
 
     return (
         <AnimatePresence>
@@ -119,164 +127,241 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                         initial={{ opacity: 0, scale: 0.95, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                        className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden"
+                        className="relative w-full max-w-2xl rounded-2xl shadow-2xl border overflow-hidden"
+                        style={{
+                            background: theme.colors.white,
+                            borderColor: theme.colors.lightGray,
+                        }}
                     >
-                        <div className="flex flex-col gap-1 mb-6">
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Share Your Notes</h2>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Share code snippets or upload your study documents.
-                            </p>
-                        </div>
+                        <div className="p-6 sm:p-7">
+                            {/* Header */}
+                            <div className="flex flex-col gap-1 mb-6">
+                                <h2 className="text-xl font-bold tracking-tight" style={{ color: theme.colors.dark }}>
+                                    Share Your Notes
+                                </h2>
+                                <p className="text-sm" style={{ color: theme.colors.darkGray }}>
+                                    Upload files or save code snippets with clean section organization.
+                                </p>
+                            </div>
 
-                        <div className="space-y-4">
-                            {/* Upload Type Switcher */}
-                            <div className="flex p-1 bg-slate-100 dark:bg-slate-950 rounded-xl mb-4">
+                            {/* Upload Type Switcher (Home-style segmented UI) */}
+                            <div className="flex p-1 rounded-xl mb-5" style={{ background: theme.colors.softGray, border: `1px solid ${theme.colors.lightGray}` }}>
                                 <button
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${fileType === "text" ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-all" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"} shadow-sm`}
-                                    onClick={() => { setfileType("text") }}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all shadow-sm`}
+                                    style={{
+                                        background: fileType === "text" ? theme.colors.white : "transparent",
+                                        color: fileType === "text" ? theme.colors.dark : theme.colors.darkGray,
+                                        border: `1px solid ${fileType === "text" ? theme.colors.lightGray : "transparent"}`,
+                                    }}
+                                    onClick={() => { setFileType("text") }}
                                 >
-                                    <Code className="w-4 h-4" />
+                                    <Code className="w-4 h-4" style={{ color: fileType === "text" ? theme.colors.lime : theme.colors.darkGray }} />
                                     Text / Code
                                 </button>
                                 <button
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all ${fileType === "file" ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-all" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"}`}
-                                    onClick={() => { setfileType("file"); }}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all shadow-sm`}
+                                    style={{
+                                        background: fileType === "file" ? theme.colors.white : "transparent",
+                                        color: fileType === "file" ? theme.colors.dark : theme.colors.darkGray,
+                                        border: `1px solid ${fileType === "file" ? theme.colors.lightGray : "transparent"}`,
+                                    }}
+                                    onClick={() => { setFileType("file"); }}
                                 >
-                                    <File className="w-4 h-4" />
+                                    <FileText className="w-4 h-4" style={{ color: fileType === "file" ? theme.colors.lime : theme.colors.darkGray }} />
                                     Upload File
                                 </button>
                             </div>
 
                             <div className="space-y-4">
+                                {/* Title */}
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Title</label>
+                                    <label className="text-sm font-medium" style={{ color: theme.colors.darkGray }}>
+                                        Title
+                                    </label>
                                     <input
                                         type="text"
                                         placeholder="e.g., Java Collections Framework"
                                         name="title"
                                         value={noteData.title}
-                                        className="mt-1.5 w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                        className="mt-1.5 w-full h-10 px-3 rounded-lg text-sm transition-all outline-none"
+                                        style={{
+                                            background: theme.colors.softGray,
+                                            border: `1px solid ${theme.colors.lightGray}`,
+                                            color: theme.colors.dark,
+                                        }}
                                         onChange={(e) => { handleChanged(e) }}
                                     />
                                 </div>
 
+                                {/* Section */}
                                 <div>
-                                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                        <Layout className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                    <label className="text-sm font-medium flex items-center gap-2" style={{ color: theme.colors.darkGray }}>
+                                        <Layout className="w-4 h-4" style={{ color: theme.colors.darkGray }} />
                                         Section
                                     </label>
                                     <div className="mt-1.5 flex gap-2">
                                         {newSection ? (
                                             <div className="relative flex-1">
                                                 <select
-                                                    className="w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm appearance-none transition-all text-slate-900 dark:text-white"
+                                                    className="w-full h-10 px-3 rounded-lg text-sm appearance-none transition-all outline-none"
                                                     name="section"
                                                     onChange={(e) => { handleChanged(e); }}
                                                     value={noteData.section}
+                                                    style={{
+                                                        background: theme.colors.softGray,
+                                                        border: `1px solid ${theme.colors.lightGray}`,
+                                                        color: theme.colors.dark,
+                                                    }}
                                                 >
                                                     {allSections.map((item, index) => {
                                                         return <option key={index} value={item}>{item}</option>
                                                     })}
                                                 </select>
-                                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                                                <ChevronDown
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+                                                    style={{ color: theme.colors.darkGray }}
+                                                />
                                             </div>
                                         ) : (
                                             <div className="relative flex-1">
-                                                <div>
-                                                    <input
-                                                        className="w-full h-10 px-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm appearance-none transition-all text-slate-900 dark:text-white"
-                                                        name="section"
-                                                        onChange={(e) => { handleChanged(e); }}
-                                                        value={noteData.section}
-                                                        placeholder="Enter the section"
+                                                <input
+                                                    className="w-full h-10 px-3 rounded-lg text-sm appearance-none transition-all outline-none"
+                                                    name="section"
+                                                    onChange={(e) => { handleChanged(e); }}
+                                                    value={noteData.section}
+                                                    placeholder="Enter the section"
+                                                    style={{
+                                                        background: theme.colors.softGray,
+                                                        border: `1px solid ${theme.colors.lightGray}`,
+                                                        color: theme.colors.dark,
+                                                    }}
+                                                />
 
-                                                    />
-                                                </div>
-
-                                                <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500  cursor-pointer"
+                                                <X
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 cursor-pointer"
+                                                    style={{ color: theme.colors.darkGray }}
                                                     onClick={() => { setNewSection(true) }}
                                                 />
                                             </div>
                                         )}
+
                                         <button
                                             type="button"
-                                            className="h-10 px-3 rounded-lg border flex items-center justify-center gap-2 text-sm font-medium transition-all bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-600"
+                                            className="h-10 px-3 rounded-lg border flex items-center justify-center gap-2 text-sm font-medium transition-all"
+                                            style={{
+                                                background: theme.colors.white,
+                                                borderColor: theme.colors.lightGray,
+                                                color: theme.colors.darkGray,
+                                            }}
                                             onClick={() => {
                                                 handleSection();
                                             }}
                                         >
-                                            <Plus className="w-4 h-4" />
+                                            <Plus className="w-4 h-4" style={{ color: theme.colors.lime }} />
                                             <span className="hidden sm:inline" >New</span>
                                         </button>
-
                                     </div>
                                 </div>
 
-
+                                {/* Content */}
                                 {fileType === "text" && (
                                     <div>
-                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                            <Code className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                        <label className="text-sm font-medium flex items-center gap-2" style={{ color: theme.colors.darkGray }}>
+                                            <Code className="w-4 h-4" style={{ color: theme.colors.darkGray }} />
                                             Content / Code
                                         </label>
                                         <textarea
                                             placeholder="Paste your code or text here..."
-                                            className="mt-1.5 w-full px-3 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg text-sm min-h-62.5 font-mono transition-all resize-y text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                            className="mt-1.5 w-full px-3 py-3 rounded-lg text-sm min-h-62.5 font-mono transition-all resize-y outline-none"
+                                            style={{
+                                                background: theme.colors.softGray,
+                                                border: `1px solid ${theme.colors.lightGray}`,
+                                                color: theme.colors.dark,
+                                            }}
                                             name="code"
                                             value={noteData.code}
                                             onChange={(e) => { handleChanged(e) }}
                                         />
                                     </div>
                                 )}
+
                                 {fileType === "file" && (
                                     <div>
-                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                            <ImageIcon className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                        <label className="text-sm font-medium flex items-center gap-2" style={{ color: theme.colors.darkGray }}>
+                                            <ImageIcon className="w-4 h-4" style={{ color: theme.colors.darkGray }} />
                                             Upload Document
                                         </label>
-                                        <div className="mt-1.5 flex items-center gap-4">
-                                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 transition-all text-sm text-slate-500 min-h-[250px] dark:text-slate-400">
-                                                <FileText className="w-6 h-6 mb-2" />
-                                                {!fileUpload ? <span>Click to select a file (Only PDF,DOCX, TXT, IMG) are supported</span> : <span>{fileUpload.name}</span>}
-                                                <input type="file" className="hidden"
+                                        <div className="mt-2">
+                                            <label
+                                                className="w-full h-32 border-2 border-dashed rounded-lg cursor-pointer flex flex-col items-center justify-center gap-2 text-sm transition-all"
+                                                style={{
+                                                    background: theme.colors.softGray,
+                                                    borderColor: theme.colors.lightGray,
+                                                    color: theme.colors.darkGray,
+                                                }}
+                                            >
+                                                <FileText className="w-6 h-6" style={{ color: theme.colors.lime }} />
+                                                {!fileUpload ? (
+                                                    <span>Click to select a file (Only PDF,DOCX, TXT, IMG)</span>
+                                                ) : (
+                                                    <span className="font-semibold" style={{ color: theme.colors.dark }}>
+                                                        {fileUpload.name}
+                                                    </span>
+                                                )}
+                                                <input
+                                                    type="file"
+                                                    className="hidden"
                                                     onChange={(e) => {
                                                         handleFileUpload(e);
-                                                    }} />
+                                                    }}
+                                                />
                                             </label>
                                         </div>
                                     </div>
                                 )}
-                            </div>
 
-                            <button
-                                className="w-full h-12 flex items-center justify-center gap-2 font-bold rounded-xl transition-all shadow-sm bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 active:scale-[0.99] shadow-lg shadow-slate-200 dark:shadow-none"
-                                onClick={() => {
-                                    handleSubmit();
-                                }}
-                            >
-                                {
-                                    loading ? (
-                                        <DotLoader size="10px" color={"white"} />
-                                    ) : (
-                                        <>
-                                            <Upload className="w-4 h-4" />
-                                            {fileType === "text" ? "Save Note" : "Upload Note"}
-                                        </>
-                                    )
-                                }
-                            </button>
+                                {/* Primary CTA */}
+                                <button
+                                    className="w-full h-12 flex items-center justify-center gap-2 font-bold rounded-xl transition-all active:scale-[0.99] shadow-lg"
+                                    style={{
+                                        background: theme.colors.lime,
+                                        color: theme.colors.dark,
+                                        boxShadow: "0 6px 0 rgba(17,17,19,0.14)",
+                                    }}
+                                    onClick={() => {
+                                        handleSubmit();
+                                    }}
+                                >
+                                    {
+                                        loading ? (
+                                            <DotLoader size="10px" color={"white"} />
+                                        ) : (
+                                            <>
+                                                <Upload className="w-4 h-4" />
+                                                {fileType === "text" ? "Save Note" : "Upload Note"}
+                                            </>
+                                        )
+                                    }
+                                </button>
+                            </div>
                         </div>
 
+                        {/* Close button */}
                         <button
                             onClick={() => onOpenChange(false)}
-                            className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-all"
+                            className="absolute top-4 right-4 p-1.5 rounded-full transition-all"
+                            style={{
+                                color: theme.colors.darkGray,
+                                background: theme.colors.white,
+                                border: `1px solid ${theme.colors.lightGray}`,
+                            }}
                         >
                             <X className="w-5 h-5" />
                         </button>
                     </motion.div>
                 </div >
-            )
-            }
+            )}
         </AnimatePresence >
     )
 }
+

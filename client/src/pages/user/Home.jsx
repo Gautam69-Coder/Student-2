@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo,useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
     Bell,
     CheckCircle2,
@@ -19,6 +19,7 @@ import {
     Info,
     Icon,
 } from "lucide-react";
+
 import { Card, CardTitle } from "/components/ui/card";
 
 import {
@@ -27,6 +28,7 @@ import {
     ChartTooltipContent,
     // ChartConfig
 } from "/components/ui/chart";
+
 import { Progress } from "/components/ui/progress";
 import { Separator } from "/components/ui/separator";
 import { DashboardLayout } from "@/components/layout/layout";
@@ -34,14 +36,10 @@ import { DashStatCard, DashStatCard as DashboardStatCard } from "@/components/wi
 import RippleLoader from "../../components/ui/nurui/ripple-loader";
 import { theme } from "@/lib/theme";
 import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
-import { getMe, userProfileUpdate, fetchUserProgress } from "@/Api/api";
+import { fetchUserProgress } from "@/Api/api";
 import { Link } from "react-router-dom";
-import {
-    fetchPracticals,
-    fetchNotes
-} from "@/Api/api";
 import { DotLoader } from "@/Utils/loaders";
-
+import { useData } from "@/context/DataContext"
 
 function SubjectProgressRow({ name, progress, done, total, Icon }) {
     return (
@@ -93,6 +91,14 @@ function SubjectProgressRow({ name, progress, done, total, Icon }) {
 
 export function Home() {
 
+    const {
+        user,
+        subjects,
+        practicals,
+        notes,
+        refreshNotes,
+    } = useData();
+
     const [userData, setUserData] = useState(null);
     const [userProgress, setUserProgress] = useState(null);
     const [chartData, setChartData] = useState(null);
@@ -108,6 +114,7 @@ export function Home() {
         recentNotes: [],
     });
 
+
     const [sectionData, setSectionsData] = useState({
         practicalSections: 0,
         notesSections: 0,
@@ -116,16 +123,15 @@ export function Home() {
     // Fetch user data on component mount
     const fetchUserData = useCallback(async () => {
         try {
-            const userData = await getMe();
-            setUserData(userData.data);
+           ;
             setDashboardStats(prev => ({
                 ...prev,
-                platformVisits: userData.data.visitCount
+                platformVisits: user.visitCount
             }))
         } catch (error) {
             console.error("Error fetching user data:", error);
         }
-    }, []);
+    }, [user]);
 
     //Fetch user progress data
     const fetchUserProgressData = async () => {
@@ -141,19 +147,16 @@ export function Home() {
         }
     }
 
-    const fetchPracticalsSectionsAndTotalPracticals = async () => {
-        const res = await fetchPracticals();
-        const practicals = res.data;
+    const fetchPracticalsSectionsAndTotalPracticals = useMemo( () => {
+        console.log("Practicals : ",[...new Set(practicals.map(p => p.section))].length);
         setDashboardStats(prev => ({
             ...prev,
             practicalSections: [...new Set(practicals.map(p => p.section))].length,
             totalPracticals: practicals.length,
         }));
-    }
+    },[practicals])
 
-    const fetchNotesSectionsAndTotalNotes = async () => {
-        const res = await fetchNotes();
-        const notes = res.data;
+    const fetchNotesSectionsAndTotalNotes = useMemo(() => {
         setDashboardStats(prev => ({
             ...prev,
             noteSections: [...new Set(notes.map(n => n.section))].length,
@@ -162,7 +165,7 @@ export function Home() {
             publicNotes: notes.filter(n => !n.isGlobal).length,
             recentNotes: notes.slice(0, 4),
         }));
-    }
+    }, [notes]);
 
     useEffect(() => {
         const loadDashboard = async () => {
@@ -183,7 +186,7 @@ export function Home() {
         };
 
         loadDashboard();
-    }, [fetchPracticals]);
+    }, []);
 
     const recentNotesList = [
         {
@@ -209,10 +212,10 @@ export function Home() {
     ];
 
     const quickActions = [
-        { label: "Add Note", path: "/notes/", icon: Notebook },
-        { label: "Browse Practicals", path: "/practicals", icon: FlaskConical },
-        { label: "Ask Community", path: "/community", icon: Users },
-        { label: "Start Practice", path: "/practice", icon: Code2 },
+        { label: "Add Note", path: "notes", icon: Notebook },
+        { label: "Browse Practicals", path: "practicals", icon: FlaskConical },
+        { label: "Ask Community", path: "community", icon: Users },
+        { label: "Start Practice", path: "practice", icon: Code2 },
     ];
 
     const chartiData = [

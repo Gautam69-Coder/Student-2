@@ -48,6 +48,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
         : users.filter(user => user.role === filterRole)
 
     // const searchUser = users.find(u=> u == search);
+    console.log(users.data)
     const searchUser = users.filter(i => {
         const username = i.username.toLowerCase().split(' ');
         return username.some(word => word.includes(search.toLowerCase()))

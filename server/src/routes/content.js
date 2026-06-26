@@ -1,63 +1,19 @@
 import express from 'express';
 import auth from '../middleware/auth.js';
-import Content from '../models/Content.js';
+import { getContent, createContent, updateContent, deleteContent } from '../controllers/content.controller.js';
 
 const router = express.Router();
 
 // Get all content
-router.get('/', async (req, res) => {
-    try {
-        const content = await Content.find().sort({ createdAt: -1 });
-        res.json(content);
-    } catch (err) {
-        res.status(500).send('Server Error');
-    }
-});
+router.get('/', getContent);
 
 // Create Content (Admin only)
-router.post('/', auth, async (req, res) => {
-    if (req.user.role !== 'admin') return res.status(403).json({ msg: 'Access denied' });
-
-    const { title, description, code, language, section, rating, likes, downloads } = req.body;
-    try {
-        const newContent = new Content({
-            title, description, code, language, section, rating, likes, downloads
-        });
-        const content = await newContent.save();
-        res.json(content);
-    } catch (err) {
-        res.status(500).send('Server Error');
-    }
-});
+router.post('/', auth, createContent);
 
 // Update Content
-router.put('/:id', auth, async (req, res) => {
-    if (req.user.role !== 'admin') return res.status(403).json({ msg: 'Access denied' });
-
-    try {
-        let content = await Content.findById(req.params.id);
-        if (!content) return res.status(404).json({ msg: 'Content not found' });
-
-        content = await Content.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
-        res.json(content);
-    } catch (err) {
-        res.status(500).send('Server Error');
-    }
-});
+router.put('/:id', auth, updateContent);
 
 // Delete Content
-router.delete('/:id', auth, async (req, res) => {
-    if (req.user.role !== 'admin') return res.status(403).json({ msg: 'Access denied' });
-
-    try {
-        let content = await Content.findById(req.params.id);
-        if (!content) return res.status(404).json({ msg: 'Content not found' });
-
-        await Content.findByIdAndDelete(req.params.id);
-        res.json({ msg: 'Content removed' });
-    } catch (err) {
-        res.status(500).send('Server Error');
-    }
-});
+router.delete('/:id', auth, deleteContent);
 
 export default router;

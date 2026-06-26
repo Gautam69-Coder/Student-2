@@ -62,6 +62,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
         refreshNotes,
     } = useData();
 
+
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
     const [practicalUploadOpen, setPracticalUploadOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -111,6 +112,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
         return practicals.filter(p => p.subject?._id === user.subject?._id);
     }, [user, practicals]);
 
+    
+
     const searchResults = useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [] };
 
@@ -158,9 +161,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                         }}
                     />
                 </div>
-
+                
                 <div className="w-full">
-
                     <TopNavBar
                         userName={userName}
                         userEmail={user?.email}
@@ -177,9 +179,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                     />
 
                     <main className="flex-1 w-full  ">
-
                         <div className="">
-
                             {searchQuery ? (
                                 <DashboardLayout>
                                     <div className="space-y-8  animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -367,22 +367,10 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                     <Route path="*" element={<Navigate to="" replace />} />
                                 </Routes>
                             )}
-
                         </div>
-
                     </main >
-
                 </div>
-
-
-
             </div>
-
-
-
-
-
-
 
             <UploadModal
                 open={uploadModalOpen}

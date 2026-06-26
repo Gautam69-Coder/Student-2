@@ -42,7 +42,7 @@ export const DataProvider = ({ children }) => {
         queryKey: ['subjects'],
         queryFn: async () => {
             const res = await fetchSections();
-            return res.data;
+            return res.data.data;
         },
         enabled: !!user,
     });
@@ -55,7 +55,7 @@ export const DataProvider = ({ children }) => {
         queryKey: ['practicals'],
         queryFn: async () => {
             const res = await fetchPracticals();
-            return res.data;
+            return res.data.data;
         },
         enabled: !!user,
     });
@@ -68,7 +68,7 @@ export const DataProvider = ({ children }) => {
         queryKey: ['notes'],
         queryFn: async () => {
             const res = await fetchNotes();
-            return res.data;
+            return res.data.data;
         },
         enabled: !!user,
     });

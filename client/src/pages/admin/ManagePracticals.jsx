@@ -8,6 +8,7 @@ import {
     fetchPracticals
 } from "@/Api/api"
 import { useTitle } from "@/hooks/useTitle"
+import { customMessage } from "@/Utils/customMessage"
 
 const EMPTY_QUESTION = () => ({ question: '', code: '', file: null });
 
@@ -89,17 +90,17 @@ export function ManagePracticals({ uniqueSubjectSections }) {
             if (editPracticalId) {
                 await updatePractical(editPracticalId, formData);
                 setEditPracticalId(null);
-                alert('Practical updated successfully!');
+                customMessage({ type: "success", content: "Practical updated successfully!" });
             } else {
                 await createPractical(formData);
-                alert('Practical added successfully!');
+                customMessage({ type: "success", content: "Practical added successfully!" });
             }
 
             setNewPractical({ practicalNumber: '', section: '', questions: [EMPTY_QUESTION()] });
             handleFetchPracticals();
         } catch (error) {
             console.error('Error saving practical:', error);
-            alert('Failed to save practical');
+            customMessage({ type: "error", content: "Failed to save practical" });
         } finally {
             setIsSubmitting(false);
         }
@@ -122,8 +123,10 @@ export function ManagePracticals({ uniqueSubjectSections }) {
             if (!window.confirm("Are you sure you want to delete this practical?")) return;
             await deletePractical(practicalId);
             setPracticals(prev => prev.filter(p => p._id !== practicalId));
+            customMessage({ type: "success", content: "Practical deleted successfully" });
         } catch (error) {
             console.error(error);
+            customMessage({ type: "error", content: "Failed to delete practical" });
         }
     };
 

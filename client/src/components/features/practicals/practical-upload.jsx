@@ -6,6 +6,7 @@ import { getLenis } from "@/hooks/useLenis";
 import { useData } from "@/context/DataContext";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
 import { theme } from "@/lib/theme";
+import { customMessage } from "@/Utils/customMessage";
 
 const EMPTY_QUESTION = () => ({ question: "", code: "", file: null });
 
@@ -165,10 +166,16 @@ const PracticalUpload = ({ open, onOpenChange, uniqueSubjects }) => {
             await refreshPracticals();
             resetForm();
             onOpenChange(false);
-            alert(editPracticalId ? "Practical updated successfully!" : "Practical added successfully!");
+            customMessage({
+                type: "success",
+                content: editPracticalId ? "Practical updated successfully!" : "Practical added successfully!"
+            });
         } catch (error) {
             console.error("Error adding practical:", error);
-            alert("Failed to add practical. Please try again.");
+            customMessage({
+                type: "error",
+                content: "Failed to add practical. Please try again."
+            });
         } finally {
             setIsSubmitting(false);
         }

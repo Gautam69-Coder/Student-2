@@ -116,7 +116,7 @@ export function Profile({ onLogout }) {
             }
         } catch (error) {
             console.error(error)
-            customMessage("Failed to update profile", "error")
+            customMessage({ content: "Failed to update profile", type: "error" })
         }
     }
 

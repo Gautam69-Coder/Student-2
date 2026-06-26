@@ -38,7 +38,6 @@ export function TopNavBar({
             const res = await saveApiKey({ apiKeyInput });
             localStorage.setItem("isApiKey","false")
             if (res.data.message) {
-                setIsApiButton(false);
                 return customMessage({
                     type: "success",
                     content: `${res.data.message} !`

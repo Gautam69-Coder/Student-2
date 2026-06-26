@@ -7,11 +7,11 @@ import { createNoteText } from "@/Api/api"
 import { customMessage } from "@/Utils/customMessage"
 import { DotLoader } from "@/Utils/loaders.jsx"
 import { theme } from "@/lib/theme"
-import {useData} from "@/Context/DataContext"
+import { useData } from "@/context/DataContext"
 
 export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 
-    const {notes} = useData();
+    const { notes } = useData();
 
     const [fileType, setFileType] = useState("text");
     const [newSection, setNewSection] = useState(true);
@@ -30,7 +30,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 
     const loadSections = async () => {
         try {
-            
+
             const sections = notes.map(item => item.section);
             setallSections([...new Set(sections)]);
         } catch (err) {

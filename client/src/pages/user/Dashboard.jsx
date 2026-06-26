@@ -112,7 +112,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
         return practicals.filter(p => p.subject?._id === user.subject?._id);
     }, [user, practicals]);
 
-    
+
 
     const searchResults = useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [] };
@@ -161,7 +161,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                         }}
                     />
                 </div>
-                
+
                 <div className="w-full">
                     <TopNavBar
                         userName={userName}

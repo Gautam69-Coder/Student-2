@@ -25,7 +25,7 @@ import { DashboardLayout } from "@/components/layout/layout";
 import { Card, CardTitle } from "../../../components/ui/card";
 import { Progress } from "../../../components/ui/progress";
 import { theme } from "@/lib/theme";
-import { useData } from "@/Context/DataContext"
+import { useData } from "@/context/DataContext"
 
 
 export function Profile({ onLogout }) {

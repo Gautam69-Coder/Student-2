@@ -43,7 +43,7 @@ export function Community({ requireAuth }) {
             setError("");
             try {
                 const res = await fetchCommunityPosts(1, 30);
-                setPosts(res.data.posts || []);
+                setPosts(res.data.data.posts || []);
             } catch (err) {
                 setError("Unable to load community right now. Please try again.");
             } finally {
@@ -69,7 +69,7 @@ export function Community({ requireAuth }) {
                     content: content.trim(),
                     username: currentUsername,
                 });
-                setPosts((prev) => [res.data, ...prev]);
+                setPosts((prev) => [res.data.data, ...prev]);
                 setContent("");
                 setTitle("");
             } catch (err) {

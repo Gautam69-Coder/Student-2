@@ -35,17 +35,17 @@ export function TopNavBar({
         setSavingApiKey(true);
         setApiKeyError("");
         try {
-            console.log(apiKeyInput);
-            res = await saveApiKey({ apiKeyInput });
-            setShowAddKeyModal(false);
+            const res = await saveApiKey({ apiKeyInput });
+            localStorage.setItem("isApiKey","false")
             if (res.data.message) {
+                setIsApiButton(false);
                 return customMessage({
                     type: "success",
                     content: `${res.data.message} !`
                 });
             }
         } catch (e) {
-            // setApiKeyError(e?.response?.data?.error || e?.message || "Failed to save API key");
+            setApiKeyError(e?.response?.data?.error || e?.message || "Failed to save API key");
             console.log(e);
         } finally {
             setSavingApiKey(false);
@@ -142,6 +142,7 @@ export function TopNavBar({
                     <input
                         type="text"
                         placeholder="Search..."
+                        name="search"
                         value={searchQuery || ""}
                         onChange={(e) => setSearchQuery?.(e.target.value)}
                         className="w-full h-9 pl-10 pr-4 bg-slate-100 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
@@ -234,7 +235,7 @@ export function TopNavBar({
                                                 value={apiKeyInput}
                                                 onChange={(e) => setApiKeyInput(e.target.value)}
                                                 placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
-                                                className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm transition-all shadow-sm font-mono"
+                                                className="block w-full pl-10 pr-3 py-3 border text-black border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm transition-all shadow-sm font-mono"
                                             />
                                         </div>
                                         <button
@@ -256,22 +257,25 @@ export function TopNavBar({
                     )}
 
                     {/* Enhanced Add Key Button */}
-                    <button
-                        onClick={() => setShowAddKeyModal(true)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden group"
-                        style={{
-                            background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
-                            color: "white",
-                            fontSize: 13,
-                            fontWeight: 600,
-                            border: "1px solid rgba(255,255,255,0.1)",
-                            boxShadow: "0 4px 14px 0 rgba(15, 23, 42, 0.4)"
-                        }}
-                    >
-                        {/* <div className=" w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" /> */}
-                        <Key size={15} className="text-emerald-400" />
-                        <span className="tracking-wide">Add AI Key</span>
-                    </button>
+                    {!localStorage.getItem("isApiKey") && (
+                        <button
+                            onClick={() => setShowAddKeyModal(true)}
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden group"
+                            style={{
+                                background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+                                color: "white",
+                                fontSize: 13,
+                                fontWeight: 600,
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                boxShadow: "0 4px 14px 0 rgba(15, 23, 42, 0.4)"
+                            }}
+                        >
+                            {/* <div className=" w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" /> */}
+                            <Key size={15} className="text-emerald-400" />
+                            <span className="tracking-wide">Add AI Key</span>
+                        </button>
+
+                    )}
 
                     <div>
                         <button

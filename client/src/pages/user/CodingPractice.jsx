@@ -26,7 +26,7 @@ const CodingPractice = () => {
                 const res = await fetchCodingPractices();
                 if (!isMounted) return;
 
-                setCards(Array.isArray(res?.data) ? res.data : []);
+                setCards(Array.isArray(res?.data.data) ? res.data.data : []);
             } catch (e) {
                 if (!isMounted) return;
                 setError(e);
@@ -52,26 +52,7 @@ const CodingPractice = () => {
 
     return (
         <DashboardLayout
-            // sidebar={
-            //     <DashboardSidebar
-            //         navItems={navItems}
-            //         userName="Student Name"
-            //         userEmail="student@email.com"
-            //         searchQuery={searchQuery}
-            //         setSearchQuery={setSearchQuery}
-            //         isBell={isBell}
-            //         setisBell={setIsBell}
-            //     />
-            // }
-            // topNavProps={{
-            //     userName: "Lucas Bennett",
-            //     userEmail: "bennett02@gmail.com",
-            //     userAvatar: "https://i.pravatar.cc/150?img=33",
-            //     searchQuery: searchQuery,
-            //     setSearchQuery: setSearchQuery,
-            //     isBell: isBell,
-            //     setisBell: setIsBell,
-            // }}
+           
         >
             <div className="space-y-6">
                 {/* Header Section */}

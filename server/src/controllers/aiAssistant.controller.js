@@ -19,6 +19,7 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
         user.iv
     );
 
+
     const groq = new Groq({ apiKey: apiKey });
 
     const memory = await AICodeHelperMemory.findOneAndUpdate(

@@ -16,7 +16,7 @@ import {
     Eye,
     EyeOff,
     Save,
-    ArrowRight 
+    ArrowRight
 } from "lucide-react";
 import { getMe, userProfileUpdate } from "@/Api/api";
 import { useTitle } from "@/hooks/useTitle";
@@ -25,12 +25,14 @@ import { DashboardLayout } from "@/components/layout/layout";
 import { Card, CardTitle } from "../../../components/ui/card";
 import { Progress } from "../../../components/ui/progress";
 import { theme } from "@/lib/theme";
+import { useData } from "@/Context/DataContext"
 
 
 export function Profile({ onLogout }) {
+
+    const { user } = useData();
+
     useTitle("Profile");
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [flipped, setFlipped] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [userDetail, setUserDetail] = useState({
@@ -41,20 +43,6 @@ export function Profile({ onLogout }) {
     })
     const [userUpdate, setUserUpdate] = useState([])
 
-    //Fetch userData
-    const fetchUserData = () => {
-        getMe().then(res => {
-            setUser(res.data);
-            setLoading(false);
-        }).catch(err => {
-            console.error(err);
-            setLoading(false);
-        });
-    }
-
-    useEffect(() => {
-        fetchUserData();
-    }, []);
 
     useEffect(() => {
         setUserDetail({
@@ -65,13 +53,6 @@ export function Profile({ onLogout }) {
         });
     }, [user, flipped]);
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-[60vh]">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
-            </div>
-        );
-    }
 
     if (!user) {
         return <div className="text-center py-12 text-slate-500">Failed to load profile details.</div>;
@@ -108,8 +89,8 @@ export function Profile({ onLogout }) {
             )
 
             const updatedData = await userProfileUpdate(newObj);
-            if (updatedData.data.type === "success") {
-                customMessage({ content: updatedData.data.msg, type: updatedData.data.type });
+            if (updatedData.data.data.type === "success") {
+                customMessage({ content: updatedData.data.message, type: updatedData.data.data.type });
                 setTimeout(() => {
                     setFlipped(false);
                 }, 1000)

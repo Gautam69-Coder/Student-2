@@ -166,7 +166,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
 
         try {
             const res = await aiCodeHelper(context);
-            if (res.data.message) {
+            if (!res.data.message) {
                 return customMessage({
                     type: "error",
                     content: `${res.data.message} !`
@@ -175,7 +175,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
             setTimeout(() => {
                 const botMessage = {
                     id: messages.length + 2,
-                    text: res.data || "Sorry, I couldn't understand that. Could you please rephrase?",
+                    text: res.data.data || "Sorry, I couldn't understand that. Could you please rephrase?",
                     sender: "bot",
                 };
                 setMessages((prev) => [...prev, botMessage]);

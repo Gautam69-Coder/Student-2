@@ -117,15 +117,15 @@ export function AIAssistant() {
 
         try {
             const res = await aiAssistant(message);
-            if (res.data.message) {
+            console.log(res.data.data)
+            if (!res.data.message) {
                 setMessages((prev) => [...prev, { role: "assistant", content: res.data.message }]);
                 return customMessage({
                     type: "error",
                     content: `${res.data.message} !`
                 });
             }
-            setMessages((prev) => [...prev, { role: "assistant", content: res.data }]);
-
+            setMessages((prev) => [...prev, { role: "assistant", content: res.data.data }]);
 
         } catch (error) {
             console.error(error);

@@ -87,7 +87,7 @@ export default function CodeEditor() {
             setFetching(true);
             try {
                 const res = await fetchCodingPractices();
-                const list = Array.isArray(res?.data) ? res.data : [];
+                const list = Array.isArray(res?.data.data) ? res.data.data : [];
                 const currentLanguage = String(language || "").toLowerCase();
 
                 const filterLanguage = list.find(
@@ -150,13 +150,13 @@ export default function CodeEditor() {
 
         // Check user submited code 
         const check = await codeChecker({ question, code, output });
-        if (check.data.message) {
+        if (!check.data.message) {
             return customMessage({
                 type: "error",
                 content: `${check.data.message} !`
             });
         }
-        if (check.data === "true") {
+        if (check.data.data === "true") {
             setSubmitLaoding(true);
             try {
                 const day = new Date().toLocaleString('en-US', { weekday: 'long' });

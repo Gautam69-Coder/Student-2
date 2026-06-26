@@ -168,7 +168,7 @@ export default function PracticeDeatils() {
         setLoading(true);
         try {
             const res = await fetchCodingPractices();
-            const list = res.data;
+            const list = res.data.data;
             const currentLanguage = String(language || "").toLowerCase();
 
             const filtered = list.find(

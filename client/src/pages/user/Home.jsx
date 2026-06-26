@@ -148,7 +148,6 @@ export function Home() {
     }
 
     const fetchPracticalsSectionsAndTotalPracticals = useMemo( () => {
-        console.log("Practicals : ",[...new Set(practicals.map(p => p.section))].length);
         setDashboardStats(prev => ({
             ...prev,
             practicalSections: [...new Set(practicals.map(p => p.section))].length,

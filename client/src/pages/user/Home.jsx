@@ -123,10 +123,9 @@ export function Home() {
     // Fetch user data on component mount
     const fetchUserData = useCallback(async () => {
         try {
-           ;
             setDashboardStats(prev => ({
                 ...prev,
-                platformVisits: user.visitCount
+                platformVisits: user?.visitCount
             }))
         } catch (error) {
             console.error("Error fetching user data:", error);

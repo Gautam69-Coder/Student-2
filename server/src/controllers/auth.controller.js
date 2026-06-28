@@ -130,7 +130,7 @@ export const googleLogin = asyncHandler(async (req, res) => {
 
     console.log("New User : ", newUser);
 
-    res.status(200).json(new ApiResponse(200, { newUser }, "Login successful"));
+    res.status(200).json(new ApiResponse(200, { user: newUser }, "Login successful"));
 });
 
 export const adminAccess = asyncHandler(async (req, res) => {

@@ -145,24 +145,18 @@ export default function LandingPage() {
                     >
                         Home
                     </Link>
-                    <Link
-                        to="/studio"
-                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
-                    >
-                        Studio
-                    </Link>
                     <a
                         href="#about"
                         className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
                     >
                         About
                     </a>
-                    <Link
-                        to="/journal"
+                    <a
+                        href="#features"
                         className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
                     >
-                        Journal
-                    </Link>
+                        Features
+                    </a>
                     <a
                         href="#reach-us"
                         className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
@@ -183,24 +177,27 @@ export default function LandingPage() {
             {/* Hero Section */}
             <section
                 className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-32 pb-28 py-[90px]"
+                id="about"
             >
+                
+                
                 <h1
                     className="text-5xl sm:text-7xl md:text-8xl leading-[0.95] tracking-[-2.46px] max-w-7xl font-normal"
                     style={{ fontFamily: "'Instrument Serif', serif", color: 'hsl(var(--foreground))' }}
                 >
-                    Where dreams rise through the silence.
+                    Conquer your studies with clarity.
                 </h1>
 
                 <p
                     className="text-muted-foreground text-base sm:text-lg max-w-2xl mt-8 leading-relaxed"
                     style={{ color: 'hsl(var(--muted-foreground))' }}
                 >
-                    Student Notes Management System — organize your notes, manage practicals, and study with focused clarity.
+                    Tired of scattered notes, missing PYQs, and no guidance when stuck? Student Hub brings all your study materials, AI assistance, and peers together into one powerful, distraction-free platform.
                 </p>
 
                 <Link
                     to="/signup"
-                    className="liquid-glass rounded-full px-14 py-5 text-base text-foreground mt-12 hover:scale-[1.03] cursor-pointer"
+                    className="liquid-glass rounded-full px-14 py-5 text-base text-foreground mt-12 hover:scale-[1.03] cursor-pointer shadow-[0_0_40px_rgba(99,102,241,0.4)]"
                     style={{ color: 'hsl(var(--foreground))' }}
                 >
                     Begin Journey
@@ -209,7 +206,7 @@ export default function LandingPage() {
 
             {/* Content Sections */}
             <main className="relative z-10 pb-10">
-                <section className="px-6 pt-10" aria-label="Notes and resources">
+                <section id="features" className="px-6 pt-10" aria-label="Notes and resources">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <h2 className="text-4xl md:text-5xl font-black text-slate-100 dark:text-white mb-6">
@@ -323,24 +320,18 @@ export default function LandingPage() {
                         >
                             Home
                         </a>
-                        <Link
-                            className="hover:text-[hsl(var(--foreground))] transition-colors"
-                            to="/studio"
-                        >
-                            Studio
-                        </Link>
                         <a
                             className="hover:text-[hsl(var(--foreground))] transition-colors"
                             href="#about"
                         >
                             About
                         </a>
-                        <Link
+                        <a
                             className="hover:text-[hsl(var(--foreground))] transition-colors"
-                            to="/journal"
+                            href="#features"
                         >
-                            Journal
-                        </Link>
+                            Features
+                        </a>
                         <a
                             className="hover:text-[hsl(var(--foreground))] transition-colors"
                             href="#reach-us"

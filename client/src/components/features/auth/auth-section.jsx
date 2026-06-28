@@ -58,11 +58,11 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                     }
                     localStorage.setItem('isAuthenticated', 'true');
 
-                    if (res.data.user) {
-                        onAuth(res.data.user.role, res.data.user.username);
+                    if (res.data.data?.user) {
+                        onAuth(res.data.data.user.role, res.data.data.user.username);
                         customMessage({
                             type: "success",
-                            content: `${res.data.message}, ${res.data.user.username}!`
+                            content: `${res.data.message}, ${res.data.data.user.username}!`
                         });
                     }
                 }
@@ -93,17 +93,17 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
             }
 
             const res = authState === "login" ? await loginUser(loginData) : await registerUser(userData)
-            if (res.data.token) {
-                localStorage.setItem('token', res.data.token);
+            if (res.data.data?.token) {
+                localStorage.setItem('token', res.data.data.token);
             }
             localStorage.setItem('isAuthenticated', 'true');
 
-            if (res.data.user) {
-                onAuth(res.data.user.role, res.data.user.username);
+            if (res.data.data?.user) {
+                onAuth(res.data.data.user.role, res.data.data.user.username);
                 customMessage(
                     {
                         type: "success",
-                        content: `${authState === "login" ? "Login" : "Sign Up"} successful! ${authState === "login" ? "Welcome back" : "Welcome"}, ${res.data.user.username}!`
+                        content: `${authState === "login" ? "Login" : "Sign Up"} successful! ${authState === "login" ? "Welcome back" : "Welcome"}, ${res.data.data.user.username}!`
                     }
                 );
             }
@@ -135,12 +135,12 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
             }
             localStorage.setItem('isAuthenticated', 'true');
 
-            if (res.data.user) {
-                onAuth(res.data.user.role, res.data.user.username);
+            if (res.data.data?.user) {
+                onAuth(res.data.data.user.role, res.data.data.user.username);
                 customMessage(
                     {
                         type: "success",
-                        content: `${res.data.message}, ${res.data.user.username}!`
+                        content: `${res.data.message}, ${res.data.data.user.username}!`
                     }
                 );
             }

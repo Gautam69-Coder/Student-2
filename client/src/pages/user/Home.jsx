@@ -132,6 +132,7 @@ export function Home() {
         }
     }, [user]);
 
+
     //Fetch user progress data
     const fetchUserProgressData = async () => {
         try {
@@ -146,13 +147,13 @@ export function Home() {
         }
     }
 
-    const fetchPracticalsSectionsAndTotalPracticals = useMemo( () => {
+    const fetchPracticalsSectionsAndTotalPracticals = useMemo(() => {
         setDashboardStats(prev => ({
             ...prev,
             practicalSections: [...new Set(practicals.map(p => p.section))].length,
             totalPracticals: practicals.length,
         }));
-    },[practicals])
+    }, [practicals])
 
     const fetchNotesSectionsAndTotalNotes = useMemo(() => {
         setDashboardStats(prev => ({

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Bell, ChevronDown, Search, Shield, Key } from "lucide-react";
 import { theme } from "@/lib/theme";
 import { useNavigate } from "react-router-dom";
 import { saveApiKey } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
+import { useData } from "@/context/DataContext"
 
 export function TopNavBar({
     userName,
@@ -16,28 +17,40 @@ export function TopNavBar({
     Notification,
     onLogout
 }) {
+
+    const { user } = useData();
     const [showProfile, setShowProfile] = useState(false);
     const [showAddKeyModal, setShowAddKeyModal] = useState(false);
     const [apiKeyInput, setApiKeyInput] = useState("");
     const [savingApiKey, setSavingApiKey] = useState(false);
     const [apiKeyError, setApiKeyError] = useState("");
+    const [isApiKey, setIsApiKey] = useState(true);
 
     const navigate = useNavigate();
 
+    const checkApikey = () => {
+        if (user?.apiKey) {
+            setIsApiKey(false);
+        }
+    }
+
     useEffect(() => {
+
         if (!showAddKeyModal) {
             setApiKeyInput("");
             setApiKeyError("");
             setSavingApiKey(false);
         }
+        checkApikey();
     }, [showAddKeyModal]);
+
+
     const handleSaveApiKey = async () => {
         setSavingApiKey(true);
         setApiKeyError("");
         try {
             const res = await saveApiKey({ apiKeyInput });
             if (res.data.message) {
-                localStorage.setItem("isApiKey","false")
                 return customMessage({
                     type: "success",
                     content: `${res.data.message} !`
@@ -256,7 +269,7 @@ export function TopNavBar({
                     )}
 
                     {/* Enhanced Add Key Button */}
-                    {!localStorage.getItem("isApiKey") && (
+                    {isApiKey && (
                         <button
                             onClick={() => setShowAddKeyModal(true)}
                             className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden group"

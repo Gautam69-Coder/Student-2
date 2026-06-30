@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { setUser as setReduxUser, logout as reduxLogout } from '@/store/slices/authSlice';
-import { fetchSections, fetchPracticals, fetchNotes } from '@/Api/api';
+import { fetchSections, fetchPracticals, fetchNotes,fetchUsers } from '@/Api/api';
 import { userDetail } from '@/lib/user';
 
 const DataContext = createContext();
@@ -73,6 +73,20 @@ export const DataProvider = ({ children }) => {
         enabled: !!user,
     });
 
+    // Use ReactQuery fro ALL Users
+    const { 
+        data: allusersData, 
+        isLoading: alluersloading
+    } = useQuery({
+        queryKey: ['allusers'],
+        queryFn: async () => {
+            const res = await fetchUsers();
+            return res.data.data;
+        },
+        enabled: !!user,
+    });
+
+
     const logout = () => {
         setUser(null);
         dispatch(reduxLogout());
@@ -85,6 +99,7 @@ export const DataProvider = ({ children }) => {
         subjects: subjectsData || [],
         practicals: practicalsData || [],
         notes: notesData || [],
+        allusers:allusersData || [],
         loading: {
             user: userLoading,
             subjects: subjectsLoading,

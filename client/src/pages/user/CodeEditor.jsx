@@ -117,23 +117,32 @@ export default function CodeEditor() {
     const examples = useMemo(() => data?.examples || [], [data]);
     const completion = 0;
 
+    const getLanguageId = async (languageName) => {
+        const { data } = await axios.get("https://ce.judge0.com/languages");
+
+        const language = data.find((lang) =>
+            lang.name.toLowerCase().includes(languageName.toLowerCase())
+        );
+
+        return language ? language.id : null;
+    };
+
     const runCode = async () => {
         try {
             setLoading(true);
             setOutput("Running...");
 
+            const languageId = await getLanguageId(language);
             const response = await axios.post(
                 "https://ce.judge0.com/submissions?base64_encoded=false&wait=true",
                 {
                     source_code: code,
-                    language_id: 63,
+                    language_id: languageId,
                     stdin: "",
                 }
             );
 
             setOutput(response.data.stdout || response.data.stderr || "No output");
-
-            // console.log(response.data)
         } catch (error) {
             setOutput("Error running code");
             console.error(error);

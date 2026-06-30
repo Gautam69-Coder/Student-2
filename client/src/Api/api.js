@@ -116,6 +116,12 @@ export const getTrackerData = () => api.get('/trackingData')
 export const fetchCodingPractices = () => api.get('/coding-practices');
 export const updateProblemStatus = (data) => api.put('/coding-practices/update-problem-status', { data });
 export const fetchUserProgress = () => api.get('/coding-practices/user-progress')
+export const addCodingPracticeTrack = (data) => api.post('/coding-practices/track', data);
+export const updateCodingPracticeTrack = (id, data) => api.put(`/coding-practices/track/${id}`, data);
+export const deleteCodingPracticeTrack = (id) => api.delete(`/coding-practices/track/${id}`);
+export const addCodingPracticeProblem = (data) => api.post('/coding-practices/problem', data);
+export const updateCodingPracticeProblem = (trackId, problemId, data) => api.put(`/coding-practices/track/${trackId}/problem/${problemId}`, data);
+export const deleteCodingPracticeProblem = (trackId, problemId) => api.delete(`/coding-practices/track/${trackId}/problem/${problemId}`);
 
 // Dashboard stats
 export const fetchDashboardStats = () => api.get('/stats/dashboard')

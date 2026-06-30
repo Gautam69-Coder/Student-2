@@ -35,7 +35,7 @@ import { DashboardLayout } from "@/components/layout/layout";
 import { DashStatCard, DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
 import RippleLoader from "../../components/ui/nurui/ripple-loader";
 import { theme } from "@/lib/theme";
-import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, CartesianGrid, YAxis } from "recharts";
 import { fetchUserProgress } from "@/Api/api";
 import { Link } from "react-router-dom";
 import { DotLoader } from "@/Utils/loaders";
@@ -474,6 +474,11 @@ export function Home() {
                                             tickMargin={10}
                                             axisLine={false}
                                             tickFormatter={(value) => value.slice(0, 3)}
+                                        />
+
+                                        <YAxis
+                                            domain={[0, 4]}
+                                            allowDecimals={false}
                                         />
 
                                         <ChartTooltip

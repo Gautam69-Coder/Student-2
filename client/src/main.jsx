@@ -7,6 +7,8 @@ import { store } from './store';
 import App from './App.jsx';
 import './index.css';
 
+const strictMode = import.meta.env.VITE_STRICT_MODE === 'true';
+
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -19,7 +21,18 @@ const queryClient = new QueryClient({
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <StrictMode>
+
+    strictMode ? (
+        <StrictMode>
+            <HelmetProvider>
+                <Provider store={store}>
+                    <QueryClientProvider client={queryClient}>
+                        <App />
+                    </QueryClientProvider>
+                </Provider>
+            </HelmetProvider>
+        </StrictMode>
+    ) : (
         <HelmetProvider>
             <Provider store={store}>
                 <QueryClientProvider client={queryClient}>
@@ -27,5 +40,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 </QueryClientProvider>
             </Provider>
         </HelmetProvider>
-    </StrictMode>
+    )
 );

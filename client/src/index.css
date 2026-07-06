@@ -662,6 +662,16 @@ h6 {
   @apply outline-none ring-2 ring-cyan-500/50 ring-offset-2 ring-offset-background;
 }
 
+/* Hide scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
 .analysis-output table {
   border-collapse: collapse;
   width: 100%;

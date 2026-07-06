@@ -96,15 +96,15 @@ export function DashboardHeader({ title, subtitle, timeRange = true, onSearch })
     );
 }
 
-import { TopNavBar } from "./top-navbar";
 
 export function DashboardLayout({
     children,
     sidebar,
     topNavProps,
+    css,
 }) {
     return (
-        <div className="flex min-h-screen w-full sm:mb-0 mb-10" style={{ background: "#F4F4F5" }}>
+        <div className={`flex   w-full sm:mb-0 mb-10 `} style={{ background: "#F4F4F5" ,height: css||"100vh"}}>
             {/* Fixed Sidebar */}
             {sidebar}
 
@@ -113,7 +113,7 @@ export function DashboardLayout({
                 {/* Top Navbar - Sticky at top */}
                 
                 {/* Content */}
-                <div className="sm:p-6 p-4 flex-1">
+                <div className="sm:p-6 p-4  flex-1 ">
                     <div className="space-y-4">{children}</div>
                 </div>
             </div>

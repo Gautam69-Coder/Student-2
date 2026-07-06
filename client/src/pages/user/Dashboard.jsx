@@ -13,6 +13,7 @@ import { useData } from "@/context/DataContext";
 
 import { Home } from "./Home";
 import { Notes } from "./Notes";
+import { Chatbot } from "./Chatbot";
 import { Practicals } from "./Practicals";
 import { Feedback } from "./Feedback";
 import { Profile } from "./Profile";
@@ -22,6 +23,7 @@ import { PracticalCard } from "@/components/features/practicals/practical-card";
 import { CodingPractice } from "./CodingPractice";
 import CodeEditor from "./CodeEditor";
 import PracticeDeatils from "./PracticeDeatils";
+import Test from "../../utils/Test";
 
 import { StudentNavbar } from "@/components/layout/student-navbar";
 import { TopNavBar } from "../../components/layout/top-navbar";
@@ -44,6 +46,7 @@ import {
     Info,
     BarChart3,
     Code2,
+    Sparkles,
 } from "lucide-react";
 
 // NOTE: sidebar nav items expect icon COMPONENTS (functions/classes), not JSX literals like <Home />
@@ -130,6 +133,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
         { label: "Notes", path: "/dashboard/notes", icon: FileText },
         { label: "Practicals", path: "/dashboard/practicals", icon: FlaskConical },
         { label: "Practice", path: "/dashboard/coding-practice", icon: Code2 },
+        { label: "AI Chatbot", path: "/dashboard/chatbot", icon: Sparkles },
         { label: "Community", path: "/dashboard/community", icon: Users },
         { label: "Feedback", path: "/dashboard/feedback", icon: MessageSquare },
         { label: "About", path: "/dashboard/about-contact", icon: Info },
@@ -178,7 +182,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                         requireAuth={handleAuthRequired}
                     />
 
-                    <main className="flex-1 w-full  ">
+                    {/* SideBar */}
+                    <main className="flex-1 w-full sm:mt-20 mt-17 ">
                         <div className="">
                             {searchQuery ? (
                                 <DashboardLayout>
@@ -340,6 +345,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                             />
                                         }
                                     />
+                                    <Route path="test" element={<Test />} />
                                     <Route path="notes" element={
                                         <Notes
                                             notes={displayedNotes}
@@ -350,6 +356,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                         />
                                     } />
                                     <Route path="practicals" element={<Practicals practicals={displayedPracticals} setPracticalUploadOpen={() => handleAuthRequired(() => setPracticalUploadOpen(true))} subjects={subjects} requireAuth={handleAuthRequired} />} />
+                                    <Route path="chatbot" element={<Chatbot />} />
                                     <Route path="feedback" element={<Feedback user={user} requireAuth={handleAuthRequired} />} />
                                     <Route path="community" element={<Community requireAuth={handleAuthRequired} />} />
                                     <Route path="coding-practice" element={<CodingPractice user={user} />} />

@@ -81,28 +81,7 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                 description="Comprehensive and   practical solutions for Mumbai students. Access verified code and implementation guides."
                 url="/dashboard/practicals"
             />
-            <DashboardLayout
-            // sidebar={
-            //     <DashboardSidebar
-            //         navItems={navItems}
-            //         userName="Student Name"
-            //         userEmail="student@email.com"
-            //         searchQuery={searchQuery}
-            //         setSearchQuery={setSearchQuery}
-            //         isBell={isBell}
-            //         setisBell={setIsBell}
-            //     />
-            // }
-            // topNavProps={{
-            //     userName: "Lucas Bennett",
-            //     userEmail: "bennett02@gmail.com",
-            //     userAvatar: "https://i.pravatar.cc/150?img=33",
-            //     searchQuery: searchQuery,
-            //     setSearchQuery: setSearchQuery,
-            //     isBell: isBell,
-            //     setisBell: setIsBell,
-            // }}
-            >
+            <DashboardLayout>
                 <div className="space-y-6">
                     {/* Home-like Header Card */}
                     <div
@@ -179,7 +158,7 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                         <span className="text-sm font-semibold" style={{ color: theme.colors.darkGray }}>SUBJECT</span>
                                         <div className="h-[1px] flex-1" style={{ background: theme.colors.lightGray }} />
                                     </div>
-                                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide w-full">
                                         {subjects.map((subject, index) => {
                                             const subjectName = subject.name || subject;
                                             const isActive = selectedSubject === subjectName;
@@ -209,14 +188,16 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                         <span className="text-sm font-semibold" style={{ color: theme.colors.darkGray }}>PRACTICAL NO</span>
                                         <div className="h-[1px] flex-1" style={{ background: theme.colors.lightGray }} />
                                     </div>
-                                    <div className="flex gap-2 overflow-x-auto">
+                                    <div className="flex gap-2 overflow-x-auto ">
                                         {uniquePracticalNumbers.map((num, index) => {
                                             const isActive = selectedPracticalNo === num;
                                             return (
                                                 <button
                                                     key={index}
-                                                    onClick={() => setSelectedPracticalNo(num)}
-                                                    className="w-9 h-9 rounded-xl text-sm font-black transition-all flex items-center justify-center"
+                                                    onClick={() => {
+                                                        setSelectedPracticalNo(num)
+                                                    }}
+                                                    className="px-4 py-2 rounded-full  text-nowrap  text-sm font-black transition-all flex items-center justify-center"
                                                     style={{
                                                         background: isActive ? theme.colors.lime : theme.colors.white,
                                                         color: isActive ? theme.colors.dark : theme.colors.darkGray,

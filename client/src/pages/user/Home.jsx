@@ -18,6 +18,7 @@ import {
     FlaskConical,
     Info,
     Icon,
+    Sparkles,
 } from "lucide-react";
 
 import { Card, CardTitle } from "/components/ui/card";
@@ -213,6 +214,7 @@ export function Home() {
     const quickActions = [
         { label: "Add Note", path: "notes", icon: Notebook },
         { label: "Browse Practicals", path: "practicals", icon: FlaskConical },
+        { label: "AI Chatbot", path: "chatbot", icon: Sparkles },
         { label: "Ask Community", path: "community", icon: Users },
         { label: "Start Practice", path: "practice", icon: Code2 },
     ];
@@ -297,7 +299,7 @@ export function Home() {
                         trend={stats.visits.trend}
                     />
                 </div>
-                <div className="my-6 space-y-2  p-4 rounded-2xl shadow-md bg-white" >
+                <div className=" space-y-2  p-4 rounded-2xl shadow-md bg-white" >
                     <div
                         className="h-12 p-2 w-60 rounded-xl border transition-all flex items-center justify-between font-bold text-sm hover:border-lime-400"
                         style={{

@@ -23,10 +23,10 @@ import { PracticalCard } from "@/components/features/practicals/practical-card";
 import { CodingPractice } from "./CodingPractice";
 import CodeEditor from "./CodeEditor";
 import PracticeDeatils from "./PracticeDeatils";
-import Test from "../../utils/Test";
+import Test from "@/utils/Test";
 
 import { StudentNavbar } from "@/components/layout/student-navbar";
-import { TopNavBar } from "../../components/layout/top-navbar";
+import { TopNavBar } from "@/components/layout/top-navbar";
 import { DashboardSidebar } from "@/components/layout/sidebar";
 import { DashStatCard, DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
 import { DashboardLayout } from "@/components/layout/layout";

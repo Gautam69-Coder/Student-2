@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { sendTrackerHome } from "../../Api/api"
+import { sendTrackerHome } from "@/Api/api"
 import {
     Home,
     FileText,
@@ -24,7 +24,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom"
 import { Logo } from "../common/logo/logo";
 import { ThemeToggle } from "../common/theme-toggle"
 import Notification from "../common/notification"
-import { getMe } from "../../Api/api"
+import { getMe } from "@/Api/api"
 
 const navItems = [
     { id: "home", label: "Home", icon: Home, path: "/dashboard" },
@@ -41,8 +41,8 @@ const moreItems = [
 ]
 
 const mobileMenuVariants = {
-    hidden: { 
-        opacity: 0, 
+    hidden: {
+        opacity: 0,
         height: 0,
         y: -15,
         transition: {
@@ -53,8 +53,8 @@ const mobileMenuVariants = {
             staggerDirection: -1
         }
     },
-    visible: { 
-        opacity: 1, 
+    visible: {
+        opacity: 1,
         height: "auto",
         y: 0,
         transition: {
@@ -69,9 +69,9 @@ const mobileMenuVariants = {
 
 const mobileItemVariants = {
     hidden: { opacity: 0, x: -10, y: -5 },
-    visible: { 
-        opacity: 1, 
-        x: 0, 
+    visible: {
+        opacity: 1,
+        x: 0,
         y: 0,
         transition: { type: "spring", stiffness: 300, damping: 25 }
     }
@@ -169,11 +169,10 @@ export function StudentNavbar({
                                 <Link
                                     key={item.id}
                                     to={item.path}
-                                    className={`relative px-4 py-2 rounded-[10px] text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                                        active
-                                            ? "text-white dark:text-slate-900 shadow-md"
-                                            : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
-                                    }`}
+                                    className={`relative px-4 py-2 rounded-[10px] text-sm font-medium transition-all duration-200 flex items-center gap-2 ${active
+                                        ? "text-white dark:text-slate-900 shadow-md"
+                                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
+                                        }`}
                                     onClick={() => {
                                         setTrack(item.path)
                                     }}
@@ -314,7 +313,7 @@ export function StudentNavbar({
                                     <Notification />
                                 </div>
                             )}
-                            
+
                         </div>
 
                         {/* Profile Link for Desktop */}

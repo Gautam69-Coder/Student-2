@@ -22,8 +22,8 @@ import { getMe, userProfileUpdate } from "@/Api/api";
 import { useTitle } from "@/hooks/useTitle";
 import { customMessage } from "@/Utils/customMessage";
 import { DashboardLayout } from "@/components/layout/layout";
-import { Card, CardTitle } from "../../../components/ui/card";
-import { Progress } from "../../../components/ui/progress";
+import { Card, CardTitle } from "@/../components/ui/card";
+import { Progress } from "@/../components/ui/progress";
 import { theme } from "@/lib/theme";
 import { useData } from "@/context/DataContext"
 

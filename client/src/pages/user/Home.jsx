@@ -216,7 +216,7 @@ export function Home() {
         { label: "Browse Practicals", path: "practicals", icon: FlaskConical },
         { label: "AI Chatbot", path: "chatbot", icon: Sparkles },
         { label: "Ask Community", path: "community", icon: Users },
-        { label: "Start Practice", path: "practice", icon: Code2 },
+        { label: "Start Practice", path: "coding-practice", icon: Code2 },
     ];
 
     const chartiData = [

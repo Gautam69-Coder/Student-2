@@ -23,7 +23,7 @@ import { PracticalCard } from "@/components/features/practicals/practical-card";
 import { CodingPractice } from "./CodingPractice";
 import CodeEditor from "./CodeEditor";
 import PracticeDeatils from "./PracticeDeatils";
-import Test from "@/utils/Test";
+import Test from "@/Utils/Test";
 
 import { StudentNavbar } from "@/components/layout/student-navbar";
 import { TopNavBar } from "@/components/layout/top-navbar";

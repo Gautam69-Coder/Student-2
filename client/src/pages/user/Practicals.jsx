@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
-import { PracticalCard } from '../../components/features/practicals/practical-card';
+import { PracticalCard } from '@/components/features/practicals/practical-card';
 import { SEO } from '@/components/common/SEO';
 import AddSections from '@/components/features/notes/add-sections';
 import { DashboardLayout } from "@/components/layout/layout";

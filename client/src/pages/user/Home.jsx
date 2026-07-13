@@ -34,7 +34,7 @@ import { Progress } from "/components/ui/progress";
 import { Separator } from "/components/ui/separator";
 import { DashboardLayout } from "@/components/layout/layout";
 import { DashStatCard, DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
-import RippleLoader from "../../components/ui/nurui/ripple-loader";
+import RippleLoader from "@/components/ui/nurui/ripple-loader";
 import { theme } from "@/lib/theme";
 import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, CartesianGrid, YAxis } from "recharts";
 import { fetchUserProgress } from "@/Api/api";
@@ -216,7 +216,7 @@ export function Home() {
         { label: "Browse Practicals", path: "practicals", icon: FlaskConical },
         { label: "AI Chatbot", path: "chatbot", icon: Sparkles },
         { label: "Ask Community", path: "community", icon: Users },
-        { label: "Start Practice", path: "practice", icon: Code2 },
+        { label: "Start Practice", path: "coding-practice", icon: Code2 },
     ];
 
     const chartiData = [

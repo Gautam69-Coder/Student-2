@@ -32,7 +32,7 @@ import { theme } from "@/lib/theme";
 import { useData } from "@/context/DataContext";
 import { aiAssistant } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
-import { MarkdownContent } from "@/utils/MarkdownContent";
+import { MarkdownContent } from "@/Utils/MarkdownContent";
 import { SettingOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 

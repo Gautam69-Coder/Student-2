@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import PracticalUpload from "../../components/features/practicals/practical-upload"
+import PracticalUpload from "@/components/features/practicals/practical-upload"
 import { Link } from "react-router-dom"
 
 import { Code, FileText, Download, X, HomeIcon } from "lucide-react"
@@ -23,7 +23,7 @@ import { PracticalCard } from "@/components/features/practicals/practical-card";
 import { CodingPractice } from "./CodingPractice";
 import CodeEditor from "./CodeEditor";
 import PracticeDeatils from "./PracticeDeatils";
-import Test from "@/utils/Test";
+import Test from "@/Utils/Test";
 
 import { StudentNavbar } from "@/components/layout/student-navbar";
 import { TopNavBar } from "@/components/layout/top-navbar";

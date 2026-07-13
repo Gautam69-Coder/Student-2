@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef } from "react";
 
 import { cn } from "../lib/utils";
-import { AnimatedBeam } from "../../components/ui/animated-beam";
+import { AnimatedBeam } from "@/components/ui/animated-beam";
 import { DashboardLayout } from "@/components/layout/layout";
 
 const Circle = forwardRef(({ className, children }, ref) => {
@@ -495,4 +495,4 @@ const Icons = {
   ),
 };
 
-export  {AnimatedLoading};
+export { AnimatedLoading };

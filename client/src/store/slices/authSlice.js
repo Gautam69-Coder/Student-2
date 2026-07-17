@@ -28,7 +28,7 @@ const authSlice = createSlice({
             state.isAuthenticated = false;
             state.loading = false;
             localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('token');
+            // BUG-18 fix: Token is purely cookie-based, no need to clear 'token' from localStorage
         },
     },
 });

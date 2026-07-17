@@ -7,8 +7,7 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 
 export const checkCode = asyncHandler(async (req, res) => {
     const { data } = req.body;
-    console.log(data.question);
-    console.log(data.output);
+    // BUG-17 fix: Removed console.log of user data
 
     const user = await User.findById(req.user.id);
 

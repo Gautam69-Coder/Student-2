@@ -7,6 +7,16 @@ import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
+// BUG-15 fix: Sanitize user messages to reduce prompt injection risk
+function sanitizeForPrompt(text) {
+    if (typeof text !== 'string') return '';
+    return text
+        .replace(/\bsystem\s*:/gi, '[filtered]:')
+        .replace(/\bignore\s+(all\s+)?previous\s+instructions?\b/gi, '[filtered]')
+        .replace(/\byou\s+are\s+now\b/gi, '[filtered]')
+        .replace(/\bnew\s+instructions?\s*:/gi, '[filtered]:');
+}
+
 export const handleAiCodeHelperChat = asyncHandler(async (req, res) => {
     const { context } = req.body;
     const userId = req.user.id;
@@ -21,12 +31,15 @@ export const handleAiCodeHelperChat = asyncHandler(async (req, res) => {
     );
     const groq = new Groq({ apiKey: apiKey });
 
+    // Sanitize context message
+    const sanitizedUserMessage = sanitizeForPrompt(context.message);
+
     const memory = await AIMemory.findOneAndUpdate(
         { userId },
         {
             $push: {
                 messages: {
-                    $each: [context.message],
+                    $each: [sanitizedUserMessage],
                     $slice: -10
                 }
             },
@@ -36,7 +49,7 @@ export const handleAiCodeHelperChat = asyncHandler(async (req, res) => {
         { upsert: true, new: true }
     );
 
-    const prompt = systemPrompt(context.message, context.code, context.section, context.question);
+    const prompt = systemPrompt(sanitizedUserMessage, context.code, context.section, context.question);
 
     //Ai result;
     const completion = await groq.chat.completions.create({
@@ -47,7 +60,7 @@ export const handleAiCodeHelperChat = asyncHandler(async (req, res) => {
             },
             {
                 role: "user",
-                content: `${context.message}`,
+                content: sanitizedUserMessage,
             },
         ],
         model: "openai/gpt-oss-20b",

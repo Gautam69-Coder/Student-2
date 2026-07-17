@@ -13,7 +13,7 @@ export const updateProblemStatus = asyncHandler(async (req, res) => {
     const { data } = req.body;
     const userId = req.user.id;
     const total = await CodingPractice.findOne().select("totalProblems");
-    console.log(total);
+    // BUG-17 fix: Removed console.log of DB data
     const updateProblemStatus = await UserProgress.findOneAndUpdate(
         {
             userId,

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+import { generalLimiter, authLimiter, aiLimiter } from './middleware/rateLimiter.js';
 
 // Routes imports
 import auth from './routes/auth.js';
@@ -31,12 +32,16 @@ app.use(cors({
     credentials: true
 }));
 app.use(cookieParser());
-app.use(express.json({ limit: '100mb' }));
-app.use(express.urlencoded({ limit: '100mb', extended: true }));
-app.use(bodyParser.text({ limit: '100mb' }));
+// BUG-14 fix: Reduce body size limits from 100mb to prevent memory exhaustion DoS
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.text({ limit: '1mb' }));
 
-// API Routes mounting
-app.use('/api/auth', auth);
+// BUG-13 fix: Apply global rate limiter
+app.use(generalLimiter);
+
+// API Routes mounting — with targeted rate limiters
+app.use('/api/auth', authLimiter, auth);
 app.use('/api/content', content);
 app.use('/api/notes', notes);
 app.use('/api/sections', sections);
@@ -44,11 +49,11 @@ app.use('/api/practicals', practicals);
 app.use('/api/feedback', feedback);
 app.use('/api/notifications', notification);
 app.use('/api/community', community);
-app.use('/api/aiassistant', aiassistant);
-app.use('/api/aicodehelper', aicodehelper);
+app.use('/api/aiassistant', aiLimiter, aiassistant);
+app.use('/api/aicodehelper', aiLimiter, aicodehelper);
 app.use('/api/coding-practices', codingPractices);
 app.use('/api/stats', stats);
-app.use('/api/code-checker', codechecker);
+app.use('/api/code-checker', aiLimiter, codechecker);
 app.use('/api/hometracking', activityTrack);
 app.use('/api/trackingData', activityTrack);
 app.use('/api/guesttrack', guestTrack);

@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     BookOpen,
     Code2,
@@ -13,7 +13,9 @@ import {
     Users,
     MessageSquare,
     ChevronRight,
-    Star
+    Star,
+    Menu,
+    X
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/common/SEO';
@@ -48,10 +50,32 @@ const StatCard = ({ label, value, icon: Icon }) => (
 );
 
 export default function LandingPage() {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [faqIndex, setFaqIndex] = useState(null);
+
+    const faqs = [
+        {
+            q: "Is Student Hub completely free for students?",
+            a: "Yes, Student Hub is designed as an open-access platform for students to share notes, practice code, and access previous year papers at no cost."
+        },
+        {
+            q: "How does the AI Assistant help with my coursework?",
+            a: "The built-in AI assistant can answer conceptual questions, debug programming code, suggest optimizations, and explain complicated topics with clear step-by-step guides."
+        },
+        {
+            q: "Can I upload my own notes or practical solutions?",
+            a: "Currently, administrators review and upload resources to maintain verified and high-quality materials. If you have great resources, you can submit them to any admin."
+        },
+        {
+            q: "Does the platform support real-time chat with other students?",
+            a: "Absolutely! Once logged in, you can view online peers and start direct messaging, collaborating, and discussing assignments in real-time."
+        }
+    ];
+
     const homeSchema = {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "name": "Velorah",
+        "name": "Student Hub",
         "url": "https://student-2.pages.dev/",
         "potentialAction": {
             "@type": "SearchAction",
@@ -87,8 +111,8 @@ export default function LandingPage() {
             }}
         >
             <SEO
-                title="Student Notes Management System"
-                description="Student Hub — Student Notes Management System"
+                title="Student Hub | Student Notes Management System"
+                description="Student Hub — Access premium study materials, programming practicals, previous year questions (PYQs), and chat with an intelligent AI helper."
                 url="/"
                 schema={[homeSchema, breadcrumbSchema]}
             />
@@ -102,7 +126,7 @@ export default function LandingPage() {
             />
 
             {/* Fullscreen looping video background */}
-            <div className="absolute inset-0 z-0 bg-[hsl(var(--background))]">
+            <div className="fixed inset-0 z-0 bg-[hsl(var(--background))]">
                 <video
                     className="absolute inset-0 w-full h-full object-cover z-0"
                     autoPlay
@@ -115,69 +139,142 @@ export default function LandingPage() {
 
                 {/* subtle readability fade; no blobs/overlays */}
                 <div
-                    className="absolute inset-0"
-                    style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.45), rgba(0,0,0,0.55))' }}
+                    className="absolute inset-0 bg-black/60"
                 />
             </div>
 
-            {/* Glassmorphic Navigation */}
-            <nav className="relative z-10 flex row justify-between px-8 py-6 max-w-7xl mx-auto">
-                <Link to="/" className="flex items-center gap-3">
-                    <img
-                        src="/circle_logo.png"
-                        alt="Student Hub Circle Logo"
-                        className="h-10 w-10 object-contain"
-                        loading="eager"
-                    />
-                    <span
-                        className="text-3xl tracking-tight"
-                        style={{ fontFamily: "'Instrument Serif', serif", color: 'hsl(var(--foreground))' }}
-                    >
-                        Student Hub<sup className="text-xs">®</sup>
-                    </span>
-                </Link>
-
-                <div className="hidden md:flex items-center gap-8" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                    <Link
-                        to="/"
-                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
-                        style={{ color: 'hsl(var(--foreground))' }}
-                    >
-                        Home
+            {/* Glassmorphic Sticky/Floating Navigation */}
+            <header className="sticky top-4 left-0 right-0 z-50 w-[95%] sm:w-[90%] max-w-7xl mx-auto">
+                <nav className="rounded-full bg-slate-950/60 border border-white/10 backdrop-blur-xl px-6 sm:px-8 py-3.5 flex items-center justify-between shadow-2xl transition-all duration-300">
+                    <Link to="/" className="flex items-center gap-3">
+                        <img
+                            src="/circle_logo.png"
+                            alt="Student Hub Circle Logo"
+                            className="h-9 w-9 object-contain"
+                            loading="eager"
+                        />
+                        <span
+                            className="text-2xl sm:text-3xl tracking-tight font-medium"
+                            style={{ fontFamily: "'Instrument Serif', serif", color: 'hsl(var(--foreground))' }}
+                        >
+                            Student Hub<sup className="text-xs">®</sup>
+                        </span>
                     </Link>
-                    <a
-                        href="#about"
-                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
-                    >
-                        About
-                    </a>
-                    <a
-                        href="#features"
-                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
-                    >
-                        Features
-                    </a>
-                    <a
-                        href="#reach-us"
-                        className="text-sm transition-colors hover:text-[hsl(var(--foreground))]"
-                    >
-                        Reach Us
-                    </a>
-                </div>
 
-                <Link
-                    to="/signup"
-                    className="liquid-glass rounded-full px-6 py-2.5 text-sm"
-                    style={{ color: 'hsl(var(--foreground))' }}
-                >
-                    Begin Journey
-                </Link>
-            </nav>
+                    {/* Desktop Menu */}
+                    <div className="hidden md:flex items-center gap-8 text-slate-300">
+                        <Link to="/" className="text-sm font-medium transition-colors hover:text-white">
+                            Home
+                        </Link>
+                        <a href="#about" className="text-sm font-medium transition-colors hover:text-white">
+                            About
+                        </a>
+                        <a href="#features" className="text-sm font-medium transition-colors hover:text-white">
+                            Features
+                        </a>
+                        <a href="#stats" className="text-sm font-medium transition-colors hover:text-white">
+                            Stats
+                        </a>
+                        <a href="#faq" className="text-sm font-medium transition-colors hover:text-white">
+                            FAQ
+                        </a>
+                        <a href="#reach-us" className="text-sm font-medium transition-colors hover:text-white">
+                            Reach Us
+                        </a>
+                    </div>
+
+                    {/* Desktop CTA & Theme */}
+                    <div className="hidden md:flex items-center gap-4">
+                        <ThemeToggle className="!bg-transparent hover:!bg-white/10 !border-0 text-white rounded-full p-2.5 cursor-pointer" />
+                        <Link
+                            to="/signup"
+                            className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 shadow-lg shadow-indigo-600/20"
+                        >
+                            Begin Journey
+                        </Link>
+                    </div>
+
+                    {/* Mobile Menu & Theme Buttons */}
+                    <div className="flex md:hidden items-center gap-3">
+                        <ThemeToggle className="!bg-transparent hover:!bg-white/10 !border-0 text-white rounded-full p-2 cursor-pointer" />
+                        <button
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="text-slate-300 hover:text-white focus:outline-none p-1 cursor-pointer"
+                            aria-label="Toggle Menu"
+                        >
+                            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
+                    </div>
+                </nav>
+
+                {/* Mobile Navigation Drawer */}
+                <AnimatePresence>
+                    {mobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -15 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute top-16 left-0 right-0 mx-auto w-full rounded-3xl bg-slate-950/95 border border-white/10 backdrop-blur-2xl p-6 shadow-2xl flex flex-col gap-4 md:hidden"
+                        >
+                            <Link
+                                to="/"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
+                            >
+                                Home
+                            </Link>
+                            <a
+                                href="#about"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
+                            >
+                                About
+                            </a>
+                            <a
+                                href="#features"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
+                            >
+                                Features
+                            </a>
+                            <a
+                                href="#stats"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
+                            >
+                                Stats
+                            </a>
+                            <a
+                                href="#faq"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
+                            >
+                                FAQ
+                            </a>
+                            <a
+                                href="#reach-us"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
+                            >
+                                Reach Us
+                            </a>
+                            <Link
+                                to="/signup"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-full py-3 text-center text-base font-semibold mt-4 shadow-lg shadow-indigo-600/20"
+                            >
+                                Begin Journey
+                            </Link>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </header>
 
             {/* Hero Section */}
             <section
-                className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-32 pb-28 py-[90px]"
-                id="about"
+                className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-40 pb-28 md:py-[120px]"
+                id="hero"
             >
                 
                 
@@ -206,19 +303,94 @@ export default function LandingPage() {
 
             {/* Content Sections */}
             <main className="relative z-10 pb-10">
-                <section id="features" className="px-6 pt-10" aria-label="Notes and resources">
+                {/* About / Core Vision Section */}
+                <section id="about" className="px-6 py-20 max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <motion.div
+                            initial={{ opacity: 0, x: -30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="space-y-6 text-left"
+                        >
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
+                                <Sparkles className="w-3.5 h-3.5" /> Our Mission
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
+                                Simplifying academic collaboration.
+                            </h2>
+                            <p className="text-slate-350 leading-relaxed text-lg">
+                                Student Hub was born out of a simple realization: students waste too much time searching for disorganized notes, searching for past question papers, and struggling alone with complex programming practicals.
+                            </p>
+                            <p className="text-slate-400 leading-relaxed text-base">
+                                We built a centralized, distraction-free environment that combines premium study resources, real-time peer collaboration, and an intelligent AI assistant trained to help you code and learn.
+                            </p>
+                            <div className="pt-4 flex flex-wrap gap-4">
+                                <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-4">
+                                    <Users className="w-8 h-8 text-indigo-400" />
+                                    <div>
+                                        <div className="font-bold text-white">Peer Network</div>
+                                        <div className="text-xs text-slate-400">Learn together in real-time</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-4">
+                                    <ShieldCheck className="w-8 h-8 text-indigo-400" />
+                                    <div>
+                                        <div className="font-bold text-white">Verified Content</div>
+                                        <div className="text-xs text-slate-400">Checked by administrators</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, x: 30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="relative lg:ml-10 text-left"
+                        >
+                            <div className="absolute inset-0 bg-indigo-500/10 rounded-3xl blur-3xl -z-10" />
+                            <div className="glass-card p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-xl" />
+                                <h3 className="text-2xl font-bold text-white mb-4">Why Student Hub?</h3>
+                                <ul className="space-y-4">
+                                    {[
+                                        { title: "One-Stop Portal", desc: "No more switching between Drive links and chat groups." },
+                                        { title: "AI-Powered Help", desc: "Get debugging assistance and concept summaries instantly." },
+                                        { title: "Organized Practicals", desc: "View multi-language code snippets with clean interactive layout." },
+                                        { title: "Active Community", desc: "Discuss topics, share blogs, and send direct messages." }
+                                    ].map((item, idx) => (
+                                        <li key={idx} className="flex gap-3 items-start">
+                                            <div className="w-6 h-6 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-semibold text-xs mt-0.5 shrink-0">
+                                                {idx + 1}
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-white text-sm">{item.title}</h4>
+                                                <p className="text-slate-400 text-xs mt-0.5">{item.desc}</p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </motion.div>
+                    </div>
+                </section>
+
+                {/* Features Section */}
+                <section id="features" className="px-6 py-20 border-t border-white/5" aria-label="Notes and resources">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <h2 className="text-4xl md:text-5xl font-black text-slate-100 dark:text-white mb-6">
                                 Notes &amp; IT Resources
                             </h2>
                             <p className="text-slate-300 dark:text-slate-300/90 max-w-2xl mx-auto text-lg">
-                                Powerful tools designed to simplify your   journey with student notes and resources.
+                                Powerful tools designed to simplify your journey with student notes and resources.
                             </p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
                                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
                                     <Code2 className="w-7 h-7 text-indigo-500" />
                                 </div>
@@ -228,7 +400,7 @@ export default function LandingPage() {
                                 </p>
                             </div>
 
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
                                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
                                     <Sparkles className="w-7 h-7 text-indigo-500" />
                                 </div>
@@ -238,7 +410,7 @@ export default function LandingPage() {
                                 </p>
                             </div>
 
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
                                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
                                     <Zap className="w-7 h-7 text-indigo-500" />
                                 </div>
@@ -248,7 +420,7 @@ export default function LandingPage() {
                                 </p>
                             </div>
 
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
                                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
                                     <ShieldCheck className="w-7 h-7 text-indigo-500" />
                                 </div>
@@ -258,7 +430,7 @@ export default function LandingPage() {
                                 </p>
                             </div>
 
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
                                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
                                     <MessageSquare className="w-7 h-7 text-indigo-500" />
                                 </div>
@@ -268,7 +440,7 @@ export default function LandingPage() {
                                 </p>
                             </div>
 
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500">
+                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
                                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
                                     <BookOpen className="w-7 h-7 text-indigo-500" />
                                 </div>
@@ -277,6 +449,177 @@ export default function LandingPage() {
                                     Learn with organized materials, notes, and guided resources—built for deep study and faster revision.
                                 </p>
                             </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Stats / Social Proof Section */}
+                <section id="stats" className="px-6 py-20 border-t border-white/5 bg-slate-950/20">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl md:text-4xl font-extrabold text-white">
+                                Empowering Academic Success
+                            </h2>
+                            <p className="text-slate-400 mt-3 max-w-xl mx-auto text-base sm:text-lg">
+                                Our stats speak for themselves. We provide students with the ultimate ecosystem for deep study.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.4 }}
+                            >
+                                <StatCard label="Study Materials" value="5,000+" icon={BookOpen} />
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.4, delay: 0.1 }}
+                            >
+                                <StatCard label="AI Answers" value="15,000+" icon={Sparkles} />
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.4, delay: 0.2 }}
+                            >
+                                <StatCard label="Active Students" value="1,200+" icon={Users} />
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.4, delay: 0.3 }}
+                            >
+                                <StatCard label="Exams Covered" value="250+" icon={Trophy} />
+                            </motion.div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* FAQ Section */}
+                <section id="faq" className="px-6 py-20 border-t border-white/5">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl md:text-4xl font-extrabold text-white">
+                                Frequently Asked Questions
+                            </h2>
+                            <p className="text-slate-400 mt-3 text-base sm:text-lg">
+                                Got questions? We have answers. If you need further help, feel free to reach us.
+                            </p>
+                        </div>
+
+                        <div className="space-y-4 text-left">
+                            {faqs.map((faq, idx) => (
+                                <div
+                                    key={idx}
+                                    className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:bg-white/[0.08]"
+                                >
+                                    <button
+                                        onClick={() => setFaqIndex(faqIndex === idx ? null : idx)}
+                                        className="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none cursor-pointer"
+                                    >
+                                        <span className="font-semibold text-white md:text-lg">{faq.q}</span>
+                                        <ChevronRight
+                                            className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${
+                                                faqIndex === idx ? "rotate-90 text-indigo-400" : ""
+                                            }`}
+                                        />
+                                    </button>
+                                    <AnimatePresence initial={false}>
+                                        {faqIndex === idx && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: "auto", opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{ duration: 0.25 }}
+                                            >
+                                                <div className="px-6 pb-5 text-slate-300 border-t border-white/5 pt-3 leading-relaxed text-sm md:text-base">
+                                                    {faq.a}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Reach Us / Contact Form Section */}
+                <section id="reach-us" className="px-6 py-20 border-t border-white/5 bg-slate-950/20">
+                    <div className="max-w-5xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                            <div className="text-left">
+                                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+                                    Get in Touch
+                                </h2>
+                                <p className="text-slate-300 leading-relaxed mb-6 text-base">
+                                    Have a question about Student Hub, feedback on notes, or need technical help? Send us a message and our administration team will get back to you shortly.
+                                </p>
+                                <div className="space-y-4 text-sm text-slate-400">
+                                    <div className="flex items-center gap-3">
+                                        <MessageSquare className="w-5 h-5 text-indigo-400" />
+                                        <span>support@studenthub.edu</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Users className="w-5 h-5 text-indigo-400" />
+                                        <span>Active admin office: Room 304, IT Block</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5 }}
+                                className="glass-card p-8 rounded-3xl border border-white/10 relative overflow-hidden text-left"
+                            >
+                                <form onSubmit={(e) => { e.preventDefault(); alert('Message sent successfully!'); e.target.reset(); }} className="space-y-4">
+                                    <div>
+                                        <label htmlFor="contact-name" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Name</label>
+                                        <input
+                                            id="contact-name"
+                                            type="text"
+                                            required
+                                            placeholder="Your name"
+                                            className="w-full bg-white/5 border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none transition-all duration-300 text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="contact-email" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Email Address</label>
+                                        <input
+                                            id="contact-email"
+                                            type="email"
+                                            required
+                                            placeholder="name@email.com"
+                                            className="w-full bg-white/5 border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none transition-all duration-300 text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="contact-message" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Message</label>
+                                        <textarea
+                                            id="contact-message"
+                                            rows="4"
+                                            required
+                                            placeholder="How can we help you?"
+                                            className="w-full bg-white/5 border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none transition-all duration-300 text-sm resize-none"
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3 font-semibold text-sm transition-all duration-300 shadow-lg shadow-indigo-600/20 cursor-pointer text-center"
+                                    >
+                                        Send Message
+                                    </button>
+                                </form>
+                            </motion.div>
                         </div>
                     </div>
                 </section>

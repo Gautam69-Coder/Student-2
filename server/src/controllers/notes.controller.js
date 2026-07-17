@@ -28,7 +28,7 @@ export const getNotes = asyncHandler(async (req, res) => {
 });
 
 export const getAllNotes = asyncHandler(async (req, res) => {
-    if (req.user.role !== 'admin') {
+    if (!['admin', 'superadmin'].includes(req.user.role)) {
         throw new ApiError(403, 'Access denied');
     }
     const notes = await UserNote.find().populate('user', 'username email').sort({ createdAt: -1 });
@@ -95,7 +95,7 @@ export const deleteNote = asyncHandler(async (req, res) => {
         throw new ApiError(404, 'Note not found');
     }
 
-    if (note.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (note.user.toString() !== req.user.id && !['admin', 'superadmin'].includes(req.user.role)) {
         throw new ApiError(401, 'Not authorized');
     }
 

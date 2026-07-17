@@ -6,6 +6,16 @@ import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
+// BUG-15 fix: Sanitize user messages to reduce prompt injection risk
+function sanitizeForPrompt(text) {
+    if (typeof text !== 'string') return '';
+    return text
+        .replace(/\bsystem\s*:/gi, '[filtered]:')
+        .replace(/\bignore\s+(all\s+)?previous\s+instructions?\b/gi, '[filtered]')
+        .replace(/\byou\s+are\s+now\b/gi, '[filtered]')
+        .replace(/\bnew\s+instructions?\s*:/gi, '[filtered]:');
+}
+
 export const handleAiAssistantChat = asyncHandler(async (req, res) => {
     const { message } = req.body;
 
@@ -22,12 +32,14 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
 
     const groq = new Groq({ apiKey: apiKey });
 
+    const sanitizedMessage = sanitizeForPrompt(message);
+
     const memory = await AICodeHelperMemory.findOneAndUpdate(
         { userId: req.user.id },
         {
             $push: {
                 messages: {
-                    $each: [message],
+                    $each: [sanitizedMessage],
                     $slice: -10
                 }
             },
@@ -46,7 +58,7 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
             },
             {
                 role: "user",
-                content: `${message}`,
+                content: sanitizedMessage,
             },
         ],
         model: "openai/gpt-oss-20b",

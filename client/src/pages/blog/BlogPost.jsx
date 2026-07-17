@@ -5,6 +5,15 @@ import { ArrowLeft, Calendar, Share2 } from 'lucide-react';
 import blogPosts from '@/data/blog-posts.json';
 import { SEO } from '@/components/common/SEO';
 
+// Simple helper to sanitize HTML for defense-in-depth (BUG-19 fix)
+function sanitizeHtml(html) {
+    if (!html) return "";
+    return html
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "") // strip script blocks
+        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, "") // strip onerror, onload, etc.
+        .replace(/javascript\s*:/gi, "[blocked]"); // block javascript: protocols
+}
+
 export default function BlogPost() {
     const { slug } = useParams();
     const post = blogPosts.find(p => p.slug === slug);
@@ -35,7 +44,7 @@ export default function BlogPost() {
                         <ArrowLeft className="w-4 h-4" /> Back to Blog
                     </Link>
                 </motion.div>
-
+ 
                 <motion.article
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -51,7 +60,7 @@ export default function BlogPost() {
                             {post.title}
                         </h1>
                     </header>
-
+ 
                     <div 
                         className="prose prose-slate dark:prose-invert max-w-none 
                         prose-h1:text-3xl prose-h1:font-black prose-h1:mb-6
@@ -59,7 +68,7 @@ export default function BlogPost() {
                         prose-p:text-lg prose-p:leading-relaxed prose-p:text-slate-600 dark:prose-p:text-slate-400
                         prose-a:text-indigo-600 dark:prose-a:text-indigo-400 prose-a:font-bold prose-a:no-underline hover:prose-a:underline
                         prose-strong:text-slate-900 dark:prose-strong:text-white"
-                        dangerouslySetInnerHTML={{ __html: post.content }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
                     />
 
                     <div className="mt-16 pt-8 border-t border-slate-100 dark:border-slate-900 flex items-center justify-between">

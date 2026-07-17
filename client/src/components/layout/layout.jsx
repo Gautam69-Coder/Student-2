@@ -104,7 +104,7 @@ export function DashboardLayout({
     css,
 }) {
     return (
-        <div className={`flex   w-full sm:mb-0 mb-10  `} style={{ background: "#F4F4F5" }}>
+        <div className={`flex w-full sm:mb-0 mb-10 min-h-screen`} style={{ background: "#F4F4F5" }}>
             {/* Fixed Sidebar */}
             {sidebar}
             

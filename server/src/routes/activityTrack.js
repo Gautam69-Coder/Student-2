@@ -5,6 +5,6 @@ import { updateVisitCount, getTrackData } from '../controllers/activityTrack.con
 const router = express.Router();
 
 router.post('/', auth, updateVisitCount);
-router.get('/', getTrackData);
+router.get('/', auth, getTrackData);
 
 export default router;

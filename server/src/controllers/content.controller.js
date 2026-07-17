@@ -9,7 +9,7 @@ export const getContent = asyncHandler(async (req, res) => {
 });
 
 export const createContent = asyncHandler(async (req, res) => {
-    if (req.user.role !== 'admin') {
+    if (!['admin', 'superadmin'].includes(req.user.role)) {
         throw new ApiError(403, 'Access denied');
     }
 
@@ -22,7 +22,7 @@ export const createContent = asyncHandler(async (req, res) => {
 });
 
 export const updateContent = asyncHandler(async (req, res) => {
-    if (req.user.role !== 'admin') {
+    if (!['admin', 'superadmin'].includes(req.user.role)) {
         throw new ApiError(403, 'Access denied');
     }
 
@@ -31,7 +31,19 @@ export const updateContent = asyncHandler(async (req, res) => {
         throw new ApiError(404, 'Content not found');
     }
 
-    content = await Content.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    // BUG-8 fix: Whitelist allowed fields instead of $set: req.body
+    const { title, description, code, language, section, rating, likes, downloads } = req.body;
+    const updateFields = {};
+    if (title !== undefined) updateFields.title = title;
+    if (description !== undefined) updateFields.description = description;
+    if (code !== undefined) updateFields.code = code;
+    if (language !== undefined) updateFields.language = language;
+    if (section !== undefined) updateFields.section = section;
+    if (rating !== undefined) updateFields.rating = rating;
+    if (likes !== undefined) updateFields.likes = likes;
+    if (downloads !== undefined) updateFields.downloads = downloads;
+
+    content = await Content.findByIdAndUpdate(req.params.id, { $set: updateFields }, { new: true });
     res.status(200).json(new ApiResponse(200, content, "Content updated successfully"));
 });
 

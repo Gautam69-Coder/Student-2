@@ -5,7 +5,7 @@ import { Sun, Moon } from "lucide-react"
 import { useTheme } from "@/context/ThemeContext"
 
 export function ThemeToggle({ className = "" }) {
-    // const { darkMode, toggleDarkMode } = useTheme()
+    const { darkMode = true, toggleDarkMode } = useTheme() || {};
 
     return (
         <button

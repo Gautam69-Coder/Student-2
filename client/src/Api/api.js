@@ -16,13 +16,10 @@ const api = axios.create({
     }
 });
 
-// Add a request interceptor to include the token in all requests
+// Add a request interceptor
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers['x-auth-token'] = token;
-        }
+        // BUG-18/22 fix: Rely purely on cookies; do not read/inject token from localStorage.
         return config;
     },
     (error) => Promise.reject(error)

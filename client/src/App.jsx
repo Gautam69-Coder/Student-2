@@ -36,7 +36,8 @@ const PageLoader = () => (
 
 // Helper component for protected routes
 const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
-    if (localStorage.getItem("isAuthenticated") !== "true") {
+    // BUG-20 fix: Use the actual reactive isAuthenticated state instead of easily-bypassed localStorage flag
+    if (!isAuthenticated) {
         return <Navigate to={redirectPath} replace />;
     }
     return children;
@@ -145,7 +146,8 @@ function AppContent() {
                     <Route
                         path="/admin/*"
                         element={
-                            <ProtectedRoute isAuthenticated={isAuthenticated} redirectPath="/login">
+                            // BUG-21 fix: Check if user is authenticated and is an admin/superadmin
+                            <ProtectedRoute isAuthenticated={isAuthenticated && ['admin', 'superadmin'].includes(userRole)} redirectPath="/dashboard">
                                 <AdminPanel
                                     userName={currentUser || "Admin"}
                                     onLogout={handleLogout}

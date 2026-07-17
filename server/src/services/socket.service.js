@@ -8,44 +8,51 @@ export const initSocket = (io) => {
         // console.log('🔌 New connection attempt:', socket.id);
 
         socket.on('user_online', async (userData) => {
-            if (userData && userData.id) {
-                const userId = String(userData.id);
-                onlineUsers.add(userId);
-                userMap.set(socket.id, { ...userData, id: userId });
-
-                try {
-                    // Increment visit count in database
-                    const updatedUser = await User.findByIdAndUpdate(
-                        userId,
-                        {
-                            $inc: { visitCount: 1 },
-                            currentVisit: new Date(),
-                            currentVisitTime: new Date().toLocaleTimeString('en-US', {
-                                hour: 'numeric',
-                                minute: 'numeric',
-                                hour12: true,
-                                timeZone: 'Asia/Kolkata',
-                            })
-                        },
-                        { new: true }
-                    );
-
-                    // Broadcast update so admin table sees new visit count
-                    io.emit('user_stats_update', {
-                        userId: userId,
-                        visitCount: updatedUser?.visitCount,
-                        currentVisit: updatedUser?.currentVisit,
-                        currentVisitTime: updatedUser?.currentVisitTime
-                    });
-                } catch (err) {
-                    console.error('❌ Error updating visit count:', err.message);
-                }
-
-                io.emit('online_users_update', Array.from(onlineUsers));
-                io.emit('user_visit', { ...userData, timestamp: new Date() });
-            } else {
-                console.log('⚠️ Received invalid user_online data:', userData);
+            // BUG-3 fix: Authenticate the user using socket.user set by handshake.
+            // Do not trust the client-provided userData ID to prevent impersonation.
+            if (!socket.user) {
+                console.log('⚠️ Rejected unauthenticated user_online emit on socket:', socket.id);
+                return;
             }
+
+            const userId = String(socket.user.id);
+            const userRole = socket.user.role;
+            const username = userData?.username || 'User';
+            const email = userData?.email || '';
+
+            onlineUsers.add(userId);
+            userMap.set(socket.id, { id: userId, username, email, role: userRole });
+
+            try {
+                // Increment visit count in database securely
+                const updatedUser = await User.findByIdAndUpdate(
+                    userId,
+                    {
+                        $inc: { visitCount: 1 },
+                        currentVisit: new Date(),
+                        currentVisitTime: new Date().toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: true,
+                            timeZone: 'Asia/Kolkata',
+                        })
+                    },
+                    { new: true }
+                );
+
+                // Broadcast update so admin table sees new visit count
+                io.emit('user_stats_update', {
+                    userId: userId,
+                    visitCount: updatedUser?.visitCount,
+                    currentVisit: updatedUser?.currentVisit,
+                    currentVisitTime: updatedUser?.currentVisitTime
+                });
+            } catch (err) {
+                console.error('❌ Error updating visit count:', err.message);
+            }
+
+            io.emit('online_users_update', Array.from(onlineUsers));
+            io.emit('user_visit', { id: userId, username, email, role: userRole, timestamp: new Date() });
         });
 
         socket.on('user_logout', async () => {

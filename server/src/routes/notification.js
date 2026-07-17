@@ -5,7 +5,7 @@ import { createNotification, getNotifications, updateNotificationStatus } from '
 const router = express.Router();
 
 router.post('/', auth, createNotification);
-router.get('/', getNotifications);
+router.get('/', auth, getNotifications);
 router.post("/notification-status", auth, updateNotificationStatus);
 
 export default router;

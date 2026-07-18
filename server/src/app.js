@@ -24,6 +24,9 @@ import apiKeyController from "./routes/apiKey.js";
 
 const app = express();
 
+// Trust the first proxy hop (necessary for rate limiting behind load balancers like Render/Nginx)
+app.set('trust proxy', 1);
+
 // Standard Middlewares
 app.use(cors({
     origin: ['http://localhost:5173', 'http://localhost:5175', 'http://localhost:5001', 'http://127.0.0.1:5173', 'https://student-2-3ow8.onrender.com', 'https://student-2.pages.dev', 'https://student-2-temprory.onrender.com'],
@@ -31,6 +34,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization'],
     credentials: true
 }));
+
 app.use(cookieParser());
 // BUG-14 fix: Reduce body size limits from 100mb to prevent memory exhaustion DoS
 app.use(express.json({ limit: '1mb' }));

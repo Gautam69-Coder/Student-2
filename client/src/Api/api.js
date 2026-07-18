@@ -19,7 +19,11 @@ const api = axios.create({
 // Add a request interceptor
 api.interceptors.request.use(
     (config) => {
-        // BUG-18/22 fix: Rely purely on cookies; do not read/inject token from localStorage.
+        // Read JWT from localStorage (used in cross-origin environments where cookies may be blocked)
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers['x-auth-token'] = token;
+        }
         return config;
     },
     (error) => Promise.reject(error)

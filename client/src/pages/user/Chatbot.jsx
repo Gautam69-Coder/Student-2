@@ -254,23 +254,19 @@ export function Chatbot() {
 
         if (attachedNotes.length > 0 || attachedPracticals.length > 0) {
             promptPayload += `Attached Context details:\n`;
-            attachedNotes.forEach(async (nId) => {
+
+            for (const nId of attachedNotes) {
                 const note = notes.find((n) => n._id === nId);
 
-                // Normal parse notes in text format
                 if (note.fileType === "NAN") {
                     promptPayload += `[Attachment Note: ${note.title}]\nCategory: ${note.section}\nContent summary: ${note.content || "Code file uploaded"}\n\n`;
                 }
 
-                // Extract Text from PDF
                 if (note.fileType === "application/pdf") {
                     const text = await extractPdfText(note.fileData);
                     promptPayload += `[Attachment Note: ${note.title}]\nCategory: ${note.section}\nContent summary: ${text || "Code file uploaded"}\n\n`;
-                    console.log(promptPayload)
                 }
-
-
-            });
+            }
             attachedPracticals.forEach((pId) => {
                 const practical = practicals.find((p) => p._id === pId);
                 if (practical) {
@@ -285,7 +281,7 @@ export function Chatbot() {
 
         try {
             // Attempt server call
-
+            console.log("Prompt : ", promptPayload)
             const res = await aiAssistant(promptPayload);
             let assistantResponse = "";
 

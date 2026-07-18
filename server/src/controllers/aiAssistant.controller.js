@@ -66,5 +66,7 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
 
     const result = completion.choices[0]?.message?.content;
 
+    console.log("result:",sanitizedMessage)
+
     res.status(200).json(new ApiResponse(200, result, "Success"));
 });

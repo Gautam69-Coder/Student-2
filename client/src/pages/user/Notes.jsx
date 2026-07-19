@@ -8,7 +8,7 @@ import { FileText, Users, MessageSquare, FlaskConical, Code2, Info, Home } from 
 
 import { theme } from '@/lib/theme';
 
-export const Notes = memo(({ notes, user, loading, onRefresh, requireAuth }) => {
+export const Notes = memo(({ notes, user, loading, onRefresh, requireAuth ,onShare}) => {
   
     return (
         <>
@@ -21,7 +21,7 @@ export const Notes = memo(({ notes, user, loading, onRefresh, requireAuth }) => 
             >
                 <div className="space-y-4">
 
-                    <NotesSection notes={notes} user={user} loading={loading} onRefresh={onRefresh} requireAuth={requireAuth} />
+                    <NotesSection notes={notes} user={user} loading={loading} onRefresh={onRefresh} requireAuth={requireAuth} onShare={onShare} />
                 </div>
             </DashboardLayout>
         </>

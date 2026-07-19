@@ -15,6 +15,7 @@ import {
     Image as ImageIcon,
     Sparkles,
     Filter,
+    Upload
 } from "lucide-react";
 import { deleteNote, makeNotePublic } from "@/Api/api";
 import { CodeModal } from "@/components/features/coding/code-modal";
@@ -248,7 +249,7 @@ const NoteCard = memo(
     }
 );
 
-export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth = (cb) => cb && cb() }) {
+export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth = (cb) => cb && cb(), onShare }) {
     const [selectedNote, setSelectedNote] = useState(null);
     const [copying, setCopying] = useState(null);
     const [activeSection, setActiveSection] = useState("All");
@@ -374,52 +375,70 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                            <div
-                                className="rounded-2xl border px-4 py-3"
-                                style={{
-                                    background: theme.colors.softGray,
-                                    borderColor: theme.colors.lightGray,
-                                }}
-                            >
-                                <div className="text-[12px] font-medium" style={{ color: theme.colors.darkGray }}>
-                                    Total Notes
-                                </div>
-                                <div className="text-lg font-bold" style={{ color: theme.colors.dark }}>
-                                    {notes.length}
-                                </div>
+                        <div className="space-y-2">
+                            <div>
+                                {onShare && (
+                                    <button
+                                        onClick={onShare}
+                                        className="w-full justify-center gap-5 flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                                        style={{
+                                            background: theme.colors.lime,
+                                            color: theme.colors.dark,
+                                        }}
+                                    >
+                                        <Upload size={16} />
+                                        <span className="font-bold ">Upload Note</span>
+                                    </button>
+                                )}
                             </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <div
+                                    className="rounded-2xl border px-4 py-3"
+                                    style={{
+                                        background: theme.colors.softGray,
+                                        borderColor: theme.colors.lightGray,
+                                    }}
+                                >
+                                    <div className="text-[12px] font-medium" style={{ color: theme.colors.darkGray }}>
+                                        Total Notes
+                                    </div>
+                                    <div className="text-lg font-bold" style={{ color: theme.colors.dark }}>
+                                        {notes.length}
+                                    </div>
+                                </div>
 
-                            <div
-                                className="rounded-2xl border px-4 py-3"
-                                style={{
-                                    background: theme.colors.softGray,
-                                    borderColor: theme.colors.lightGray,
-                                }}
-                            >
-                                <div className="text-[12px] font-medium" style={{ color: theme.colors.darkGray }}>
-                                    Files
+                                <div
+                                    className="rounded-2xl border px-4 py-3"
+                                    style={{
+                                        background: theme.colors.softGray,
+                                        borderColor: theme.colors.lightGray,
+                                    }}
+                                >
+                                    <div className="text-[12px] font-medium" style={{ color: theme.colors.darkGray }}>
+                                        Files
+                                    </div>
+                                    <div className="text-lg font-bold" style={{ color: theme.colors.dark }}>
+                                        {totalFiles}
+                                    </div>
                                 </div>
-                                <div className="text-lg font-bold" style={{ color: theme.colors.dark }}>
-                                    {totalFiles}
-                                </div>
-                            </div>
 
-                            <div
-                                className="rounded-2xl border px-4 py-3 col-span-2 sm:col-span-1"
-                                style={{
-                                    background: theme.colors.softGray,
-                                    borderColor: theme.colors.lightGray,
-                                }}
-                            >
-                                <div className="text-[12px] font-medium" style={{ color: theme.colors.darkGray }}>
-                                    Code Notes
-                                </div>
-                                <div className="text-lg font-bold" style={{ color: theme.colors.dark }}>
-                                    {totalCodeNotes}
+                                <div
+                                    className="rounded-2xl border px-4 py-3 col-span-2 sm:col-span-1"
+                                    style={{
+                                        background: theme.colors.softGray,
+                                        borderColor: theme.colors.lightGray,
+                                    }}
+                                >
+                                    <div className="text-[12px] font-medium" style={{ color: theme.colors.darkGray }}>
+                                        Code Notes
+                                    </div>
+                                    <div className="text-lg font-bold" style={{ color: theme.colors.dark }}>
+                                        {totalCodeNotes}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </CardContent>
             </Card>

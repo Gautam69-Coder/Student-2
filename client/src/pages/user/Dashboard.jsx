@@ -158,10 +158,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
                         }}    // Add your logout logic here
                         onShare={() => {
-                            // Handle share
-                            console.log("Share clicked");
                             setUploadModalOpen(true);
-                            // Add your share/upload logic here
                         }}
                     />
                 </div>
@@ -353,6 +350,9 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                             loading={loading.notes}
                                             onRefresh={handleNoteCreated}
                                             requireAuth={handleAuthRequired}
+                                            onShare={() => {
+                                                setUploadModalOpen(true);
+                                            }}
                                         />
                                     } />
                                     <Route path="practicals" element={<Practicals practicals={displayedPracticals} setPracticalUploadOpen={() => handleAuthRequired(() => setPracticalUploadOpen(true))} subjects={subjects} requireAuth={handleAuthRequired} />} />

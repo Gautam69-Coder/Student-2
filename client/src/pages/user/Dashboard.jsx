@@ -150,7 +150,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         isBell={isBell}
-                        setisBell={isBell}
+                        setisBell={setisBell}
                         onLogout={() => {
                             // Handle logout
                             console.log("Logout clicked");

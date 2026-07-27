@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Bell, ChevronDown, Search, Shield, Key } from "lucide-react";
 import { theme } from "@/lib/theme";
 import { useNavigate } from "react-router-dom";
 import { saveApiKey } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
-import { useData } from "@/context/DataContext"
+import { useData } from "@/context/DataContext";
+import NotificationPanel from "@/components/common/notification";
 
 export function TopNavBar({
     userName,
@@ -14,7 +15,6 @@ export function TopNavBar({
     setSearchQuery,
     isBell,
     setisBell,
-    Notification,
     onLogout
 }) {
 
@@ -311,20 +311,14 @@ export function TopNavBar({
                         </button>
                     </div>
 
-                    {isBell && Notification && (
+                    {isBell && (
                         <>
                             <div
                                 className="fixed inset-0 z-10"
                                 onClick={() => setisBell?.(false)}
                             />
-                            <div
-                                className="absolute right-0 top-full mt-2 w-96 rounded-lg shadow-2xl z-20 max-h-96 overflow-y-auto"
-                                style={{
-                                    background: theme.colors.white,
-                                    border: `1px solid ${theme.colors.lightGray}`,
-                                }}
-                            >
-                                <Notification />
+                            <div className="absolute right-0 top-full mt-2 z-20">
+                                <NotificationPanel onClose={() => setisBell?.(false)} />
                             </div>
                         </>
                     )}

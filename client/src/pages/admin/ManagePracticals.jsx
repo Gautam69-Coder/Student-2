@@ -180,9 +180,9 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                     required
                                 >
                                     <option value="">Select subject</option>
-                                    {uniqueSubjectSections.map((section) => (
-                                        <option key={section._id} value={section.name}>{section.name}</option>
-                                    ))}
+                                    {(Array.isArray(uniqueSubjectSections) ? uniqueSubjectSections : uniqueSubjectSections?.data || []).map((section) => (
+                                         <option key={section._id || section.name} value={section.name}>{section.name}</option>
+                                     ))}
                                 </select>
                             </div>
 

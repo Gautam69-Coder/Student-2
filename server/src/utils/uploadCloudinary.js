@@ -7,7 +7,7 @@ export const uploadCloudinary = async (filePath) => {
         const result = await cloudinary.uploader.upload(filePath, {
             folder: "UserNotes",
             resource_type: "raw",
-            access_mode: "public",  // ← Add this
+            access_mode: "public",  
             type: "upload"   
         });
 
@@ -15,6 +15,6 @@ export const uploadCloudinary = async (filePath) => {
         return result;
     } catch (err) {
         console.error("File not uploaded:", err);
-        throw err; // ← re-throw so the route catches it too
+        throw err; 
     }
 };

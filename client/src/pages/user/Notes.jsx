@@ -1,12 +1,7 @@
 import React, { memo, useState } from 'react';
 import { DashboardLayout } from "@/components/layout/layout";
-import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
-import { DashboardSidebar } from "@/components/layout/sidebar";
 import { NotesSection } from '@/components/features/notes/notes-section';
 import { SEO } from '@/components/common/SEO';
-import { FileText, Users, MessageSquare, FlaskConical, Code2, Info, Home } from 'lucide-react';
-
-import { theme } from '@/lib/theme';
 
 export const Notes = memo(({ notes, user, loading, onRefresh, requireAuth ,onShare}) => {
   
@@ -20,7 +15,6 @@ export const Notes = memo(({ notes, user, loading, onRefresh, requireAuth ,onSha
             <DashboardLayout
             >
                 <div className="space-y-4">
-
                     <NotesSection notes={notes} user={user} loading={loading} onRefresh={onRefresh} requireAuth={requireAuth} onShare={onShare} />
                 </div>
             </DashboardLayout>

@@ -24,26 +24,19 @@ export function DashboardSidebar({
 
     return (
         <motion.aside
-         
-            className="hidden md:flex sticky flex-col h-screen overflow-y-auto gap-3 p-4 top-0 left-0"
+            className="hidden md:flex sticky flex-col h-screen overflow-y-auto gap-3 p-4 top-0 left-0 bg-white border-r border-slate-200 text-slate-800"
             style={{
                 width: "250px",
-                background: theme.colors.dark,
-                color: theme.colors.white,
-                borderRight: `1px solid ${theme.colors.lightGray}20`,
             }}
         >
             {/* Logo */}
-            <div className="text-2xl mb-15 font-bold px-2" style={{ color: theme.colors.lime }}>
+            <div className="text-2xl mb-12 font-bold px-2 pt-2">
                <Logo/>
             </div>
 
-            
-          
-
             {/* Navigation Items */}
             <LayoutGroup>
-                <nav className="flex flex-col gap-1 flex-1 mx-2">
+                <nav className="flex flex-col gap-1 flex-1 mx-1">
                     {navItems?.map((item) => {
                         const isActive =
                             item.path === "/dashboard"
@@ -58,34 +51,22 @@ export function DashboardSidebar({
                                 whileHover={{ x: 4, scale: 1.01 }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                className="relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all overflow-hidden"
-                                style={{
-                                    background: isActive ? theme.colors.lime : "transparent",
-                                    color: isActive ? theme.colors.dark : theme.colors.white,
-                                    opacity: isActive ? 1 : 0.7,
-                                }}
+                                className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold transition-all overflow-hidden ${
+                                    isActive
+                                        ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+                                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+                                }`}
                             >
-                                {isActive && (
-                                    <motion.div
-                                        layoutId="sidebar-active-route"
-                                        className="absolute inset-0 rounded-lg"
-                                        style={{
-                                            background: theme.colors.lime,
-                                            boxShadow: "0 8px 18px rgba(204, 255, 0, 0.16)",
-                                        }}
-                                        transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                                    />
-                                )}
                                 <div className="relative z-10 flex items-center gap-3 w-full">
-                                    <item.icon size={18} />
+                                    <item.icon size={18} className={isActive ? "text-white" : "text-slate-500"} />
                                     <span className="flex-1 text-left">{item.label}</span>
                                     {item.badge && (
                                         <span
-                                            className="ml-auto px-2 py-0.5 rounded-full text-xs font-bold"
-                                            style={{
-                                                background: isActive ? theme.colors.dark : theme.colors.lime,
-                                                color: isActive ? theme.colors.lime : theme.colors.dark,
-                                            }}
+                                            className={`ml-auto px-2 py-0.5 rounded-full text-xs font-black ${
+                                                isActive
+                                                    ? "bg-white text-indigo-700"
+                                                    : "bg-indigo-100 text-indigo-700"
+                                            }`}
                                         >
                                             {item.badge}
                                         </span>
@@ -98,16 +79,12 @@ export function DashboardSidebar({
             </LayoutGroup>
 
             {/* Action Buttons Section */}
-            <div className="space-y-2 mx-2 border-t border-slate-700 pt-3">
+            <div className="space-y-2 mx-1 border-t border-slate-200/80 pt-3">
                 {/* Share Button */}
                 {onShare && (
                     <button
                         onClick={onShare}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all"
-                        style={{
-                            background: theme.colors.lime,
-                            color: theme.colors.dark,
-                        }}
+                        className="w-full flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200/60 transition-all"
                     >
                         <Upload size={16} />
                         <span>Upload Note</span>
@@ -118,17 +95,13 @@ export function DashboardSidebar({
                 <div className="relative">
                     <button
                         onClick={() => setisBell?.(!isBell)}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all"
-                        style={{
-                            background: isBell ? "rgba(204, 255, 0, 0.2)" : "rgba(255, 255, 255, 0.1)",
-                            color: theme.colors.white,
-                        }}
+                        className="w-full flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-100 transition-all"
                     >
-                        <Bell size={16} />
+                        <Bell size={16} className="text-slate-500" />
                         <span>Notifications</span>
                     </button>
                     {isBell && Notification && (
-                        <div className="absolute bottom-12 left-0 right-0 bg-slate-800 rounded-lg shadow-lg z-50 max-w-xs">
+                        <div className="absolute bottom-12 left-0 right-0 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-w-xs p-2">
                             <Notification />
                         </div>
                     )}
@@ -138,7 +111,7 @@ export function DashboardSidebar({
                 {onLogout && (
                     <button
                         onClick={onLogout}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all text-red-400 hover:bg-red-900/20"
+                        className="w-full flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-all"
                     >
                         <LogOut size={16} />
                         <span>Sign Out</span>
@@ -148,21 +121,16 @@ export function DashboardSidebar({
 
             {/* Upgrade CTA - Pushed to bottom */}
             <div
-                className="p-3 rounded-xl text-center mx-2"
-                style={{ background: theme.colors.lime }}
+                className="p-3.5 rounded-2xl text-center mx-1 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50/50 border border-indigo-100 shadow-2xs"
             >
-                <div className="text-xs font-bold" style={{ color: theme.colors.dark }}>
+                <div className="text-xs font-black text-indigo-950">
                     Upgrade to Pro
                 </div>
-                <div className="text-xs mt-1 mb-2" style={{ color: theme.colors.dark }}>
-                    Unlock premium
+                <div className="text-[11px] mt-0.5 mb-2.5 text-slate-600 font-medium">
+                    Unlock premium features
                 </div>
                 <button
-                    className="w-full py-1.5 rounded-lg font-bold text-xs"
-                    style={{
-                        background: theme.colors.dark,
-                        color: theme.colors.lime,
-                    }}
+                    className="w-full py-2 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all"
                 >
                     Upgrade
                 </button>

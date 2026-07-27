@@ -292,16 +292,13 @@ export function TopNavBar({
                     <div>
                         <button
                             onClick={() => setisBell?.(!isBell)}
-                            className="p-2 rounded-lg hover:bg-slate-100 transition-all relative"
-                            style={{
-                                background: isBell ? "rgba(204, 255, 0, 0.1)" : "transparent",
-                                color: isBell ? theme.colors.lime : theme.colors.dark,
-                            }}
+                            className={`p-2 rounded-xl transition-all relative ${
+                                isBell ? "bg-indigo-50 text-indigo-600" : "hover:bg-slate-100 text-slate-700"
+                            }`}
                         >
                             <Bell size={20} />
                             <span
-                                className="absolute top-1 right-1 w-2 h-2 rounded-full"
-                                style={{ background: theme.colors.lime }}
+                                className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-600"
                             />
                         </button>
 

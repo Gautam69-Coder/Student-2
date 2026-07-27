@@ -42,49 +42,32 @@ export function TrendBadge({ text, variant = "success" }) {
 export function DashStatCard({ icon: Icon, title, value, trend, variant = "primary" }) {
     return (
       <Card
-  className="rounded-2xl h-full transition-all hover:shadow-lg"
-  style={{
-    background: theme.colors.white,
-    borderColor: theme.colors.lightGray,
-  }}
->
-  <CardHeader className="pb-3">
-    <div className="flex items-start justify-between">
-      <div
-        className="p-2.5 rounded-xl shrink-0"
-        style={{
-          background:
-            variant === "primary"
-              ? theme.colors.limeDim
-              : theme.colors.purpleLight,
-        }}
+        className="rounded-2xl h-full transition-all hover:shadow-md border border-slate-200 bg-white"
       >
-        <Icon size={18} color={theme.colors.dark} />
-      </div>
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div
+              className="p-2.5 rounded-xl shrink-0 bg-indigo-50 text-indigo-600 border border-indigo-100/80"
+            >
+              <Icon size={18} className="text-indigo-600" />
+            </div>
+          </div>
 
-      {/* <TrendBadge
-        text={trend}
-        variant={trend.includes("-") ? "danger" : "success"}
-      /> */}
-    </div>
+          <CardTitle
+            className="mt-3 text-xs sm:text-sm font-semibold leading-tight text-slate-500"
+          >
+            {title}
+          </CardTitle>
+        </CardHeader>
 
-    <CardTitle
-      className="mt-3 text-xs sm:text-sm font-medium leading-tight"
-      style={{ color: theme.colors.darkGray }}
-    >
-      {title}
-    </CardTitle>
-  </CardHeader>
-
-  <CardContent className="pt-0">
-    <div
-      className="text-xl sm:text-2xl lg:text-3xl font-bold break-words"
-      style={{ color: theme.colors.dark }}
-    >
-      {value}
-    </div>
-  </CardContent>
-</Card>
+        <CardContent className="pt-0">
+          <div
+            className="text-xl sm:text-2xl lg:text-3xl font-extrabold break-words text-slate-900"
+          >
+            {value}
+          </div>
+        </CardContent>
+      </Card>
     );
 }
 

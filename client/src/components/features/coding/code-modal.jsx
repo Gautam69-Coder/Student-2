@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check, Sparkles, Code2 } from "lucide-react";
 import Highlight from "react-highlight";
 import "highlight.js/styles/atom-one-dark.css";
-import { ShimmerButton } from "/components/ui/shimmer-button";
 import { AICodeHelper } from "@/components/features/coding/ai-code-helper";
 import { Card, CardContent } from "/components/ui/card";
 import { theme } from "@/lib/theme";

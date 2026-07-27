@@ -15,7 +15,8 @@ export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubje
     const handleAddSection = async (sectionName) => {
         try {
             const res = await createSection(sectionName);
-            setUniqueSubjectSections([...uniqueSubjectSections, res.data])
+            const addedItem = res.data?.data || res.data;
+            setUniqueSubjectSections(prev => [...(Array.isArray(prev) ? prev : []), addedItem]);
         } catch (error) {
             console.error(error);
         }
@@ -24,7 +25,7 @@ export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubje
     const handleDeleteSection = async (sectionId) => {
         try {
             await deleteSection(sectionId);
-            setUniqueSubjectSections(uniqueSubjectSections.filter(section => section._id !== sectionId))
+            setUniqueSubjectSections(prev => (Array.isArray(prev) ? prev : []).filter(section => section._id !== sectionId));
         } catch (error) {
             console.error(error);
         }
@@ -87,7 +88,7 @@ export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubje
                             </tr>
                         </thead>
                         <tbody>
-                            {uniqueSubjectSections.map((sub, idx) => (
+                            {(Array.isArray(uniqueSubjectSections) ? uniqueSubjectSections : uniqueSubjectSections?.data || []).map((sub, idx) => (
                                 <tr key={idx} className="border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                     <td className="px-6 py-4 font-semibold text-slate-900 dark:text-white">{idx + 1}</td>
                                     <td className="px-6 py-4 font-mono text-sm text-slate-500 dark:text-slate-400">{sub.name}</td>

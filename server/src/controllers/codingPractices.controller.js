@@ -1,20 +1,31 @@
 import CodingPractice from '../models/CodingPractice.js';
 import UserProgress from '../models/UserProgress.js';
+import { initialPracticeTracks, autoSeedCodingPractices } from '../seeds/seedCodingPractices.js';
 import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
 export const getCodingPractices = asyncHandler(async (req, res) => {
-    const tracks = await CodingPractice.find().sort({ createdAt: -1 });
+    let tracks = await CodingPractice.find().sort({ createdAt: -1 });
+    if (!tracks || tracks.length < 5) {
+        await autoSeedCodingPractices();
+        tracks = await CodingPractice.find().sort({ createdAt: -1 });
+    }
     res.status(200).json(new ApiResponse(200, tracks, 'Success'));
 });
 
+
+
 export const updateProblemStatus = asyncHandler(async (req, res) => {
     const { data } = req.body;
-    const userId = req.user.id;
-    const total = await CodingPractice.findOne().select("totalProblems");
-    // BUG-17 fix: Removed console.log of DB data
-    const updateProblemStatus = await UserProgress.findOneAndUpdate(
+    const userId = req.user._id || req.user.id;
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const currentDay = dayNames[new Date().getDay()];
+
+    const trackDoc = await CodingPractice.findOne({ language: data.language }).select("totalProblems");
+    const totalCount = trackDoc?.totalProblems || 10;
+
+    const updateStatus = await UserProgress.findOneAndUpdate(
         {
             userId,
             codingLanguage: data.language,
@@ -24,8 +35,8 @@ export const updateProblemStatus = asyncHandler(async (req, res) => {
                 completedProblems: data.problemId
             },
             $set: {
-                totalProblems: total.totalProblems,
-                day: data.day || "Monday",
+                totalProblems: totalCount,
+                day: data.day || currentDay,
             }
         },
         {
@@ -34,13 +45,15 @@ export const updateProblemStatus = asyncHandler(async (req, res) => {
         }
     );
 
-    res.status(200).json(new ApiResponse(200, updateProblemStatus, "Problem Status updated"));
+    res.status(200).json(new ApiResponse(200, updateStatus, "Problem Status updated"));
 });
 
 export const getUserProgress = asyncHandler(async (req, res) => {
-    const userProgress = await UserProgress.find();
+    const userId = req.user._id || req.user.id;
+    const userProgress = await UserProgress.find({ userId });
     res.status(200).json(new ApiResponse(200, userProgress, "Success"));
 });
+
 
 export const addCodingPracticeTrack = asyncHandler(async (req, res) => {
     if (req.user.role !== 'admin' && req.user.role !== 'superadmin') {

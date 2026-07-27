@@ -52,13 +52,15 @@ export function AdminPanel({ userName, onLogout }) {
 
         const section = fetchSections();
         section.then((res) => {
-            setUniqueSubjectSections(res.data);
+            const list = Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+            setUniqueSubjectSections(list);
         });
     }, [])
 
     // Real-time Visit Stats Listener
     useEffect(() => {
         if (!socket) return;
+        console.log("hi")
 
         socket.on('user_stats_update', (data) => {
             // console.log('📊 Received user_stats_update:', data);

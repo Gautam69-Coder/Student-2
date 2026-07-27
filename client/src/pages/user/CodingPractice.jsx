@@ -120,10 +120,19 @@ const CodingPractice = () => {
                                                 style={{ background: theme.colors.white, borderColor: color }}
                                             >
                                                 <img
-                                                    src={`https://cdn.simpleicons.org/${String(item.language || '').toLowerCase()}`}
-                                                    alt={item.language}
-                                                    className="w-8 h-8"
-                                                />
+                                                     src={
+                                                         String(item.language || '').toLowerCase() === 'cpp'
+                                                             ? 'https://cdn.simpleicons.org/cplusplus'
+                                                             : String(item.language || '').toLowerCase() === 'dsa'
+                                                             ? 'https://cdn.simpleicons.org/leetcode'
+                                                             : `https://cdn.simpleicons.org/${String(item.language || '').toLowerCase()}`
+                                                     }
+                                                     alt={item.language}
+                                                     className="w-8 h-8"
+                                                     onError={(e) => {
+                                                         e.target.style.display = 'none';
+                                                     }}
+                                                 />
                                             </div>
                                         </div>
 

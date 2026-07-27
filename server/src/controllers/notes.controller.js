@@ -3,6 +3,8 @@ import { uploadCloudinary } from '../utils/uploadCloudinary.js';
 import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
+import auth from '../middleware/auth.js';
+
 
 export const getNotes = asyncHandler(async (req, res) => {
     const token = req.header('x-auth-token') || req.cookies?.token;
@@ -22,7 +24,7 @@ export const getNotes = asyncHandler(async (req, res) => {
             console.error("Token invalid in public notes route");
         }
     }
-
+    // console.log("Notes : ",query);
     const notes = await UserNote.find(query).sort({ createdAt: -1 });
     res.status(200).json(new ApiResponse(200, notes, "Success"));
 });

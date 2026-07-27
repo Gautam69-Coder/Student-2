@@ -226,7 +226,10 @@ const NoteCard = memo(
                                 >
                                     <Download className="w-4 h-4" />
                                     Download
+
+
                                 </button>
+
                             </>
                         ) : (
                             <button
@@ -307,9 +310,12 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
 
     const handleDownload = useCallback(
         (note) => {
-            requireAuth(() => {
+            requireAuth(async() => {
+                const res = await fetch(note.fileData);
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
                 const a = document.createElement("a");
-                a.href = note.fileData;
+                a.href = url;
                 a.download = note.fileName || "note";
                 a.click();
             });

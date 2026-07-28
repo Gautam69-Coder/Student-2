@@ -108,18 +108,27 @@ export function ContextSidebar({
                         initial={{ width: 0, opacity: 0 }}
                         animate={{ width: "320px", opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
-                        className="flex flex-col h-full bg-white border-l border-slate-200 text-slate-900 shrink-0 relative"
+                        className="flex flex-col h-full bg-white border-l border-slate-200 text-slate-900 shrink-0 md:relative fixed right-0 top-0 z-50 shadow-2xl md:shadow-none"
                     >
                         {/* Token Indicator Header */}
                         <div className="p-5 border-b border-slate-200">
                             <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm font-bold flex items-center gap-2">
-                                    <Brain className="w-4 h-4 text-lime-600" />
-                                    <span>Context Window</span>
-                                </h3>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => setIsRightPanelOpen(false)}
+                                        className="md:hidden p-1 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors cursor-pointer mr-1"
+                                        title="Close Panel"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                    <h3 className="text-sm font-bold flex items-center gap-2">
+                                        <Brain className="w-4 h-4 text-indigo-600" />
+                                        <span>Context Window</span>
+                                    </h3>
+                                </div>
                                 <Badge
                                     variant="outline"
-                                    className="bg-lime-500/10 text-lime-600 text-[10px] font-mono border-lime-500/20 px-1 py-0.5"
+                                    className="bg-indigo-50 text-indigo-600 text-[10px] font-mono border-indigo-100 px-1 py-0.5"
                                 >
                                     {currentTokenCount.toLocaleString()} / 32k
                                 </Badge>
@@ -128,7 +137,7 @@ export function ContextSidebar({
                             <div className="space-y-1.5">
                                 <Progress
                                     value={tokenPercentage}
-                                    className="h-2 rounded bg-slate-100 [&>div]:bg-lime-400"
+                                    className="h-2 rounded bg-slate-100 [&>div]:bg-indigo-600"
                                 />
                                 <div className="flex justify-between text-[10px] font-bold text-slate-400">
                                     <span>{tokenPercentage}% Capacity Used</span>
@@ -154,7 +163,7 @@ export function ContextSidebar({
                                         setSystemPrompt(e.target.value);
                                         updateActiveChatConfig("systemPrompt", e.target.value);
                                     }}
-                                    className="w-full bg-slate-100 border border-slate-300 text-slate-700 text-xs rounded-xl px-3 py-2 outline-none focus:border-lime-500 font-semibold cursor-pointer"
+                                    className="w-full bg-slate-100 border border-slate-300 text-slate-700 text-xs rounded-xl px-3 py-2 outline-none focus:border-indigo-500 font-semibold cursor-pointer"
                                 >
                                     {Object.keys(systemPromptOptions).map((key) => (
                                         <option key={key} value={key}>
@@ -172,7 +181,7 @@ export function ContextSidebar({
                                 <div className="space-y-2">
                                     <div className="flex justify-between text-xs">
                                         <span className="text-slate-400">Temperature</span>
-                                        <span className="font-bold text-lime-600">{temperature}</span>
+                                        <span className="font-bold text-indigo-600">{temperature}</span>
                                     </div>
                                     <input
                                         type="range"
@@ -185,13 +194,13 @@ export function ContextSidebar({
                                             setTemperature(v);
                                             updateActiveChatConfig("temperature", v);
                                         }}
-                                        className="w-full accent-lime-500 bg-slate-100 rounded h-1 cursor-pointer"
+                                        className="w-full accent-indigo-500 bg-slate-100 rounded h-1 cursor-pointer"
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <div className="flex justify-between text-xs">
                                         <span className="text-slate-400">Max Tokens</span>
-                                        <span className="font-bold text-lime-600">{maxTokens}</span>
+                                        <span className="font-bold text-indigo-600">{maxTokens}</span>
                                     </div>
                                     <input
                                         type="range"
@@ -215,7 +224,7 @@ export function ContextSidebar({
                                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                                         Attach Notes
                                     </h4>
-                                    <Badge className="bg-lime-400 text-black text-[10px] font-bold font-sans">
+                                    <Badge className="bg-indigo-600 text-white text-[10px] font-bold font-sans">
                                         {attachedNotes.length} attached
                                     </Badge>
                                 </div>
@@ -238,12 +247,12 @@ export function ContextSidebar({
                                                 onClick={() => handleToggleNote(note._id)}
                                                 className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors border ${
                                                     isChecked
-                                                        ? "bg-lime-500/10 border-lime-500/30 text-slate-900"
+                                                        ? "bg-indigo-50 border-indigo-100 text-indigo-900 font-semibold"
                                                         : "bg-slate-50 border-transparent hover:bg-slate-200 text-slate-450"
                                                 }`}
                                             >
                                                 <div className="flex items-center gap-2 truncate">
-                                                    <FileText className="w-3.5 h-3.5 text-lime-600 shrink-0" />
+                                                    <FileText className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                                                     <span className="truncate">{note.title}</span>
                                                 </div>
                                                 <span className="text-[10px] px-1 text-slate-400 shrink-0">
@@ -266,7 +275,7 @@ export function ContextSidebar({
                                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                                         Attach Practicals
                                     </h4>
-                                    <Badge className="bg-lime-400 text-black text-[10px] font-bold font-sans">
+                                    <Badge className="bg-indigo-600 text-white text-[10px] font-bold font-sans">
                                         {attachedPracticals.length} attached
                                     </Badge>
                                 </div>
@@ -294,12 +303,12 @@ export function ContextSidebar({
                                                 }}
                                                 className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors border ${
                                                     isChecked
-                                                        ? "bg-lime-500/10 border-lime-500/30 text-slate-900"
+                                                        ? "bg-indigo-50 border-indigo-100 text-indigo-900 font-semibold"
                                                         : "bg-slate-50 border-transparent hover:bg-slate-200 text-slate-450"
                                                 }`}
                                             >
                                                 <div className="flex items-center gap-2 truncate">
-                                                    <FlaskConical className="w-3.5 h-3.5 text-lime-600 shrink-0" />
+                                                    <FlaskConical className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                                                     <span className="truncate">{prac || "Untitled Practical"}</span>
                                                 </div>
                                                 <span className="text-[10px] px-1 text-slate-400 shrink-0">
@@ -327,7 +336,7 @@ export function ContextSidebar({
                                             {/* Modal Header */}
                                             <div className="px-6 py-4 bg-slate-50 border-b border-slate-150 flex items-center justify-between">
                                                 <div className="flex items-center gap-2.5">
-                                                    <FlaskConical className="w-5 h-5 text-lime-650 shrink-0" />
+                                                    <FlaskConical className="w-5 h-5 text-indigo-600 shrink-0" />
                                                     <div className="min-w-0 font-sans">
                                                         <h3 className="font-bold text-slate-900 text-sm md:text-base truncate">
                                                             {section || "Lab Questions"}
@@ -353,7 +362,7 @@ export function ContextSidebar({
                                                         placeholder="Search questions inside this lab..."
                                                         value={questionSearch}
                                                         onChange={(e) => setQuestionSearch(e.target.value)}
-                                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl text-xs outline-none bg-slate-50 border border-slate-200 focus:border-lime-500 focus:bg-white transition-all text-slate-800 font-medium"
+                                                        className="w-full pl-9 pr-3 py-2.5 rounded-xl text-xs outline-none bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white transition-all text-slate-800 font-medium"
                                                     />
                                                     <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                                                 </div>
@@ -371,7 +380,7 @@ export function ContextSidebar({
                                                                 className="w-full px-4 py-3.5 flex items-center justify-between text-left font-bold text-xs text-slate-800 hover:bg-slate-50/50 transition-colors cursor-pointer"
                                                             >
                                                                 <div className="flex items-center gap-2">
-                                                                    <FlaskConical className="w-3.5 h-3.5 text-lime-650" />
+                                                                    <FlaskConical className="w-3.5 h-3.5 text-indigo-600" />
                                                                     <span>Practical {prac.practicalNumber}</span>
                                                                 </div>
                                                                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
@@ -384,17 +393,17 @@ export function ContextSidebar({
                                                                         return (
                                                                             <div
                                                                                 key={qidx}
-                                                                                className="group p-3 bg-slate-50 hover:bg-lime-500/5 border border-slate-150 hover:border-lime-500/20 rounded-lg flex items-start justify-between gap-3 transition-all"
+                                                                                className="group p-3 bg-slate-50 hover:bg-indigo-50/50 border border-slate-150 hover:border-indigo-500/20 rounded-lg flex items-start justify-between gap-3 transition-all"
                                                                             >
                                                                                 <p className="text-xs text-slate-700 leading-relaxed group-hover:text-slate-900 transition-colors font-semibold">
                                                                                     {q.question}
                                                                                 </p>
                                                                                 <button
                                                                                     onClick={() => handleCopyQuestion(q.question)}
-                                                                                    className="shrink-0 p-1.5 rounded-md border border-slate-200 hover:border-lime-500/30 bg-white hover:bg-lime-500/10 text-slate-400 hover:text-lime-600 transition-colors cursor-pointer"
+                                                                                    className="shrink-0 p-1.5 rounded-md border border-slate-200 hover:border-indigo-500/30 bg-white hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
                                                                                     title="Copy Question"
                                                                                 >
-                                                                                    {isCopied ? <Check size={13} className="text-lime-650" /> : <Copy size={13} />}
+                                                                                    {isCopied ? <Check size={13} className="text-indigo-650" /> : <Copy size={13} />}
                                                                                 </button>
                                                                             </div>
                                                                         );

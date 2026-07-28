@@ -149,14 +149,9 @@ export function AIAssistant() {
                             scale: { duration: 0.2 },
                         }}
                         onClick={() => setIsOpen(true)}
-                        className="fixed sm:bottom-8 backdrop-blur-sm bottom-25 sm:right-8 right-4 z-50 w-14 h-14 rounded-2xl border shadow-[0_10px_0_rgba(17,17,19,0.16)] flex items-center justify-center transition-transform hover:scale-[1.02]"
-                        style={{
-                            background: theme.colors.lime,
-                            color: theme.colors.dark,
-                            borderColor: theme.colors.lime,
-                        }}
+                        className="fixed sm:bottom-8 backdrop-blur-sm bottom-25 sm:right-8 right-4 z-50 w-14 h-14 rounded-2xl border shadow-lg shadow-indigo-200/50 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-600"
                     >
-                        <PencilLine className="w-6 h-6" />
+                        <Sparkles className="w-6 h-6" />
                     </motion.button>
                 )}
             </AnimatePresence>
@@ -179,10 +174,9 @@ export function AIAssistant() {
                     >
                         <div className="flex items-center gap-3 min-w-0">
                             <div
-                                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                                style={{ background: theme.colors.limeDim }}
+                                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-indigo-50 border border-indigo-100"
                             >
-                                <Sparkles className="w-5 h-5" style={{ color: theme.colors.dark }} />
+                                <Sparkles className="w-5 h-5 text-indigo-600" />
                             </div>
                             <div className="min-w-0">
                                 <h3 className="font-bold text-[16px]" style={{ color: theme.colors.dark }}>
@@ -222,90 +216,57 @@ export function AIAssistant() {
                         </div>
                     </div>
 
-                    <div className="flex-1 min-h-0 p-4">
-                        <Card
-                            className="h-full rounded-2xl overflow-hidden"
-                            style={{
-                                background: theme.colors.white,
-                                borderColor: theme.colors.lightGray,
-                                boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
-                            }}
+                    {/* Chat Area - Edge-to-Edge */}
+                    <div className="flex-1 min-h-0 flex flex-col bg-slate-50">
+                        {/* Messages List */}
+                        <div
+                            className="flex-1 overflow-y-auto p-4 space-y-4"
+                            data-lenis-prevent
                         >
-                            <CardContent className="h-full p-0 flex flex-col">
-                                <div
-                                    className="flex-1 overflow-y-auto p-4 space-y-4"
-                                    style={{ background: theme.colors.softGray }}
+                            {messages.map((msg, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                                 >
-                                    {messages.map((msg, index) => (
-                                        <motion.div
-                                            key={index}
-                                            initial={{ opacity: 0, y: 5 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                                        >
-                                            <div
-                                                className={`max-w-[90%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === "user" ? "rounded-br-none" : "rounded-bl-none border"
-                                                    }`}
-                                                style={
-                                                    msg.role === "user"
-                                                        ? {
-                                                            background: theme.colors.dark,
-                                                            color: theme.colors.white,
-                                                            boxShadow: "0 6px 0 rgba(17,17,19,0.14)",
-                                                        }
-                                                        : {
-                                                            background: theme.colors.white,
-                                                            color: theme.colors.dark,
-                                                            borderColor: theme.colors.lightGray,
-                                                        }
-                                                }
-                                            >
-                                                <MarkdownContent content={msg.content} role={msg.role} />
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                    <div ref={messagesEndRef} />
-                                </div>
-
-                                <div
-                                    className="p-4 border-t"
-                                    style={{
-                                        background: theme.colors.white,
-                                        borderColor: theme.colors.lightGray,
-                                    }}
-                                >
-                                    <div className="flex gap-2">
-                                        <div className="relative w-full h-11 overflow-hidden rounded-xl">
-                                            <ShineBorder shineColor={["rgb(204, 255, 0)", "rgb(17,17,19)", "rgb(245,245,245)"]} />
-                                            <input
-                                                type="text"
-                                                value={message}
-                                                onChange={(e) => setMessage(e.target.value)}
-                                                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                                                placeholder="Ask a question..."
-                                                className="w-full h-full px-4 rounded-xl text-sm outline-none transition-all"
-                                                style={{
-                                                    background: theme.colors.softGray,
-                                                    color: theme.colors.dark,
-                                                }}
-                                            />
-                                        </div>
-                                        <button
-                                            className="flex items-center justify-center w-11 h-11 rounded-xl font-bold transition-transform active:scale-[0.98]"
-                                            onClick={handleSend}
-                                            style={{
-                                                background: theme.colors.lime,
-                                                color: theme.colors.dark,
-                                                boxShadow: "0 8px 0 rgba(17,17,19,0.14)",
-                                            }}
-                                            aria-label="Send message"
-                                        >
-                                            <Send className="w-4 h-4" />
-                                        </button>
+                                    <div
+                                        className={`max-w-[90%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                                            msg.role === "user"
+                                                ? "rounded-br-none bg-indigo-600 text-white shadow-md shadow-indigo-100 font-semibold"
+                                                : "rounded-bl-none border border-slate-200 bg-white text-slate-800"
+                                        }`}
+                                    >
+                                        <MarkdownContent content={msg.content} role={msg.role} />
                                     </div>
+                                </motion.div>
+                            ))}
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        {/* Input Footer */}
+                        <div className="p-4 bg-white border-t border-slate-200">
+                            <div className="flex gap-2">
+                                <div className="relative flex-1 h-11 rounded-xl overflow-hidden bg-slate-50 border border-slate-200 focus-within:border-indigo-500 focus-within:bg-white transition-all">
+                                    <ShineBorder shineColor={["rgb(99, 102, 241)", "rgb(79, 70, 229)", "rgb(243, 244, 246)"]} />
+                                    <input
+                                        type="text"
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                                        placeholder="Ask a question..."
+                                        className="w-full h-full px-4 text-sm outline-none bg-transparent text-slate-900 placeholder-slate-500"
+                                    />
                                 </div>
-                            </CardContent>
-                        </Card>
+                                <button
+                                    className="flex items-center justify-center w-11 h-11 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] shadow-md shadow-indigo-100 cursor-pointer shrink-0"
+                                    onClick={handleSend}
+                                    aria-label="Send message"
+                                >
+                                    <Send className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </motion.div>
             )}

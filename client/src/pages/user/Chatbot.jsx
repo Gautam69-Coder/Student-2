@@ -14,7 +14,7 @@ export function Chatbot() {
     const { user, notes, practicals } = useData();
 
     // Sidebar & Layout Toggles
-    const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
+    const [isRightPanelOpen, setIsRightPanelOpen] = useState(typeof window !== "undefined" && window.innerWidth >= 1024);
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     // Chatbot States
@@ -451,8 +451,7 @@ I have received your prompt. Here are some options you can explore:
 
     return (
         <DashboardLayout css={"89vh"}>
-            {/* This feature only for Desktop version */}
-            <div className="flex flex-col gap-4 sm:block hidden">
+            <div className="flex flex-col gap-4 w-full">
                 {/* Workspace card */}
                 <Card
                     className={`rounded-2xl overflow-hidden transition-all duration-300 ${isFullscreen ? "fixed inset-0 z-50 rounded-none m-0 border-0" : ""
@@ -505,15 +504,11 @@ I have received your prompt. Here are some options you can explore:
                                 handleTogglePractical={handleTogglePractical}
                                 updateActiveChatConfig={updateActiveChatConfig}
                                 isRightPanelOpen={isRightPanelOpen}
+                                setIsRightPanelOpen={setIsRightPanelOpen}
                             />
                         </div>
                     </CardContent>
                 </Card>
-            </div>
-            <div className="flex justify-center sm:hidden h-full block items-center">
-                <h1 className="text-lime-600 py-2 px-4 flex justify-center items-center rounded-2xl bg-white shadow-md">
-                    This feature only for Desktop version
-                </h1>
             </div>
         </DashboardLayout>
     );

@@ -92,12 +92,11 @@ const NoteCard = memo(
 
                         {isOwner && (
                             <button
-                                className="rounded-full border px-3 py-1.5 text-[11px] font-bold transition-colors"
-                                style={{
-                                    background: note.isGlobal ? theme.colors.lime : theme.colors.white,
-                                    borderColor: note.isGlobal ? theme.colors.lime : theme.colors.lightGray,
-                                    color: theme.colors.dark,
-                                }}
+                                className={`rounded-full border px-3 py-1.5 text-[11px] font-bold transition-colors ${
+                                    note.isGlobal
+                                        ? "bg-indigo-600 text-white border-indigo-600"
+                                        : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                                }`}
                                 onClick={() => onPublic(note._id)}
                             >
                                 {note.isGlobal ? "Public" : "Private"}
@@ -217,12 +216,7 @@ const NoteCard = memo(
 
                                 <button
                                     onClick={() => onDownload(note)}
-                                    className="flex-1 flex justify-center items-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-transform active:scale-[0.99]"
-                                    style={{
-                                        background: theme.colors.lime,
-                                        color: theme.colors.dark,
-                                        boxShadow: "0 6px 0 rgba(17,17,19,0.14)",
-                                    }}
+                                    className="flex-1 flex justify-center items-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.99] shadow-md shadow-indigo-100"
                                 >
                                     <Download className="w-4 h-4" />
                                     Download
@@ -234,12 +228,7 @@ const NoteCard = memo(
                         ) : (
                             <button
                                 onClick={() => onShowCode(note)}
-                                className="w-full flex justify-center items-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-transform active:scale-[0.99]"
-                                style={{
-                                    background: theme.colors.lime,
-                                    color: theme.colors.dark,
-                                    boxShadow: "0 6px 0 rgba(17,17,19,0.14)",
-                                }}
+                                className="w-full flex justify-center items-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.99] shadow-md shadow-indigo-100"
                             >
                                 <Code className="w-4 h-4" />
                                 View Code
@@ -386,14 +375,10 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
                                 {onShare && (
                                     <button
                                         onClick={onShare}
-                                        className="w-full justify-center gap-5 flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all"
-                                        style={{
-                                            background: theme.colors.lime,
-                                            color: theme.colors.dark,
-                                        }}
+                                        className="w-full justify-center gap-5 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
                                     >
                                         <Upload size={16} />
-                                        <span className="font-bold ">Upload Note</span>
+                                        <span>Upload Note</span>
                                     </button>
                                 )}
                             </div>
@@ -472,14 +457,11 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
                         <button
                             key={sec}
                             onClick={() => setActiveSection(sec)}
-                            className="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border"
-                            style={{
-                                background: activeSection === sec ? theme.colors.lime : theme.colors.white,
-                                color: theme.colors.dark,
-                                borderColor: activeSection === sec ? theme.colors.lime : theme.colors.lightGray,
-                                boxShadow:
-                                    activeSection === sec ? "0 6px 0 rgba(17,17,19,0.12)" : "0 0 0 rgba(0,0,0,0)",
-                            }}
+                            className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${
+                                activeSection === sec
+                                    ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
+                                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                            }`}
                         >
                             {sec}
                         </button>
@@ -606,11 +588,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, requireAuth
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => handleDownload(selectedNote)}
-                                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-colors"
-                                        style={{
-                                            background: theme.colors.lime,
-                                            color: theme.colors.dark,
-                                        }}
+                                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-100"
                                     >
                                         <Download className="w-4 h-4" />
                                         Download

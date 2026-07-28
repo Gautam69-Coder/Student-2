@@ -66,7 +66,7 @@ export function TopNavBar({
 
     return (
         <div
-            className="flex flex-1 fixed sm:w-[calc(100%-14rem)]   z-50  items-center justify-between sm:px-6 px-2 py-4 border-b shadow-sm"
+            className="flex flex-1 fixed top-0 right-0 md:left-[250px] left-0 z-50 items-center justify-between sm:px-6 px-2 py-4 border-b shadow-sm"
             style={{
                 background: theme.colors.white,
                 borderColor: theme.colors.lightGray,

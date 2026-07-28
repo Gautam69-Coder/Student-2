@@ -91,13 +91,10 @@ export function Home() {
 
     const {
         user,
-        subjects,
         practicals,
         notes,
-        refreshNotes,
     } = useData();
 
-    const [userData, setUserData] = useState(null);
     const [userProgress, setUserProgress] = useState(null);
     const [chartData, setChartData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -111,12 +108,6 @@ export function Home() {
         publicNotes: 0,
         recentNotes: [],
     });
-
-
-    const [sectionData, setSectionsData] = useState({
-        practicalSections: 0,
-        notesSections: 0,
-    })
 
     // Fetch user data on component mount
     const fetchUserData = useCallback(async () => {
@@ -261,29 +252,6 @@ export function Home() {
 
         loadDashboard();
     }, []);
-
-    const recentNotesList = [
-        {
-            subject: "Java",
-            title: "Java Multithreading — Thread lifecycle & synchronization",
-            ts: "2 days ago",
-        },
-        {
-            subject: "CN",
-            title: "CN — OSI Model layers explained with examples",
-            ts: "4 days ago",
-        },
-        {
-            subject: "Scilab",
-            title: "Scilab — Matrix operations & plotting basics",
-            ts: "1 week ago",
-        },
-        {
-            subject: "Figma",
-            title: "Figma — Auto Layout & component variants",
-            ts: "1 week ago",
-        },
-    ];
 
     const quickActions = [
         { label: "Add Note", path: "notes", icon: Notebook },

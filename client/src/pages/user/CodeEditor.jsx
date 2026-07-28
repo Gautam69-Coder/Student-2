@@ -301,12 +301,7 @@ export default function CodeEditor() {
                                         <button
                                             onClick={runCode}
                                             disabled={loading}
-                                            className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black transition-transform hover:scale-[1.01] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-                                            style={{
-                                                background: theme.colors.lime,
-                                                color: theme.colors.dark,
-                                                boxShadow: "0 8px 0 rgba(17,17,19,0.18)",
-                                            }}
+                                            className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md shadow-indigo-100"
                                         >
                                             <Play className="w-4 h-4" />
                                             Run Code
@@ -426,12 +421,7 @@ export default function CodeEditor() {
                                 <button
                                     onClick={runCode}
                                     disabled={loading}
-                                    className="mt-5 w-fit inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black transition-transform hover:scale-[1.01] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-                                    style={{
-                                        background: theme.colors.lime,
-                                        color: theme.colors.dark,
-                                        boxShadow: "0 8px 0 rgba(17,17,19,0.18)",
-                                    }}
+                                    className="mt-5 w-fit inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md shadow-indigo-100"
                                 >
                                     <Play className="w-4 h-4" />
                                     Run Code

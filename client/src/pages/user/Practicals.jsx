@@ -134,20 +134,18 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                 </div>
 
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
-                                    <button
-                                        className="px-4 py-3 rounded-xl text-sm font-black transition-transform hover:scale-[1.01] active:scale-[0.99]"
-                                        style={{ background: theme.colors.lime, color: theme.colors.dark, boxShadow: "0 8px 0 rgba(17,17,19,0.12)" }}
-                                        onClick={() => setShowAddSection(true)}
-                                    >
-                                        Add Section
-                                    </button>
-                                    <button
-                                        className="px-4 py-3 rounded-xl text-sm font-black transition-transform hover:scale-[1.01] active:scale-[0.99]"
-                                        style={{ background: theme.colors.lime, color: theme.colors.dark, boxShadow: "0 8px 0 rgba(17,17,19,0.12)" }}
-                                        onClick={() => setPracticalUploadOpen(true)}
-                                    >
-                                        Add Practical
-                                    </button>
+                                     <button
+                                         className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
+                                         onClick={() => setShowAddSection(true)}
+                                     >
+                                         Add Section
+                                     </button>
+                                     <button
+                                         className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
+                                         onClick={() => setPracticalUploadOpen(true)}
+                                     >
+                                         Add Practical
+                                     </button>
                                 </div>
                             </div>
 
@@ -163,18 +161,17 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                             const subjectName = subject.name || subject;
                                             const isActive = selectedSubject === subjectName;
                                             return (
-                                                <button
-                                                    key={index}
-                                                    onClick={() => { setSelectedSubject(subjectName); }}
-                                                    className="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all"
-                                                    style={{
-                                                        background: isActive ? theme.colors.lime : theme.colors.white,
-                                                        color: isActive ? theme.colors.dark : theme.colors.darkGray,
-                                                        border: `1px solid ${theme.colors.lightGray}`,
-                                                    }}
-                                                >
-                                                    {subjectName}
-                                                </button>
+                                                 <button
+                                                     key={index}
+                                                     onClick={() => { setSelectedSubject(subjectName); }}
+                                                     className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${
+                                                         isActive
+                                                             ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
+                                                             : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                                                     }`}
+                                                 >
+                                                     {subjectName}
+                                                 </button>
                                             )
                                         })}
                                     </div>
@@ -192,20 +189,19 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                         {uniquePracticalNumbers.map((num, index) => {
                                             const isActive = selectedPracticalNo === num;
                                             return (
-                                                <button
-                                                    key={index}
-                                                    onClick={() => {
-                                                        setSelectedPracticalNo(num)
-                                                    }}
-                                                    className="px-4 py-2 rounded-full  text-nowrap  text-sm font-black transition-all flex items-center justify-center"
-                                                    style={{
-                                                        background: isActive ? theme.colors.lime : theme.colors.white,
-                                                        color: isActive ? theme.colors.dark : theme.colors.darkGray,
-                                                        border: `1px solid ${theme.colors.lightGray}`,
-                                                    }}
-                                                >
-                                                    {num}
-                                                </button>
+                                                 <button
+                                                     key={index}
+                                                     onClick={() => {
+                                                         setSelectedPracticalNo(num)
+                                                     }}
+                                                     className={`px-4 py-2 rounded-full text-nowrap text-sm font-bold transition-all flex items-center justify-center border ${
+                                                         isActive
+                                                             ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                                                             : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                                                     }`}
+                                                 >
+                                                     {num}
+                                                 </button>
                                             )
                                         })}
                                     </div>

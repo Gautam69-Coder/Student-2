@@ -32,10 +32,9 @@ function StatPill({ icon: Icon, label, value }) {
             }}
         >
             <div
-                className="h-10 w-10 rounded-xl flex items-center justify-center"
-                style={{ background: theme.colors.limeDim }}
+                className="h-10 w-10 rounded-xl flex items-center justify-center bg-indigo-50 text-indigo-600"
             >
-                <Icon size={18} color={theme.colors.dark} />
+                <Icon size={18} />
             </div>
             <div className="min-w-0">
                 <div className="text-[12px] font-medium" style={{ color: theme.colors.darkGray }}>
@@ -231,12 +230,7 @@ export default function PracticeDeatils() {
                                 <div className="min-w-0 flex-1">
                                     <div className="flex flex-wrap items-center gap-3">
                                         <span
-                                            className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-black uppercase tracking-[0.18em]"
-                                            style={{
-                                                background: theme.colors.lime,
-                                                color: theme.colors.dark,
-                                                borderColor: theme.colors.lime,
-                                            }}
+                                            className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-black uppercase tracking-[0.18em] bg-indigo-600 text-white border-indigo-600 shadow-sm"
                                         >
                                             <Sparkles className="w-4 h-4" />
                                             {language || "Language"}
@@ -335,7 +329,7 @@ export default function PracticeDeatils() {
                                                         height: 10,
                                                         borderRadius: 999,
                                                         backgroundColor: theme.colors.softGray,
-                                                        color: theme.colors.lime,
+                                                        color: "#4f46e5",
                                                     }}
                                                 />
                                             </div>
@@ -344,12 +338,7 @@ export default function PracticeDeatils() {
                                         <button
                                             onClick={startLearning}
                                             disabled={!problems.length}
-                                            className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black transition-transform hover:scale-[1.01] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-                                            style={{
-                                                background: theme.colors.lime,
-                                                color: theme.colors.dark,
-                                                boxShadow: "0 8px 0 rgba(17,17,19,0.18)",
-                                            }}
+                                            className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md shadow-indigo-100"
                                         >
                                             Start Learning
                                             <ArrowUpRight className="w-4 h-4" />

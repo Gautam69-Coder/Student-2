@@ -179,11 +179,7 @@ const CodingPractice = () => {
 
                                             {/* Button */}
                                             <button
-                                                className="w-full py-2 rounded-lg text-sm font-bold transition-all"
-                                                style={{
-                                                    background: theme.colors.lime,
-                                                    color: theme.colors.dark,
-                                                }}
+                                                className="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
                                             >
                                                 Start Practice →
                                             </button>

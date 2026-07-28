@@ -321,12 +321,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 
                                 {/* Primary CTA */}
                                 <button
-                                    className="w-full h-12 flex items-center justify-center gap-2 font-bold rounded-xl transition-all active:scale-[0.99] shadow-lg"
-                                    style={{
-                                        background: theme.colors.lime,
-                                        color: theme.colors.dark,
-                                        boxShadow: "0 6px 0 rgba(17,17,19,0.14)",
-                                    }}
+                                    className="w-full h-12 flex items-center justify-center gap-2 font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all active:scale-[0.99] shadow-md shadow-indigo-100"
                                     onClick={() => {
                                         handleSubmit();
                                     }}

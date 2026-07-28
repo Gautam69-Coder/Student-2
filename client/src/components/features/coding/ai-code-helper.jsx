@@ -364,12 +364,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                         />
                                         <button
                                             onClick={handleSendMessage}
-                                            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-black transition-transform active:scale-[0.98]"
-                                            style={{
-                                                background: theme.colors.lime,
-                                                color: theme.colors.dark,
-                                                boxShadow: "0 8px 0 rgba(17,17,19,0.14)",
-                                            }}
+                                            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] shadow-md shadow-indigo-100"
                                         >
                                             <Send className="w-4 h-4" />
                                             Send

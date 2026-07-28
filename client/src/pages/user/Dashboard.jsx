@@ -163,7 +163,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                     />
                 </div>
 
-                <div className="w-full">
+                <div className="flex-1 min-w-0">
                     <TopNavBar
                         userName={userName}
                         userEmail={user?.email}

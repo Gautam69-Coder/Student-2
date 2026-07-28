@@ -219,11 +219,7 @@ export function Community({ requireAuth }) {
                         <button
                             type="submit"
                             disabled={creating}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold"
-                            style={{
-                                background: theme.colors.lime,
-                                color: theme.colors.dark,
-                            }}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 disabled:opacity-50"
                         >
                             {creating ? (
                                 <>
@@ -283,12 +279,11 @@ export function Community({ requireAuth }) {
                                     <button
                                         type="button"
                                         onClick={() => handleLike(post._id)}
-                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium"
-                                        style={{
-                                            background: post.isLiked ? theme.colors.lime : theme.colors.white,
-                                            color: post.isLiked ? theme.colors.dark : theme.colors.darkGray,
-                                            border: `1px solid ${theme.colors.lightGray}`,
-                                        }}
+                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                                            post.isLiked
+                                                ? "bg-indigo-600 text-white border-indigo-600"
+                                                : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+                                        }`}
                                     >
                                         <Heart size={14} className={post.isLiked ? "fill-current" : ""} />
                                         <span>{post.likesCount || 0}</span>

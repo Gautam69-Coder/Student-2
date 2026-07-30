@@ -8,7 +8,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
 // BUG-1 fix: Whitelist of fields allowed in updateProfile
-const ALLOWED_PROFILE_FIELDS = ['username', 'email', 'password', 'avatar'];
+const ALLOWED_PROFILE_FIELDS = ['username', 'email', 'password', 'avatar', 'subscription'];
 
 export const register = asyncHandler(async (req, res) => {
     const { username, email, password, role, adminSecret } = req.body;

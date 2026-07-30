@@ -28,17 +28,15 @@ export const SocketProvider = ({ children, user }) => {
         socketRef.current = socket;
 
         socket.on('connect', () => {
-            // console.log('✅ Connected to WebSocket:', socket.id);
+           
             setIsConnected(true);
         });
 
         socket.on('disconnect', () => {
-            // console.log('❌ Disconnected from WebSocket');
             setIsConnected(false);
         });
 
         socket.on('online_users_update', (users) => {
-            // console.log('👥 Online users updated:', users);
             setOnlineUsers(users);
         });
 

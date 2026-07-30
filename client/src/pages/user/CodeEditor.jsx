@@ -4,13 +4,59 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCodingPractices } from "@/Api/api";
 import { theme } from "@/lib/theme";
-import { ArrowLeft, ArrowUpRight, AlertCircle, Code2, Play, Send, Sparkles, SquareCode } from "lucide-react";
+import { 
+    ArrowLeft, 
+    AlertCircle, 
+    Code2, 
+    Play, 
+    Send, 
+    Sparkles, 
+    SquareCode, 
+    Terminal, 
+    RotateCcw, 
+    Copy, 
+    Check 
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
-import { Progress } from "/components/ui/progress";
 import { DashboardLayout } from "@/components/layout/layout";
 import { updateProblemStatus } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
 import { codeChecker } from "@/Api/api";
+
+const DEFAULT_TEMPLATES = {
+    javascript: `// Write your JavaScript solution here
+function solve() {
+    console.log("Hello World");
+}
+
+solve();`,
+    python: `# Write your Python solution here
+def solve():
+    print("Hello World")
+
+solve()`,
+    cpp: `// Write your C++ solution here
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello World" << endl;
+    return 0;
+}`,
+    java: `// Write your Java solution here
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello World");
+    }
+}`,
+    c: `// Write your C solution here
+#include <stdio.h>
+
+int main() {
+    printf("Hello World\\n");
+    return 0;
+}`
+};
 
 function Badge({ children, variant = "neutral" }) {
     const variants = {
@@ -29,13 +75,28 @@ function Badge({ children, variant = "neutral" }) {
             borderColor: "rgba(59,130,246,0.22)",
             color: "#2563EB",
         },
+        success: {
+            background: "rgba(34,197,94,0.10)",
+            borderColor: "rgba(34,197,94,0.22)",
+            color: "#16A34A",
+        },
+        warning: {
+            background: "rgba(245,158,11,0.10)",
+            borderColor: "rgba(245,158,11,0.22)",
+            color: "#D97706",
+        },
+        danger: {
+            background: "rgba(239,68,68,0.10)",
+            borderColor: "rgba(239,68,68,0.22)",
+            color: "#DC2626",
+        },
     };
 
     const style = variants[variant] || variants.neutral;
 
     return (
         <span
-            className="inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold"
+            className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold transition-all"
             style={style}
         >
             {children}
@@ -43,24 +104,56 @@ function Badge({ children, variant = "neutral" }) {
     );
 }
 
-function PanelTitle({ icon: Icon, title, subtitle }) {
+function ExampleCard({ index, example }) {
+    const [copiedInput, setCopiedInput] = useState(false);
+    const [copiedOutput, setCopiedOutput] = useState(false);
+
+    const handleCopy = (text, setCopied) => {
+        if (!text) return;
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     return (
-        <div className="flex items-start gap-3">
-            <div
-                className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: theme.colors.limeDim }}
-            >
-                <Icon size={18} color={theme.colors.dark} />
+        <div className="rounded-2xl border border-zinc-200 overflow-hidden bg-zinc-50 shadow-sm transition-all hover:shadow-md">
+            <div className="h-10 bg-zinc-100/80 px-4 border-b border-zinc-200 flex items-center justify-between">
+                <span className="text-xs font-black text-zinc-700 flex items-center gap-1.5 select-none">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Example {index + 1}
+                </span>
             </div>
-            <div className="min-w-0">
-                <h2 className="text-[16px] sm:text-[18px] font-bold" style={{ color: theme.colors.dark }}>
-                    {title}
-                </h2>
-                {subtitle && (
-                    <p className="text-[13px] font-medium mt-1" style={{ color: theme.colors.darkGray }}>
-                        {subtitle}
-                    </p>
-                )}
+            <div className="p-4 space-y-4 font-mono text-xs">
+                <div>
+                    <div className="flex items-center justify-between text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider select-none">
+                        <span>Input</span>
+                        <button
+                            onClick={() => handleCopy(example.input, setCopiedInput)}
+                            className="text-[10px] text-zinc-500 hover:text-zinc-800 transition flex items-center gap-1 bg-white hover:bg-zinc-100 border border-zinc-200 rounded px-1.5 py-0.5 font-sans"
+                        >
+                            {copiedInput ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            {copiedInput ? "Copied" : "Copy"}
+                        </button>
+                    </div>
+                    <pre className="bg-zinc-950 text-zinc-100 p-3 rounded-xl overflow-x-auto shadow-inner leading-relaxed select-text">
+                        {example.input}
+                    </pre>
+                </div>
+                <div>
+                    <div className="flex items-center justify-between text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider select-none">
+                        <span>Output</span>
+                        <button
+                            onClick={() => handleCopy(example.output, setCopiedOutput)}
+                            className="text-[10px] text-zinc-500 hover:text-zinc-800 transition flex items-center gap-1 bg-white hover:bg-zinc-100 border border-zinc-200 rounded px-1.5 py-0.5 font-sans"
+                        >
+                            {copiedOutput ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            {copiedOutput ? "Copied" : "Copy"}
+                        </button>
+                    </div>
+                    <pre className="bg-zinc-950 text-emerald-400 p-3 rounded-xl overflow-x-auto shadow-inner leading-relaxed select-text">
+                        {example.output}
+                    </pre>
+                </div>
             </div>
         </div>
     );
@@ -75,10 +168,24 @@ export default function CodeEditor() {
     const [data, setData] = useState({});
     const [fetching, setFetching] = useState(true);
     const [submitLaoding, setSubmitLaoding] = useState(false);
+    
+    // Editor controls state
+    const [fontSize, setFontSize] = useState(15);
+    const [wordWrap, setWordWrap] = useState("on");
+    const [activeTab, setActiveTab] = useState("description"); // "description" | "editor" | "console"
+    const [editorSize, setEditorSize] = useState("small"); // "small" | "big"
 
-    const [code, setCode] = useState(`function solve() {
-  console.log("Hello World");
-}`);
+    const [code, setCode] = useState(`function solve() {\n  console.log("Hello World");\n}`);
+
+    // Load default templates when language changes
+    useEffect(() => {
+        const langKey = String(language || "").toLowerCase();
+        if (DEFAULT_TEMPLATES[langKey]) {
+            setCode(DEFAULT_TEMPLATES[langKey]);
+        } else {
+            setCode(`function solve() {\n  console.log("Hello World");\n}`);
+        }
+    }, [language]);
 
     useEffect(() => {
         let mounted = true;
@@ -98,7 +205,6 @@ export default function CodeEditor() {
                     (problem) => String(problem?._id) === String(problemId)
                 );
 
-
                 if (mounted) setData(filterProblem || {});
             } catch (error) {
                 console.error("Error fetching coding practices:", error);
@@ -115,22 +221,26 @@ export default function CodeEditor() {
     }, [language, problemId]);
 
     const examples = useMemo(() => data?.examples || [], [data]);
-    const completion = 0;
 
     const getLanguageId = async (languageName) => {
         const { data } = await axios.get("https://ce.judge0.com/languages");
 
-        const language = data.find((lang) =>
+        const matchedLang = data.find((lang) =>
             lang.name.toLowerCase().includes(languageName.toLowerCase())
         );
 
-        return language ? language.id : null;
+        return matchedLang ? matchedLang.id : null;
     };
 
     const runCode = async () => {
         try {
             setLoading(true);
             setOutput("Running...");
+            
+            // Auto switch to console tab on mobile devices
+            if (window.innerWidth < 1024) {
+                setActiveTab("console");
+            }
 
             const languageId = await getLanguageId(language);
             const response = await axios.post(
@@ -144,51 +254,80 @@ export default function CodeEditor() {
 
             setOutput(response.data.stdout || response.data.stderr || "No output");
         } catch (error) {
-            setOutput("Error running code");
+            setOutput("Error running code. Please check your internet connection.");
             console.error(error);
         } finally {
             setLoading(false);
         }
     };
 
-
     const handleSubmit = async () => {
-        await runCode();
-        const question = data?.question || "hello";
-        const output = data.examples[0].output
-
-        // Check user submited code 
-        const check = await codeChecker({ question, code, output });
-        if (!check.data.message) {
-            return customMessage({
-                type: "error",
-                content: `${check.data.message} !`
-            });
-        }
-        if (check.data.data === "true") {
+        try {
             setSubmitLaoding(true);
-            try {
+            await runCode();
+            
+            const question = data?.question || "hello";
+            const outputVal = data?.examples?.[0]?.output || "";
+
+            // Check user submitted code 
+            const check = await codeChecker({ question, code, output: outputVal });
+            
+            if (!check.data || check.data.message === undefined) {
+                customMessage({
+                    type: "error",
+                    content: "Failed to evaluate code. Check connection!"
+                });
+                return;
+            }
+
+            if (check.data.data === "true") {
                 const day = new Date().toLocaleString('en-US', { weekday: 'long' });
                 const updateStatus = await updateProblemStatus({ problemId, language, day });
-                console.log(updateStatus.data);
+                
                 if (updateStatus.data.success === true) {
-                    return customMessage({
+                    customMessage({
                         type: "success",
-                        content: `Your code is submited`
+                        content: `Excellent! Your code submitted successfully.`
+                    });
+                    
+                    setTimeout(() => {
+                        goBack();
+                    }, 1500);
+                } else {
+                    customMessage({
+                        type: "success",
+                        content: `Code evaluated correctly! Status updated.`
                     });
                 }
+            } else {
+                customMessage({
+                    type: "error",
+                    content: `Incorrect solution. Verify example test cases!`
+                });
             }
-            catch (err) {
-                console.error(err)
-            }
-        }
-        else {
-            return customMessage({
+        } catch (err) {
+            console.error(err);
+            customMessage({
                 type: "error",
-                content: `Your code is not correct`
+                content: `Error submitting solution.`
             });
+        } finally {
+            setSubmitLaoding(false);
         }
-    }
+    };
+
+    const resetTemplate = () => {
+        const langKey = String(language || "").toLowerCase();
+        if (DEFAULT_TEMPLATES[langKey]) {
+            setCode(DEFAULT_TEMPLATES[langKey]);
+        } else {
+            setCode(`function solve() {\n  console.log("Hello World");\n}`);
+        }
+        customMessage({
+            type: "success",
+            content: "Workspace code reset to default template."
+        });
+    };
 
     const goBack = () => {
         navigate(`/dashboard/coding-practice/${encodeURIComponent(String(language || "").toLowerCase())}`);
@@ -196,206 +335,137 @@ export default function CodeEditor() {
 
     return (
         <DashboardLayout>
-            <div >
-                <div className="mx-auto  space-y-4 sm:space-y-6">
-                    {/* Question Card */}
-                    <Card
-                        className="rounded-2xl"
-                        style={{
-                            background: theme.colors.white,
-                            borderColor: theme.colors.lightGray,
-                            boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
-                        }}
-                    >
-                        <CardContent className="p-6 sm:px-6">
-                            <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
-                                <div className="min-w-0 flex-1">
-                                    <div className="flex flex-wrap items-center gap-3">
-                                        <button
-                                            onClick={goBack}
-                                            className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold transition-colors hover:bg-slate-50"
-                                            style={{
-                                                background: theme.colors.white,
-                                                borderColor: theme.colors.lightGray,
-                                                color: theme.colors.dark,
-                                            }}
-                                        >
-                                            <ArrowLeft className="w-4 h-4" />
-                                            Back
-                                        </button>
-
-                                        <Badge variant="primary">
-                                            <Sparkles className="w-3.5 h-3.5 mr-1" />
-                                            {String(language || "Language").toUpperCase()}
-                                        </Badge>
-
-                                        <Badge>
-                                            <SquareCode className="w-3.5 h-3.5 mr-1" />
-                                            Coding Workspace
-                                        </Badge>
-                                    </div>
-
-                                    <h1
-                                        className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black leading-tight"
-                                        style={{ color: theme.colors.dark }}
-                                    >
-                                        {data?.question || "Solve the problem"}
-                                    </h1>
-
-                                    <p className="mt-4 max-w-3xl text-sm sm:text-base leading-7" style={{ color: theme.colors.darkGray }}>
-                                        {data?.problemDiscription ||
-                                            "Read the prompt, write your solution, and run it against the sample inputs before submitting."}
-                                    </p>
-
-                                    <div className="mt-6 flex flex-wrap gap-3">
-                                        <Badge variant="info">{data?.difficulty || "Unspecified"}</Badge>
-                                        <Badge>{examples.length} Example{examples.length === 1 ? "" : "s"}</Badge>
-                                        <Badge>{loading ? "Running..." : "Ready to code"}</Badge>
-                                    </div>
-
-
-                                </div>
-
-                                <div className="w-full xl:w-[320px] shrink-0">
-                                    <div
-                                        className="rounded-2xl border p-5"
-                                        style={{
-                                            background: theme.colors.white,
-                                            borderColor: theme.colors.lightGray,
-                                            boxShadow: "0 10px 0 rgba(17,17,19,0.06)",
-                                        }}
-                                    >
-                                        <div className="flex items-center justify-between gap-3">
-                                            <div className="flex items-center gap-2">
-                                                <Code2 className="w-4 h-4" style={{ color: theme.colors.dark }} />
-                                                <span className="text-sm font-bold" style={{ color: theme.colors.dark }}>
-                                                    Editor status
-                                                </span>
-                                            </div>
-                                            <Badge variant="primary">Live</Badge>
-                                        </div>
-
-                                        <div className="mt-5 space-y-3">
-                                            <div className="flex items-center justify-between text-sm">
-                                                <span style={{ color: theme.colors.darkGray }}>Selected language</span>
-                                                <span className="font-bold" style={{ color: theme.colors.dark }}>
-                                                    {language || "N/A"}
-                                                </span>
-                                            </div>
-
-                                            <div className="flex items-center justify-between text-sm">
-                                                <span style={{ color: theme.colors.darkGray }}>Examples loaded</span>
-                                                <span className="font-bold" style={{ color: theme.colors.dark }}>
-                                                    {examples.length}
-                                                </span>
-                                            </div>
-
-                                            <div className="flex items-center justify-between text-sm">
-                                                <span style={{ color: theme.colors.darkGray }}>Output</span>
-                                                <span className="font-bold" style={{ color: theme.colors.dark }}>
-                                                    {loading ? "Running" : "Idle"}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <button
-                                            onClick={runCode}
-                                            disabled={loading}
-                                            className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md shadow-indigo-100"
-                                        >
-                                            <Play className="w-4 h-4" />
-                                            Run Code
-                                        </button>
-
-                                        <button
-                                            className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black border transition-colors hover:bg-slate-50"
-                                            style={{
-                                                background: theme.colors.white,
-                                                color: theme.colors.dark,
-                                                borderColor: theme.colors.lightGray,
-                                            }}
-                                            onClick={() => {
-                                                handleSubmit();
-                                            }}
-                                        >
-                                            <Send className="w-4 h-4" />
-                                            Submit
-                                        </button>
-                                    </div>
-                                </div>
+            <div className="max-w-[1600px] mx-auto space-y-6">
+                
+                {/* Sleek Breadcrumb Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-200">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={goBack}
+                            className="inline-flex items-center justify-center p-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 transition-all shadow-sm active:scale-95 shrink-0"
+                            title="Go Back"
+                        >
+                            <ArrowLeft className="w-5 h-5 text-zinc-700" />
+                        </button>
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider select-none">
+                                <span>Practice</span>
+                                <span>/</span>
+                                <span className="text-zinc-700">{String(language || "").toUpperCase()}</span>
+                                <span>/</span>
+                                <span className="text-zinc-400 font-medium">Workspace</span>
                             </div>
-                        </CardContent>
-                    </Card>
+                            <h1 className="text-xl sm:text-2xl font-black text-zinc-900 truncate mt-0.5">
+                                {data?.question || "Solve the problem"}
+                            </h1>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2.5 self-end md:self-center select-none">
+                        <Badge variant="primary">
+                            <Sparkles className="w-3.5 h-3.5 mr-1 animate-pulse" />
+                            Live Coding
+                        </Badge>
+                        {data?.difficulty && (
+                            <Badge variant={
+                                data.difficulty.toLowerCase() === "easy" ? "success" :
+                                data.difficulty.toLowerCase() === "medium" ? "warning" :
+                                data.difficulty.toLowerCase() === "hard" ? "danger" : "neutral"
+                            }>
+                                {data.difficulty}
+                            </Badge>
+                        )}
+                    </div>
+                </div>
 
+                {/* Mobile Navigation Tabs */}
+                <div className="flex lg:hidden items-center border border-zinc-200 bg-white p-1 rounded-xl gap-1 select-none">
+                    <button
+                        onClick={() => setActiveTab("description")}
+                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                            activeTab === "description"
+                                ? "bg-zinc-900 text-white shadow-sm"
+                                : "text-zinc-600 hover:bg-zinc-100"
+                        }`}
+                    >
+                        Description
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("editor")}
+                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                            activeTab === "editor"
+                                ? "bg-zinc-900 text-white shadow-sm"
+                                : "text-zinc-600 hover:bg-zinc-100"
+                        }`}
+                    >
+                        Editor
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("console")}
+                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all relative ${
+                            activeTab === "console"
+                                ? "bg-zinc-900 text-white shadow-sm"
+                                : "text-zinc-600 hover:bg-zinc-100"
+                        }`}
+                    >
+                        Console Output
+                        {output && (
+                            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping" />
+                        )}
+                    </button>
+                </div>
 
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                {/* Main Workspace panels */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    
+                    {/* Left Column: Description & Metadata */}
+                    <div className={`lg:col-span-5 flex flex-col ${editorSize === "big" ? "lg:hidden" : ""} ${activeTab === "description" ? "block" : "hidden lg:block"}`}>
                         <Card
-                            className="rounded-2xl"
+                            className="rounded-2xl border flex flex-col h-full"
                             style={{
                                 background: theme.colors.white,
                                 borderColor: theme.colors.lightGray,
-                                boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
+                                boxShadow: "0 4px 12px rgba(17,17,19,0.03)",
                             }}
                         >
-                            <CardHeader className="pb-2">
-                                <PanelTitle
-                                    icon={AlertCircle}
-                                    title="Problem Statement"
-                                    subtitle="Read the prompt and examples before writing your solution."
-                                />
+                            <CardHeader className="pb-3 border-b border-zinc-100 flex flex-row items-center justify-between select-none">
+                                <div className="flex items-center gap-2">
+                                    <AlertCircle className="w-5 h-5 text-indigo-500" />
+                                    <CardTitle className="text-base font-bold text-zinc-900">Problem Description</CardTitle>
+                                </div>
+                                <div className="text-xs font-semibold text-zinc-400">
+                                    {examples.length} Example{examples.length === 1 ? "" : "s"}
+                                </div>
                             </CardHeader>
-                            <CardContent className="pt-0">
+                            <CardContent className="pt-4 flex-1 flex flex-col overflow-y-auto max-h-[720px] custom-scrollbar">
                                 {fetching ? (
-                                    <div
-                                        className="rounded-2xl border p-6 text-center font-semibold"
-                                        style={{
-                                            background: theme.colors.white,
-                                            borderColor: theme.colors.lightGray,
-                                            color: theme.colors.darkGray,
-                                        }}
-                                    >
-                                        Loading problem...
+                                    <div className="py-20 flex flex-col items-center justify-center text-zinc-400 gap-3">
+                                        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                                        <span className="font-semibold text-sm">Loading problem details...</span>
                                     </div>
                                 ) : (
-                                    <div className="rounded-2xl border p-5" style={{ borderColor: theme.colors.lightGray }}>
-                                        <h3 className="text-sm font-bold mb-2" style={{ color: theme.colors.dark }}>
-                                            {data?.question || "No problem found"}
-                                        </h3>
-                                        <p className="text-sm leading-7" style={{ color: theme.colors.darkGray }}>
-                                            {data?.problemDiscription || "No description available"}
-                                        </p>
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h3 className="text-lg font-bold text-zinc-800 mb-2">
+                                                {data?.question || "No problem found"}
+                                            </h3>
+                                            <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-line">
+                                                {data?.problemDiscription || "No description available."}
+                                            </p>
+                                        </div>
 
-                                        <div className="mt-6 space-y-4">
+                                        {/* Examples */}
+                                        <div className="space-y-4">
+                                            <h4 className="text-sm font-bold text-zinc-700 flex items-center gap-2 select-none">
+                                                <Code2 className="w-4 h-4 text-zinc-500" />
+                                                Examples
+                                            </h4>
                                             {examples.length ? (
                                                 examples.map((example, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="rounded-2xl border p-4"
-                                                        style={{
-                                                            background: theme.colors.softGray,
-                                                            borderColor: theme.colors.lightGray,
-                                                        }}
-                                                    >
-                                                        <div className="mb-2 text-sm font-bold" style={{ color: theme.colors.dark }}>
-                                                            Example {index + 1}
-                                                        </div>
-                                                        <div className="text-sm leading-7" style={{ color: theme.colors.darkGray }}>
-                                                            <span className="font-bold" style={{ color: theme.colors.dark }}>
-                                                                Input:
-                                                            </span>{" "}
-                                                            {example.input}
-                                                        </div>
-                                                        <div className="mt-2 text-sm leading-7" style={{ color: theme.colors.darkGray }}>
-                                                            <span className="font-bold" style={{ color: theme.colors.dark }}>
-                                                                Output:
-                                                            </span>{" "}
-                                                            {example.output}
-                                                        </div>
-                                                    </div>
+                                                    <ExampleCard key={index} index={index} example={example} />
                                                 ))
                                             ) : (
-                                                <div className="rounded-2xl border p-4 text-sm" style={{ borderColor: theme.colors.lightGray, color: theme.colors.darkGray }}>
-                                                    No examples provided for this problem.
+                                                <div className="rounded-xl border border-zinc-200 border-dashed p-6 text-center text-zinc-400 text-xs font-medium select-none">
+                                                    No example cases provided for this problem.
                                                 </div>
                                             )}
                                         </div>
@@ -403,118 +473,241 @@ export default function CodeEditor() {
                                 )}
                             </CardContent>
                         </Card>
+                    </div>
 
+                    {/* Right Column: Code Editor & Console Output */}
+                    <div className={`flex flex-col ${editorSize === "big" ? "lg:col-span-12" : "lg:col-span-7"} ${activeTab === "editor" || activeTab === "console" ? "block" : "hidden lg:block"}`}>
                         <Card
-                            className="rounded-2xl"
+                            className="rounded-2xl border flex flex-col overflow-hidden h-full"
                             style={{
                                 background: theme.colors.white,
                                 borderColor: theme.colors.lightGray,
-                                boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
+                                boxShadow: "0 4px 12px rgba(17,17,19,0.03)",
                             }}
                         >
-                            <CardHeader className="pb-2 flex justify-between items-center ">
-                                <PanelTitle
-                                    icon={ArrowUpRight}
-                                    title="Code Editor"
-                                    subtitle="Write your solution and check the output below."
-                                />
-                                <button
-                                    onClick={runCode}
-                                    disabled={loading}
-                                    className="mt-5 w-fit inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md shadow-indigo-100"
-                                >
-                                    <Play className="w-4 h-4" />
-                                    Run Code
-                                </button>
-                                <button
-                                    className="mt-3 w-fit inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-black border transition-colors hover:bg-slate-50"
-                                    style={{
-                                        background: theme.colors.white,
-                                        color: theme.colors.dark,
-                                        borderColor: theme.colors.lightGray,
-                                    }}
-                                    onClick={() => {
-                                        handleSubmit();
-                                    }}
-                                >
-                                    <Send className="w-4 h-4" />
-                                    Submit
-                                </button>
-                            </CardHeader>
-                            <CardContent className="pt-0">
-                                <div className="rounded-2xl overflow-hidden border" style={{ borderColor: theme.colors.lightGray }}>
-                                    <Editor
-                                        height="460px"
-                                        language={language}
-                                        value={code}
-                                        theme="vs-dark"
-                                        onChange={(value) => setCode(value || "")}
-                                        options={{
-                                            minimap: { enabled: false },
-                                            fontSize: 15,
-                                            automaticLayout: true,
-                                            scrollBeyondLastLine: false,
-                                            padding: { top: 25, bottom: 16, },
-                                            fontFamily: "JetBrains Mono, monospace",
-                                            wordWrap: "on",
-                                            renderLineHighlight: "line",
-                                        }}
-                                    />
-                                </div>
-
-                                <div
-                                    className="mt-4 rounded-2xl border overflow-hidden"
-                                    style={{ borderColor: theme.colors.lightGray }}
-                                >
-                                    <div
-                                        className="h-12 flex items-center px-5 border-b"
-                                        style={{
-                                            background: theme.colors.softGray,
-                                            borderColor: theme.colors.lightGray,
-                                        }}
-                                    >
-                                        <span className="text-sm font-bold" style={{ color: theme.colors.dark }}>
-                                            Console Output
+                            {/* Editor Header Panel controls */}
+                            <div className="flex flex-wrap items-center justify-between gap-4 p-4 border-b border-zinc-100 bg-zinc-50/50 select-none">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-zinc-950 flex items-center justify-center shadow">
+                                        <Code2 size={16} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <span className="text-sm font-bold text-zinc-950">Code Workspace</span>
+                                        <span className="ml-2 text-xs font-semibold text-zinc-500 uppercase px-2 py-0.5 bg-zinc-200/60 rounded">
+                                            {language || "N/A"}
                                         </span>
                                     </div>
-                                    <div className="p-4">
-                                        <pre
-                                            className="text-sm font-mono whitespace-pre-wrap min-h-[96px]"
-                                            style={{ color: loading ? "#2563EB" : "#15803D" }}
-                                        >
-                                            {output || "Run your code to see output"}
-                                        </pre>
-                                    </div>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </div>
 
-                    <Card
-                        className="rounded-2xl"
-                        style={{
-                            background: theme.colors.white,
-                            borderColor: theme.colors.lightGray,
-                            boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
-                        }}
-                    >
-                        <CardContent className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div>
-                                <div className="text-sm font-bold" style={{ color: theme.colors.dark }}>
-                                    Tip
-                                </div>
-                                <div className="text-sm mt-1" style={{ color: theme.colors.darkGray }}>
-                                    Keep your solution clean and test edge cases before submitting.
+                                {/* Editor controls */}
+                                <div className="flex items-center gap-2">
+                                    {/* Editor Size Selector (Big/Small) */}
+                                    <div className="hidden lg:flex items-center gap-1 bg-white border border-zinc-200 rounded-xl p-1 shadow-sm">
+                                        <button
+                                            onClick={() => setEditorSize("small")}
+                                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                                                editorSize === "small"
+                                                    ? "bg-zinc-950 text-white shadow-sm"
+                                                    : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50"
+                                            }`}
+                                            title="Split Layout"
+                                        >
+                                            Small
+                                        </button>
+                                        <button
+                                            onClick={() => setEditorSize("big")}
+                                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                                                editorSize === "big"
+                                                    ? "bg-zinc-950 text-white shadow-sm"
+                                                    : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50"
+                                            }`}
+                                            title="Focus Layout (Big)"
+                                        >
+                                            Big
+                                        </button>
+                                    </div>
+
+                                    {/* Font Size Selector */}
+                                    <div className="flex items-center gap-1 bg-white border border-zinc-200 rounded-xl px-2 py-1 shadow-sm">
+                                        <span className="text-xs text-zinc-400 font-bold px-1">Aa</span>
+                                        <select
+                                            value={fontSize}
+                                            onChange={(e) => setFontSize(Number(e.target.value))}
+                                            className="text-xs font-bold text-zinc-700 bg-transparent outline-none cursor-pointer"
+                                        >
+                                            <option value={13}>13px</option>
+                                            <option value={15}>15px</option>
+                                            <option value={17}>17px</option>
+                                            <option value={19}>19px</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Word Wrap Toggle */}
+                                    <button
+                                        onClick={() => setWordWrap(wordWrap === "on" ? "off" : "on")}
+                                        className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm ${
+                                            wordWrap === "on"
+                                                ? "bg-zinc-950 text-white border-zinc-950"
+                                                : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50"
+                                        }`}
+                                        title="Toggle Word Wrap"
+                                    >
+                                        Wrap
+                                    </button>
+
+                                    {/* Reset template */}
+                                    <button
+                                        onClick={resetTemplate}
+                                        className="p-2 rounded-xl border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 transition-all shadow-sm active:scale-95 flex items-center justify-center"
+                                        title="Reset Code Template"
+                                    >
+                                        <RotateCcw className="w-3.5 h-3.5" />
+                                    </button>
                                 </div>
                             </div>
 
-                            <Badge variant="primary">
-                                <Sparkles className="w-3.5 h-3.5 mr-1" />
-                                Dashboard Style
-                            </Badge>
-                        </CardContent>
-                    </Card>
+                            {/* Monaco Editor Container */}
+                            <div className={`overflow-hidden bg-zinc-950 border-b border-zinc-100 ${activeTab === "console" ? "hidden lg:block" : "block"}`}>
+                                <Editor
+                                    height={editorSize === "big" ? "560px" : "420px"}
+                                    language={language}
+                                    value={code}
+                                    theme="vs-dark"
+                                    onChange={(value) => setCode(value || "")}
+                                    options={{
+                                        minimap: { enabled: false },
+                                        fontSize: fontSize,
+                                        automaticLayout: true,
+                                        scrollBeyondLastLine: false,
+                                        padding: { top: 16, bottom: 16 },
+                                        fontFamily: "JetBrains Mono, Fira Code, monospace",
+                                        wordWrap: wordWrap,
+                                        renderLineHighlight: "line",
+                                        lineHeight: 22,
+                                        cursorBlinking: "smooth",
+                                        smoothScrolling: true,
+                                        bracketPairColorization: { enabled: true },
+                                    }}
+                                />
+                            </div>
+
+                            {/* CLI Console Panel */}
+                            <div className={`flex flex-col bg-zinc-950 border-t border-zinc-900 ${activeTab === "editor" ? "hidden lg:flex" : "flex flex-1"}`}>
+                                <div className="h-10 bg-zinc-900/60 px-5 flex items-center justify-between border-b border-zinc-800/80 select-none">
+                                    <div className="flex items-center gap-2">
+                                        <Terminal className="w-4 h-4 text-indigo-400" />
+                                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Console Output</span>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-3">
+                                        {output && (
+                                            <button
+                                                onClick={() => setOutput("")}
+                                                className="text-[10px] font-bold text-zinc-500 hover:text-zinc-300 transition uppercase"
+                                            >
+                                                Clear
+                                            </button>
+                                        )}
+                                        {loading && (
+                                            <div className="w-3 h-3 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="p-5 bg-zinc-950 min-h-[165px] font-mono text-xs flex-1 flex flex-col justify-start">
+                                    {loading ? (
+                                        <div className="flex flex-col items-center justify-center py-8 text-zinc-500 gap-3 select-none">
+                                            <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <div className="text-[11px] font-semibold text-indigo-400/90">Executing code on compiler sandbox...</div>
+                                        </div>
+                                    ) : output ? (
+                                        <div className="space-y-1 select-text">
+                                            <div className="text-zinc-500 text-[10px] border-b border-zinc-900 pb-1 mb-2 select-none">
+                                                Status: <span className={output.includes("Error") || output.includes("Exception") ? "text-rose-500 font-black" : "text-emerald-500 font-black"}>{output.includes("Error") || output.includes("Exception") ? "FAILED" : "SUCCESS"}</span>
+                                            </div>
+                                            <pre className={`whitespace-pre-wrap leading-relaxed p-3 rounded-xl border ${
+                                                output.includes("Error") || output.includes("Exception")
+                                                    ? "text-rose-400 bg-rose-950/20 border-rose-900/40"
+                                                    : "text-emerald-400 bg-emerald-950/10 border-emerald-900/30"
+                                            }`}>
+                                                {output}
+                                            </pre>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center py-10 text-zinc-600 text-center gap-1.5 select-none">
+                                            <Terminal className="w-5 h-5 text-zinc-700" />
+                                            <span className="text-[11px]">Terminal is idle. Run your code to display stdout.</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Bottom Actions Bar */}
+                            <div className="p-4 bg-zinc-50 border-t border-zinc-100 flex items-center justify-end gap-3 select-none">
+                                <button
+                                    onClick={runCode}
+                                    disabled={loading}
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md shadow-indigo-100"
+                                >
+                                    <Play className="w-4 h-4 fill-white text-white" />
+                                    Run Code
+                                </button>
+
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={submitLaoding || loading}
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-2.5 text-xs font-black text-black transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md hover:brightness-105"
+                                    style={{
+                                        background: theme.colors.lime,
+                                        boxShadow: "0 4px 10px rgba(204,255,0,0.15)",
+                                    }}
+                                >
+                                    {submitLaoding ? (
+                                        <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                                    ) : (
+                                        <Send className="w-4 h-4" />
+                                    )}
+                                    Submit Solution
+                                </button>
+                            </div>
+                        </Card>
+                    </div>
+
                 </div>
+
+                {/* Footer Pro Tip Panel */}
+                <Card
+                    className="rounded-2xl border"
+                    style={{
+                        background: theme.colors.white,
+                        borderColor: theme.colors.lightGray,
+                        boxShadow: "0 4px 12px rgba(17,17,19,0.03)",
+                    }}
+                >
+                    <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div className="flex items-start gap-3">
+                            <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 bg-amber-50 border border-amber-200">
+                                <Sparkles className="w-4 h-4 text-amber-500" />
+                            </div>
+                            <div>
+                                <div className="text-sm font-bold text-zinc-950">
+                                    Pro Developer Tip
+                                </div>
+                                <div className="text-xs text-zinc-500 mt-0.5 leading-relaxed">
+                                    Write modular functions, verify variable scopes, and run test cases before submitting. Correct indentation helps debugging!
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 self-start sm:self-center select-none">
+                            <Badge variant="primary">
+                                <SquareCode className="w-3.5 h-3.5 mr-1" />
+                                Advanced Sandbox
+                            </Badge>
+                        </div>
+                    </CardContent>
+                </Card>
+
             </div>
         </DashboardLayout>
     );

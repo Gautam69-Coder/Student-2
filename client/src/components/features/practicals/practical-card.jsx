@@ -1,7 +1,6 @@
 import React, { useState, memo, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ShimmerButton } from "/components/ui/shimmer-button";
-import { AICodeHelper } from "../coding/ai-code-helper";
+import { AICodeHelper } from "../coding/ai-code-helper"
 import {
     Code,
     Copy,
@@ -10,7 +9,8 @@ import {
     FileText,
     Download,
     ExternalLink,
-    Cpu
+    Cpu,
+    Sparkles
 } from "lucide-react"
 
 import { CodeModal } from "@/components/features/coding/code-modal"
@@ -19,28 +19,28 @@ import "highlight.js/styles/atom-one-dark.css"
 
 const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth, section }) {
     const [copied, setCopied] = useState(false)
-    const [showModal, setShowModal] = useState(false);
-    const [showModalCodeHelper, setShowModalCodeHelper] = useState(false);
+    const [showModal, setShowModal] = useState(false)
+    const [showModalCodeHelper, setShowModalCodeHelper] = useState(false)
 
     const handleCopy = useCallback(() => {
         requireAuth(() => {
             navigator.clipboard.writeText(question.code)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
-        });
+        })
     }, [question.code, requireAuth])
 
     const handleOpenModal = useCallback(() => {
         requireAuth(() => {
             setShowModal(true)
-        });
-    }, [requireAuth]);
+        })
+    }, [requireAuth])
 
     const handleOpenCodeHelper = useCallback(() => {
         requireAuth(() => {
             setShowModalCodeHelper(true)
-        });
-    }, [requireAuth]);
+        })
+    }, [requireAuth])
 
     const handleCloseCodeHelper = useCallback(() => {
         setShowModalCodeHelper(false)
@@ -48,21 +48,20 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
 
     const handleCloseModal = useCallback(() => {
         setShowModal(false)
-    }, []);
-
+    }, [])
 
     return (
         <div
             className="group/q relative border-b last:border-b-0 border-slate-100/50 dark:border-white/5"
         >
-            {/* Simplified Side Accent - CSS only */}
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-cyan-500/50 scale-y-0 group-hover/q:scale-y-100 transition-transform duration-300 origin-top" />
+            {/* Side Accent Line */}
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 scale-y-0 group-hover/q:scale-y-100 transition-transform duration-300 origin-top" />
 
             <div className="sm:p-6 p-4">
-                <div className="flex   items-start justify-between gap-4 mb-6">
+                <div className="flex items-start justify-between gap-4 mb-6">
                     <div className="flex items-start gap-4 flex-1 min-w-0">
                         <div className="relative shrink-0">
-                            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-slate-200 dark:border-slate-700/50 group-hover/q:border-cyan-500/30 transition-colors">
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-slate-200 dark:border-slate-700/50 group-hover/q:border-indigo-500/30 transition-colors font-bold text-slate-700 dark:text-slate-300">
                                 {index + 1}
                             </div>
                         </div>
@@ -79,28 +78,30 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                         </div>
                     </div>
 
-                    <div className="flex  items-center gap-2 self-end sm:self-start">
+                    <div className="flex items-center gap-2 self-end sm:self-start">
+                        {/* Premium AI Assistant Button */}
                         <button
-                            onClick={() => {
-                                handleOpenCodeHelper()
-                            }}
-                            className="hidden sm:block"
+                            onClick={handleOpenCodeHelper}
+                            className="hidden sm:flex h-9 px-4 items-center gap-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-100 transition-all active:scale-[0.98] cursor-pointer"
                         >
-                            <ShimmerButton className={"py-2"}>
-                                AI Assistant
-                            </ShimmerButton>
+                            <Sparkles size={13} className="fill-current text-indigo-200 animate-pulse" />
+                            <span>AI Assistant</span>
                         </button>
+                        
+                        {/* View Button */}
                         <button
-                            className="h-9 px-4 flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/20 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 border border-slate-200 dark:border-slate-700/50 hover:border-cyan-500/30 transition-all duration-300 font-bold text-xs"
+                            className="h-9 px-4 flex items-center gap-2 rounded-lg bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 border border-slate-200 hover:border-indigo-200 transition-all duration-300 font-bold text-xs cursor-pointer"
                             onClick={handleOpenModal}
                         >
                             <Code className="w-3.5 h-3.5" />
                             <p className="sm:block hidden">View</p>
                         </button>
+
+                        {/* Copy Button */}
                         <button
-                            className={`h-9 px-4 flex items-center gap-2 rounded-lg transition-all duration-300 font-bold text-xs border ${copied
-                                ? "bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-400"
-                                : "bg-slate-100 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-cyan-500/10 hover:border-cyan-500/30 hover:text-cyan-600 dark:hover:text-cyan-400"
+                            className={`h-9 px-4 flex items-center gap-2 rounded-lg transition-all duration-300 font-bold text-xs border cursor-pointer ${copied
+                                ? "bg-emerald-50 border-emerald-200 text-emerald-600"
+                                : "bg-slate-50 hover:bg-indigo-50 border-slate-200 hover:border-indigo-200 text-slate-600 hover:text-indigo-600"
                                 }`}
                             onClick={handleCopy}
                         >
@@ -129,23 +130,16 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                 <div className="w-2.5 h-2.5 rounded-full bg-green-400/50"></div>
                             </div>
 
+                            {/* Mobile AI Assistant Button */}
                             <button
-                                onClick={() => {
-                                    handleOpenCodeHelper()
-                                }}
-                                className="sm:hidden block"
+                                onClick={handleOpenCodeHelper}
+                                className="sm:hidden flex h-8 px-3 items-center gap-1.5 rounded-lg text-[10px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-100 transition-all active:scale-[0.98] cursor-pointer"
                             >
-                                <ShimmerButton className={"text-[10px] py-2"}>
-                                    AI Assistant
-                                </ShimmerButton>
+                                <Sparkles size={11} className="fill-current text-indigo-200 animate-pulse" />
+                                <span>AI Assistant</span>
                             </button>
-
-
                         </div>
-
                     </div>
-
-
 
                     <div
                         className=" bg-[#0d1117] hover:overflow-y-auto sm:hover:overflow-y-auto overscroll-contain"
@@ -156,10 +150,8 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                         </Highlight>
                     </div>
 
-
-
                     {/* Floating Glow */}
-                    <div className="absolute inset-0 pointer-events-none opacity-0 group-hover/code:opacity-100 bg-linear-to-tr from-cyan-500/5 via-transparent to-transparent transition-opacity duration-700" />
+                    <div className="absolute inset-0 pointer-events-none opacity-0 group-hover/code:opacity-100 bg-linear-to-tr from-indigo-500/5 via-transparent to-transparent transition-opacity duration-700" />
                 </div>
 
                 {/* Multimedia Attachments */}
@@ -182,18 +174,18 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                     <div className="flex gap-3">
                                         <button
                                             onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
-                                            className="px-5 py-2.5 bg-white text-slate-900 text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform"
+                                            className="px-5 py-2.5 bg-white text-slate-900 text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer"
                                         >
                                             <ExternalLink className="w-4 h-4" /> Expand View
                                         </button>
                                         <button
                                             onClick={() => requireAuth(() => {
-                                                const link = document.createElement('a');
-                                                link.href = question.fileUrl;
-                                                link.download = question.fileName || 'asset';
-                                                link.click();
+                                                const link = document.createElement('a')
+                                                link.href = question.fileUrl
+                                                link.download = question.fileName || 'asset'
+                                                link.click()
                                             })}
-                                            className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors"
+                                            className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors cursor-pointer"
                                         >
                                             <Download className="w-4 h-4" /> Get Asset
                                         </button>
@@ -201,13 +193,13 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-wrap text-center items-center justify-between p-4 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-white/5 group/file hover:border-cyan-500/50 transition-colors">
+                            <div className="flex flex-wrap text-center items-center justify-between p-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 hover:border-indigo-400 transition-colors group/file">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-500">
+                                    <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
                                         <FileText className="w-6 h-6" />
                                     </div>
-                                    <div className="space-y-0.5">
-                                        <p className="text-sm font-bold text-slate-900 dark:text-white group-hover/file:text-cyan-500 transition-colors">
+                                    <div className="space-y-0.5 text-left">
+                                        <p className="text-sm font-bold text-slate-850 group-hover/file:text-indigo-650 transition-colors">
                                             {question.fileName || 'Attachment'}
                                         </p>
                                         <p className="text-[11px] font-medium text-slate-400">Application Resource</p>
@@ -215,15 +207,13 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                 </div>
                                 <button
                                     onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
-                                    className="h-10 px-5 w-full text-center mt-4 sm:mt-0  sm:w-fit bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                    className="h-10 px-5 w-full text-center mt-4 sm:mt-0 sm:w-fit bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
                                 >
-                                    <div className="flex items-center justify-center w-full ">
-                                        <Download className="w-4 h-4" />
+                                    <div className="flex items-center justify-center w-full">
+                                        <Download className="w-4 h-4 mr-1.5" />
                                         View File
                                     </div>
                                 </button>
-
-
                             </div>
                         )}
                     </div>
@@ -252,17 +242,14 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
 export const PracticalCard = memo(function PracticalCard({ practical, requireAuth }) {
     return (
         <div className="relative h-full">
-            {/* Removed expensive background glow animation */}
-
-            <div className="max-w-sm sm:max-w-full  relative h-full  rounded-[10px] overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
+            <div className="max-w-sm sm:max-w-full relative h-full rounded-[10px] overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
                 {/* Header Section */}
                 <div className="flex items-center sm:flex-row sm:items-center justify-between sm:p-4 p-2 sm:px-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
                     {practical.section && (
-                        <span className="px-3 py-1 rounded-[10px] bg-cyan-500/10 dark:bg-cyan-500/20 text-[10px] sm:text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest border border-cyan-500/20">
+                        <span className="px-3 py-1 rounded-lg bg-indigo-50 text-[10px] font-black text-indigo-600 uppercase tracking-widest border border-indigo-100">
                             {practical.section}
                         </span>
                     )}
-
                 </div>
 
                 {/* Content Section */}
@@ -281,7 +268,6 @@ export const PracticalCard = memo(function PracticalCard({ practical, requireAut
                             </div>
                         ))}
                     </div>
-                    {/* <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Modified: Feb 2026</span> */}
                 </div>
             </div>
         </div>

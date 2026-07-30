@@ -90,7 +90,7 @@ const NoteCard = memo(
                             {new Date(note.createdAt).toLocaleDateString()}
                         </span>
 
-                        {isOwner && (
+                        {(user?.role === "admin" || user?.role === "superadmin") && (
                             <button
                                 className={`rounded-full border px-3 py-1.5 text-[11px] font-bold transition-colors ${
                                     note.isGlobal

@@ -59,6 +59,11 @@ const UserSchema = new mongoose.Schema({
     },
     iv: {
         type: String
+    },
+    subscription: {
+        type: String,
+        enum: ['free', 'pro', 'lifetime'],
+        default: 'free'
     }
 });
 

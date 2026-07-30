@@ -58,7 +58,6 @@ export function TopNavBar({
             }
         } catch (e) {
             setApiKeyError(e?.response?.data?.error || e?.message || "Failed to save API key");
-            console.log(e);
         } finally {
             setSavingApiKey(false);
         }

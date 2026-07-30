@@ -297,7 +297,6 @@ export function ContextSidebar({
                                                 key={index}
                                                 onClick={() => {
                                                     handleTogglePractical(index);
-                                                    console.log(prac);
                                                     getPracticalQuestions(prac);
                                                     setIsQuestionModel(true);
                                                 }}

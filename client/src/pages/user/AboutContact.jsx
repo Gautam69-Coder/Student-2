@@ -1,17 +1,12 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Globe, Send, Info, PhoneCall } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/layout";
-import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
-import { DashboardSidebar } from "@/components/layout/sidebar";
 import { useTitle } from "@/hooks/useTitle";
-import { theme } from "@/lib/theme"
+import { theme } from "@/lib/theme";
 
 export function AboutContact() {
-
     useTitle("About & Contact");
-
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -22,25 +17,15 @@ export function AboutContact() {
     };
 
     const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 15 },
         visible: { opacity: 1, y: 0 }
     };
 
     const contactInfo = [
-        { icon: Mail, label: "Email", value: "gautamdoliya69@gmail.com", color: "bg-blue-500" },
-        // { icon: Phone, label: "Phone", value: "+1 (555) 000-0000", color: "bg-green-500" },
-        { icon: MapPin, label: "Location", value: "Mumbai, India", color: "bg-red-500" },
-        { icon: Globe, label: "Website", value: "https://student-2.pages.dev", color: "bg-purple-500" },
+        { icon: Mail, label: "Email", value: "gautamdoliya69@gmail.com", color: "bg-blue-50 text-blue-600 border-blue-100" },
+        { icon: MapPin, label: "Location", value: "Mumbai, India", color: "bg-rose-50 text-rose-600 border-rose-100" },
+        { icon: Globe, label: "Website", value: "student-2.pages.dev", color: "bg-purple-50 text-purple-600 border-purple-100" },
     ];
-
-    const socials = [
-        // { icon: Github, link: "#", color: "hover:text-white hover:" },
-        // { icon: Linkedin, link: "#", color: "hover:text-white hover:bg-blue-600" },
-        // { icon: Twitter, link: "#", color: "hover:text-white hover:bg-sky-500" },
-        // { icon: MessageCircle, link: "#", color: "hover:text-white hover:bg-green-500" },
-    ];
-
-
 
     return (
         <DashboardLayout>
@@ -48,130 +33,91 @@ export function AboutContact() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="space-y-6 lg:space-y-8"
+                className="space-y-8 max-w-7xl mx-auto"
             >
                 {/* Header Section */}
-                <motion.div variants={itemVariants} className="text-center space-y-4 px-2">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 text-black shadow-sm text-xs font-bold uppercase tracking-wider">
-                        <Info className="w-4 h-4" />
-                        Get to know us
+                <motion.div variants={itemVariants} className="text-center space-y-3 pt-4">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-slate-200 bg-white text-slate-500 shadow-xs text-xs font-bold uppercase tracking-wider">
+                        <Info className="w-3.5 h-3.5 text-indigo-500" />
+                        <span>Get to know us</span>
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-black text-black  tracking-tight leading-tight">
-                        About <span
-                            style={{
-                                color: theme.colors.lime
-                            }}
-                        >Student Hub</span>
+                    <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                        About <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">Student Hub</span>
                     </h1>
-                    <p className=" max-w-2xl mx-auto text-base md:text-lg leading-relaxed"
-                        style={{
-                            color: theme.colors.darkGray
-                        }}
-                    >
-                        The ultimate command center for modern students. We're on a mission to streamline learning,
-                        collaboration, and academic success through cutting-edge technology.
+                    <p className="max-w-2xl mx-auto text-sm sm:text-base leading-relaxed text-slate-500">
+                        The ultimate learning command center for modern IT students. We're on a mission to streamline learning, academic resource sharing, and peer-to-peer collaboration.
                     </p>
                 </motion.div>
 
                 {/* Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                     {/* Mission Section */}
-                    <motion.div variants={itemVariants} className="bg-white  rounded-3xl md:rounded-[2.5rem] p-6 md:p-8 border border-slate-200  shadow-sm relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500 hidden sm:block">
-                            <Globe size={120} className="text-black" />
-                        </div>
-
+                    <motion.div 
+                        variants={itemVariants} 
+                        className="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-xs relative overflow-hidden group"
+                    >
+                        {/* Decorative background blur */}
+                        <div className="absolute -top-12 -right-12 w-48 h-48 bg-indigo-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
+                        
                         <div className="relative z-10 space-y-6">
-                            <h2 className="text-2xl md:text-3xl font-black text-black  tracking-tight">Our Mission</h2>
-                            <div className="space-y-4">
-                                <p className=" leading-relaxed text-base md:text-lg text-justify sm:text-left"
-                                    style={{
-                                        color: theme.colors.darkGray
-                                    }}
-                                >
-                                    Student Hub was born out of a simple realization: student life is cluttered. Between notes,
-                                    practicals, PYQs, and feedback, information is scattered across a dozen platforms.
+                            <h2 className="text-xl md:text-2xl font-extrabold text-slate-950 tracking-tight">Our Mission</h2>
+                            <div className="space-y-4 text-sm text-slate-500 leading-relaxed">
+                                <p>
+                                    Student Hub was born out of a simple realization: student life is cluttered. Between notes, practicals, viva sheets, and feedback, academic resources are scattered across a dozen unofficial groups.
                                 </p>
-                                <p className=" leading-relaxed text-base md:text-lg text-justify sm:text-left"
-                                    style={{
-                                        color: theme.colors.darkGray
-                                    }}
-                                >
-                                    We've built a unified ecosystem—a "Learning Command Center"—where everything you need
-                                    is just one click away. From AI-powered assistance to peer-to-peer note sharing,
-                                    we're redefining how students interact with their curriculum.
+                                <p>
+                                    We've built a unified ecosystem—a digital workspace where everything you need is just a click away. From community help boards to shared study materials, we're redefining how students navigate their coursework.
                                 </p>
                             </div>
 
-                            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 md:gap-6 pt-4">
-                                <div className="text-center sm:text-left">
-                                    <p className="text-2xl md:text-3xl font-black ">10k+</p>
-                                    <p className="text-[10px] md:text-xs font-bold  uppercase tracking-widest"
-                                        style={{
-                                            color: theme.colors.darkGray
-                                        }}
-                                    >Active Students</p>
+                            <div className="flex flex-wrap items-center justify-between sm:justify-start gap-6 pt-4 border-t border-slate-100">
+                                <div>
+                                    <p className="text-xl md:text-2xl font-black text-slate-900">10k+</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Active Students</p>
                                 </div>
-                                <div className="hidden sm:block w-px h-10 bg-slate-200 dark:" />
-                                <div className="text-center sm:text-left">
-                                    <p className="text-2xl md:text-3xl font-black ">500+</p>
-                                    <p className="text-[10px] md:text-xs font-bold  uppercase tracking-widest"
-                                        style={{
-                                            color: theme.colors.darkGray
-                                        }}
-                                    >Shared Notes</p>
+                                <div className="hidden sm:block w-px h-8 bg-slate-200" />
+                                <div>
+                                    <p className="text-xl md:text-2xl font-black text-slate-900">500+</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Shared Notes</p>
                                 </div>
-                                <div className="hidden sm:block w-px h-10 bg-slate-200 dark:" />
-                                <div className="text-center sm:text-left">
-                                    <p className="text-2xl md:text-3xl font-black ">50+</p>
-                                    <p className="text-[10px] md:text-xs font-bold  uppercase tracking-widest"
-                                        style={{
-                                            color: theme.colors.darkGray
-                                        }}
-                                    >Expert Tutors</p>
+                                <div className="hidden sm:block w-px h-8 bg-slate-200" />
+                                <div>
+                                    <p className="text-xl md:text-2xl font-black text-slate-900">50+</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Expert Tutors</p>
                                 </div>
                             </div>
                         </div>
                     </motion.div>
 
                     {/* Contact Info Card */}
-                    <motion.div variants={itemVariants} className="  rounded-3xl md:rounded-[2.5rem] p-6 md:p-8 border border-slate-200 shadow-2xl relative overflow-hidden text-black">
-                        <div className="absolute top-0 right-0 p-8 opacity-10 hidden sm:block">
-                            <PhoneCall size={120} />
-                        </div>
+                    <motion.div 
+                        variants={itemVariants} 
+                        className="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-xs relative overflow-hidden text-slate-900"
+                    >
+                        <div className="absolute -top-12 -right-12 w-48 h-48 bg-purple-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
-                        <div className="relative z-10 h-full flex flex-col">
-                            <h2 className="text-2xl md:text-3xl font-black mb-6 md:mb-8 tracking-tight">Contact Us</h2>
-                            <div className="space-y-5 md:space-y-6 flex-1">
-                                {contactInfo.map((info, idx) => (
-                                    <div key={idx} className="flex items-center gap-4 group cursor-default">
-                                        <div className={`p-2.5 md:p-3 rounded-xl md:rounded-2xl ${info.color} bg-opacity-20 flex items-center justify-center transition-all group-hover:scale-110`}>
-                                            <info.icon className={`w-5 h-5 md:w-6 md:h-6 ${info.color.replace('bg-', 'text-')}`} />
+                        <div className="relative z-10 h-full flex flex-col justify-between">
+                            <div>
+                                <h2 className="text-xl md:text-2xl font-extrabold mb-6 tracking-tight">Contact Us</h2>
+                                <div className="space-y-4">
+                                    {contactInfo.map((info, idx) => (
+                                        <div key={idx} className="flex items-center gap-4 group cursor-default">
+                                            <div className={`w-11 h-11 rounded-xl border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${info.color}`}>
+                                                <info.icon className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{info.label}</p>
+                                                <p className="text-sm md:text-base font-bold text-slate-800 mt-0.5 truncate">{info.value}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-[10px] md:text-xs font-bold  uppercase tracking-widest">{info.label}</p>
-                                            <p className="text-base md:text-lg font-bold truncate max-w-[200px] sm:max-w-none">{info.value}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
 
-                            <div className="mt-8 md:mt-12 flex flex-col sm:flex-row items-center justify-between gap-6">
-                                <div className="flex gap-3">
-                                    {socials.length > 0 ? socials.map((social, idx) => (
-                                        <a
-                                            key={idx}
-                                            href={social.link}
-                                            className={`p-3 rounded-xl  border border-slate-200  transition-all ${social.color} hover:shadow-lg hover:-translate-y-1`}
-                                        >
-                                            <social.icon className="w-5 h-5" />
-                                        </a>
-                                    )) : (
-                                        <p className="text-xs text-black font-bold uppercase tracking-widest">Social links coming soon</p>
-                                    )}
-                                </div>
-                                <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-black rounded-xl font-black hover:bg-indigo-50 transition-all active:scale-95 shadow-xl text-sm">
-                                    <Send className="w-4 h-4" />
+                            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Social connections coming soon</p>
+                                <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all active:scale-95 shadow-md shadow-indigo-100 text-xs cursor-pointer">
+                                    <PhoneCall className="w-3.5 h-3.5" />
                                     Support Chat
                                 </button>
                             </div>
@@ -180,68 +126,63 @@ export function AboutContact() {
                 </div>
 
                 {/* Form Section */}
-                <motion.div variants={itemVariants} className="bg-white  rounded-3xl md:rounded-[2.5rem] p-6 md:p-12 border border-slate-200  shadow-sm">
-                    <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-                        <div className="space-y-4 md:space-y-6">
-                            <h2 className="text-3xl md:text-4xl font-black text-black  tracking-tight lead-tight">
-                                Have a specific <span className="">question?</span>
+                <motion.div 
+                    variants={itemVariants} 
+                    className="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-xs"
+                >
+                    <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div className="space-y-4">
+                            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                                Have a specific <span className="text-indigo-600">Question?</span>
                             </h2>
-                            <p className=" text-base md:text-lg"
-                                style={{
-                                    color: theme.colors.darkGray
-                                }}
-                            >
-                                Send us a message and our team will get back to you within 24 hours. We love hearing from our community!
+                            <p className="text-sm text-slate-500 leading-relaxed">
+                                Send us a message and our support team will get back to you within 24 hours. We love hearing suggestions from our student community!
                             </p>
-                            <ul className="space-y-3 md:space-y-4">
+                            <ul className="space-y-2 text-xs font-semibold text-slate-600">
                                 {[
                                     "Feature requests & suggestions",
-                                    "Report technical issues",
-                                    "Partnership opportunities",
-                                    "General academic inquiries"
+                                    "Report academic/content errors",
+                                    "Technical portal issues",
+                                    "University syllabus alignment queries"
                                 ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3   font-bold text-sm md:text-base"
-                                        style={{
-                                            color: theme.colors.darkGray
-                                        }}
-                                    >
-                                        <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full " />
-                                        {item}
+                                    <li key={i} className="flex items-center gap-2.5">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
+                                        <span>{item}</span>
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
-                        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-black  ml-1">Full Name</label>
+                        <form className="space-y-3.5" onSubmit={(e) => e.preventDefault()}>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <div className="space-y-1">
+                                    <label className="text-[11px] font-bold text-slate-700 ml-1">Full Name</label>
                                     <input
                                         type="text"
                                         placeholder="John Doe"
-                                        className="w-full h-11 md:h-12 px-4 bg-slate-50  border border-slate-200  rounded-xl  transition-all text-black  font-medium text-sm"
+                                        className="w-full h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none text-slate-800 text-xs font-semibold transition-all"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-black  ml-1">Email</label>
+                                <div className="space-y-1">
+                                    <label className="text-[11px] font-bold text-slate-700 ml-1">Email Address</label>
                                     <input
                                         type="email"
                                         placeholder="john@example.com"
-                                        className="w-full h-11 md:h-12 px-4 bg-slate-50  border border-slate-200  rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-black  font-medium text-sm"
+                                        className="w-full h-11 px-4 bg-slate-50/50 border border-slate-200 rounded-xl focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none text-slate-800 text-xs font-semibold transition-all"
                                     />
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold text-black  ml-1">Message</label>
+                            <div className="space-y-1">
+                                <label className="text-[11px] font-bold text-slate-700 ml-1">Message</label>
                                 <textarea
                                     rows={4}
                                     placeholder="How can we help you?"
-                                    className="w-full p-4 bg-slate-50  border border-slate-200  rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-black  font-medium resize-none text-sm"
+                                    className="w-full p-4 bg-slate-50/50 border border-slate-200 rounded-xl focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none text-slate-800 text-xs leading-relaxed transition-all resize-none font-semibold"
                                 ></textarea>
                             </div>
-                            <button className="w-full h-13 md:h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-base md:text-lg transition-all active:scale-[0.98] shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 mt-2">
-                                <Send className="w-5 h-5" />
-                                Launch Message
+                            <button className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs transition-all active:scale-[0.98] shadow-md shadow-indigo-100 flex items-center justify-center gap-2 mt-2 cursor-pointer">
+                                <Send className="w-3.5 h-3.5" />
+                                Send Message
                             </button>
                         </form>
                     </div>
@@ -250,5 +191,3 @@ export function AboutContact() {
         </DashboardLayout>
     );
 }
-
-

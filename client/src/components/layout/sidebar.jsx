@@ -3,7 +3,8 @@ import { LayoutGroup, motion } from "framer-motion";
 import { theme } from "@/lib/theme";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Bell, LogOut, Upload, Search, X } from "lucide-react";
-import { Logo } from "../common/logo/logo"; 
+import { Logo } from "../common/logo/logo";
+import { useData } from "@/context/DataContext";
 
 export function DashboardSidebar({
     navItems,
@@ -21,6 +22,7 @@ export function DashboardSidebar({
     const navigate = useNavigate();
     const location = useLocation();
     const [showSearch, setShowSearch] = useState(false);
+    const { user } = useData();
 
     return (
         <motion.aside
@@ -120,21 +122,24 @@ export function DashboardSidebar({
             </div>
 
             {/* Upgrade CTA - Pushed to bottom */}
-            <div
-                className="p-3.5 rounded-2xl text-center mx-1 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50/50 border border-indigo-100 shadow-2xs"
-            >
-                <div className="text-xs font-black text-indigo-950">
-                    Upgrade to Pro
-                </div>
-                <div className="text-[11px] mt-0.5 mb-2.5 text-slate-600 font-medium">
-                    Unlock premium features
-                </div>
-                <button
-                    className="w-full py-2 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all"
+            {user?.subscription !== "pro" && user?.subscription !== "lifetime" && (
+                <div
+                    className="p-3.5 rounded-2xl text-center mx-1 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50/50 border border-indigo-100 shadow-2xs mt-auto"
                 >
-                    Upgrade
-                </button>
-            </div>
+                    <div className="text-xs font-black text-indigo-950">
+                        Upgrade to Pro
+                    </div>
+                    <div className="text-[11px] mt-0.5 mb-2.5 text-slate-600 font-medium">
+                        Unlock premium features
+                    </div>
+                    <button
+                        onClick={() => navigate("/dashboard/upgrade")}
+                        className="w-full py-2 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all cursor-pointer"
+                    >
+                        Upgrade
+                    </button>
+                </div>
+            )}
         </motion.aside>
     );
 }

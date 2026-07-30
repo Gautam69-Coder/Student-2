@@ -41,7 +41,6 @@ export function ChatFeed({
     const handleSendLocal = () => {
         if (!inputMessage.trim() || isLoadingResponse) return;
         onSend(inputMessage.trim());
-        // console.log("Chatbot.jsx: ",activeChat)
         setInputMessage("");
     };
 

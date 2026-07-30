@@ -19,6 +19,7 @@ import { Feedback } from "./Feedback";
 import { Profile } from "./Profile";
 import { AboutContact } from "./AboutContact";
 import { Community } from "./Community";
+import { Upgrade } from "./Upgrade";
 import { PracticalCard } from "@/components/features/practicals/practical-card";
 import { CodingPractice } from "./CodingPractice";
 import CodeEditor from "./CodeEditor";
@@ -153,7 +154,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                         setisBell={setisBell}
                         onLogout={() => {
                             // Handle logout
-                            console.log("Logout clicked");
                             onLogout();
 
                         }}    // Add your logout logic here
@@ -359,6 +359,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                     <Route path="chatbot" element={<Chatbot />} />
                                     <Route path="feedback" element={<Feedback user={user} requireAuth={handleAuthRequired} />} />
                                     <Route path="community" element={<Community requireAuth={handleAuthRequired} />} />
+                                    <Route path="upgrade" element={<Upgrade />} />
                                     <Route path="coding-practice" element={<CodingPractice user={user} />} />
                                     <Route path="coding-practice/:language" element={<PracticeDeatils />} />
                                     <Route path="profile" element={

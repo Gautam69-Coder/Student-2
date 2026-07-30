@@ -281,7 +281,6 @@ export function Chatbot() {
 
         try {
             // Attempt server call
-            console.log("Prompt : ", promptPayload)
             const res = await aiAssistant(promptPayload);
             let assistantResponse = "";
 

@@ -8,7 +8,6 @@ import rehypeRaw from "rehype-raw";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Sparkles, X, Send, Minimize2, PencilLine, Maximize2, CloudFog } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
 import { theme } from "@/lib/theme";
 import { customMessage } from "@/Utils/customMessage";
 
@@ -117,7 +116,6 @@ export function AIAssistant() {
 
         try {
             const res = await aiAssistant(message);
-            console.log(res.data.data)
             if (!res.data.message) {
                 setMessages((prev) => [...prev, { role: "assistant", content: res.data.message }]);
                 return customMessage({

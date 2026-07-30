@@ -60,7 +60,6 @@ export function AdminPanel({ userName, onLogout }) {
     // Real-time Visit Stats Listener
     useEffect(() => {
         if (!socket) return;
-        console.log("hi")
 
         socket.on('user_stats_update', (data) => {
             // console.log('📊 Received user_stats_update:', data);

@@ -111,8 +111,8 @@ export const togglePublicStatus = asyncHandler(async (req, res) => {
         throw new ApiError(404, 'Note not found');
     }
 
-    if (note.user.toString() !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'superadmin') {
-        throw new ApiError(401, 'Not authorized');
+    if (req.user.role !== 'admin' && req.user.role !== 'superadmin') {
+        throw new ApiError(403, 'Only admins are authorized to toggle public/private status of notes');
     }
 
     const userFind = await UserNote.findById(note.id);

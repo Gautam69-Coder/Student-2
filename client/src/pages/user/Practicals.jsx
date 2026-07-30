@@ -97,14 +97,9 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                 <div className="min-w-0 flex-1">
                                     <div className="flex flex-wrap items-center gap-3">
                                         <span
-                                            className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-black uppercase tracking-[0.18em]"
-                                            style={{
-                                                background: theme.colors.limeDim,
-                                                color: theme.colors.dark,
-                                                borderColor: theme.colors.limeDim,
-                                            }}
+                                            className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-black uppercase tracking-[0.18em] bg-indigo-50/50 text-indigo-700 border-indigo-150"
                                         >
-                                            <FlaskConical className="w-4 h-4" />
+                                            <FlaskConical className="w-4 h-4 text-indigo-650" />
                                             Practicals
                                         </span>
                                         <span
@@ -134,18 +129,18 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                 </div>
 
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
-                                     <button
-                                         className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
-                                         onClick={() => setShowAddSection(true)}
-                                     >
-                                         Add Section
-                                     </button>
-                                     <button
-                                         className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
-                                         onClick={() => setPracticalUploadOpen(true)}
-                                     >
-                                         Add Practical
-                                     </button>
+                                    <button
+                                        className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
+                                        onClick={() => setShowAddSection(true)}
+                                    >
+                                        Add Section
+                                    </button>
+                                    <button
+                                        className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
+                                        onClick={() => setPracticalUploadOpen(true)}
+                                    >
+                                        Add Practical
+                                    </button>
                                 </div>
                             </div>
 
@@ -161,17 +156,16 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                             const subjectName = subject.name || subject;
                                             const isActive = selectedSubject === subjectName;
                                             return (
-                                                 <button
-                                                     key={index}
-                                                     onClick={() => { setSelectedSubject(subjectName); }}
-                                                     className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${
-                                                         isActive
-                                                             ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
-                                                             : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                                                     }`}
-                                                 >
-                                                     {subjectName}
-                                                 </button>
+                                                <button
+                                                    key={index}
+                                                    onClick={() => { setSelectedSubject(subjectName); }}
+                                                    className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${isActive
+                                                            ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
+                                                            : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                                                        }`}
+                                                >
+                                                    {subjectName}
+                                                </button>
                                             )
                                         })}
                                     </div>
@@ -189,19 +183,18 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                         {uniquePracticalNumbers.map((num, index) => {
                                             const isActive = selectedPracticalNo === num;
                                             return (
-                                                 <button
-                                                     key={index}
-                                                     onClick={() => {
-                                                         setSelectedPracticalNo(num)
-                                                     }}
-                                                     className={`px-4 py-2 rounded-full text-nowrap text-sm font-bold transition-all flex items-center justify-center border ${
-                                                         isActive
-                                                             ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
-                                                             : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                                                     }`}
-                                                 >
-                                                     {num}
-                                                 </button>
+                                                <button
+                                                    key={index}
+                                                    onClick={() => {
+                                                        setSelectedPracticalNo(num)
+                                                    }}
+                                                    className={`px-4 py-2 rounded-full text-nowrap text-sm font-bold transition-all flex items-center justify-center border ${isActive
+                                                            ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                                                            : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                                                        }`}
+                                                >
+                                                    {num}
+                                                </button>
                                             )
                                         })}
                                     </div>

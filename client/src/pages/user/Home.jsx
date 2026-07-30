@@ -1,23 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
-    Bell,
-    CheckCircle2,
-    Clock,
     FileText,
-    Plus,
-    TrendingUp,
     Zap,
     BookOpen,
-    LayoutGrid,
     Home as HomeIcon,
-    BarChart3,
     Users,
-    MessageSquare,
     Notebook,
     Code2,
     FlaskConical,
-    Info,
-    Icon,
     Sparkles,
 } from "lucide-react";
 
@@ -466,8 +456,8 @@ export function Home() {
                 </div>
             </div>
 
-            {/* Subject Progress + Recent Notes + Activity row */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            {/* Subject Progpress + Recent Notes + Activity row */}
+            <div className="space-y-4">
                 {/* Subject Progress - Col 1 */}
                 <Card
                     className="rounded-2xl bg-white border border-slate-200 shadow-xs"
@@ -506,121 +496,123 @@ export function Home() {
                     </div>
                 </Card>
 
-                {/* Recent Notes - Col 2-3 (middle) */}
-                <Card
-                    className="rounded-2xl lg:col-span-2 bg-white border border-slate-200 shadow-xs"
-                >
-                    <div className="p-6">
-                        <CardTitle
-                            className="text-[16px] font-bold text-slate-900"
-                        >
-                            Recent Notes
-                        </CardTitle>
-                        <div
-                            className="text-[13px] font-medium text-slate-500 mt-1"
-                        >
-                            Your last saved notes
-                        </div>
-
-                        <div className="mt-6 space-y-0">
-                            {dashboardStats.recentNotes?.map((note, idx) => (
-                                <div key={idx} className="py-4">
-                                    <div className="flex items-start gap-3">
-                                        <div
-                                            className="inline-block bg-indigo-50 text-indigo-700 border border-indigo-200/60 rounded-md font-extrabold px-2.5 py-1 text-[11px] shrink-0"
-                                        >
-                                            {note.section}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div
-                                                className="font-bold text-[13px] text-slate-900 truncate hover:text-indigo-600 transition-colors"
-                                            >
-                                                {note.title}
-                                            </div>
-                                            <div
-                                                className="text-[11px] font-medium text-slate-500 mt-0.5"
-                                            >
-                                                {note.updatedAt ? new Date(note.updatedAt).toLocaleDateString() : "Unknown date"}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {idx !== (dashboardStats.recentNotes?.length || 0) - 1 && (
-                                        <Separator className="my-4 bg-slate-100" />
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="pt-4">
-                            <Link
-                                to={"notes"}
-                                className="text-[13px] font-bold text-indigo-600 hover:text-indigo-700"
+                <div className="flex gap-6 w-full">
+                    {/* Recent Notes - Col 2-3 (middle) */}
+                    <Card
+                        className="rounded-2xl w-full bg-white border border-slate-200 shadow-xs"
+                    >
+                        <div className="p-6">
+                            <CardTitle
+                                className="text-[16px] font-bold text-slate-900"
                             >
-                                View all notes →
-                            </Link>
+                                Recent Notes
+                            </CardTitle>
+                            <div
+                                className="text-[13px] font-medium text-slate-500 mt-1"
+                            >
+                                Your last saved notes
+                            </div>
+
+                            <div className="mt-6 space-y-0">
+                                {dashboardStats.recentNotes?.map((note, idx) => (
+                                    <div key={idx} className="py-4">
+                                        <div className="flex items-start gap-3">
+                                            <div
+                                                className="inline-block bg-indigo-50 text-indigo-700 border border-indigo-200/60 rounded-md font-extrabold px-2.5 py-1 text-[11px] shrink-0"
+                                            >
+                                                {note.section}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div
+                                                    className="font-bold text-[13px] text-slate-900 truncate hover:text-indigo-600 transition-colors"
+                                                >
+                                                    {note.title}
+                                                </div>
+                                                <div
+                                                    className="text-[11px] font-medium text-slate-500 mt-0.5"
+                                                >
+                                                    {note.updatedAt ? new Date(note.updatedAt).toLocaleDateString() : "Unknown date"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {idx !== (dashboardStats.recentNotes?.length || 0) - 1 && (
+                                            <Separator className="my-4 bg-slate-100" />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="pt-4">
+                                <Link
+                                    to={"notes"}
+                                    className="text-[13px] font-bold text-indigo-600 hover:text-indigo-700"
+                                >
+                                    View all notes →
+                                </Link>
+                            </div>
                         </div>
-                    </div>
-                </Card>
+                    </Card>
 
-                {/* Activity This Week - Col 4-5 */}
-                <Card
-                    className="rounded-2xl lg:col-span-2 bg-white border border-slate-200 shadow-xs"
-                >
-                    <div className="p-6">
-                        <CardTitle
-                            className="text-[16px] font-bold text-slate-900"
-                        >
-                            Activity This Week
-                        </CardTitle>
-                        <div
-                            className="text-[13px] font-medium text-slate-500 mt-1"
-                        >
-                            Practice sessions per day
+                    {/* Activity This Week - Col 4-5 */}
+                    <Card
+                        className="rounded-2xl w-full bg-white border border-slate-200 shadow-xs"
+                    >
+                        <div className="p-6">
+                            <CardTitle
+                                className="text-[16px] font-bold text-slate-900"
+                            >
+                                Activity This Week
+                            </CardTitle>
+                            <div
+                                className="text-[13px] font-medium text-slate-500 mt-1"
+                            >
+                                Practice sessions per day
+                            </div>
+
+                            <div className="my-6" style={{ height: "160px" }}>
+                                <ChartContainer config={chartConfig}>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={chartData || chartiData}>
+                                            <CartesianGrid vertical={false} stroke="#F1F5F9" />
+
+                                            <XAxis
+                                                dataKey="day"
+                                                tickLine={false}
+                                                tickMargin={10}
+                                                axisLine={false}
+                                                tickFormatter={(value) => value.slice(0, 3)}
+                                                stroke="#64748B"
+                                            />
+
+                                            <YAxis
+                                                domain={[0, 'auto']}
+                                                allowDecimals={false}
+                                                stroke="#64748B"
+                                            />
+
+                                            <ChartTooltip
+                                                cursor={false}
+                                                content={<ChartTooltipContent />}
+                                            />
+
+                                            <Bar
+                                                dataKey="questions"
+                                                fill="#6366F1"
+                                                radius={8}
+                                            />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </ChartContainer>
+                            </div>
+
+                            <div
+                                className="text-[12px] font-medium text-center mt-4 text-slate-500"
+                            >
+                                Avg {avgDailyQuestions} questions/day · Best: {bestActivityDay}
+                            </div>
                         </div>
-
-                        <div className="my-6" style={{ height: "160px" }}>
-                            <ChartContainer config={chartConfig}>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={chartData || chartiData}>
-                                        <CartesianGrid vertical={false} stroke="#F1F5F9" />
-
-                                        <XAxis
-                                            dataKey="day"
-                                            tickLine={false}
-                                            tickMargin={10}
-                                            axisLine={false}
-                                            tickFormatter={(value) => value.slice(0, 3)}
-                                            stroke="#64748B"
-                                        />
-
-                                        <YAxis
-                                            domain={[0, 'auto']}
-                                            allowDecimals={false}
-                                            stroke="#64748B"
-                                        />
-
-                                        <ChartTooltip
-                                            cursor={false}
-                                            content={<ChartTooltipContent />}
-                                        />
-
-                                        <Bar
-                                            dataKey="questions"
-                                            fill="#6366F1"
-                                            radius={8}
-                                        />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </ChartContainer>
-                        </div>
-
-                        <div
-                            className="text-[12px] font-medium text-center mt-4 text-slate-500"
-                        >
-                            Avg {avgDailyQuestions} questions/day · Best: {bestActivityDay}
-                        </div>
-                    </div>
-                </Card>
+                    </Card>
+                </div>
             </div>
 
             {/* Student Reviews & Community Feedback Section */}

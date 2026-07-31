@@ -193,9 +193,9 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-wrap text-center items-center justify-between p-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 hover:border-indigo-400 transition-colors group/file">
+                            <div className="flex flex-wrap text-center items-center justify-between p-4 rounded-2xl border border-dashed border-indigo-400  hover:border-indigo-400 transition-colors group/file">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                                    <div className="w-12 h-12 rounded-xl  border border-indigo-400 flex items-center justify-center text-indigo-600">
                                         <FileText className="w-6 h-6" />
                                     </div>
                                     <div className="space-y-0.5 text-left">
@@ -207,7 +207,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                 </div>
                                 <button
                                     onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
-                                    className="h-10 px-5 w-full text-center mt-4 sm:mt-0 sm:w-fit bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
+                                    className="h-10 px-5 w-full text-center mt-4 sm:mt-0 sm:w-fit bg-indigo-600  hover:bg-indigo-700 text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
                                 >
                                     <div className="flex items-center justify-center w-full">
                                         <Download className="w-4 h-4 mr-1.5" />

@@ -49,7 +49,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
 
     // const searchUser = users.find(u=> u == search);
     const searchUser = users.filter(i => {
-        const username = i.username.toLowerCase().split(' ');
+        const username = (i.username || "").toLowerCase().split(' ');
         return username.some(word => word.includes(search.toLowerCase()))
     })
 
@@ -147,7 +147,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
                     </thead>
                     <tbody>
                         {currentItems.map((user) => {
-                            const isOnline = onlineUsers.includes(user._id);
+                            const isOnline = onlineUsers && onlineUsers.includes(user._id);
                             const activityColor = user.role === 'admin' ? '#7C3AED' : (isOnline ? '#22C55E' : '#64748B');
 
                             return (

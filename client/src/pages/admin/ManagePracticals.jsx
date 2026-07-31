@@ -133,7 +133,8 @@ export function ManagePracticals({ uniqueSubjectSections }) {
     const handleFetchPracticals = async () => {
         try {
             const res = await fetchPracticals();
-            setPracticals(res.data);
+            setPracticals(res.data.data);
+            console.log(res.data);
         } catch (error) {
             console.error(error);
         }
@@ -305,7 +306,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                         className="h-10 px-3 bg-white dark:bg-slate-900 border rounded-[10px] text-sm text-slate-900 dark:text-white"
                     >
                         <option value="all">All Subjects</option>
-                        {uniqueSubjectSections.map((section) => (
+                        {(Array.isArray(uniqueSubjectSections) ? uniqueSubjectSections : uniqueSubjectSections?.data || []).map((section) => (
                             <option key={section._id} value={section.name}>{section.name}</option>
                         ))}
                     </select>

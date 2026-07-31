@@ -9,7 +9,7 @@ export function StatsCard({ title, value, change, icon: Icon, color }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             whileHover={{ y: -4, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.08)" }}
-            className="bg-white dark:bg-slate-900 rounded-[10px] p-6 border border-[#E5E5E5] dark:border-slate-800 transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-700"
+            className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-zinc-200 dark:border-slate-800 transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-700"
         >
             <div className="flex items-start justify-between mb-2">
                 <div className="p-3 rounded-[10px] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">

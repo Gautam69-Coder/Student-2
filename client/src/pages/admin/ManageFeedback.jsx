@@ -21,7 +21,7 @@ export const ManageFeedback = () => {
     const loadFeedback = async () => {
         try {
             const res = await fetchAllFeedback();
-            setFeedbacks(res.data);
+            setFeedbacks(res.data.data);
         } catch (err) {
             console.error('Failed to load feedback', err);
         } finally {

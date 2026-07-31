@@ -6,11 +6,6 @@ import {
     fetchSections
 } from "@/Api/api"
 
-const pendingNotes = [
-    { id: 1, title: "Advanced Java Streams", author: "Rahul S.", subject: "Java", date: "Today" },
-    { id: 2, title: "Scilab Signal Processing", author: "Priya K.", subject: "Scilab", date: "Yesterday" },
-    { id: 3, title: "Graph Algorithms Notes", author: "Vikram T.", subject: "DSA", date: "2 days ago" },
-]
 
 import { GraduationCap, Menu, X } from "lucide-react"
 import { AdminSidebar } from "@/components/layout/admin-sidebar"
@@ -24,6 +19,7 @@ import { ManageNotification } from "./ManageNotification"
 import { AnalyticsDashboard } from "./AnalyticsDashboard"
 import { ManageFeedback } from "./ManageFeedback"
 import { MessageSender } from "./MessageSender"
+import { ManagePractice } from "./ManagePractice"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTitle } from "@/hooks/useTitle"
 
@@ -47,7 +43,7 @@ export function AdminPanel({ userName, onLogout }) {
 
         const content = fetchContent();
         content.then((res) => {
-            setSubjects(res.data)
+            setSubjects(res.data.data)
         });
 
         const section = fetchSections();
@@ -92,34 +88,36 @@ export function AdminPanel({ userName, onLogout }) {
 
             <main className={`flex-1 w-full transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : "ml-0"}`}>
                 {/* Header */}
-                <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-[#E5E5E5] dark:border-slate-800 transition-colors">
-                    <div className="flex items-center justify-between sm:px-8 px-2  py-5">
-                        <div className="flex items-center sm:gap-4 gap-2 ">
+                <header className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-zinc-200/80 dark:border-slate-800 transition-all select-none">
+                    <div className="flex items-center justify-between sm:px-8 px-4 py-4">
+                        <div className="flex items-center sm:gap-4 gap-2">
                             <button
                                 onClick={() => setSidebarOpen(true)}
-                                className="p-2 rounded-[10px] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors lg:hidden"
+                                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all lg:hidden"
                             >
-                                <Menu className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+                                <Menu className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                             </button>
                             <div>
-                                <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Admin Command </h1>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Welcome back, {userName}</p>
+                                <h1 className="text-lg font-black text-zinc-950 dark:text-white tracking-tight leading-none">
+                                    Admin Workspace
+                                </h1>
+                                <p className="text-[11px] text-zinc-400 font-bold mt-1">
+                                    Operator: {userName}
+                                </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-[10px]">
-                                <span className="w-2 h-2 bg-green-500 rounded-[10px] animate-pulse" />
-                                <span className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider">{onlineUsers.length} Online</span>
+                            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-xl">
+                                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                                <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">{onlineUsers.length} Active</span>
                             </div>
-
-
 
                             <button
                                 onClick={() => { navigate("/dashboard"); }}
-                                className="inline-flex items-center justify-center rounded-[10px] gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400"
+                                className="inline-flex items-center justify-center rounded-xl gap-1.5 border border-zinc-200 bg-white hover:bg-zinc-50 active:scale-[0.98] px-4 py-2 text-xs font-black text-zinc-800 transition-all shadow-sm cursor-pointer"
                             >
-                                <GraduationCap className="w-4 h-4" />
-                                <span className="hidden sm:inline">Student View</span>
+                                <GraduationCap className="w-4 h-4 text-zinc-500" />
+                                Student View
                             </button>
                         </div>
                     </div>
@@ -130,6 +128,7 @@ export function AdminPanel({ userName, onLogout }) {
                         <Route path="/" element={<ManageUsers users={users} setUsers={setUsers} subjects={subjects} />} />
                         <Route path="subjects" element={<ManageSubjects subjects={subjects} uniqueSubjectSections={uniqueSubjectSections} setUniqueSubjectSections={setUniqueSubjectSections} />} />
                         <Route path="practicals" element={<ManagePracticals uniqueSubjectSections={uniqueSubjectSections} />} />
+                        <Route path="practice" element={<ManagePractice />} />
                         <Route path="guests" element={<ManageGuestVisits />} />
                         <Route path="analytics" element={<AnalyticsDashboard users={users} />} />
                         <Route path="feedback" element={<ManageFeedback />} />

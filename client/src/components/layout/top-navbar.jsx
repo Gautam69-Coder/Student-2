@@ -19,6 +19,7 @@ export function TopNavBar({
 }) {
 
     const { user } = useData();
+    const [isAdmin, setIsAdmin] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showAddKeyModal, setShowAddKeyModal] = useState(false);
     const [apiKeyInput, setApiKeyInput] = useState("");
@@ -32,6 +33,7 @@ export function TopNavBar({
         if (user?.apiKey) {
             setIsApiKey(false);
         }
+        setIsAdmin(user.role === "admin" || user.role === "superadmin");
     }
 
     useEffect(() => {
@@ -291,9 +293,8 @@ export function TopNavBar({
                     <div>
                         <button
                             onClick={() => setisBell?.(!isBell)}
-                            className={`p-2 rounded-xl transition-all relative ${
-                                isBell ? "bg-indigo-50 text-indigo-600" : "hover:bg-slate-100 text-slate-700"
-                            }`}
+                            className={`p-2 rounded-xl transition-all relative ${isBell ? "bg-indigo-50 text-indigo-600" : "hover:bg-slate-100 text-slate-700"
+                                }`}
                         >
                             <Bell size={20} />
                             <span
@@ -301,13 +302,14 @@ export function TopNavBar({
                             />
                         </button>
 
-                        <button className="text-black mx-5 shadow-lg border border-yellow-100 bg-white p-2 rounded-2xl"
-                            onClick={() => {
-                                navigate("/admin")
-                            }}
-                        >
-                            <Shield size={20} />
-                        </button>
+                        {isAdmin && (
+                            <button
+                                onClick={() => navigate("/admin")}
+                                className="text-black mx-5 shadow-lg border border-yellow-100 bg-white p-2 rounded-2xl"
+                            >
+                                <Shield size={20} />
+                            </button>
+                        )}
                     </div>
 
                     {isBell && (

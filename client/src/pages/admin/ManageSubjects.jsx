@@ -13,10 +13,15 @@ export function ManageSubjects({ subjects, uniqueSubjectSections, setUniqueSubje
     // console.log(uniqueSubjectSections)
 
     const handleAddSection = async (sectionName) => {
+        if (!sectionName || !sectionName.trim()) {
+            alert("Subject name cannot be empty.");
+            return;
+        }
         try {
-            const res = await createSection(sectionName);
+            const res = await createSection(sectionName.trim());
             const addedItem = res.data?.data || res.data;
             setUniqueSubjectSections(prev => [...(Array.isArray(prev) ? prev : []), addedItem]);
+            setNewSubject(""); // Clear input!
         } catch (error) {
             console.error(error);
         }

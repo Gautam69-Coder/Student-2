@@ -168,7 +168,7 @@ export function ManagePractice() {
                 question: problemQuestion,
                 problemDiscription: problemDescription,
                 difficulty: problemDifficulty,
-                examples: problemExamples.filter(ex => ex.input.trim() !== "" || ex.output.trim() !== "")
+                examples: problemExamples.filter(ex => (ex.input || "").trim() !== "" || (ex.output || "").trim() !== "")
             };
 
             if (isEditingProblem) {

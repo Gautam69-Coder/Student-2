@@ -216,7 +216,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
     return ReactDOM.createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center px-3 sm:px-6">
+                <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center px-3 sm:px-4">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -230,14 +230,14 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-7xl h-[88vh] z-10 overflow-hidden rounded-2xl border shadow-2xl flex flex-col"
+                        className="relative w-full max-w-8xl h-[88vh] z-10 overflow-hidden rounded-2xl border shadow-2xl flex flex-col"
                         style={{
                             background: theme.colors.white,
                             borderColor: theme.colors.lightGray,
                         }}
                     >
                         <div
-                            className="flex items-start justify-between gap-4 p-4 sm:p-6 border-b"
+                            className="flex items-start justify-between gap-4 p-4 sm:p-4 border-b"
                             style={{ borderColor: theme.colors.lightGray }}
                         >
                             <div className="min-w-0">
@@ -292,7 +292,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                             </div>
                         </div>
 
-                        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-5 gap-4 p-4 sm:p-6">
+                        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-5 gap-4 p-4 overflow-y-auto">
                             <Card
                                 className="lg:col-span-3 rounded-2xl overflow-hidden"
                                 style={{
@@ -374,7 +374,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                             </Card>
 
                             <Card
-                                className="lg:col-span-2 rounded-2xl sm:block hidden overflow-hidden"
+                                className="lg:col-span-2 rounded-2xl sm:block hidden overflow-y-auto"
                                 style={{
                                     background: theme.colors.white,
                                     borderColor: theme.colors.lightGray,
@@ -401,12 +401,12 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                         </div>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="pt-0">
+                                <CardContent className="pt-0" data-lenis-prevent>
                                     <div
                                         className="rounded-2xl overflow-hidden border"
                                         style={{ borderColor: theme.colors.lightGray }}
                                     >
-                                        <Highlight className="javascript">{code}</Highlight>
+                                        <Highlight className="javascript" >{code}</Highlight>
                                     </div>
                                 </CardContent>
                             </Card>

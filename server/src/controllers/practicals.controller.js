@@ -12,8 +12,15 @@ export const getPracticals = asyncHandler(async (req, res) => {
 export const createPractical = asyncHandler(async (req, res) => {
     const { practicalNumber, section } = req.body;
 
+    console.log("Practical Data : ",practicalNumber);
+    console.log("Practical Section : ",section);
+    
+
+
     let questions = req.body.questions;
     questions = JSON.parse(questions);
+
+    console.log("Practical Section : ",questions);
 
     const files = req.files || [];
 
@@ -32,7 +39,6 @@ export const createPractical = asyncHandler(async (req, res) => {
         }
     });
 
-    console.log("Full Questions with Cloudinary URLs:", JSON.stringify(questions, null, 2));
 
     const newPractical = new Practical({
         practicalNumber,

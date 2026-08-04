@@ -140,11 +140,6 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
         scrollToBottom();
     }, [messages]);
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(code || "");
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
 
     const handleSendMessage = async () => {
         if (!inputValue.trim()) return;
@@ -260,22 +255,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                             </div>
 
                             <div className="flex items-center gap-2 shrink-0">
-                                <button
-                                    onClick={handleCopy}
-                                    className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-colors border hover:bg-slate-50"
-                                    style={{
-                                        background: theme.colors.white,
-                                        color: theme.colors.dark,
-                                        borderColor: theme.colors.lightGray,
-                                    }}
-                                >
-                                    {copied ? (
-                                        <Check className="w-4 h-4" style={{ color: "#16A34A" }} />
-                                    ) : (
-                                        <Copy className="w-4 h-4" />
-                                    )}
-                                    {copied ? "Copied!" : "Copy"}
-                                </button>
+
 
                                 <button
                                     onClick={handleClose}
@@ -349,10 +329,14 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                         <div ref={messagesEndRef} />
                                     </div>
 
+
                                     <div className="mt-4 flex gap-2">
                                         <input
                                             value={inputValue}
-                                            onChange={(e) => setInputValue(e.target.value)}
+                                            onChange={(e) => {
+                                                setInputValue(e.target.value);
+                                            }
+                                            }
                                             onKeyDown={handleKeyPress}
                                             placeholder="Ask about the code..."
                                             className="flex-1 px-4 py-3 rounded-xl border text-sm outline-none transition-colors"

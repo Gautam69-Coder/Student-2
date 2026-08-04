@@ -10,8 +10,7 @@ import {
 import { useTitle } from "@/hooks/useTitle"
 import { customMessage } from "@/Utils/customMessage"
 
-const EMPTY_CODE_TAB = () => ({ languageName: '', code: '' });
-const EMPTY_QUESTION = () => ({ question: '', code: [EMPTY_CODE_TAB()], file: null });
+const EMPTY_QUESTION = () => ({ question: '', code: '', file: null });
 
 export function ManagePracticals({ uniqueSubjectSections }) {
     useTitle("Manage Practicals");
@@ -19,7 +18,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
     const [newPractical, setNewPractical] = useState({
         practicalNumber: '',
         section: '',
-        questions: [EMPTY_QUESTION()],
+        questions: [EMPTY_QUESTION()]
     });
     const [practicals, setPracticals] = useState([]);
     const [editPracticalId, setEditPracticalId] = useState(null);
@@ -30,13 +29,6 @@ export function ManagePracticals({ uniqueSubjectSections }) {
         setNewPractical(prev => ({
             ...prev,
             questions: [...prev.questions, EMPTY_QUESTION()]
-        }));
-    };
-
-    const handleAddCodeTab = () => {
-        setNewPractical(prev => ({
-            ...prev,
-            questions: [...prev.questions.code, EMPTY_CODE_TAB()]
         }));
     };
 
@@ -190,8 +182,8 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                 >
                                     <option value="">Select subject</option>
                                     {(Array.isArray(uniqueSubjectSections) ? uniqueSubjectSections : uniqueSubjectSections?.data || []).map((section) => (
-                                        <option key={section._id || section.name} value={section.name}>{section.name}</option>
-                                    ))}
+                                         <option key={section._id || section.name} value={section.name}>{section.name}</option>
+                                     ))}
                                 </select>
                             </div>
 
@@ -232,41 +224,17 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                         />
 
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Code Template</label>
-                                        <button className="w-fit px-2 py-2 bg-slate-900 dark:bg-slate-100  text-white dark:text-slate-900 font-medium rounded-[10px]  flex items-center justify-center gap-2" onClick={handleAddCodeTab} type="button">+ Add Tab</button>
-
-                                        {question.code.map((ct, index) => {
-                                            <div className="mt-4 space-y-4 border border-dashed p-2 border-blue-400/50 rounded-[10px]">
-                                                <div className="flex items-center justify-between ">
-                                                    <div className="flex items-center gap-2">
-                                                        <p className="py-2 px-4 border rounded-full border-blue-600/50  w-fit">1</p>
-                                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Code Tab</label>
-                                                    </div>
-                                                </div>
-                                                <input
-                                                    type="text"
-                                                    value={question.question}
-                                                    onChange={(e) => {
-                                                        const updated = [...newPractical.questions];
-                                                        updated[index].question = e.target.value;
-                                                        setNewPractical({ ...newPractical, questions: updated });
-                                                    }}
-                                                    required
-                                                    placeholder="Write the practical question..."
-                                                    className="w-full px-4 h-11  bg-slate-50 dark:bg-slate-950 border rounded-[10px] text-slate-900 dark:text-white"
-                                                />
-                                                <textarea
-                                                    value={question.code}
-                                                    onChange={(e) => {
-                                                        const updated = [...newPractical.questions];
-                                                        updated[index].code = e.target.value;
-                                                        setNewPractical({ ...newPractical, questions: updated });
-                                                    }}
-                                                    required
-                                                    placeholder="// Starter code..."
-                                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-950 border rounded-[10px] min-h-40 font-mono text-sm text-slate-900 dark:text-white"
-                                                />
-                                            </div>
-                                        })}
+                                        <textarea
+                                            value={question.code}
+                                            onChange={(e) => {
+                                                const updated = [...newPractical.questions];
+                                                updated[index].code = e.target.value;
+                                                setNewPractical({ ...newPractical, questions: updated });
+                                            }}
+                                            required
+                                            placeholder="// Starter code..."
+                                            className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-950 border rounded-[10px] min-h-40 font-mono text-sm text-slate-900 dark:text-white"
+                                        />
 
                                         <div className="mt-2">
                                             <label className="text-sm font-medium block mb-2 text-slate-700 dark:text-slate-300">Reference File (Optional)</label>

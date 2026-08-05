@@ -7,7 +7,8 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import Highlight from "react-highlight";
+import HighlightComponent from "react-highlight";
+const Highlight = HighlightComponent.default || HighlightComponent;
 
 import { aiCodeHelper } from "@/Api/api";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";

@@ -14,7 +14,8 @@ import {
 } from "lucide-react"
 
 import { CodeModal } from "@/components/features/coding/code-modal"
-import Highlight from "react-highlight"
+import HighlightComponent from "react-highlight"
+const Highlight = HighlightComponent.default || HighlightComponent
 import "highlight.js/styles/atom-one-dark.css"
 
 const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth, section }) {

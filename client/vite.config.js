@@ -13,11 +13,21 @@ export default defineConfig({
     build: {
         rollupOptions: {
             output: {
-                manualChunks: {
-                    'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-                    'motion': ['framer-motion'],
-                    'ui-icons': ['lucide-react'],
-                    'antd-vendor': ['antd'],
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+                            return 'react-vendor';
+                        }
+                        if (id.includes('framer-motion')) {
+                            return 'motion';
+                        }
+                        if (id.includes('lucide-react')) {
+                            return 'ui-icons';
+                        }
+                        if (id.includes('antd')) {
+                            return 'antd-vendor';
+                        }
+                    }
                 },
             },
         },

@@ -108,7 +108,7 @@ export function ContextSidebar({
                         initial={{ width: 0, opacity: 0 }}
                         animate={{ width: "320px", opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
-                        className="flex flex-col h-full bg-white border-l border-slate-200 text-slate-900 shrink-0 md:relative fixed right-0 top-0 z-50 shadow-2xl md:shadow-none"
+                        className="flex flex-col h-full bg-white border-l border-slate-200 text-slate-900 shrink-0 md:relative fixed right-0 top-0 z-10 shadow-2xl md:shadow-none"
                     >
                         {/* Token Indicator Header */}
                         <div className="p-5 border-b border-slate-200">

@@ -7,7 +7,7 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 export const updateVisitCount = asyncHandler(async (req, res) => {
     const { section } = req.body;
     const userId = req.user.id;
-
+    console.log("Test commit");
     const validSections = ['home', 'notes', 'practicals', 'community', 'feedback', 'aboutcontact'];
 
     if (!validSections.includes(section)) {

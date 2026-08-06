@@ -1,5 +1,6 @@
 import React, { useState, memo, useCallback } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+// import { motion, AnimatePresence } from "framer-motion"
+import  CodeTabs  from "@/components/features/practicals/practical-code-tab"
 import { AICodeHelper } from "../coding/ai-code-helper"
 import {
     Code,
@@ -22,6 +23,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
     const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false)
+    console.log("Question Code : ", question)
 
     const handleCopy = useCallback(() => {
         requireAuth(() => {
@@ -146,9 +148,10 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                         className=" bg-[#0d1117] hover:overflow-y-auto sm:hover:overflow-y-auto overscroll-contain"
                         style={{ height: '300px' }}
                     >
-                        <Highlight className="javascript">
+                        {/* <Highlight className="javascript">
                             {question.code}
-                        </Highlight>
+                        </Highlight> */}
+                        <CodeTabs tabs={[{ label: "Default", code: question.code }]} />
                     </div>
 
                     {/* Floating Glow */}

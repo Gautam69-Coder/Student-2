@@ -10,7 +10,8 @@ import {
 import { useTitle } from "@/hooks/useTitle"
 import { customMessage } from "@/Utils/customMessage"
 
-const EMPTY_QUESTION = () => ({ question: '', code: '', file: null });
+const EMPTY_CodeTab = () => ({ languageName: '', code: '' });
+const EMPTY_QUESTION = () => ({ question: '',code : [EMPTY_CodeTab()], file: null });
 
 export function ManagePracticals({ uniqueSubjectSections }) {
     useTitle("Manage Practicals");
@@ -20,6 +21,10 @@ export function ManagePracticals({ uniqueSubjectSections }) {
         section: '',
         questions: [EMPTY_QUESTION()]
     });
+
+    const [codeTab, setCodeTab] = useState([{ languageName: '', code: '' }]);
+
+
     const [practicals, setPracticals] = useState([]);
     const [editPracticalId, setEditPracticalId] = useState(null);
     const [filterRole, setFilterRole] = useState("all");
@@ -31,6 +36,23 @@ export function ManagePracticals({ uniqueSubjectSections }) {
             questions: [...prev.questions, EMPTY_QUESTION()]
         }));
     };
+
+    const handleAddCodeTab = (index) => {
+        setNewPractical(prev => {
+            const updatedQuestions = [...prev.questions];
+            updatedQuestions[index].code.push(EMPTY_CodeTab());
+            return { ...prev, questions: updatedQuestions };
+        });
+    };
+
+    const handleRemoveCodeTab = (index) => {
+        setNewPractical(prev => {
+            const updatedQuestions = [...prev.questions];
+            updatedQuestions[0].code = updatedQuestions[0].code.filter((_, i) => i !== index);
+            return { ...prev, questions: updatedQuestions };
+        });
+        console.log(codeTab);
+    }
 
     const handleRemoveQuestion = (index) => {
         setNewPractical(prev => ({
@@ -69,8 +91,8 @@ export function ManagePracticals({ uniqueSubjectSections }) {
             // Prepare questions payload (Sans File object for JSON stringification)
             const questionsPayload = newPractical.questions.map(q => ({
                 question: q.question,
-                code: q.code,
                 fileUrl: q.fileUrl || null,
+                code: JSON.stringify(q.code) || null,
                 filePublicId: q.filePublicId || null,
                 fileName: q.file?.name || q.fileName || null,
                 fileType: q.file?.type || q.fileType || null
@@ -134,7 +156,6 @@ export function ManagePracticals({ uniqueSubjectSections }) {
         try {
             const res = await fetchPracticals();
             setPracticals(res.data.data);
-            console.log(res.data);
         } catch (error) {
             console.error(error);
         }
@@ -182,8 +203,8 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                 >
                                     <option value="">Select subject</option>
                                     {(Array.isArray(uniqueSubjectSections) ? uniqueSubjectSections : uniqueSubjectSections?.data || []).map((section) => (
-                                         <option key={section._id || section.name} value={section.name}>{section.name}</option>
-                                     ))}
+                                        <option key={section._id || section.name} value={section.name}>{section.name}</option>
+                                    ))}
                                 </select>
                             </div>
 
@@ -224,17 +245,47 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                         />
 
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Code Template</label>
-                                        <textarea
-                                            value={question.code}
-                                            onChange={(e) => {
-                                                const updated = [...newPractical.questions];
-                                                updated[index].code = e.target.value;
-                                                setNewPractical({ ...newPractical, questions: updated });
-                                            }}
-                                            required
-                                            placeholder="// Starter code..."
-                                            className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-950 border rounded-[10px] min-h-40 font-mono text-sm text-slate-900 dark:text-white"
-                                        />
+                                        <div className="border-blue-400/50 border-dashed border rounded-[10px] p-4 space-y-8 mt-2">
+                                            {question.code && question.code.map((item, codeIndex) => (
+                                                <>
+                                                    <div className="flex items-center justify-between gap-4">
+                                                        <div className="flex items-center gap-1 border rounded-[10px] px-4 py-2 bg-slate-50 dark:bg-slate-950">
+                                                            {codeIndex + 1}
+                                                        </div>
+                                                        <input
+                                                            type="text"
+                                                            value={item.languageName}
+                                                            onChange={(e) => {
+                                                                const updated = [...newPractical.questions];
+                                                                updated[index].code[codeIndex].languageName = e.target.value;
+                                                                setNewPractical({ ...newPractical, questions: updated });
+                                                            }}
+                                                            required
+                                                            placeholder="Write a language name for this code tab "
+                                                            className="w-full px-4 h-11 bg-slate-50 dark:bg-slate-950 border rounded-[10px] text-slate-900 dark:text-white"
+                                                        />
+                                                        {question.code && question.code.length > 1 && (
+                                                            <Trash className="w-4 h-4 text-red-500 cursor-pointer hover:text-red-700" onClick={() => handleRemoveCodeTab(index)} />
+                                                        )}
+
+                                                    </div>
+
+                                                    <textarea
+                                                        value={item.code}
+                                                        onChange={(e) => {
+                                                            const updated = [...newPractical.questions];
+                                                            updated[index].code[codeIndex].code = e.target.value;
+                                                            setNewPractical({ ...newPractical, questions: updated });
+                                                        }}
+                                                        required
+                                                        placeholder="// Starter code..."
+                                                        className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-950 border rounded-[10px] min-h-40 font-mono text-sm text-slate-900 dark:text-white"
+                                                    />
+
+                                                </>
+                                            ))}
+                                            <button className="w-full  text-nowrap p-2 bg-slate-900 dark:bg-slate-100  text-white dark:text-slate-900 font-medium rounded-[10px]  flex items-center justify-center gap-2" onClick={() => handleAddCodeTab(index)} type="button">+ Add Tab</button>
+                                        </div>
 
                                         <div className="mt-2">
                                             <label className="text-sm font-medium block mb-2 text-slate-700 dark:text-slate-300">Reference File (Optional)</label>

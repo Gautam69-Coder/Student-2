@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function CodeTabs({ tabs  }) {
+export default function CodeTabs({ tabs = [] }) {
   const [activeTab, setActiveTab] = useState(0);
 
   if (tabs.length === 0) return null;

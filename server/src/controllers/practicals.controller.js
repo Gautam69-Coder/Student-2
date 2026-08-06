@@ -10,17 +10,13 @@ export const getPracticals = asyncHandler(async (req, res) => {
 });
 
 export const createPractical = asyncHandler(async (req, res) => {
-    const { practicalNumber, section } = req.body;
+    const { practicalNumber, section, } = req.body;
 
-    console.log("Practical Data : ",practicalNumber);
-    console.log("Practical Section : ",section);
-    
-
+    console.log("Practical Data : ", practicalNumber);
+    console.log("Practical Section : ", section);
 
     let questions = req.body.questions;
     questions = JSON.parse(questions);
-
-    console.log("Practical Section : ",questions);
 
     const files = req.files || [];
 
@@ -39,6 +35,19 @@ export const createPractical = asyncHandler(async (req, res) => {
         }
     });
 
+    let codeQ = questions.map(q => JSON.parse(q.code));
+    // console.log("Questions : ", code.map(c => c.map(item => ({ languageName: item.languageName, code: item.code }))));
+    // questions.code = codeQ.map(c => c.map(item => ({ languageName: item.languageName, code: item.code })));
+    questions = questions.map((q, index) => ({
+        ...q,
+        code: codeQ[index]
+    }));
+    console.log("Questions : ", questions);
+    // const updatedQuestions = {
+    //     languageName: req.body.languageName,
+    //     code: code.code
+    // }
+    // console.log("Questions : ", questions);
 
     const newPractical = new Practical({
         practicalNumber,
@@ -48,6 +57,7 @@ export const createPractical = asyncHandler(async (req, res) => {
 
     const practical = await newPractical.save();
     res.status(201).json(new ApiResponse(201, practical, "Practical Created Successfully"));
+
 });
 
 export const updatePractical = asyncHandler(async (req, res) => {

@@ -45,13 +45,12 @@ export function ManagePracticals({ uniqueSubjectSections }) {
         });
     };
 
-    const handleRemoveCodeTab = (index) => {
+    const handleRemoveCodeTab = (qIndex, codeIndex) => {
         setNewPractical(prev => {
             const updatedQuestions = [...prev.questions];
-            updatedQuestions[0].code = updatedQuestions[0].code.filter((_, i) => i !== index);
+            updatedQuestions[qIndex].code = updatedQuestions[qIndex].code.filter((_, i) => i !== codeIndex);
             return { ...prev, questions: updatedQuestions };
         });
-        console.log(codeTab);
     }
 
     const handleRemoveQuestion = (index) => {
@@ -265,7 +264,7 @@ export function ManagePracticals({ uniqueSubjectSections }) {
                                                             className="w-full px-4 h-11 bg-slate-50 dark:bg-slate-950 border rounded-[10px] text-slate-900 dark:text-white"
                                                         />
                                                         {question.code && question.code.length > 1 && (
-                                                            <Trash className="w-4 h-4 text-red-500 cursor-pointer hover:text-red-700" onClick={() => handleRemoveCodeTab(index)} />
+                                                            <Trash className="w-4 h-4 text-red-500 cursor-pointer hover:text-red-700" onClick={() => handleRemoveCodeTab(index, codeIndex)} />
                                                         )}
 
                                                     </div>

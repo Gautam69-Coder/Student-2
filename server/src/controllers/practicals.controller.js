@@ -35,9 +35,13 @@ export const createPractical = asyncHandler(async (req, res) => {
         }
     });
 
-    let codeQ = questions.map(q => JSON.parse(q.code));
-    // console.log("Questions : ", code.map(c => c.map(item => ({ languageName: item.languageName, code: item.code }))));
-    // questions.code = codeQ.map(c => c.map(item => ({ languageName: item.languageName, code: item.code })));
+    let codeQ = questions.map(q => {
+        try {
+            return typeof q.code === 'string' ? JSON.parse(q.code) : q.code;
+        } catch (e) {
+            return q.code;
+        }
+    });
     questions = questions.map((q, index) => ({
         ...q,
         code: codeQ[index]
@@ -84,6 +88,18 @@ export const updatePractical = asyncHandler(async (req, res) => {
             }
         });
     }
+
+    let codeQ = questions.map(q => {
+        try {
+            return typeof q.code === 'string' ? JSON.parse(q.code) : q.code;
+        } catch (e) {
+            return q.code;
+        }
+    });
+    questions = questions.map((q, index) => ({
+        ...q,
+        code: codeQ[index]
+    }));
 
     practical.practicalNumber = practicalNumber;
     practical.section = section;

@@ -133,6 +133,10 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
     const [inputValue, setInputValue] = useState("");
     const messagesEndRef = useRef(null);
 
+    const displayCode = Array.isArray(code)
+        ? code.map(item => `// --- ${item.languageName} ---\n${item.code}`).join('\n\n')
+        : code || "";
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
@@ -155,7 +159,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
 
         const context = {
             message: inputValue,
-            code: code,
+            code: displayCode,
             section: section,
             question: title,
         };
@@ -348,12 +352,17 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                             }}
                                         />
                                         <button
-                                            onClick={handleSendMessage}
-                                            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] shadow-md shadow-indigo-100"
-                                        >
-                                            <Send className="w-4 h-4" />
-                                            Send
-                                        </button>
+                                             onClick={handleSendMessage}
+                                             className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-bold transition-transform active:scale-[0.98] cursor-pointer"
+                                             style={{
+                                                 background: theme.colors.lime,
+                                                 color: theme.colors.dark,
+                                                 borderColor: theme.colors.lime,
+                                             }}
+                                         >
+                                             <Send className="w-4 h-4 fill-current" />
+                                             Send
+                                         </button>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -391,7 +400,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                         className="rounded-2xl overflow-hidden border"
                                         style={{ borderColor: theme.colors.lightGray }}
                                     >
-                                        <Highlight className="javascript" >{code}</Highlight>
+                                        <Highlight className="javascript" >{displayCode}</Highlight>
                                     </div>
                                 </CardContent>
                             </Card>

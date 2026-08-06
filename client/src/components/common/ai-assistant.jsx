@@ -10,6 +10,8 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Sparkles, X, Send, Minimize2, PencilLine, Maximize2, CloudFog } from "lucide-react";
 import { theme } from "@/lib/theme";
 import { customMessage } from "@/Utils/customMessage";
+import { useData } from "@/context/DataContext";
+import { ApiKeyModal } from "@/components/common/ApiKeyModal";
 
 function MarkdownContent({ content, role }) {
     return (
@@ -91,7 +93,9 @@ function MarkdownContent({ content, role }) {
 }
 
 export function AIAssistant() {
+    const { user } = useData();
     const [isOpen, setIsOpen] = useState(false);
+    const [showApiKeyModal, setShowApiKeyModal] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([
@@ -109,6 +113,10 @@ export function AIAssistant() {
 
     const handleSend = async () => {
         if (!message.trim()) return;
+        if (user && !user.apiKey) {
+            setShowApiKeyModal(true);
+            return;
+        }
 
         const nextMessages = [...messages, { role: "user", content: message }];
         setMessages(nextMessages);
@@ -267,6 +275,12 @@ export function AIAssistant() {
                         </div>
                     </div>
                 </motion.div>
+            )}
+            {showApiKeyModal && (
+                <ApiKeyModal
+                    isOpen={showApiKeyModal}
+                    onClose={() => setShowApiKeyModal(false)}
+                />
             )}
         </>
     );

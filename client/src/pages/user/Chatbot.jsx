@@ -9,6 +9,7 @@ import { extractPdfText } from "@/Utils/extractingText";
 import { ChatHistorySidebar } from "@/components/features/chatbot/ChatHistorySidebar";
 import { ChatFeed } from "@/components/features/chatbot/ChatFeed";
 import { ContextSidebar } from "@/components/features/chatbot/ContextSidebar";
+import { ApiKeyModal } from "@/components/common/ApiKeyModal";
 
 export function Chatbot() {
     const { user, notes, practicals } = useData();
@@ -19,6 +20,13 @@ export function Chatbot() {
 
     // Chatbot States
     const [conversations, setConversations] = useState([]);
+    const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+
+    useEffect(() => {
+        if (user && !user.apiKey) {
+            setShowApiKeyModal(true);
+        }
+    }, [user]);
     const [activeChatId, setActiveChatId] = useState(null);
     const [isLoadingResponse, setIsLoadingResponse] = useState(false);
 
@@ -228,6 +236,10 @@ export function Chatbot() {
     // Prompt compilation & sending logic
     const handleSend = async (queryText) => {
         if (!queryText.trim() || isLoadingResponse) return;
+        if (user && !user.apiKey) {
+            setShowApiKeyModal(true);
+            return;
+        }
         setIsLoadingResponse(true);
 
         // Fetch active chat
@@ -509,6 +521,12 @@ I have received your prompt. Here are some options you can explore:
                     </CardContent>
                 </Card>
             </div>
+            {showApiKeyModal && (
+                <ApiKeyModal
+                    isOpen={showApiKeyModal}
+                    onClose={() => setShowApiKeyModal(false)}
+                />
+            )}
         </DashboardLayout>
     );
 }

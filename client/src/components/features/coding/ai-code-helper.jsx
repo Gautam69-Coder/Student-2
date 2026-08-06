@@ -14,6 +14,8 @@ import { aiCodeHelper } from "@/Api/api";
 import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
 import { theme } from "@/lib/theme";
 import { customMessage } from "@/Utils/customMessage";
+import { useData } from "@/context/DataContext";
+import { ApiKeyModal } from "@/components/common/ApiKeyModal";
 
 function PanelTitle({ title, subtitle }) {
     return (
@@ -126,12 +128,20 @@ function MarkdownMessage({ content, sender }) {
 }
 
 export function AICodeHelper({ isOpen, onClose, title, code, section }) {
+    const { user } = useData();
     const [copied, setCopied] = useState(false);
     const [messages, setMessages] = useState([
         { id: 1, text: "Hello! I'm your AI Code Helper. Ask me anything about this code.", sender: "bot" },
     ]);
     const [inputValue, setInputValue] = useState("");
+    const [showApiKeyModal, setShowApiKeyModal] = useState(false);
     const messagesEndRef = useRef(null);
+
+    useEffect(() => {
+        if (isOpen && user && !user.apiKey) {
+            setShowApiKeyModal(true);
+        }
+    }, [isOpen, user]);
 
     const displayCode = Array.isArray(code)
         ? code.map(item => `// --- ${item.languageName} ---\n${item.code}`).join('\n\n')
@@ -148,6 +158,10 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
 
     const handleSendMessage = async () => {
         if (!inputValue.trim()) return;
+        if (user && !user.apiKey) {
+            setShowApiKeyModal(true);
+            return;
+        }
 
         const userMessage = {
             id: messages.length + 1,
@@ -407,6 +421,12 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                         </div>
                     </motion.div>
                 </div>
+            )}
+            {showApiKeyModal && (
+                <ApiKeyModal
+                    isOpen={showApiKeyModal}
+                    onClose={() => setShowApiKeyModal(false)}
+                />
             )}
         </AnimatePresence>,
         document.body

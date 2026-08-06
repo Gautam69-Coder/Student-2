@@ -15,18 +15,22 @@ const PracticalSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            code: {
-                type: String,
-                required: true
-            },
-            // code: [
-            //     {
-            //         languageName: {
-            //             type: String,
-            //             required: true,
-            //         }
-            //     }
-            // ],
+            // code: {
+            //     type: String,
+            //     required: true
+            // },
+            code: [
+                {
+                    languageName: {
+                        type: String,
+                        required: true,
+                    },
+                    code: {
+                        type: String,
+                        required: true
+                    },
+                }
+            ],
             fileUrl: {
                 type: String,
                 default: null

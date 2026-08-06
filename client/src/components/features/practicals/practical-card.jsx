@@ -1,5 +1,6 @@
 import React, { useState, memo, useCallback } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+// import { motion, AnimatePresence } from "framer-motion"
+import CodeTabs from "@/components/features/practicals/practical-code-tab"
 import { AICodeHelper } from "../coding/ai-code-helper"
 import {
     Code,
@@ -22,10 +23,14 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
     const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false)
+    console.log("Question Code : ", question)
 
     const handleCopy = useCallback(() => {
         requireAuth(() => {
-            navigator.clipboard.writeText(question.code)
+            const codeToCopy = Array.isArray(question.code)
+                ? question.code.map(item => `// --- ${item.languageName} ---\n${item.code}`).join('\n\n')
+                : question.code || "";
+            navigator.clipboard.writeText(codeToCopy)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
         })
@@ -88,7 +93,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                             <Sparkles size={13} className="fill-current text-indigo-200 animate-pulse" />
                             <span>AI Assistant</span>
                         </button>
-                        
+
                         {/* View Button */}
                         <button
                             className="h-9 px-4 flex items-center gap-2 rounded-lg bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 border border-slate-200 hover:border-indigo-200 transition-all duration-300 font-bold text-xs cursor-pointer"
@@ -142,14 +147,16 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                         </div>
                     </div>
 
-                    <div
-                        className=" bg-[#0d1117] hover:overflow-y-auto sm:hover:overflow-y-auto overscroll-contain"
-                        style={{ height: '300px' }}
-                    >
-                        <Highlight className="javascript">
-                            {question.code}
-                        </Highlight>
-                    </div>
+                    <CodeTabs
+                        tabs={
+                            Array.isArray(question.code)
+                                ? question.code.map((item) => ({
+                                    label: item.languageName || "Default",
+                                    code: item.code || ""
+                                }))
+                                : [{ label: "Default", code: question.code || "" }]
+                        }
+                    />
 
                     {/* Floating Glow */}
                     <div className="absolute inset-0 pointer-events-none opacity-0 group-hover/code:opacity-100 bg-linear-to-tr from-indigo-500/5 via-transparent to-transparent transition-opacity duration-700" />

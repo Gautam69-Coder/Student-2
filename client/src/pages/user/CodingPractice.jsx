@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import * as icons from 'simple-icons';
 import { fetchCodingPractices } from '@/Api/api';
 import { DashboardLayout } from "@/components/layout/layout";
-import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
-import { DashboardSidebar } from "@/components/layout/sidebar";
-import { Home, FileText, FlaskConical, Code2, Users, MessageSquare, Info } from 'lucide-react';
 import { theme } from '@/lib/theme';
 
 const CodingPractice = () => {
@@ -27,6 +24,7 @@ const CodingPractice = () => {
                 if (!isMounted) return;
 
                 setCards(Array.isArray(res?.data.data) ? res.data.data : []);
+                console.log('Fetched coding practices:', res.data.data)
             } catch (e) {
                 if (!isMounted) return;
                 setError(e);
@@ -51,8 +49,7 @@ const CodingPractice = () => {
     }
 
     return (
-        <DashboardLayout
-           
+        <DashboardLayout  
         >
             <div className="space-y-6">
                 {/* Header Section */}

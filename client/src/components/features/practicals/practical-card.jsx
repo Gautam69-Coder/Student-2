@@ -23,8 +23,6 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
     const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false)
-    console.log("Question Code : ", question)
-
     const handleCopy = useCallback(() => {
         requireAuth(() => {
             const codeToCopy = Array.isArray(question.code)

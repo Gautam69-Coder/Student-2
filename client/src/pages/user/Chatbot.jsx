@@ -3,7 +3,7 @@ import { Card, CardContent } from "/components/ui/card";
 import { DashboardLayout } from "@/components/layout/layout";
 import { theme } from "@/lib/theme";
 import { useData } from "@/context/DataContext";
-import { aiAssistant } from "@/Api/api";
+import { aiChatBot } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
 import { extractPdfText } from "@/Utils/extractingText";
 import { ChatHistorySidebar } from "@/components/features/chatbot/ChatHistorySidebar";
@@ -101,6 +101,7 @@ export function Chatbot() {
         setMaxTokens(chat.maxTokens !== undefined ? chat.maxTokens : 2048);
         setAttachedNotes(chat.attachedNotes || []);
         setAttachedPracticals(chat.attachedPracticals || []);
+
     };
 
     // Sync active chat configuration with local states
@@ -151,6 +152,7 @@ export function Chatbot() {
             if (practical) {
                 count += Math.round(((practical.section || "").length + JSON.stringify(practical.questions || {}).length) / 4.2) + 150;
             }
+
         });
         return Math.min(count, 32768); // Cap at 32k visual
     }, [conversations, activeChatId, attachedNotes, attachedPracticals, notes, practicals]);
@@ -229,6 +231,7 @@ export function Chatbot() {
         } else {
             updated = [...attachedPracticals, id];
         }
+        console.log('Updated attachedPracticals:', updated);
         setAttachedPracticals(updated);
         updateActiveChatConfig("attachedPracticals", updated);
     };
@@ -278,24 +281,35 @@ export function Chatbot() {
                     const text = await extractPdfText(note.fileData);
                     promptPayload += `[Attachment Note: ${note.title}]\nCategory: ${note.section}\nContent summary: ${text || "Code file uploaded"}\n\n`;
                 }
+
             }
             attachedPracticals.forEach((pId) => {
-                const practical = practicals.find((p) => p._id === pId);
+                let practical;
+
+                for (const p of practicals) {
+                    practical = p.questions.find(q => q._id === pId);
+                    if (practical) break;
+                }
+
+                console.log('Practical:', practical);
+                // console.log('Questions Text:', ` ${practical.question}\nCode: ${practical.code?.map((c) => c) || ""}`);
+                // // console.log('Practical being processed for prompt:', practicals.map(p => p.questions.find(q=> q._id === pId)));
+
                 if (practical) {
-                    const questionsText = practical.questions?.map((q, idx) => `Q${idx + 1}: ${q.question}\nCode: ${q.codeTemplate || ""}`).join("\n") || "";
-                    promptPayload += `[Attachment Practical: ${practical.section}]\n${questionsText}\n\n`;
+                    const questionsText = `${practical.question}\nCode: ${practical.code?.map((c) => JSON.stringify(c)) || ""}` || "";
+                    promptPayload += `[Attachment Practical: ${practical.code?.map((c) => JSON.stringify(c.languageName)) || ""}]\n${questionsText}\n\n`;
                 }
             });
             promptPayload += `\nUse the above attached resources to precisely context-match the student queries if applicable.\n\n`;
         }
-
+        
         promptPayload += `Student Query: ${queryText}`;
+        console.log('promptPayload:', promptPayload);
 
         try {
             // Attempt server call
-            const res = await aiAssistant(promptPayload);
+            const res = await aiChatBot(promptPayload);
             let assistantResponse = "";
-
             if (res.data && res.data.data) {
                 assistantResponse = res.data.data;
             } else if (res.data && res.data.message) {

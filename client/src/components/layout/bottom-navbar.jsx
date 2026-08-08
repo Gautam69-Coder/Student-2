@@ -20,7 +20,7 @@ export function BottomNavbar() {
     const location = useLocation();
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 md:hidden z-40" style={{ background:theme.colors.dark }}>
+        <div className="fixed bottom-0 left-0 right-0 md:hidden border rounded-2xl z-40 mx-2 my-2" style={{ background:theme.colors.dark }}>
             <nav className="flex justify-around items-center px-1 py-3 pb-4">
                 {navItems.map((item) => {
                     const Icon = item.icon;

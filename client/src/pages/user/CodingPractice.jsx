@@ -24,7 +24,6 @@ const CodingPractice = () => {
                 if (!isMounted) return;
 
                 setCards(Array.isArray(res?.data.data) ? res.data.data : []);
-                console.log('Fetched coding practices:', res.data.data)
             } catch (e) {
                 if (!isMounted) return;
                 setError(e);

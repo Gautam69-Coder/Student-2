@@ -291,22 +291,16 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                             </div>
                         </div>
 
-                        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-5 gap-4 p-4 overflow-y-auto">
+                        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-5 gap-4  overflow-y-auto">
                             <Card
-                                className="lg:col-span-3 rounded-2xl overflow-hidden"
+                                className="lg:col-span-3 rounded-2xl overflow-hidden p-0"
                                 style={{
                                     background: theme.colors.white,
                                     borderColor: theme.colors.lightGray,
                                     boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
                                 }}
                             >
-                                <CardHeader className="pb-3">
-                                    <PanelTitle
-                                        title="Conversation"
-                                        subtitle="Ask questions about the selected code"
-                                    />
-                                </CardHeader>
-                                <CardContent className="pt-0 h-full flex flex-col min-h-0">
+                                <CardContent className="pt-0 h-full flex flex-col min-h-0 p-0 sm:p-4 p-1">
                                     <div
                                         className="flex-1 min-h-0 overflow-y-auto rounded-2xl border p-4 space-y-4"
                                         style={{

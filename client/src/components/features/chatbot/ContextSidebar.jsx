@@ -38,7 +38,7 @@ export function ContextSidebar({
     const [noteSearch, setNoteSearch] = useState("");
     const [practicalSearch, setPracticalSearch] = useState("");
     const [questionSearch, setQuestionSearch] = useState("");
-    
+
     // Modal states
     const [isQuestionModal, setIsQuestionModel] = useState(false);
     const [practicalsQuestion, setPracticalsQuestion] = useState([]);
@@ -57,9 +57,9 @@ export function ContextSidebar({
 
     const filteredQuestionsData = useMemo(() => {
         if (!questionSearch.trim()) return practicalsQuestion;
-        
+
         return practicalsQuestion.map(prac => {
-            const matches = (prac.questions || []).filter(q => 
+            const matches = (prac.questions || []).filter(q =>
                 (q.question || "").toLowerCase().includes(questionSearch.toLowerCase())
             );
             return { ...prac, questions: matches };
@@ -245,11 +245,10 @@ export function ContextSidebar({
                                             <div
                                                 key={note._id}
                                                 onClick={() => handleToggleNote(note._id)}
-                                                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors border ${
-                                                    isChecked
+                                                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors border ${isChecked
                                                         ? "bg-indigo-50 border-indigo-100 text-indigo-900 font-semibold"
                                                         : "bg-slate-50 border-transparent hover:bg-slate-200 text-slate-450"
-                                                }`}
+                                                    }`}
                                             >
                                                 <div className="flex items-center gap-2 truncate">
                                                     <FileText className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
@@ -300,11 +299,10 @@ export function ContextSidebar({
                                                     getPracticalQuestions(prac);
                                                     setIsQuestionModel(true);
                                                 }}
-                                                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors border ${
-                                                    isChecked
+                                                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors border ${isChecked
                                                         ? "bg-indigo-50 border-indigo-100 text-indigo-900 font-semibold"
                                                         : "bg-slate-50 border-transparent hover:bg-slate-200 text-slate-450"
-                                                }`}
+                                                    }`}
                                             >
                                                 <div className="flex items-center gap-2 truncate">
                                                     <FlaskConical className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
@@ -398,9 +396,14 @@ export function ContextSidebar({
                                                                                     {q.question}
                                                                                 </p>
                                                                                 <button
-                                                                                    onClick={() => handleCopyQuestion(q.question)}
+                                                                                    onClick={() => {
+                                                                                        handleCopyQuestion(q.question)
+                                                                                        console.log("Copy button clicked for question:", q._id)
+                                                                                        handleTogglePractical(q._id); // Adjust index if necessary
+                                                                                    }}
                                                                                     className="shrink-0 p-1.5 rounded-md border border-slate-200 hover:border-indigo-500/30 bg-white hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
                                                                                     title="Copy Question"
+
                                                                                 >
                                                                                     {isCopied ? <Check size={13} className="text-indigo-650" /> : <Copy size={13} />}
                                                                                 </button>

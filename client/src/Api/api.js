@@ -130,6 +130,8 @@ export const fetchDashboardStats = () => api.get('/stats/dashboard')
 //AI Assistant
 export const aiAssistant = (data) => api.post('/aiassistant', { message: data })
 export const aiCodeHelper = (context) => api.post('/aicodehelper', { context })
+export const aiChatBot = (data) => api.post('/aichatbot', { message: data })
+
 
 //AI code Checker 
 export const codeChecker = (data) => api.post('/code-checker', { data })

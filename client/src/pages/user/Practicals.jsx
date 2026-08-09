@@ -128,7 +128,7 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                     </p>
                                 </div>
 
-                                <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
+                                {/* <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
                                     <button
                                         className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
                                         onClick={() => setShowAddSection(true)}
@@ -141,7 +141,7 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                                     >
                                         Add Practical
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
 
                             {/* Subject Filter Tabs */}

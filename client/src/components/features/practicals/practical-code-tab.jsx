@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { theme } from '@/lib/theme';
 import HighlightComponent from 'react-highlight';
 const Highlight = HighlightComponent.default || HighlightComponent;
+import Editor from "@monaco-editor/react";
 import "highlight.js/styles/atom-one-dark.css";
 
 export default function CodeTabs({ tabs = [], activeTab: controlledActiveTab, onTabChange, layoutId = "activeTabUnderline" }) {
@@ -65,9 +66,34 @@ export default function CodeTabs({ tabs = [], activeTab: controlledActiveTab, on
                 transition={{ duration: 0.15 }}
                 className="overflow-x-auto text-sm leading-relaxed text-zinc-300"
               >
-                <Highlight className="javascript">
-                  {tab.code || '// No content'}
-                </Highlight>
+                {/* <Highlight className="javascript"> */}
+                {/* {tab.code || '// No content'} */}
+                <div style={{ height: "400px" }}>
+                  <Editor
+                    height="100%"
+                    defaultLanguage="javascript"
+                    // defaultValue={tab.code || '// No content'}
+                    value={tab.code || '// No content'}
+                    options={{
+                      readOnly: true,
+                      minimap: { enabled: false },
+                      scrollbar: { vertical: 'hidden', horizontal: 'auto' },
+                      lineNumbers: 'on',
+                      fontSize: 16,
+                      fontFamily: 'Fira Code, monospace',
+                      wordWrap: 'on',
+                      wrappingIndent: 'indent',
+                      renderLineHighlight: 'all',
+                      renderWhitespace: 'all',
+                      automaticLayout: true,
+                      formatOnType: true,
+                      formatOnPaste: true,
+                      automaticLayout: true,
+                    }}
+                    theme="vs-dark"
+                  />
+                </div>
+                {/* </Highlight> */}
               </motion.div>
             );
           })}

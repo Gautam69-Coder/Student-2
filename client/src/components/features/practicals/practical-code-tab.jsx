@@ -66,9 +66,12 @@ export default function CodeTabs({ tabs = [], activeTab: controlledActiveTab, on
                 transition={{ duration: 0.15 }}
                 className="overflow-x-auto text-sm leading-relaxed text-zinc-300"
               >
-                {/* <Highlight className="javascript"> */}
-                {/* {tab.code || '// No content'} */}
-                <div style={{ height: "400px" }}>
+                <div className="sm:hidden">
+                  <Highlight className="javascript ">
+                    {tab.code || '// No content'}
+                  </Highlight>
+                </div>
+                <div style={{ height: "500px" }} className="sm:block hidden">
                   <Editor
                     height="100%"
                     defaultLanguage="javascript"
@@ -93,7 +96,6 @@ export default function CodeTabs({ tabs = [], activeTab: controlledActiveTab, on
                     theme="vs-dark"
                   />
                 </div>
-                {/* </Highlight> */}
               </motion.div>
             );
           })}

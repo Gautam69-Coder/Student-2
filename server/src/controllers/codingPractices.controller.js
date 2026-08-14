@@ -8,7 +8,7 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 export const getCodingPractices = asyncHandler(async (req, res) => {
     let tracks = await CodingPractice.find().sort({ createdAt: -1 });
     if (!tracks || tracks.length < 5) {
-        await autoSeedCodingPractices();
+        // await autoSeedCodingPractices();
         tracks = await CodingPractice.find().sort({ createdAt: -1 });
     }
     res.status(200).json(new ApiResponse(200, tracks, 'Success'));

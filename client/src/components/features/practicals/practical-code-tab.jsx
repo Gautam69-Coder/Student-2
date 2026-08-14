@@ -91,7 +91,6 @@ export default function CodeTabs({ tabs = [], activeTab: controlledActiveTab, on
                       automaticLayout: true,
                       formatOnType: true,
                       formatOnPaste: true,
-                      automaticLayout: true,
                     }}
                     theme="vs-dark"
                   />

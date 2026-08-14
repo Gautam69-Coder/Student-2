@@ -56,11 +56,12 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
             try {
                 setLoading(true);
                 const code = await createNoteText(noteData);
+                console.log("Note upload response:", code.data.success, code.data.message);
                 if (code.data.success) {
-                    customMessage({ content: code.data.msg, type: "success" });
+                    customMessage({ content: code.data.message || "Note uploaded successfully", type: "success" });
                     setNoteData({ title: "", section: "General", code: "" });
                     onOpenChange(false);
-                    onNoteCreated?.(); // Trigger notes refresh in parent
+                    onNoteCreated?.(); 
                     setLoading(false);
                 }
             } catch (err) {
@@ -324,11 +325,13 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                     className="w-full h-12 flex items-center justify-center gap-2 font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all active:scale-[0.99] shadow-md shadow-indigo-100"
                                     onClick={() => {
                                         handleSubmit();
+                                        setLoading(true);
+
                                     }}
                                 >
                                     {
                                         loading ? (
-                                            <DotLoader size="10px" color={"white"} />
+                                            <DotLoader size={20} color={"white"} />
                                         ) : (
                                             <>
                                                 <Upload className="w-4 h-4" />

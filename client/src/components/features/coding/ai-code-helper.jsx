@@ -17,6 +17,8 @@ import { customMessage } from "@/Utils/customMessage";
 import { useData } from "@/context/DataContext";
 import { ApiKeyModal } from "@/components/common/ApiKeyModal";
 
+import ChatInput from "@/components/common/chat-input";
+
 function PanelTitle({ title, subtitle }) {
     return (
         <div className="flex items-start justify-between gap-4">
@@ -194,6 +196,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                 };
                 setMessages((prev) => [...prev, botMessage]);
             }, 100);
+            setInputValue("");
         } catch (error) {
             console.error(error);
             setMessages((prev) => [
@@ -317,7 +320,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                                 className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
                                             >
                                                 <div
-                                                    className={`max-w-[90%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${message.sender === "user"
+                                                    className={` px-4 py-3 rounded-2xl text-sm leading-relaxed ${message.sender === "user"
                                                         ? "rounded-br-none"
                                                         : "rounded-bl-none border"
                                                         }`}
@@ -344,33 +347,23 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
 
 
                                     <div className="mt-4 flex gap-2">
-                                        <input
-                                            value={inputValue}
-                                            onChange={(e) => {
-                                                setInputValue(e.target.value);
-                                            }
-                                            }
-                                            onKeyDown={handleKeyPress}
-                                            placeholder="Ask about the code..."
-                                            className="flex-1 px-4 py-3 rounded-xl border text-sm outline-none transition-colors"
-                                            style={{
-                                                background: theme.colors.white,
-                                                borderColor: theme.colors.lightGray,
-                                                color: theme.colors.dark,
-                                            }}
+                                        <ChatInput
+                                            inputValue={inputValue}
+                                            setInputValue={setInputValue}
+                                            handleKeyPress={handleKeyPress}
                                         />
                                         <button
-                                             onClick={handleSendMessage}
-                                             className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-bold transition-transform active:scale-[0.98] cursor-pointer"
-                                             style={{
-                                                 background: theme.colors.lime,
-                                                 color: theme.colors.dark,
-                                                 borderColor: theme.colors.lime,
-                                             }}
-                                         >
-                                             <Send className="w-4 h-4 fill-current" />
-                                             Send
-                                         </button>
+                                            onClick={handleSendMessage}
+                                            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-bold transition-transform active:scale-[0.98] cursor-pointer"
+                                            style={{
+                                                background: theme.colors.lime,
+                                                color: theme.colors.dark,
+                                                borderColor: theme.colors.lime,
+                                            }}
+                                        >
+                                            <Send className="w-4 h-4 fill-current" />
+                                            Send
+                                        </button>
                                     </div>
                                 </CardContent>
                             </Card>

@@ -184,7 +184,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                         >
                                             <ExternalLink className="w-4 h-4" /> Expand View
                                         </button>
-                                        <button
+                                        {/* <button
                                             onClick={() => requireAuth(() => {
                                                 const link = document.createElement('a')
                                                 link.href = question.fileUrl
@@ -194,7 +194,18 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                             className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors cursor-pointer"
                                         >
                                             <Download className="w-4 h-4" /> Get Asset
-                                        </button>
+                                        </button> */}
+                                        <a className="" href={question.fileUrl} download target="_blank" rel="noopener noreferrer"
+                                            onClick={(e) => {
+                                                // e.preventDefault();
+                                                console.log("Downloading asset");
+                                            }}
+                                        >
+
+                                            <button className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors cursor-pointer">
+                                                <Download className="w-4 h-4" /> Get Asset
+                                            </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

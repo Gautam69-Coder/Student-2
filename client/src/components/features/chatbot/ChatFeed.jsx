@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Badge } from "/components/ui/badge";
 import { MarkdownContent } from "@/Utils/MarkdownContent";
+import ChatInput from "@/components/common/chat-input";
 
 export function ChatFeed({
     activeChat,
@@ -221,14 +222,10 @@ export function ChatFeed({
             <div className="p-4 bg-white border-t border-slate-200">
                 <div className="max-w-3xl mx-auto flex gap-3">
                     <div className="relative flex-1 rounded-xl overflow-hidden bg-slate-100 border border-slate-300 focus-within:border-indigo-500 transition-colors">
-                        <input
-                            type="text"
-                            value={inputMessage}
-                            onChange={(e) => setInputMessage(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleSendLocal()}
-                            placeholder="Type a message or concept question..."
-                            className="w-full px-4 py-3 text-sm outline-none bg-transparent text-slate-900 placeholder-slate-500"
-                            disabled={isLoadingResponse}
+                        <ChatInput
+                            inputValue={inputMessage}
+                            setInputValue={setInputMessage}
+                            handleKeyPress={(e) => e.key === "Enter" && handleSendLocal()}
                         />
                     </div>
                     <button

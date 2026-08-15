@@ -104,7 +104,7 @@ export function DashboardLayout({
     css,
 }) {
     return (
-        <div className={`flex w-full sm:mb-0 mb-10 min-h-screen`} style={{ background: "#F4F4F5" }}>
+        <div className={`flex w-full sm:mb-0 mb-10 min-h-screen }`} style={{ background: "#F4F4F5" }}>
             {/* Fixed Sidebar */}
             {sidebar}
             
@@ -113,7 +113,7 @@ export function DashboardLayout({
                 {/* Top Navbar - Sticky at top */}
                 
                 {/* Content */}
-                <div className="sm:p-6 p-4  flex-1">
+                <div className={`flex-1 ${css || "sm:p-6 p-4 "}`}>
                     <div className="space-y-4">{children}</div>
                 </div>
             </div>

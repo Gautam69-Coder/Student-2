@@ -304,7 +304,6 @@ export function Chatbot() {
         }
         
         promptPayload += `Student Query: ${queryText}`;
-        console.log('promptPayload:', promptPayload);
 
         try {
             // Attempt server call
@@ -475,7 +474,7 @@ I have received your prompt. Here are some options you can explore:
     const activeChat = conversations.find((c) => c.id === activeChatId) || conversations[0];
 
     return (
-        <DashboardLayout css={"89vh"}>
+        <DashboardLayout>
             <div className="flex flex-col gap-4 w-full">
                 {/* Workspace card */}
                 <Card

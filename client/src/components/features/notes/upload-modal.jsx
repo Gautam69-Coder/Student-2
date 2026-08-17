@@ -19,7 +19,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
         title: "",
         section: "General",
         code: ""
-    })
+    });
     const [fileUpload, setFileUpload] = useState(null);
     const [allSections, setallSections] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -27,6 +27,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
     const handleChanged = (e) => {
         setNoteData({ ...noteData, [e.target.name]: e.target.value })
     }
+    
 
     const loadSections = async () => {
         try {

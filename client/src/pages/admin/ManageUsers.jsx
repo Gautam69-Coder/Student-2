@@ -14,6 +14,7 @@ export function ManageUsers({ users, setUsers, subjects }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("")
     const [isSearch, setIsSearch] = useState(false);
+    const [sortBy, setSortBy] = useState("default")
     const itemsPerPage = 8;
     const { onlineUsers } = useSocket();
 
@@ -48,19 +49,39 @@ export function ManageUsers({ users, setUsers, subjects }) {
         : users.filter(user => user.role === filterRole)
 
     // const searchUser = users.find(u=> u == search);
-    const searchUser = users.filter(i => {
+    const searchUser = filteredUsers.filter(i => {
         const username = (i.username || "").toLowerCase().split(' ');
-        return username.some(word => word.includes(search.toLowerCase()))
+        const email = (i.email || "").toLowerCase();
+        return username.some(word => word.includes(search.toLowerCase())) || email.includes(search.toLowerCase())
     })
 
     // console.log(users)  
 
 
-    // Pagination Logic
+    // Sorting and Pagination Logic
+    const activeItems = search.length > 0 ? searchUser : filteredUsers;
+    const sortedUsers = [...activeItems].sort((a, b) => {
+        if (sortBy === "most-visited") {
+            return (b.visitCount || 0) - (a.visitCount || 0);
+        }
+        if (sortBy === "least-visited") {
+            return (a.visitCount || 0) - (b.visitCount || 0);
+        }
+        if (sortBy === "alphabetical") {
+            return (a.username || "").localeCompare(b.username || "");
+        }
+        if (sortBy === "recent-visit") {
+            const dateA = a.currentVisit ? new Date(a.currentVisit).getTime() : 0;
+            const dateB = b.currentVisit ? new Date(b.currentVisit).getTime() : 0;
+            return dateB - dateA;
+        }
+        return 0;
+    });
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = search.length > 1 ? searchUser : filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+    const currentItems = sortedUsers.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.max(1, Math.ceil(activeItems.length / itemsPerPage));
 
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -88,182 +109,180 @@ export function ManageUsers({ users, setUsers, subjects }) {
     }
 
     return (
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 p-4 pt-4">
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 p-4 pt-4 select-none">
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
                 className="grid  grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
             >
-                <StatsCard title="Total Users" value={users.length} change="+12%" icon={Users} color="#0f172a" />
+                <StatsCard title="Total Users" value={users.length} change="+12%" icon={Users} color="#4F46E5" />
                 <StatsCard title="Online Now" value={onlineUsers.length} change="Live" icon={Activity} color="#10b981" />
                 <StatsCard title="Storage Used" value="N/A" change="+2.3 GB" icon={HardDrive} color="#f97316" />
                 <StatsCard title="Content Items" value={subjects.length} change="+24" icon={FileText} color="#06b6d4" />
             </motion.div>
             <motion.div variants={itemVariants} className="flex items-center flex-wrap gap-3 justify-between">
-                <h2 className="text-2xl  font-bold text-slate-900 dark:text-white tracking-tight">Manage Users</h2>
-                <div className="flex flex-wrap justify-between w-full sm:mt-6 mt-4  gap-3">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Manage Users</h2>
+                <div className="flex flex-wrap justify-between w-full sm:mt-6 mt-4 gap-4">
+                    <div className="relative flex-1 sm:max-w-xl">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                         <input
                             type="text"
                             value={search}
                             placeholder="Search users..."
-                            className="sm:w-[60vw]   pl-10 pr-4 h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-[10px] text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-
+                            className="w-full pl-11 pr-4 h-10 neo-inset text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none"
                             onChange={(e) => {
-                                setSearch(e.target.value)
-                            }
-                            }
+                                setSearch(e.target.value);
+                                setCurrentPage(1);
+                            }}
                             onClick={() => {
                                 setIsSearch(true);
                             }}
                         />
                     </div>
-                    <select
-                        value={filterRole}
-                        onChange={(e) => { setFilterRole(e.target.value) }}
-                        className="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-[10px] text-sm focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 cursor-pointer text-slate-900 dark:text-white"
-                    >
-                        <option value="all">All Roles</option>
-                        <option value="user">Students</option>
-                        <option value="admin">Admins</option>
-                        <option value="superadmin">Super Admins</option>
-                    </select>
+                    <div className="flex gap-3">
+                        <select
+                            value={filterRole}
+                            onChange={(e) => {
+                                setFilterRole(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                            className="h-10 px-4 neo-inset text-sm cursor-pointer text-slate-900 dark:text-white focus:outline-none"
+                        >
+                            <option value="all">All Roles</option>
+                            <option value="user">Students</option>
+                            <option value="admin">Admins</option>
+                            <option value="superadmin">Super Admins</option>
+                        </select>
+                        <select
+                            value={sortBy}
+                            onChange={(e) => {
+                                setSortBy(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                            className="h-10 px-4 neo-inset text-sm cursor-pointer text-slate-900 dark:text-white focus:outline-none"
+                        >
+                            <option value="default">Default Order</option>
+                            <option value="most-visited">Most Visited</option>
+                            <option value="least-visited">Least Visited</option>
+                            <option value="recent-visit">Recent Visit</option>
+                            <option value="alphabetical">Alphabetical (A-Z)</option>
+                        </select>
+                    </div>
                 </div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="bg-white dark:bg-slate-900 overflow-x-auto sm:w-full w-sm rounded-[10px]  border border-[#E5E5E5] dark:border-slate-800 shadow-sm">
-                <table className="w-full">
-                    <thead>
-                        <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Role</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Online Visits</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 ">Current Visit</th>
-                            <th className="text-left sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 ">Last Visit</th>
-                            <th className="text-right sm:px-6 px-1 py-2 sm:py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentItems.map((user) => {
-                            const isOnline = onlineUsers && onlineUsers.includes(user._id);
-                            const activityColor = user.role === 'admin' ? '#7C3AED' : (isOnline ? '#22C55E' : '#64748B');
+            <motion.div variants={itemVariants} className="neo-flat overflow-hidden sm:w-full w-sm border-none shadow-none">
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr className="border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-100/10 dark:bg-slate-900/10">
+                                <th className="text-left sm:px-6 px-4 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</th>
+                                <th className="text-left sm:px-6 px-4 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Role</th>
+                                <th className="text-left sm:px-6 px-4 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Online Visits</th>
+                                <th className="text-left sm:px-6 px-4 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ">Current Visit</th>
+                                <th className="text-right sm:px-6 px-4 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentItems.map((user) => {
+                                const isOnline = onlineUsers && onlineUsers.includes(user._id);
 
-                            return (
-                                <tr key={user._id} className="border-b  border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                    <td className="sm:px-6 px-2 py-2 sm:py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="relative">
-                                                {user.avatar ? (
-                                                    <div className="sm:w-10 w-4 sm:h-8 h-8 rounded-[10px] bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-400">
-                                                        <img src={user.avatar} className="rounded-[10px]" alt={user.avatar} />
-                                                    </div>
-                                                ) : (
-                                                    <div className="sm:w-10 w-4 sm:h-10 h-8 rounded-[10px] bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-400">
-                                                        {user.username.charAt(0).toUpperCase()}
-                                                    </div>
-                                                )}
-                                                {isOnline && (
-                                                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-[10px] shadow-sm animate-pulse" />
-                                                )}
-                                            </div>
-                                            <div>
-                                                <div className="sm:flex  items-center gap-2">
-                                                    <p className="font-semibold text-slate-900 dark:text-white text-[15px]">{user.username}</p>
-                                                    {isOnline ? (
-                                                        <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Online</span>
+                                return (
+                                    <tr key={user._id} className="border-b border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-100/10 dark:hover:bg-slate-900/10 transition-colors">
+                                        <td className="sm:px-6 px-4 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="relative">
+                                                    {user.avatar ? (
+                                                        <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-400 shadow-[inset_1px_1px_3px_rgba(0,0,0,0.1)]">
+                                                            <img src={user.avatar} className="rounded-xl object-cover w-full h-full" alt="avatar" />
+                                                        </div>
                                                     ) : (
-                                                        <div className="flex items-center gap-1">
-                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">• Offline</span>
+                                                        <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-slate-500 dark:text-slate-400 shadow-[inset_1px_1px_3px_rgba(0,0,0,0.1)]">
+                                                            {(user.username || "").charAt(0).toUpperCase()}
                                                         </div>
                                                     )}
+                                                    {isOnline && (
+                                                        <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-[#e6eef8] dark:border-[#1b202e] rounded-full shadow-sm animate-pulse" />
+                                                    )}
                                                 </div>
-                                                <p className="text-sm text-slate-500 dark:text-slate-400 sm:block hidden">{user.email}</p>
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="font-bold text-slate-900 dark:text-white text-[15px]">{user.username || "Unknown"}</p>
+                                                        {isOnline ? (
+                                                            <span className="text-[10px] font-black text-green-500 uppercase tracking-wider bg-green-500/10 px-1.5 py-0.5 rounded">Online</span>
+                                                        ) : (
+                                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider bg-slate-400/10 px-1.5 py-0.5 rounded">Offline</span>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 sm:block hidden">{user.email || ""}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td className="sm:px-6 px-2 py-2 sm:py-4 flex items-center ">
-                                        {user.role !== "superadmin" ? (
-                                            <select
-                                                value={user.role}
-                                                onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                                                className={`sm:w-28 w-20 h-6 sm:h-8 sm:px-5 px-2 text-xs font-semibold rounded-[10px] border-none focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 cursor-pointer ${user.role === "admin"
-                                                    ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"
-                                                    : "bg-slate-100 dark:bg-slate-800 text-black dark:text-white"
-                                                    }`}
-                                            >
-                                                <option value="user">Student</option>
-                                                <option value="admin">Admin</option>
-                                            </select>
-                                        ) : (
-                                            <div>
-                                                <span className="sm:w-28 w-20 h-6 py-2  sm:px-5 px-2 text-[12px] text-center font-semibold rounded-[10px] border-none bg-yellow-500 text-white">{user.role}</span>
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td className="sm:px-6 px-2 py-2 sm:py-4">
-                                        <span className="font-semibold text-slate-700 dark:text-slate-300">{formatCount(user.visitCount)}</span>
-                                    </td>
-                                    <td className="sm:px-6 px-2 py-2 sm:py-4 ">
-                                        <div className="flex items-center gap-2">
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                                                    {user.currentVisit ? new Date(user.currentVisit).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never'}
-                                                    {/* {user.currentVisit} */}
+                                        </td>
+                                        <td className="sm:px-6 px-4 py-4">
+                                            {user.role !== "superadmin" ? (
+                                                <select
+                                                    value={user.role}
+                                                    onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                                                    className="sm:w-28 w-20 h-8 px-2 text-xs font-bold rounded-xl neo-btn cursor-pointer focus:outline-none"
+                                                >
+                                                    <option value="user">Student</option>
+                                                    <option value="admin">Admin</option>
+                                                </select>
+                                            ) : (
+                                                <span className="inline-block sm:w-28 w-20 py-1.5 text-center text-[10px] tracking-wider uppercase font-black rounded-lg bg-amber-500 text-white shadow-sm">
+                                                    {user.role}
                                                 </span>
-                                                <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                                                    <Clock className="w-3 h-3" />
+                                            )}
+                                        </td>
+                                        <td className="sm:px-6 px-4 py-4">
+                                            <span className="font-bold text-slate-700 dark:text-slate-300">{formatCount(user.visitCount)}</span>
+                                        </td>
+                                        <td className="sm:px-6 px-4 py-4">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                                                    {user.currentVisit ? new Date(user.currentVisit).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never'}
+                                                </span>
+                                                <span className="text-[10px] text-slate-400 flex items-center gap-1 font-semibold mt-0.5">
+                                                    <Clock className="w-3 h-3 text-slate-400" />
                                                     {user.currentVisitTime || 'N/A'}
                                                 </span>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td className="sm:px-6 px-2 py-2 sm:py-4 ">
-                                        <div className="flex items-center gap-2">
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                                                    {user.lastVisit ? new Date(user.lastVisit).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never'}
-                                                    {/* {user.currentVisit} */}
-                                                </span>
-                                                <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                                                    <Clock className="w-3 h-3" />
-                                                    {user.lastVisitTime || 'N/A'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="sm:px-6 py-4">
-                                        {user.role !== "superadmin" ? (
-                                            <div className="flex sm:justify-end justify-center gap-2">
-                                                <button onClick={() => handleDeleteUser(user._id)} className="flex items-center justify-center w-8 h-8 rounded-[10px] hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-                                                    <Trash className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="flex sm:justify-end justify-center gap-2">
-                                                <span className="text-slate-400">😂</span>
-                                            </div>
-                                        )}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                                        </td>
+
+                                        <td className="sm:px-6 px-4 py-4 text-right">
+                                            {user.role !== "superadmin" ? (
+                                                <div className="flex justify-end gap-2">
+                                                    <button
+                                                        onClick={() => handleDeleteUser(user._id)}
+                                                        className="flex items-center justify-center w-8 h-8 rounded-lg neo-btn text-slate-400 hover:text-red-500 transition-colors"
+                                                    >
+                                                        <Trash className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <span className="text-slate-400 select-none">👑</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
 
                 {/* Pagination Controls */}
-                <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/20">
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Showing <span className="font-semibold text-slate-900 dark:text-white">{indexOfFirstItem + 1}</span> to <span className="font-semibold text-slate-900 dark:text-white">{Math.min(indexOfLastItem, filteredUsers.length)}</span> of <span className="font-semibold text-slate-900 dark:text-white">{filteredUsers.length}</span> users
+                <div className="px-6 py-5 border-t border-slate-200/50 dark:border-slate-800/50 flex flex-col sm:flex-row gap-4 items-center justify-between bg-slate-100/10 dark:bg-slate-900/10">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        Showing <span className="text-slate-700 dark:text-slate-300">{indexOfFirstItem + 1}</span> - <span className="text-slate-700 dark:text-slate-300">{Math.min(indexOfLastItem, activeItems.length)}</span> of <span className="text-slate-700 dark:text-slate-300">{activeItems.length}</span> Users
                     </p>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2.5 items-center">
                         <button
                             onClick={() => paginate(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className={`px-4 py-2 text-sm font-medium rounded-[10px] border transition-all ${currentPage === 1
-                                ? "border-slate-200 text-slate-300 cursor-not-allowed"
-                                : "border-slate-200 text-slate-600 hover:bg-white hover:text-slate-900 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"}`}
+                            className={`px-4.5 py-2 text-xs font-bold rounded-xl transition-all ${currentPage === 1
+                                ? "shadow-[inset_2px_2px_4px_rgba(0,0,0,0.05)] text-slate-300 dark:text-slate-700 cursor-not-allowed"
+                                : "neo-btn text-slate-600 dark:text-slate-400"}`}
                         >
                             Previous
                         </button>
@@ -271,9 +290,9 @@ export function ManageUsers({ users, setUsers, subjects }) {
                             <button
                                 key={number}
                                 onClick={() => paginate(number)}
-                                className={`w-10 h-10 text-sm font-bold rounded-[10px] transition-all ${currentPage === number
-                                    ? "bg-slate-900 text-white shadow-lg dark:bg-white dark:text-slate-900"
-                                    : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"}`}
+                                className={`w-9 h-9 text-xs font-bold rounded-xl transition-all ${currentPage === number
+                                    ? "bg-[#e6eef8] dark:bg-[#1b202e] shadow-[inset_3px_3px_6px_#c8d0e7,inset_-3px_-3px_6px_#ffffff] dark:shadow-[inset_3px_3px_6px_#0f121b,inset_-3px_-3px_6px_#272e41] text-[#4F46E5] dark:text-[#CCFF00]"
+                                    : "neo-btn text-slate-600 dark:text-slate-400"}`}
                             >
                                 {number}
                             </button>
@@ -281,15 +300,15 @@ export function ManageUsers({ users, setUsers, subjects }) {
                         <button
                             onClick={() => paginate(currentPage + 1)}
                             disabled={currentPage === totalPages}
-                            className={`px-4 py-2 text-sm font-medium rounded-[10px] border transition-all ${currentPage === totalPages
-                                ? "border-slate-200 text-slate-300 cursor-not-allowed"
-                                : "border-slate-200 text-slate-600 hover:bg-white hover:text-slate-900 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"}`}
+                            className={`px-4.5 py-2 text-xs font-bold rounded-xl transition-all ${currentPage === totalPages
+                                ? "shadow-[inset_2px_2px_4px_rgba(0,0,0,0.05)] text-slate-300 dark:text-slate-700 cursor-not-allowed"
+                                : "neo-btn text-slate-600 dark:text-slate-400"}`}
                         >
                             Next
                         </button>
                     </div>
                 </div>
             </motion.div>
-        </motion.div >
+        </motion.div>
     )
 }

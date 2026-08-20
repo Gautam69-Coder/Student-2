@@ -14,64 +14,63 @@ const SOCKET_URL = window.location.hostname === 'localhost' || window.location.h
     : 'https://student-2-temprory.onrender.com';
 
 export const SocketProvider = ({ children, user }) => {
-    const socketRef = useRef(null);
+    const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [lastVisit, setLastVisit] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        const socket = io(SOCKET_URL, {
+        const socketInstance = io(SOCKET_URL, {
             withCredentials: true,
             transports: ['websocket', 'polling']
         });
 
-        socketRef.current = socket;
+        setSocket(socketInstance);
 
-        socket.on('connect', () => {
-           
+        socketInstance.on('connect', () => {
             setIsConnected(true);
         });
 
-        socket.on('disconnect', () => {
+        socketInstance.on('disconnect', () => {
             setIsConnected(false);
         });
 
-        socket.on('online_users_update', (users) => {
+        socketInstance.on('online_users_update', (users) => {
             setOnlineUsers(users);
         });
 
-        socket.on('user_visit', (data) => {
+        socketInstance.on('user_visit', (data) => {
             setLastVisit(data);
         });
 
         return () => {
-            socket.disconnect();
+            socketInstance.disconnect();
         };
     }, []);
 
     // Separate effect to handle user registration when user OR connection changes
     useEffect(() => {
-        if (isConnected && user && socketRef.current) {
+        if (isConnected && user && socket) {
             // console.log('📤 Emitting user_online for:', user.username);
-            socketRef.current.emit('user_online', {
+            socket.emit('user_online', {
                 id: user._id || user.id,
                 username: user.username,
                 email: user.email,
                 role: user.role
             });
-        } else if (isConnected && !user && socketRef.current) {
+        } else if (isConnected && !user && socket) {
             // console.log('📤 Emitting user_logout');
-            socketRef.current.emit('user_logout');
+            socket.emit('user_logout');
         }
-    }, [user, isConnected]);
+    }, [user, isConnected, socket]);
 
     // Memoize context value to prevent unnecessary re-renders of consumers
     const value = useMemo(() => ({
-        socket: socketRef.current,
+        socket,
         onlineUsers,
         lastVisit,
         isConnected
-    }), [onlineUsers, lastVisit, isConnected]);
+    }), [socket, onlineUsers, lastVisit, isConnected]);
 
     return (
         <SocketContext.Provider value={value}>

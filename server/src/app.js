@@ -20,7 +20,6 @@ import codingPractices from './routes/codingPractices.js';
 import stats from './routes/stats.js';
 import codechecker from './routes/codeChecker.js';
 import activityTrack from './routes/activityTrack.js';
-import guestTrack from './routes/guestTrack.js';
 import apiKeyController from "./routes/apiKey.js";
 
 const app = express();
@@ -62,7 +61,6 @@ app.use('/api/stats', stats);
 app.use('/api/code-checker', aiLimiter, codechecker);
 app.use('/api/hometracking', activityTrack);
 app.use('/api/trackingData', activityTrack);
-app.use('/api/guesttrack', guestTrack);
 app.use('/api/save-apikey', apiKeyController);
 
 // Root route

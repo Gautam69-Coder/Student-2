@@ -47,29 +47,17 @@ export function Chatbot() {
     };
 
     // Load Chat History from LocalStorage
-    useEffect(() => {
-        const stored = localStorage.getItem(localStorageKey);
-        if (stored) {
-            try {
-                const parsed = JSON.parse(stored);
-                if (parsed.length > 0) {
-                    setConversations(parsed);
-                    // Select first chat
-                    setActiveChatId(parsed[0].id);
-                    loadConversationState(parsed[0]);
-                    return;
-                }
-            } catch (e) {
-                console.error("Failed to parse chat history:", e);
-            }
-        }
-        // Initialize an empty first chat if none exists
-        initFirstChat();
-    }, [localStorageKey]);
-
     // Save Chat History to LocalStorage on modifications
     const saveToLocalStorage = (updatedConversations) => {
         localStorage.setItem(localStorageKey, JSON.stringify(updatedConversations));
+    };
+
+    const loadConversationState = (chat) => {
+        setSystemPrompt(chat.systemPrompt || "Default Tutor");
+        setTemperature(chat.temperature !== undefined ? chat.temperature : 0.7);
+        setMaxTokens(chat.maxTokens !== undefined ? chat.maxTokens : 2048);
+        setAttachedNotes(chat.attachedNotes || []);
+        setAttachedPracticals(chat.attachedPracticals || []);
     };
 
     const initFirstChat = () => {
@@ -95,14 +83,25 @@ export function Chatbot() {
         saveToLocalStorage([newChat]);
     };
 
-    const loadConversationState = (chat) => {
-        setSystemPrompt(chat.systemPrompt || "Default Tutor");
-        setTemperature(chat.temperature !== undefined ? chat.temperature : 0.7);
-        setMaxTokens(chat.maxTokens !== undefined ? chat.maxTokens : 2048);
-        setAttachedNotes(chat.attachedNotes || []);
-        setAttachedPracticals(chat.attachedPracticals || []);
-
-    };
+    useEffect(() => {
+        const stored = localStorage.getItem(localStorageKey);
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (parsed.length > 0) {
+                    setConversations(parsed);
+                    // Select first chat
+                    setActiveChatId(parsed[0].id);
+                    loadConversationState(parsed[0]);
+                    return;
+                }
+            } catch (e) {
+                console.error("Failed to parse chat history:", e);
+            }
+        }
+        // Initialize an empty first chat if none exists
+        initFirstChat();
+    }, [localStorageKey]);
 
     // Sync active chat configuration with local states
     useEffect(() => {
@@ -296,8 +295,8 @@ export function Chatbot() {
                 // // console.log('Practical being processed for prompt:', practicals.map(p => p.questions.find(q=> q._id === pId)));
 
                 if (practical) {
-                    const questionsText = `${practical.question}\nCode: ${practical.code?.map((c) => JSON.stringify(c)) || ""}` || "";
-                    promptPayload += `[Attachment Practical: ${practical.code?.map((c) => JSON.stringify(c.languageName)) || ""}]\n${questionsText}\n\n`;
+                    const questionsText = `${practical.question}\nCode: ${practical.code?.map((c) => JSON.stringify(c)).join(", ") || ""}`;
+                    promptPayload += `[Attachment Practical: ${practical.code?.map((c) => c.languageName).join(", ") || ""}]\n${questionsText}\n\n`;
                 }
             });
             promptPayload += `\nUse the above attached resources to precisely context-match the student queries if applicable.\n\n`;

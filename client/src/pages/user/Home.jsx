@@ -89,29 +89,20 @@ export function Home() {
     const [userProgress, setUserProgress] = useState(null);
     const [chartData, setChartData] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [dashboardStats, setDashboardStats] = useState({
-        practicalSections: 0,
-        noteSections: 0,
-        totalPracticals: 0,
-        platformVisits: 0,
-        totalNotes: 0,
-        privateNotes: 0,
-        publicNotes: 0,
-        recentNotes: [],
-    });
-
-    // Fetch user data on component mount
-    const fetchUserData = useCallback(async () => {
-        try {
-            setDashboardStats(prev => ({
-                ...prev,
-                platformVisits: user?.visitCount
-            }))
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
-    }, [user]);
-
+    const dashboardStats = useMemo(() => {
+        const practicalList = Array.isArray(practicals) ? practicals : [];
+        const notesList = Array.isArray(notes) ? notes : [];
+        return {
+            practicalSections: [...new Set(practicalList.map(p => p.section))].length,
+            totalPracticals: practicalList.length,
+            noteSections: [...new Set(notesList.map(n => n.section))].length,
+            totalNotes: notesList.length,
+            privateNotes: notesList.filter(n => n.isGlobal).length,
+            publicNotes: notesList.filter(n => !n.isGlobal).length,
+            recentNotes: notesList.slice(0, 4),
+            platformVisits: user?.visitCount || 0,
+        };
+    }, [practicals, notes, user]);
 
     // Fetch user progress data & build weekly activity chart
     const fetchUserProgressData = async () => {
@@ -202,38 +193,11 @@ export function Home() {
         };
     }, [mergedUserProgress]);
 
-
-
-    const fetchPracticalsSectionsAndTotalPracticals = useMemo(() => {
-        setDashboardStats(prev => ({
-            ...prev,
-            practicalSections: [...new Set(practicals.map(p => p.section))].length,
-            totalPracticals: practicals.length,
-        }));
-    }, [practicals])
-
-    const fetchNotesSectionsAndTotalNotes = useMemo(() => {
-        setDashboardStats(prev => ({
-            ...prev,
-            noteSections: [...new Set(notes.map(n => n.section))].length,
-            totalNotes: notes.length,
-            privateNotes: notes.filter(n => n.isGlobal).length,
-            publicNotes: notes.filter(n => !n.isGlobal).length,
-            recentNotes: notes.slice(0, 4),
-        }));
-    }, [notes]);
-
     useEffect(() => {
         const loadDashboard = async () => {
             try {
                 setLoading(true);
-
-                await Promise.all([
-                    fetchUserData(),
-                    fetchUserProgressData(),
-                    fetchPracticalsSectionsAndTotalPracticals(),
-                    fetchNotesSectionsAndTotalNotes(),
-                ]);
+                await fetchUserProgressData();
             } catch (error) {
                 console.error(error);
             } finally {

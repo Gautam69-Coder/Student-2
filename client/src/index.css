@@ -778,3 +778,72 @@ h6 {
   border-radius: 8px;
   overflow-x: auto;
 }
+
+/* Neomorphism Theme and Utility Classes */
+:root {
+  --neo-bg-light: #e6eef8;
+  --neo-shadow-light-flat: 8px 8px 16px #c8d0e7, -8px -8px 16px #ffffff;
+  --neo-shadow-light-inset: inset 6px 6px 12px #c8d0e7, inset -6px -6px 12px #ffffff;
+  --neo-shadow-light-button-hover: 4px 4px 8px #c8d0e7, -4px -4px 8px #ffffff;
+  
+  --neo-bg-dark: #1b202e;
+  --neo-shadow-dark-flat: 8px 8px 16px #0f121b, -8px -8px 16px #272e41;
+  --neo-shadow-dark-inset: inset 6px 6px 12px #0f121b, inset -6px -6px 12px #272e41;
+}
+
+.neo-bg {
+  background: var(--neo-bg-light) !important;
+}
+.dark .neo-bg {
+  background: var(--neo-bg-dark) !important;
+}
+
+.neo-flat {
+  background: var(--neo-bg-light);
+  box-shadow: var(--neo-shadow-light-flat);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.dark .neo-flat {
+  background: var(--neo-bg-dark);
+  box-shadow: var(--neo-shadow-dark-flat);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.neo-inset {
+  background: var(--neo-bg-light);
+  box-shadow: var(--neo-shadow-light-inset);
+  border-radius: 12px;
+  border: none;
+}
+.dark .neo-inset {
+  background: var(--neo-bg-dark);
+  box-shadow: var(--neo-shadow-dark-inset);
+}
+
+.neo-btn {
+  background: var(--neo-bg-light);
+  box-shadow: var(--neo-shadow-light-flat);
+  border-radius: 12px;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.dark .neo-btn {
+  background: var(--neo-bg-dark);
+  box-shadow: var(--neo-shadow-dark-flat);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+.neo-btn:hover {
+  box-shadow: var(--neo-shadow-light-button-hover);
+  transform: translateY(-1px);
+}
+.dark .neo-btn:hover {
+  box-shadow: 4px 4px 8px #0f121b, -4px -4px 8px #272e41;
+}
+.neo-btn:active {
+  box-shadow: var(--neo-shadow-light-inset);
+  transform: translateY(0);
+}
+.dark .neo-btn:active {
+  box-shadow: var(--neo-shadow-dark-inset);
+}

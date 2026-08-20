@@ -35,7 +35,7 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [adminSecret, setAdminSecret] = useState("")
-    const [currentQuote] = useState(quotes[Math.floor(Math.random() * quotes.length)])
+    const [currentQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)])
 
     const navigate = useNavigate();
 

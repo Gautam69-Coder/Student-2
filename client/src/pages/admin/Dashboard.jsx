@@ -12,7 +12,6 @@ import { AdminSidebar } from "@/components/layout/admin-sidebar"
 import { useSocket } from "@/context/SocketContext"
 
 import { ManageUsers } from "./ManageUsers"
-import { ManageGuestVisits } from "./ManageGuestVisits"
 import { ManageSubjects } from "./ManageSubjects"
 import { ManagePracticals } from "./ManagePracticals"
 import { ManageNotification } from "./ManageNotification"
@@ -35,22 +34,37 @@ export function AdminPanel({ userName, onLogout }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const user = fetchUsers();
-        user.then((res) => {
-            setUsers(res.data.data);
-            // console.log("Fetched users:", res.data);
-        });
+        const loadUsers = async () => {
+            try {
+                const res = await fetchUsers();
+                setUsers(res.data?.data || []);
+            } catch (err) {
+                console.error("Failed to fetch users:", err);
+            }
+        };
 
-        const content = fetchContent();
-        content.then((res) => {
-            setSubjects(res.data.data)
-        });
+        const loadContent = async () => {
+            try {
+                const res = await fetchContent();
+                setSubjects(res.data?.data || []);
+            } catch (err) {
+                console.error("Failed to fetch content/subjects:", err);
+            }
+        };
 
-        const section = fetchSections();
-        section.then((res) => {
-            const list = Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
-            setUniqueSubjectSections(list);
-        });
+        const loadSectionsData = async () => {
+            try {
+                const res = await fetchSections();
+                const list = Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+                setUniqueSubjectSections(list);
+            } catch (err) {
+                console.error("Failed to fetch sections:", err);
+            }
+        };
+
+        loadUsers();
+        loadContent();
+        loadSectionsData();
     }, [])
 
     // Real-time Visit Stats Listener
@@ -79,7 +93,7 @@ export function AdminPanel({ userName, onLogout }) {
     }, [lastVisit]);
 
     return (
-        <div className={`flex min-h-screen transition-colors duration-300 bg-[#FCFAF8] dark:bg-slate-950`}>
+        <div className={`flex min-h-screen transition-colors duration-300 bg-[#e6eef8] dark:bg-[#1b202e]`}>
             <AdminSidebar
                 isOpen={sidebarOpen}
                 setIsOpen={setSidebarOpen}
@@ -88,35 +102,35 @@ export function AdminPanel({ userName, onLogout }) {
 
             <main className={`flex-1 w-full transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : "ml-0"}`}>
                 {/* Header */}
-                <header className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-zinc-200/80 dark:border-slate-800 transition-all select-none">
+                <header className="sticky top-0 z-40 bg-[#e6eef8]/80 dark:bg-[#1b202e]/80 backdrop-blur-md transition-all select-none border-b border-slate-200/50 dark:border-slate-800/50">
                     <div className="flex items-center justify-between sm:px-8 px-4 py-4">
                         <div className="flex items-center sm:gap-4 gap-2">
                             <button
                                 onClick={() => setSidebarOpen(true)}
-                                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all lg:hidden"
+                                className="p-2.5 rounded-xl neo-btn lg:hidden"
                             >
                                 <Menu className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                             </button>
                             <div>
-                                <h1 className="text-lg font-black text-zinc-950 dark:text-white tracking-tight leading-none">
+                                <h1 className="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-none">
                                     Admin Workspace
                                 </h1>
-                                <p className="text-[11px] text-zinc-400 font-bold mt-1">
+                                <p className="text-[11px] text-slate-400 font-bold mt-1">
                                     Operator: {userName}
                                 </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-xl">
+                            <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#0f121b,inset_-2px_-2px_4px_#272e41] rounded-xl bg-transparent">
                                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                                <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">{onlineUsers.length} Active</span>
+                                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">{onlineUsers.length} Active</span>
                             </div>
 
                             <button
                                 onClick={() => { navigate("/dashboard"); }}
-                                className="inline-flex items-center justify-center rounded-xl gap-1.5 border border-zinc-200 bg-white hover:bg-zinc-50 active:scale-[0.98] px-4 py-2 text-xs font-black text-zinc-800 transition-all shadow-sm cursor-pointer"
+                                className="inline-flex items-center justify-center rounded-xl gap-1.5 neo-btn active:scale-[0.98] px-4 py-2.5 text-xs font-black text-slate-800 dark:text-white transition-all cursor-pointer"
                             >
-                                <GraduationCap className="w-4 h-4 text-zinc-500" />
+                                <GraduationCap className="w-4 h-4 text-indigo-500 dark:text-[#CCFF00]" />
                                 Student View
                             </button>
                         </div>
@@ -129,7 +143,6 @@ export function AdminPanel({ userName, onLogout }) {
                         <Route path="subjects" element={<ManageSubjects subjects={subjects} uniqueSubjectSections={uniqueSubjectSections} setUniqueSubjectSections={setUniqueSubjectSections} />} />
                         <Route path="practicals" element={<ManagePracticals uniqueSubjectSections={uniqueSubjectSections} />} />
                         <Route path="practice" element={<ManagePractice />} />
-                        <Route path="guests" element={<ManageGuestVisits />} />
                         <Route path="analytics" element={<AnalyticsDashboard users={users} />} />
                         <Route path="feedback" element={<ManageFeedback />} />
                         <Route path="messages" element={<MessageSender users={users} />} />

@@ -3,6 +3,7 @@ import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { sanitizeForPrompt } from '../utils/sanitize.js';
 import { getUserGroqClient } from '../utils/aiClient.js';
+import { getAiAssistantPrompt } from '../utils/systemPrompt.js';
 
 export const handleAiAssistantChat = asyncHandler(async (req, res) => {
     const { message } = req.body;
@@ -23,17 +24,17 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
     );
 
     const saveMemory = memory?.messages?.join("\n");
+    const systemPromptContent = getAiAssistantPrompt(saveMemory);
 
-    // Ai result
     const completion = await groq.chat.completions.create({
         messages: [
             {
                 role: "system",
-                content: `you can also remember by previous messages then answer my next question: ${saveMemory}`,
+                content: systemPromptContent,
             },
             {
                 role: "user",
-                content: sanitizedMessage,
+                content: sanitizedMessage + "Give the user very simple answer and not more than 100 words.",
             },
         ],
         model: "openai/gpt-oss-20b",

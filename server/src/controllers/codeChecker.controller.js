@@ -1,41 +1,26 @@
-import Groq from "groq-sdk";
-import User from '../models/User.js';
-import { decrypt } from '../utils/crypto.js';
 import { asyncHandler } from '../utils/AsyncHandler.js';
-import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
+import { getUserGroqClient } from '../utils/aiClient.js';
+import { STUDY_AI_IDENTITY } from '../utils/systemPrompt.js';
 
 export const checkCode = asyncHandler(async (req, res) => {
     const { data } = req.body;
-    // BUG-17 fix: Removed console.log of user data
-
-    const user = await User.findById(req.user.id);
-
-    if (!user.apiKey && !user.iv) {
-        throw new ApiError(400, "Please add your api key");
-    }
-
-    const apiKey = decrypt(
-        user.apiKey,
-        user.iv
-    );
-    const groq = new Groq({ apiKey: apiKey });
+    const groq = await getUserGroqClient(req.user.id);
 
     const completion = await groq.chat.completions.create({
         messages: [
             {
                 role: "system",
-                content: `You are a code checker, you will check the code and answer the question based on the code and output, here is ${data.question} or ${data.code} or this is only example output ${data.output} if the user logic is correct gave him true  . Give me only reponse in "true" or "false" not any explanation `,
+                content: `${STUDY_AI_IDENTITY}\n\n**Mode: Code Evaluator**\nYou are a precise code verification module for Student Hub. Evaluate whether the provided code solves the given problem and matches the expected output.\n\nProblem: ${data.question}\nSubmitted Code: ${data.code}\nExample Output: ${data.output}\n\nRespond ONLY with "true" if the logic is correct, or "false" if incorrect. Do not include any explanations.`,
             },
             {
                 role: "user",
-                content: `Check`,
+                content: "Evaluate code",
             },
         ],
         model: "openai/gpt-oss-20b",
     });
 
-    const result = completion.choices[0]?.message?.content;
-
+    const result = completion.choices[0]?.message?.content?.trim();
     res.status(200).json(new ApiResponse(200, result, "Success"));
 });

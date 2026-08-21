@@ -29,14 +29,15 @@ export const handleAiCodeHelperChat = asyncHandler(async (req, res) => {
         { upsert: true, new: true }
     );
 
-    const prompt = systemPrompt(sanitizedUserMessage, context.code, context.section, context.question);
+    const memoryHistory = memory?.messages?.join("\n");
+    const prompt = systemPrompt(sanitizedUserMessage, context.code, context.section, context.question, memoryHistory);
 
     // Ai result
     const completion = await groq.chat.completions.create({
         messages: [
             {
                 role: "system",
-                content: `you can also remember by previous messages then answer my next question: ${memory?.messages?.join("\n")} Here is the system prompt for you: ${prompt}`,
+                content: prompt,
             },
             {
                 role: "user",

@@ -14,6 +14,7 @@ import { Progress } from "/components/ui/progress";
 import { Badge } from "/components/ui/badge";
 import { useData } from "@/context/DataContext";
 import { customMessage } from "@/Utils/customMessage";
+import { copyToClipboard } from "@/Utils/clipboard";
 
 export function ContextSidebar({
     currentTokenCount,
@@ -48,11 +49,13 @@ export function ContextSidebar({
     const [activeAccordion, setActiveAccordion] = useState(null);
     const [copiedText, setCopiedText] = useState("");
 
-    const handleCopyQuestion = (text) => {
-        navigator.clipboard.writeText(text);
-        setCopiedText(text);
-        customMessage({ type: "success", content: "Question copied to clipboard!" });
-        setTimeout(() => setCopiedText(""), 2000);
+    const handleCopyQuestion = async (text) => {
+        const success = await copyToClipboard(text);
+        if (success) {
+            setCopiedText(text);
+            customMessage({ type: "success", content: "Question copied to clipboard!" });
+            setTimeout(() => setCopiedText(""), 2000);
+        }
     };
 
     const filteredQuestionsData = useMemo(() => {

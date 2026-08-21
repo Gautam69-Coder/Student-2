@@ -2,18 +2,20 @@ import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { sanitizeForPrompt } from '../utils/sanitize.js';
 import { getUserGroqClient } from '../utils/aiClient.js';
+import { getAiChatBotPrompt } from '../utils/systemPrompt.js';
 
 export const handleAiChatBot = asyncHandler(async (req, res) => {
     const { message } = req.body;
     const groq = await getUserGroqClient(req.user.id);
     const sanitizedMessage = sanitizeForPrompt(message);
+    const systemPromptContent = getAiChatBotPrompt();
 
     // Ai result
     const completion = await groq.chat.completions.create({
         messages: [
             {
                 role: "system",
-                content: `if user have any attachement show them sections about thier query : ${sanitizedMessage} and answer them in a detailed manner, if user have no attachement then answer them in a detailed manner`,
+                content: systemPromptContent,
             },
             {
                 role: "user",

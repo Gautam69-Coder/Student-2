@@ -157,7 +157,7 @@ export function AIAssistant() {
                                         className={`max-w-[90%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                                             msg.role === "user"
                                                 ? "rounded-br-none bg-indigo-600 text-white shadow-md shadow-indigo-100 font-semibold"
-                                                : "rounded-bl-none border border-slate-200 bg-white text-slate-800"
+                                                : "rounded-bl-none border border-slate-200 bg-white "
                                         }`}
                                     >
                                         <MarkdownContent content={msg.content} role={msg.role} />

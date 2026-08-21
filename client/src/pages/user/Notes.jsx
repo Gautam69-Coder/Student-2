@@ -3,8 +3,8 @@ import { DashboardLayout } from "@/components/layout/layout";
 import { NotesSection } from '@/components/features/notes/notes-section';
 import { SEO } from '@/components/common/SEO';
 
-export const Notes = memo(({ notes, user, loading, onRefresh, requireAuth ,onShare}) => {
-  
+export const Notes = memo(({ notes, user, loading, onRefresh, onShare }) => {
+
     return (
         <>
             <SEO
@@ -15,7 +15,12 @@ export const Notes = memo(({ notes, user, loading, onRefresh, requireAuth ,onSha
             <DashboardLayout
             >
                 <div className="space-y-4">
-                    <NotesSection notes={notes} user={user} loading={loading} onRefresh={onRefresh} requireAuth={requireAuth} onShare={onShare} />
+                    <NotesSection
+                        notes={notes}
+                        user={user}
+                        loading={loading}
+                        onRefresh={onRefresh}
+                        onShare={onShare} />
                 </div>
             </DashboardLayout>
         </>

@@ -847,3 +847,53 @@ h6 {
 .dark .neo-btn:active {
   box-shadow: var(--neo-shadow-dark-inset);
 }
+
+/* Custom Neumorphic Styling for Practicals (Light Theme, optimized for #F4F4F5) */
+.neuo-raised {
+  background-color: #F4F4F5 !important;
+  color: #1e293b !important;
+  box-shadow: 6px 6px 12px rgba(163, 177, 198, 0.45), -6px -6px 12px rgba(255, 255, 255, 0.85) !important;
+  border: none !important;
+  transition: all 0.3s ease;
+}
+
+.neuo-sunken {
+  background-color: #F4F4F5 !important;
+  color: #1e293b !important;
+  box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.5), inset -4px -4px 8px rgba(255, 255, 255, 0.85) !important;
+  border: none !important;
+  transition: all 0.3s ease;
+}
+
+.neuo-btn-raised {
+  background-color: #F4F4F5 !important;
+  color: #475569 !important;
+  box-shadow: 6px 6px 12px rgba(163, 177, 198, 0.45), -6px -6px 12px rgba(255, 255, 255, 0.85) !important;
+  border: none !important;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+}
+.neuo-btn-raised:hover {
+  transform: translateY(-1px);
+  color: #0f172a !important;
+  box-shadow: 8px 8px 16px rgba(163, 177, 198, 0.55), -8px -8px 16px rgba(255, 255, 255, 0.9) !important;
+}
+.neuo-btn-raised:active {
+  transform: translateY(0);
+  background-color: #F4F4F5 !important;
+  color: #4f46e5 !important;
+  box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.5), inset -4px -4px 8px rgba(255, 255, 255, 0.85) !important;
+}
+
+.neuo-btn-sunken {
+  background-color: #F4F4F5 !important;
+  color: #4f46e5 !important;
+  box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.5), inset -4px -4px 8px rgba(255, 255, 255, 0.85) !important;
+  border: none !important;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+}

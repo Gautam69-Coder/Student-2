@@ -6,9 +6,10 @@ import CodeTabs from "@/components/features/practicals/practical-code-tab";
 import { AICodeHelper } from "@/components/features/coding/ai-code-helper";
 import { CardContent } from "/components/ui/card";
 import { theme } from "@/lib/theme";
+import { useClipboard } from "@/Utils/clipboard";
 
 export function CodeModal({ isOpen, onClose, title, code, section }) {
-    const [copied, setCopied] = useState(false);
+    const { copied, copy } = useClipboard(2000);
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
 
@@ -33,10 +34,8 @@ export function CodeModal({ isOpen, onClose, title, code, section }) {
     const activeCode = tabs[activeTab]?.code || "";
 
     const handleCopy = useCallback(() => {
-        navigator.clipboard.writeText(activeCode);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    }, [activeCode]);
+        copy(activeCode);
+    }, [activeCode, copy]);
 
     const handleOpenCodeHelper = useCallback(() => {
         setShowModalCodeHelper(true);

@@ -18,33 +18,26 @@ import { CodeModal } from "@/components/features/coding/code-modal"
 import HighlightComponent from "react-highlight"
 const Highlight = HighlightComponent.default || HighlightComponent
 import "highlight.js/styles/atom-one-dark.css"
+import { useClipboard } from "@/Utils/clipboard";
 
-const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth, section }) {
-    const [copied, setCopied] = useState(false)
+const QuestionBlock = memo(function QuestionBlock({ question, index, section }) {
+    const { copied, copy } = useClipboard(2000)
     const [showModal, setShowModal] = useState(false)
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false)
     const handleCopy = useCallback(() => {
-        requireAuth(() => {
-            const codeToCopy = Array.isArray(question.code)
-                ? question.code.map(item => `// --- ${item.languageName} ---\n${item.code}`).join('\n\n')
-                : question.code || "";
-            navigator.clipboard.writeText(codeToCopy)
-            setCopied(true)
-            setTimeout(() => setCopied(false), 2000)
-        })
-    }, [question.code, requireAuth])
+        const codeToCopy = Array.isArray(question.code)
+            ? question.code.map(item => `// --- ${item.languageName} ---\n${item.code}`).join('\n\n')
+            : question.code || "";
+        copy(codeToCopy)
+    }, [question.code, copy])
 
     const handleOpenModal = useCallback(() => {
-        requireAuth(() => {
-            setShowModal(true)
-        })
-    }, [requireAuth])
+        setShowModal(true)
+    }, [])
 
     const handleOpenCodeHelper = useCallback(() => {
-        requireAuth(() => {
-            setShowModalCodeHelper(true)
-        })
-    }, [requireAuth])
+        setShowModalCodeHelper(true)
+    }, [])
 
     const handleCloseCodeHelper = useCallback(() => {
         setShowModalCodeHelper(false)
@@ -179,7 +172,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover/asset:opacity-100 transition-all duration-300 flex items-end justify-center p-8">
                                     <div className="flex gap-3">
                                         <button
-                                            onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
+                                            onClick={() => window.open(question.fileUrl, '_blank')}
                                             className="px-5 py-2.5 bg-white text-slate-900 text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer"
                                         >
                                             <ExternalLink className="w-4 h-4" /> Expand View
@@ -223,7 +216,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
+                                    onClick={() => window.open(question.fileUrl, '_blank')}
                                     className="h-10 px-5 w-full text-center mt-4 sm:mt-0 sm:w-fit bg-indigo-600  hover:bg-indigo-700 text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
                                 >
                                     <div className="flex items-center justify-center w-full">
@@ -256,7 +249,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
     )
 })
 
-export const PracticalCard = memo(function PracticalCard({ practical, requireAuth }) {
+export const PracticalCard = memo(function PracticalCard({ practical }) {
     return (
         <div className="relative h-full">
             <div className="max-w-sm sm:max-w-full relative h-full rounded-[10px] overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
@@ -272,7 +265,7 @@ export const PracticalCard = memo(function PracticalCard({ practical, requireAut
                 {/* Content Section */}
                 <div>
                     {practical.questions.map((question, index) => (
-                        <QuestionBlock key={index} question={question} index={index} requireAuth={requireAuth} section={practical.section} />
+                        <QuestionBlock key={index} question={question} index={index} section={practical.section} />
                     ))}
                 </div>
 

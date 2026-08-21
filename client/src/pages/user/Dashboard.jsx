@@ -6,8 +6,9 @@ import { Link } from "react-router-dom"
 
 import { Code, FileText, Download, X, HomeIcon, Search, ArrowUpRight } from "lucide-react"
 import { BottomNavbar } from "@/components/layout/bottom-navbar"
-import { UploadModal } from "@/components/features/notes/upload-modal"
-    ;
+import { UploadModal } from "@/components/features/notes/upload-modal";
+import { NotePreviewModal } from "@/components/features/notes/note-preview-modal";
+import { downloadFile } from "@/Utils/download";
 import { useTitle } from "@/hooks/useTitle";
 import { useData } from "@/context/DataContext";
 
@@ -81,26 +82,12 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
     const isAuthenticated = !!user;
 
-    const handleAuthRequired = useCallback((action) => {
-        if (!isAuthenticated) {
-            navigate('/login');
-            return false;
-        }
-        if (action) action();
-        return true;
-    }, [isAuthenticated, navigate]);
-
     const handleNoteCreated = useCallback(() => {
         refreshNotes();
     }, [refreshNotes]);
 
     const handleDownload = useCallback((note) => {
-        const link = document.createElement('a');
-        link.href = note.fileData;
-        link.download = note.fileName || 'download';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        downloadFile(note.fileData, note.fileName || note.title);
     }, []);
 
     const userName = user?.username || "Student";
@@ -128,16 +115,16 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
         const query = searchQuery.toLowerCase();
         return {
-            subjects: subjects.filter(s => 
-                (s.name)?.toLowerCase()?.includes(query) || 
+            subjects: subjects.filter(s =>
+                (s.name)?.toLowerCase()?.includes(query) ||
                 (s.code)?.toLowerCase()?.includes(query)
             ),
-            practicals: displayedPracticals.filter(p => 
+            practicals: displayedPracticals.filter(p =>
                 (p.section)?.toLowerCase()?.includes(query) ||
                 p.questions?.some(q => q?.question?.toLowerCase()?.includes(query) || q?.code?.toLowerCase()?.includes(query))
             ),
-            notes: displayedNotes.filter(n => 
-                (n.title)?.toLowerCase()?.includes(query) || 
+            notes: displayedNotes.filter(n =>
+                (n.title)?.toLowerCase()?.includes(query) ||
                 (n.content)?.toLowerCase()?.includes(query)
             ),
         };
@@ -187,10 +174,9 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                         onLogout={onLogout}
                         onSwitchToAdmin={onSwitchToAdmin}
                         role={role}
-                        setUploadModalOpen={() => handleAuthRequired(() => setUploadModalOpen(true))}
+                        setUploadModalOpen={() => setUploadModalOpen(true)}
                         isBell={isBell}
                         setisBell={setisBell}
-                        requireAuth={handleAuthRequired}
                     />
 
                     {/* SideBar */}
@@ -199,7 +185,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                             {searchQuery ? (
                                 <DashboardLayout>
                                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 select-none">
-                                        
+
                                         {/* Search Header */}
                                         <div className="flex items-center justify-between gap-4 p-5 bg-white border border-zinc-200 rounded-2xl shadow-sm">
                                             <div>
@@ -228,61 +214,53 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                         <div className="flex items-center border border-zinc-200 bg-white p-1 rounded-xl gap-1 overflow-x-auto">
                                             <button
                                                 onClick={() => setActiveSearchTab("all")}
-                                                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${
-                                                    activeSearchTab === "all"
+                                                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "all"
                                                         ? "bg-zinc-950 text-white shadow-sm"
                                                         : "text-zinc-650 hover:bg-zinc-50"
-                                                }`}
+                                                    }`}
                                             >
                                                 All Results
-                                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${
-                                                    activeSearchTab === "all" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
-                                                }`}>
+                                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${activeSearchTab === "all" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
+                                                    }`}>
                                                     {searchResults.subjects.length + searchResults.practicals.length + searchResults.notes.length}
                                                 </span>
                                             </button>
                                             <button
                                                 onClick={() => setActiveSearchTab("subjects")}
-                                                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${
-                                                    activeSearchTab === "subjects"
+                                                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "subjects"
                                                         ? "bg-zinc-950 text-white shadow-sm"
                                                         : "text-zinc-650 hover:bg-zinc-50"
-                                                }`}
+                                                    }`}
                                             >
                                                 Subjects
-                                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${
-                                                    activeSearchTab === "subjects" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
-                                                }`}>
+                                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${activeSearchTab === "subjects" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
+                                                    }`}>
                                                     {searchResults.subjects.length}
                                                 </span>
                                             </button>
                                             <button
                                                 onClick={() => setActiveSearchTab("practicals")}
-                                                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${
-                                                    activeSearchTab === "practicals"
+                                                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "practicals"
                                                         ? "bg-zinc-950 text-white shadow-sm"
                                                         : "text-zinc-650 hover:bg-zinc-50"
-                                                }`}
+                                                    }`}
                                             >
                                                 Practicals
-                                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${
-                                                    activeSearchTab === "practicals" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
-                                                }`}>
+                                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${activeSearchTab === "practicals" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
+                                                    }`}>
                                                     {searchResults.practicals.length}
                                                 </span>
                                             </button>
                                             <button
                                                 onClick={() => setActiveSearchTab("notes")}
-                                                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${
-                                                    activeSearchTab === "notes"
+                                                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "notes"
                                                         ? "bg-zinc-950 text-white shadow-sm"
                                                         : "text-zinc-650 hover:bg-zinc-50"
-                                                }`}
+                                                    }`}
                                             >
                                                 My Notes
-                                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${
-                                                    activeSearchTab === "notes" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
-                                                }`}>
+                                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${activeSearchTab === "notes" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
+                                                    }`}>
                                                     {searchResults.notes.length}
                                                 </span>
                                             </button>
@@ -290,7 +268,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
                                         {/* Results Lists */}
                                         <div className="space-y-8 mt-2">
-                                            
+
                                             {/* Subjects Matches */}
                                             {(activeSearchTab === "all" || activeSearchTab === "subjects") && searchResults.subjects.length > 0 && (
                                                 <div className="space-y-4">
@@ -338,7 +316,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                                             <PracticalCard
                                                                 key={index}
                                                                 practical={practical}
-                                                                requireAuth={handleAuthRequired}
                                                             />
                                                         ))}
                                                     </div>
@@ -387,86 +364,30 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                                 (activeSearchTab === "practicals" && searchResults.practicals.length === 0) ||
                                                 (activeSearchTab === "notes" && searchResults.notes.length === 0)
                                             ) && (
-                                                <div className="py-20 text-center select-none bg-white rounded-2xl border border-zinc-200 shadow-xs flex flex-col items-center justify-center max-w-sm mx-auto">
-                                                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 border border-indigo-100">
-                                                        <Search className="w-6 h-6 text-indigo-650" />
+                                                    <div className="py-20 text-center select-none bg-white rounded-2xl border border-zinc-200 shadow-xs flex flex-col items-center justify-center max-w-sm mx-auto">
+                                                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 border border-indigo-100">
+                                                            <Search className="w-6 h-6 text-indigo-650" />
+                                                        </div>
+                                                        <div className="text-base font-bold text-zinc-950">
+                                                            No results found
+                                                        </div>
+                                                        <div className="mt-1 text-xs text-zinc-400 leading-relaxed">
+                                                            We couldn't find matches for "{searchQuery}" in {activeSearchTab === "all" ? "any category" : activeSearchTab}. Try using simpler keywords.
+                                                        </div>
                                                     </div>
-                                                    <div className="text-base font-bold text-zinc-950">
-                                                        No results found
-                                                    </div>
-                                                    <div className="mt-1 text-xs text-zinc-400 leading-relaxed">
-                                                        We couldn't find matches for "{searchQuery}" in {activeSearchTab === "all" ? "any category" : activeSearchTab}. Try using simpler keywords.
-                                                    </div>
-                                                </div>
-                                            )}
+                                                )}
 
                                         </div>
 
-                                        {selectedNote && (
-                                            <AnimatePresence>
-                                                <motion.div
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    exit={{ opacity: 0 }}
-                                                    className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
-                                                    onClick={() => setSelectedNote(null)}
-                                                >
-                                                    <motion.div
-                                                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                                                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                                                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                                                        className="relative w-full max-w-4xl max-h-[85vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
-                                                        <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
-                                                            <div>
-                                                                <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedNote.title}</h2>
-                                                                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                                                                    {selectedNote.section} • Created on {new Date(selectedNote.createdAt).toLocaleDateString()}
-                                                                </p>
-                                                            </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <button
-                                                                    onClick={() => handleDownload(selectedNote)}
-                                                                    className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-400 rounded-lg text-sm font-medium transition-all"
-                                                                >
-                                                                    <Download className="w-4 h-4" />
-                                                                    Download {selectedNote.fileName}
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => setSelectedNote(null)}
-                                                                    className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                                                                >
-                                                                    <X className="w-5 h-5 text-slate-400" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="flex-1 overflow-auto bg-slate-50 dark:bg-black p-6 flex items-center justify-center">
-                                                            {selectedNote.fileType?.startsWith('image/') ? (
-                                                                <img src={selectedNote.fileData} alt={selectedNote.title} className="max-w-full max-h-full object-contain rounded-lg shadow-xl" />
-                                                            ) : (
-                                                                <div className="text-center p-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                                                                    <FileText className="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
-                                                                    <p className="text-slate-600 dark:text-slate-300 font-bold mb-2">Full File Preview Unavailable</p>
-                                                                    <p className="text-slate-400 dark:text-slate-500 text-sm mb-6">This {selectedNote.fileType?.split('/')[1] || 'file'} type cannot be displayed in-browser.</p>
-                                                                    <button
-                                                                        onClick={() => handleDownload(selectedNote)}
-                                                                        className="px-6 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
-                                                                    >
-                                                                        Download to View
-                                                                    </button>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </motion.div>
-                                                </motion.div>
-                                            </AnimatePresence>
-                                        )}
+                                        <NotePreviewModal
+                                            note={selectedNote}
+                                            onClose={() => setSelectedNote(null)}
+                                        />
                                     </div>
                                 </DashboardLayout>
                             ) : (
                                 <Routes>
+                                    {/* All Path */}
                                     <Route
                                         path="/"
                                         element={
@@ -476,7 +397,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                                 subjectPracticals={subjectPracticals}
                                                 practicals={displayedPracticals}
                                                 loadingPracticals={loading.practicals}
-                                                requireAuth={handleAuthRequired}
                                                 isGuest={isGuest}
                                                 stats={{
                                                     notesCount: notes.length,
@@ -486,26 +406,41 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                             />
                                         }
                                     />
+
+                                    {/* Test Route */}
                                     <Route path="test" element={<Test />} />
+
+                                    {/* Notes Route */}
                                     <Route path="notes" element={
                                         <Notes
                                             notes={displayedNotes}
                                             user={user}
                                             loading={loading.notes}
                                             onRefresh={handleNoteCreated}
-                                            requireAuth={handleAuthRequired}
                                             onShare={() => {
                                                 setUploadModalOpen(true);
                                             }}
                                         />
                                     } />
-                                    <Route path="practicals" element={<Practicals practicals={displayedPracticals} setPracticalUploadOpen={() => handleAuthRequired(() => setPracticalUploadOpen(true))} subjects={subjects} requireAuth={handleAuthRequired} />} />
+
+                                    {/* Practicals Route */}
+                                    <Route path="practicals" element={<Practicals practicals={displayedPracticals} setPracticalUploadOpen={() => setPracticalUploadOpen(true)} subjects={subjects} />} />
+
+                                    {/* ChatBot Route */}
                                     <Route path="chatbot" element={<Chatbot />} />
-                                    <Route path="feedback" element={<Feedback user={user} requireAuth={handleAuthRequired} />} />
-                                    <Route path="community" element={<Community requireAuth={handleAuthRequired} />} />
+
+                                    {/* Feedback and Community Routes */}
+                                    <Route path="feedback" element={<Feedback user={user} />} />
+                                    <Route path="community" element={<Community />} />
+
+                                    {/* Upgrade Route */}
                                     <Route path="upgrade" element={<Upgrade />} />
+
+                                    {/* Code pratice */}
                                     <Route path="coding-practice" element={<CodingPractice user={user} />} />
                                     <Route path="coding-practice/:language" element={<PracticeDeatils />} />
+
+                                    {/* Profile route */}
                                     <Route path="profile" element={
                                         isAuthenticated ? (
 
@@ -514,6 +449,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                             <Navigate to="/dashboard" replace />
                                         )
                                     } />
+
+                                    {/* About and Contact Route */}
                                     <Route path="about-contact" element={<AboutContact />} />
                                     <Route path="code-editor/:language/:problemId" element={<CodeEditor />} />
                                     <Route path="*" element={<Navigate to="" replace />} />

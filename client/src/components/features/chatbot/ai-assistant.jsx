@@ -2,95 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShineBorder } from "/components/ui/shine-border";
 import { aiAssistant } from "@/Api/api";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Sparkles, X, Send, Minimize2, PencilLine, Maximize2, CloudFog } from "lucide-react";
+import { Sparkles, X, Send, Minimize2, Maximize2 } from "lucide-react";
 import { theme } from "@/lib/theme";
 import { customMessage } from "@/Utils/customMessage";
 import { useData } from "@/context/DataContext";
 import { ApiKeyModal } from "@/components/common/ApiKeyModal";
-
-function MarkdownContent({ content, role }) {
-    return (
-        <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
-            components={{
-                h1: ({ children }) => <h1 className="text-lg font-bold mt-3 mb-2">{children}</h1>,
-                h2: ({ children }) => <h2 className="text-base font-bold mt-2 mb-2">{children}</h2>,
-                h3: ({ children }) => <h3 className="text-sm font-bold mt-2 mb-2">{children}</h3>,
-                p: ({ children }) => <p className="mb-2 leading-relaxed">{children}</p>,
-                ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                li: ({ children }) => <li className="text-sm">{children}</li>,
-                a: ({ href, children }) => (
-                    <a href={href} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
-                        {children}
-                    </a>
-                ),
-                strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-                em: ({ children }) => <em className="italic">{children}</em>,
-                blockquote: ({ children }) => (
-                    <blockquote className="border-l-4 border-blue-300 pl-3 italic my-2 opacity-80">
-                        {children}
-                    </blockquote>
-                ),
-                code({ className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || "");
-                    const isInline = !match;
-
-                    return !isInline ? (
-                        <div className="relative group rounded-xl overflow-hidden my-4">
-                            <div className="flex items-center justify-between px-4 py-2" style={{ background: "#111827" }}>
-                                <span className="text-xs font-semibold text-white">{match[1]}</span>
-                                <button
-                                    onClick={() => navigator.clipboard.writeText(String(children).replace(/\n$/, ""))}
-                                    className="text-xs font-medium text-slate-300 hover:text-white transition-colors"
-                                >
-                                    Copy
-                                </button>
-                            </div>
-                            <SyntaxHighlighter
-                                style={oneDark}
-                                language={match[1]}
-                                PreTag="div"
-                                customStyle={{
-                                    borderRadius: "0 0 8px 8px",
-                                    padding: "12px",
-                                    fontSize: "13px",
-                                    margin: "0",
-                                    backgroundColor: "#0d1117",
-                                    border: "1px solid #1f2937",
-                                }}
-                                {...props}
-                            >
-                                {String(children).replace(/\n$/, "")}
-                            </SyntaxHighlighter>
-                        </div>
-                    ) : (
-                        <code
-                            className={
-                                role === "user"
-                                    ? "bg-blue-700 bg-opacity-40 px-2 py-1 rounded text-blue-100 text-sm font-mono"
-                                    : "bg-zinc-700 bg-opacity-50 px-2 py-1 rounded text-orange-300 text-sm font-mono"
-                            }
-                            {...props}
-                        >
-                            {children}
-                        </code>
-                    );
-                },
-                br: () => <br className="my-1" />,
-                hr: () => <hr className="my-3 border-slate-300 dark:border-slate-600" />,
-            }}
-        >
-            {content}
-        </ReactMarkdown>
-    );
-}
+import { MarkdownContent } from "@/Utils/MarkdownContent";
 
 export function AIAssistant() {
     const { user } = useData();
@@ -167,7 +84,7 @@ export function AIAssistant() {
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className={`fixed  sm:bottom-8 bottom-25 sm:right-8 right-4 z-50 rounded-2xl border shadow-2xl transition-all flex flex-col overflow-hidden ${isMaximized ? "w-[90vw] h-[80vh] sm:bottom-[5vh] bottom-[10vh] right-[5vw]" : "sm:w-[420px] w-[93%] h-[80vh] sm:h-[82vh]"
+                    className={`fixed sm:bottom-8 bottom-25 sm:right-8 right-4 z-50 rounded-2xl border shadow-2xl transition-all flex flex-col overflow-hidden ${isMaximized ? "w-[90vw] h-[80vh] sm:bottom-[5vh] bottom-[10vh] right-[5vw]" : "sm:w-[420px] w-[93%] h-[80vh] sm:h-[82vh]"
                         }`}
                     style={{
                         background: theme.colors.white,
@@ -175,7 +92,7 @@ export function AIAssistant() {
                     }}
                 >
                     <div
-                        className="flex items-start justify-between gap-4 p-4 sm:p-5 border-b"
+                        className="flex items-start justify-between gap-4 p-4 sm:p-5 border-b bg-white"
                         style={{ borderColor: theme.colors.lightGray }}
                     >
                         <div className="flex items-center gap-3 min-w-0">
@@ -185,7 +102,7 @@ export function AIAssistant() {
                                 <Sparkles className="w-5 h-5 text-indigo-600" />
                             </div>
                             <div className="min-w-0">
-                                <h3 className="font-bold text-[16px]" style={{ color: theme.colors.dark }}>
+                                <h3 className="font-bold text-[16px] text-zinc-900" style={{ color: theme.colors.dark }}>
                                     Study Assistant
                                 </h3>
                                 <p className="text-[11px] font-medium uppercase tracking-[0.18em]" style={{ color: theme.colors.darkGray }}>
@@ -196,7 +113,7 @@ export function AIAssistant() {
 
                         <div className="flex gap-1 shrink-0">
                             <button
-                                className="flex items-center justify-center w-8 h-8 rounded-xl border hover:bg-slate-50 transition-colors"
+                                className="flex items-center justify-center w-8 h-8 rounded-xl border hover:bg-slate-50 transition-colors cursor-pointer"
                                 style={{
                                     background: theme.colors.white,
                                     color: theme.colors.darkGray,
@@ -208,7 +125,7 @@ export function AIAssistant() {
                                 {isMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                             </button>
                             <button
-                                className="flex items-center justify-center w-8 h-8 rounded-xl border hover:bg-slate-50 transition-colors"
+                                className="flex items-center justify-center w-8 h-8 rounded-xl border hover:bg-slate-50 transition-colors cursor-pointer"
                                 style={{
                                     background: theme.colors.white,
                                     color: theme.colors.darkGray,
@@ -227,7 +144,7 @@ export function AIAssistant() {
                         {/* Messages List */}
                         <div
                             className="flex-1 overflow-y-auto p-4 space-y-4"
-                            data-lenis-prevent
+                            data-lenis-prevent="true"
                         >
                             {messages.map((msg, index) => (
                                 <motion.div

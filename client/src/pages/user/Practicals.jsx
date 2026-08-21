@@ -11,7 +11,7 @@ import { DashboardSidebar } from "@/components/layout/sidebar";
 import { FileText, Users, MessageSquare, FlaskConical, Code2, Info, Home } from 'lucide-react';
 import { theme } from '@/lib/theme';
 
-export function Practicals({ practicals, subjects, setPracticalUploadOpen, requireAuth }) {
+export function Practicals({ practicals, subjects, setPracticalUploadOpen }) {
     const location = useLocation();
     const [selectedSubject, setSelectedSubject] = useState("");
     const [selectedPracticalNo, setSelectedPracticalNo] = useState("");
@@ -209,7 +209,6 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen, requi
                             <PracticalCard
                                 key={index}
                                 practical={practical}
-                                requireAuth={requireAuth}
                             />
                         ))}
                         {filteredPracticals.length === 0 && (

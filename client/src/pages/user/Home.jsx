@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 
 import { Card, CardTitle } from "/components/ui/card";
-import Feedback from "@/components/layout/feedback";
+import FeedbackMarquee from "@/components/features/feedback/feedback-marquee";
+import { formatDate } from "@/Utils/date";
 
 import {
     ChartContainer,
@@ -520,7 +521,7 @@ export function Home() {
                                                 <div
                                                     className="text-[11px] font-medium text-slate-500 mt-0.5"
                                                 >
-                                                    {note.updatedAt ? new Date(note.updatedAt).toLocaleDateString() : "Unknown date"}
+                                                    {formatDate(note.updatedAt)}
                                                 </div>
                                             </div>
                                         </div>
@@ -608,7 +609,7 @@ export function Home() {
             <Card
                 className="rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-xs"
             >
-               <Feedback feedbacks={userFeedback} />
+               <FeedbackMarquee feedbacks={userFeedback} />
             </Card>
 
             {/* Quick Actions - Full width */}

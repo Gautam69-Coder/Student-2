@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCodingPractices } from "@/Api/api";
 import { theme } from "@/lib/theme";
+import { copyToClipboard } from "@/Utils/clipboard";
 import { 
     ArrowLeft, 
     AlertCircle, 
@@ -108,11 +109,13 @@ function ExampleCard({ index, example }) {
     const [copiedInput, setCopiedInput] = useState(false);
     const [copiedOutput, setCopiedOutput] = useState(false);
 
-    const handleCopy = (text, setCopied) => {
+    const handleCopy = async (text, setCopied) => {
         if (!text) return;
-        navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        const success = await copyToClipboard(text);
+        if (success) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
     };
 
     return (

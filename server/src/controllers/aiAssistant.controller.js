@@ -1,37 +1,12 @@
-import Groq from "groq-sdk";
 import AICodeHelperMemory from "../models/AICodeHelperMemory.js";
-import { decrypt } from "../utils/crypto.js";
-import User from "../models/User.js";
 import { asyncHandler } from '../utils/AsyncHandler.js';
-import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
-
-// BUG-15 fix: Sanitize user messages to reduce prompt injection risk
-function sanitizeForPrompt(text) {
-    if (typeof text !== 'string') return '';
-    return text
-        .replace(/\bsystem\s*:/gi, '[filtered]:')
-        .replace(/\bignore\s+(all\s+)?previous\s+instructions?\b/gi, '[filtered]')
-        .replace(/\byou\s+are\s+now\b/gi, '[filtered]')
-        .replace(/\bnew\s+instructions?\s*:/gi, '[filtered]:');
-}
+import { sanitizeForPrompt } from '../utils/sanitize.js';
+import { getUserGroqClient } from '../utils/aiClient.js';
 
 export const handleAiAssistantChat = asyncHandler(async (req, res) => {
     const { message } = req.body;
-
-    const user = await User.findById(req.user.id);
-    if (!user.apiKey && !user.iv) {
-        throw new ApiError(400, "Please add your api key");
-    }
-
-    const apiKey = decrypt(
-        user.apiKey,
-        user.iv
-    );
-
-
-    const groq = new Groq({ apiKey: apiKey });
-
+    const groq = await getUserGroqClient(req.user.id);
     const sanitizedMessage = sanitizeForPrompt(message);
 
     const memory = await AICodeHelperMemory.findOneAndUpdate(
@@ -49,7 +24,7 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
 
     const saveMemory = memory?.messages?.join("\n");
 
-    //Ai result;
+    // Ai result
     const completion = await groq.chat.completions.create({
         messages: [
             {
@@ -65,8 +40,7 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
     });
 
     const result = completion.choices[0]?.message?.content;
-
-    console.log("result:",sanitizedMessage)
+    console.log("result:", sanitizedMessage);
 
     res.status(200).json(new ApiResponse(200, result, "Success"));
 });

@@ -19,6 +19,7 @@ import HighlightComponent from "react-highlight"
 const Highlight = HighlightComponent.default || HighlightComponent
 import "highlight.js/styles/atom-one-dark.css"
 import { useClipboard } from "@/Utils/clipboard";
+import { downloadFile } from "@/Utils/download";
 
 const QuestionBlock = memo(function QuestionBlock({ question, index, section }) {
     const { copied, copy } = useClipboard(2000)
@@ -154,7 +155,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, section }) 
                 </div>
 
                 {/* Multimedia Attachments */}
-                {question.fileUrl && (
+                {(question.fileUrl || question.fileData) && (
                     <div className="mt-6 flex flex-col gap-4">
                         <div className="flex items-center gap-2">
                             <div className="h-[1px] flex-1 bg-slate-100 dark:bg-white/5" />
@@ -162,43 +163,34 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, section }) 
                             <div className="h-[1px] flex-1 bg-slate-100 dark:bg-white/5" />
                         </div>
 
-                        {question.fileType?.startsWith('image/') ? (
+                        {(question.fileType?.startsWith('image/') || (question.fileUrl || question.fileData)?.startsWith('data:image/')) ? (
                             <div className="relative group/asset rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50">
                                 <img
-                                    src={question.fileUrl}
+                                    src={question.fileUrl || question.fileData}
                                     alt="Practical Reference"
                                     className="w-full h-auto max-h-[500px] object-contain transition-transform duration-500 group-hover/asset:scale-[1.02]"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover/asset:opacity-100 transition-all duration-300 flex items-end justify-center p-8">
                                     <div className="flex gap-3">
                                         <button
-                                            onClick={() => window.open(question.fileUrl, '_blank')}
+                                            onClick={() => {
+                                                const url = question.fileUrl || question.fileData;
+                                                if (url.startsWith('data:')) {
+                                                    downloadFile(url, question.fileName || 'image');
+                                                } else {
+                                                    window.open(url, '_blank');
+                                                }
+                                            }}
                                             className="px-5 py-2.5 bg-white text-slate-900 text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer"
                                         >
                                             <ExternalLink className="w-4 h-4" /> Expand View
                                         </button>
-                                        {/* <button
-                                            onClick={() => requireAuth(() => {
-                                                const link = document.createElement('a')
-                                                link.href = question.fileUrl
-                                                link.download = question.fileName || 'asset'
-                                                link.click()
-                                            })}
+                                        <button
+                                            onClick={() => downloadFile(question.fileUrl || question.fileData, question.fileName || 'asset')}
                                             className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors cursor-pointer"
                                         >
                                             <Download className="w-4 h-4" /> Get Asset
-                                        </button> */}
-                                        <a className="" href={question.fileUrl} download target="_blank" rel="noopener noreferrer"
-                                            onClick={(e) => {
-                                                // e.preventDefault();
-                                                console.log("Downloading asset");
-                                            }}
-                                        >
-
-                                            <button className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors cursor-pointer">
-                                                <Download className="w-4 h-4" /> Get Asset
-                                            </button>
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -216,12 +208,12 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, section }) 
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => window.open(question.fileUrl, '_blank')}
-                                    className="h-10 px-5 w-full text-center mt-4 sm:mt-0 sm:w-fit bg-indigo-600  hover:bg-indigo-700 text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
+                                    onClick={() => downloadFile(question.fileUrl || question.fileData, question.fileName || 'Attachment')}
+                                    className="h-10 px-5 w-full text-center mt-4 sm:mt-0 sm:w-fit bg-indigo-650 hover:bg-indigo-750 text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
                                 >
                                     <div className="flex items-center justify-center w-full">
                                         <Download className="w-4 h-4 mr-1.5" />
-                                        View File
+                                        Download File
                                     </div>
                                 </button>
                             </div>

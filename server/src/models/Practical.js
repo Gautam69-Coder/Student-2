@@ -39,6 +39,10 @@ const PracticalSchema = new mongoose.Schema({
                 type: String,
                 default: null
             },
+            fileData: {
+                type: String,
+                default: null
+            },
             fileName: {
                 type: String,
                 default: null

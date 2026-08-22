@@ -26,6 +26,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated, onUpdate }) {
     const [allSections, setallSections] = useState([]);
     const [loading, setLoading] = useState(false);
     const [updateFileName, setUpdateFileName] = useState(null);
+    const [previousFileUrl, setPreviousFileUrl] = useState(null);
 
     const handleChanged = (e) => {
         setNoteData({ ...noteData, [e.target.name]: e.target.value })
@@ -35,6 +36,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated, onUpdate }) {
         if (!onUpdate || !notes?.length) return;
 
         const particularNote = notes.find(i => i._id == onUpdate);
+        console.log(particularNote);
         setNoteData({
             title: particularNote.title ?? "",
             section: particularNote.section ?? "",
@@ -42,6 +44,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated, onUpdate }) {
         })
 
         setUpdateFileName(particularNote.fileName ?? "");
+        setPreviousFileUrl(particularNote.fileData);
     }, [onUpdate, notes])
 
 
@@ -89,11 +92,13 @@ export function UploadModal({ open, onOpenChange, onNoteCreated, onUpdate }) {
             // For file uploads, you would handle the file input and send it to the server using createNoteFile
             else {
                 try {
+                    console.log(previousFileUrl);
                     setLoading(true);
                     const formData = new FormData();
                     formData.append("file", fileUpload);
                     formData.append("title", noteData.title);
                     formData.append("section", noteData.section);
+                    formData.append("previousFileUrl", previousFileUrl);
                     const file = await updateNoteFile(formData);
                     if (file.data.success) {
                         customMessage({ content: file.data.msg, type: "success" });

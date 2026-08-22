@@ -125,6 +125,7 @@ export const updateNoteFile = asyncHandler(async (req, res) => {
     const { title, section } = req.body;
     const filePath = req.file.path;
     const file = req.file;
+    console.log("Title : ", req);
 
     // const updateNote = {};
 
@@ -146,7 +147,6 @@ export const updateNoteFile = asyncHandler(async (req, res) => {
 
     // res.status(201).json(new ApiResponse(201, { noteData: note }, "File Uploaded Successfully"));
 
-    console.log("Title : ", title);
 
 });
 

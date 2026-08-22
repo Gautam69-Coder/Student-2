@@ -25,6 +25,7 @@ export const Notes = memo(() => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
+    const [updateNoteId, setUpdateNoteId] = useState(null);
 
     // Fetch notes function
     const fetchNotesPage = useCallback(async (pageNum) => {
@@ -97,9 +98,10 @@ export const Notes = memo(() => {
                         user={user}
                         loading={loading?.notes && page === 1}
                         onRefresh={handleNoteCreated}
-                        onShare={() => { setUploadModalOpen(true); }}
+                        onShare={() => { setUploadModalOpen(true) }}
+                        onUpdate={(id) => { setUploadModalOpen(true); setUpdateNoteId(id) }}
                     />
-                    
+
                     {/* Sentinel element and loading feedback for infinite scroll */}
                     <div ref={sentinelRef} className="py-6 flex justify-center">
                         {isFetchingMore && (
@@ -116,6 +118,7 @@ export const Notes = memo(() => {
 
             <UploadModal
                 open={uploadModalOpen}
+                onUpdate={updateNoteId}
                 onOpenChange={setUploadModalOpen}
                 onNoteCreated={handleNoteCreated}
             />

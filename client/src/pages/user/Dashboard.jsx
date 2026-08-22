@@ -75,14 +75,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
     const isAuthenticated = !!user;
 
-    const handleNoteCreated = useCallback(() => {
-        refreshNotes();
-    }, [refreshNotes]);
-
-    const handleDownload = useCallback((note) => {
-        downloadFile(note.fileData, note.fileName || note.title);
-    }, []);
-
     const userName = user?.username || "Student";
     const role = user?.role || "user";
 

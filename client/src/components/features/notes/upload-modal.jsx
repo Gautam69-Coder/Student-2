@@ -4,12 +4,14 @@ import { Upload, FileText, X, Check, Code, Plus, ChevronDown, Layout, File, Imag
 import { useState, useEffect } from "react"
 import { createNoteFile } from "@/Api/api"
 import { createNoteText } from "@/Api/api"
+import { updateNoteText } from "@/Api/api"
+import { updateNoteFile } from "@/Api/api"
 import { customMessage } from "@/Utils/customMessage"
 import { DotLoader } from "@/Utils/loaders.jsx"
 import { theme } from "@/lib/theme"
 import { useData } from "@/context/DataContext"
 
-export function UploadModal({ open, onOpenChange, onNoteCreated }) {
+export function UploadModal({ open, onOpenChange, onNoteCreated, onUpdate }) {
 
     const { notes } = useData();
 
@@ -23,11 +25,25 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
     const [fileUpload, setFileUpload] = useState(null);
     const [allSections, setallSections] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [updateFileName, setUpdateFileName] = useState(null);
 
     const handleChanged = (e) => {
         setNoteData({ ...noteData, [e.target.name]: e.target.value })
     }
-    
+
+    useEffect(() => {
+        if (!onUpdate || !notes?.length) return;
+
+        const particularNote = notes.find(i => i._id == onUpdate);
+        setNoteData({
+            title: particularNote.title ?? "",
+            section: particularNote.section ?? "",
+            code: particularNote.content ?? ""
+        })
+
+        setUpdateFileName(particularNote.fileName ?? "");
+    }, [onUpdate, notes])
+
 
     const loadSections = async () => {
         try {
@@ -47,52 +63,100 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
 
     const handleFileUpload = (e) => {
         setFileUpload(e.target.files[0])
+        console.log(e.target.files[0]);
     }
 
     const handleSubmit = async () => {
-        // Basic validation for text notes and file uploads
-        // For text notes, ensure title, section, and code are provided
-        if (fileType === "text") {
-            if (!noteData.title || !noteData.section || !noteData.code) return customMessage({ content: "All fields are required", type: "error" });
-            try {
-                setLoading(true);
-                const code = await createNoteText(noteData);
-                console.log("Note upload response:", code.data.success, code.data.message);
-                if (code.data.success) {
-                    customMessage({ content: code.data.message || "Note uploaded successfully", type: "success" });
-                    setNoteData({ title: "", section: "General", code: "" });
-                    onOpenChange(false);
-                    onNoteCreated?.(); 
+        // IF Update note id get it 
+        if (onUpdate) {
+            if (fileType === "text") {
+                try {
+                    setLoading(true);
+                    const code = await updateNoteText(noteData);
+                    if (code.data.success) {
+                        customMessage({ content: code.data.message || "Note update successfully", type: "success" });
+                        setNoteData({ title: "", section: "General", code: "" });
+                        onOpenChange(false);
+                        onNoteCreated?.();
+                        setLoading(false);
+                    }
+                } catch (err) {
+                    console.error("Note not uploaded", err);
+                    customMessage({ content: "Note not uploaded", type: "error" });
                     setLoading(false);
                 }
-            } catch (err) {
-                console.error("Note not uploaded", err);
-                customMessage({ content: "Note not uploaded", type: "error" });
-                setLoading(false);
             }
-        }
-        // For file uploads, you would handle the file input and send it to the server using createNoteFile
-        else {
-            if (!noteData.title || !noteData.section || !fileUpload) return customMessage({ content: "All fields are required", type: "error" });
-            try {
-                setLoading(true);
-                const formData = new FormData();
-                formData.append("file", fileUpload);
-                formData.append("title", noteData.title);
-                formData.append("section", noteData.section);
-                const file = await createNoteFile(formData);
-                if (file.data.success) {
-                    customMessage({ content: file.data.msg, type: "success" });
-                    setNoteData({ title: "", section: "General" });
-                    setFileUpload(null);
-                    onOpenChange(false);
-                    onNoteCreated?.(); // Trigger notes refresh in parent
+            // For file uploads, you would handle the file input and send it to the server using createNoteFile
+            else {
+                try {
+                    setLoading(true);
+                    const formData = new FormData();
+                    formData.append("file", fileUpload);
+                    formData.append("title", noteData.title);
+                    formData.append("section", noteData.section);
+                    const file = await updateNoteFile(formData);
+                    if (file.data.success) {
+                        customMessage({ content: file.data.msg, type: "success" });
+                        setNoteData({ title: "", section: "General" });
+                        setFileUpload(null);
+                        onOpenChange(false);
+                        onNoteCreated?.(); // Trigger notes refresh in parent
+                        setLoading(false);
+                    }
+                } catch (err) {
+                    console.error("File not uploaded", err);
+                    customMessage({ content: "File not uploaded", type: "error" });
+                    setLoading(false);
+                } finally {
                     setLoading(false);
                 }
-            } catch (err) {
-                console.error("File not uploaded", err);
-                customMessage({ content: "File not uploaded", type: "error" });
-                setLoading(false);
+            }
+        } else {
+
+            // For text notes, ensure title, section, and code are provided
+            if (fileType === "text") {
+                if (!noteData.title || !noteData.section || !noteData.code) return customMessage({ content: "All fields are required", type: "error" });
+                try {
+                    setLoading(true);
+                    const code = await createNoteText(noteData);
+                    if (code.data.success) {
+                        customMessage({ content: code.data.message || "Note uploaded successfully", type: "success" });
+                        setNoteData({ title: "", section: "General", code: "" });
+                        onOpenChange(false);
+                        onNoteCreated?.();
+                        setLoading(false);
+                    }
+                } catch (err) {
+                    console.error("Note not uploaded", err);
+                    customMessage({ content: "Note not uploaded", type: "error" });
+                    setLoading(false);
+                }
+            }
+            // For file uploads, you would handle the file input and send it to the server using createNoteFile
+            else {
+                if (!noteData.title || !noteData.section || !fileUpload) return customMessage({ content: "All fields are required", type: "error" });
+                try {
+                    setLoading(true);
+                    const formData = new FormData();
+                    formData.append("file", fileUpload);
+                    formData.append("title", noteData.title);
+                    formData.append("section", noteData.section);
+                    const file = await createNoteFile(formData);
+                    if (file.data.success) {
+                        customMessage({ content: file.data.msg, type: "success" });
+                        setNoteData({ title: "", section: "General" });
+                        setFileUpload(null);
+                        onOpenChange(false);
+                        onNoteCreated?.(); // Trigger notes refresh in parent
+                        setLoading(false);
+                    }
+                } catch (err) {
+                    console.error("File not uploaded", err);
+                    customMessage({ content: "File not uploaded", type: "error" });
+                    setLoading(false);
+                } finally {
+                    setLoading(false);
+                }
             }
         }
     }
@@ -272,6 +336,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                             Content / Code
                                         </label>
                                         <textarea
+                                            data-lenis-prevent
                                             placeholder="Paste your code or text here..."
                                             className="mt-1.5 w-full px-3 py-3 rounded-lg text-sm min-h-62.5 font-mono transition-all resize-y outline-none"
                                             style={{
@@ -302,12 +367,22 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                                 }}
                                             >
                                                 <FileText className="w-6 h-6" style={{ color: theme.colors.lime }} />
-                                                {!fileUpload ? (
-                                                    <span>Click to select a file (Only PDF,DOCX, TXT, IMG)</span>
-                                                ) : (
-                                                    <span className="font-semibold" style={{ color: theme.colors.dark }}>
+                                                {updateFileName !== "NAN" ? (
+                                                    <span
+                                                        className="font-semibold"
+                                                        style={{ color: theme.colors.dark }}
+                                                    >
+                                                        {updateFileName || "Click to select a file"}
+                                                    </span>
+                                                ) : fileUpload ? (
+                                                    <span
+                                                        className="font-semibold"
+                                                        style={{ color: theme.colors.dark }}
+                                                    >
                                                         {fileUpload.name}
                                                     </span>
+                                                ) : (
+                                                    <span>Click to select a file (Only PDF, DOCX, TXT, IMG)</span>
                                                 )}
                                                 <input
                                                     type="file"
@@ -326,7 +401,6 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                     className="w-full h-12 flex items-center justify-center gap-2 font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all active:scale-[0.99] shadow-md shadow-indigo-100"
                                     onClick={() => {
                                         handleSubmit();
-                                        setLoading(true);
 
                                     }}
                                 >
@@ -335,8 +409,17 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                             <DotLoader size={20} color={"white"} />
                                         ) : (
                                             <>
-                                                <Upload className="w-4 h-4" />
-                                                {fileType === "text" ? "Save Note" : "Upload Note"}
+                                                {onUpdate ? (
+                                                    <>
+                                                        <Upload className="w-4 h-4" />
+                                                        Update Note
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Upload className="w-4 h-4" />
+                                                        {fileType === "text" ? "Save Note" : "Upload Note"}
+                                                    </>
+                                                )}
                                             </>
                                         )
                                     }

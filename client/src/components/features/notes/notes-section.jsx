@@ -20,7 +20,7 @@ import { NotePreviewModal } from "./note-preview-modal";
 import { NoteCard } from "./note-card";
 import { downloadFile } from "@/Utils/download";
 
-export function NotesSection({ notes = [], user, loading, onRefresh, onShare }) {
+export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onUpdate }) {
     const [selectedNote, setSelectedNote] = useState(null);
     const [copying, setCopying] = useState(null);
     const [activeSection, setActiveSection] = useState("All");
@@ -64,6 +64,12 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare }) 
         },
         [onRefresh]
     );
+
+    // const handleUpdate = useCallback(
+    //     async (id) => {
+    //         console.log("NOte id : ", id)
+    //     }
+    // )
 
 
 
@@ -217,11 +223,10 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare }) 
                         <button
                             key={sec}
                             onClick={() => setActiveSection(sec)}
-                            className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${
-                                activeSection === sec
-                                    ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
-                                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-                            }`}
+                            className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${activeSection === sec
+                                ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
+                                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                                }`}
                         >
                             {sec}
                         </button>
@@ -258,6 +263,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare }) 
                                         user={user}
                                         copying={copying}
                                         onDelete={handleDelete}
+                                        onUpdate={onUpdate}
                                         onCopy={handleCopy}
                                         onDownload={handleDownload}
                                         onPublic={handlePublic}

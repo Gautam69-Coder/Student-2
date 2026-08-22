@@ -68,7 +68,12 @@ export const createNoteFile = (noteData) => api.post('/notes/file', noteData, {
     headers: { "Content-Type": "multipart/form-data" }
 })
 export const createNoteText = (noteData) => api.post('/notes/text', noteData);
-export const updateNote = (id, noteData) => api.put(`/notes/${id}`, noteData);
+
+export const updateNoteText = (noteData) => api.put(`/notes/text`, noteData);
+export const updateNoteFile = (noteData) => api.put('/notes/file', noteData, {
+    headers: { "Content-Type": "multipart/form-data" }
+})
+
 export const deleteNote = (id) => api.delete(`/notes/${id}`);
 export const makeNotePublic = (id) => api.put(`/notes/public/${id}`);
 

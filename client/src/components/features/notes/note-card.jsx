@@ -10,6 +10,7 @@ import {
     Code,
     File,
     Image as ImageIcon,
+    Edit
 } from "lucide-react";
 import { Card, CardContent } from "/components/ui/card";
 import { theme } from "@/lib/theme";
@@ -21,6 +22,7 @@ export const NoteCard = memo(
         user,
         copying,
         onDelete,
+        onUpdate,
         onCopy,
         onDownload,
         onPublic,
@@ -69,6 +71,19 @@ export const NoteCard = memo(
 
                         {isOwner && (
                             <div className="flex gap-2">
+                                <button
+                                    onClick={(e) => {
+                                        onUpdate(note._id);
+                                    }}
+                                    className="p-2 rounded-xl transition-colors cursor-pointer"
+                                    style={{
+                                        background: "rgba(239,68,68,0.08)",
+                                        color: "#DC2626",
+                                    }}
+                                    aria-label="Delete note"
+                                >
+                                    <Edit className="w-4 h-4" />
+                                </button>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();

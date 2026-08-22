@@ -24,7 +24,7 @@ export const getNotes = asyncHandler(async (req, res) => {
             console.error("Token invalid in public notes route");
         }
     }
-    
+
     // Support pagination for infinite scroll if page/limit parameters are provided
     if (req.query.page || req.query.limit) {
         const page = parseInt(req.query.page, 10) || 1;
@@ -64,7 +64,7 @@ export const createNoteFile = asyncHandler(async (req, res) => {
     const { title, section } = req.body;
     const filePath = req.file.path;
     const file = req.file;
-    
+
     const uploadFile = await uploadCloudinary(filePath);
 
     const newNote = new UserNote({
@@ -92,26 +92,62 @@ export const createNoteText = asyncHandler(async (req, res) => {
     res.status(201).json(new ApiResponse(201, { noteData: note }, "Code Uploaded Successfully"));
 });
 
-export const updateNote = asyncHandler(async (req, res) => {
-    const { title, content, section, fileName, fileType, fileData } = req.body;
-    let note = await UserNote.findById(req.params.id);
-    if (!note) {
-        throw new ApiError(404, 'Note not found');
-    }
+export const updateNoteText = asyncHandler(async (req, res) => {
+    const { title, code, section } = req.body;
 
-    if (note.user.toString() !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'superadmin') {
-        throw new ApiError(401, 'Not authorized');
-    }
+    // const updateNote = {};
 
-    note.title = title || note.title;
-    note.content = content || note.content;
-    note.section = section || note.section;
-    note.fileName = fileName || note.fileName;
-    note.fileType = fileType || note.fileType;
-    note.fileData = fileData || note.fileData;
+    // if (title !== undefined) updateNote.title = title;
+    // if (section !== undefined) updateData.section = section;
+    // if (content !== undefined) updateData.content = content;
 
-    await note.save();
-    res.status(200).json(new ApiResponse(200, note, "Note updated successfully"));
+    // const uploadFile = await uploadCloudinary(filePath);
+
+
+    // const newNote = new UserNote({
+    //     user: req.user.id,
+    //     title,
+    //     section: section || 'General',
+    //     fileName: file.originalname,
+    //     fileType: file.mimetype,
+    //     fileData: uploadFile.secure_url
+    // });
+    // const note = await newNote.save();
+
+    // res.status(201).json(new ApiResponse(201, { noteData: note }, "File Uploaded Successfully"));
+
+    console.log("Title : ", title);
+    console.log("file : ", file);
+
+});
+
+export const updateNoteFile = asyncHandler(async (req, res) => {
+    const { title, section } = req.body;
+    const filePath = req.file.path;
+    const file = req.file;
+
+    // const updateNote = {};
+
+    // if (title !== undefined) updateNote.title = title;
+    // if (section !== undefined) updateData.section = section;
+
+    // const uploadFile = await uploadCloudinary(filePath);
+
+
+    // const newNote = new UserNote({
+    //     user: req.user.id,
+    //     title,
+    //     section: section || 'General',
+    //     fileName: file.originalname,
+    //     fileType: file.mimetype,
+    //     fileData: uploadFile.secure_url
+    // });
+    // const note = await newNote.save();
+
+    // res.status(201).json(new ApiResponse(201, { noteData: note }, "File Uploaded Successfully"));
+
+    console.log("Title : ", title);
+
 });
 
 export const deleteNote = asyncHandler(async (req, res) => {

@@ -83,7 +83,7 @@ export function StudentNavbar({
     onLogout,
     onSwitchToAdmin,
     role,
-    setUploadModalOpen,
+    onShare,
     isBell,
     setisBell,
     requireAuth
@@ -290,7 +290,7 @@ export function StudentNavbar({
 
                         </div>
                         <button
-                            onClick={() => setUploadModalOpen(true)}
+                            onClick={onShare}
                             className="hidden md:flex items-center gap-2 bg-slate-900 dark:bg-white  text-white dark:text-slate-900 px-4 py-2 rounded-[10px] text-sm font-bold shadow-md hover:opacity-90 active:scale-95 transition-all"
                         >
                             <Upload className="w-4 h-4" />
@@ -425,7 +425,7 @@ export function StudentNavbar({
                                 <button
                                     onClick={() => {
                                         setMobileMenuOpen(false);
-                                        setUploadModalOpen(true);
+                                        onShare();
                                     }}
                                     className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                                 >

@@ -24,7 +24,30 @@ export const getNotes = asyncHandler(async (req, res) => {
             console.error("Token invalid in public notes route");
         }
     }
-    // console.log("Notes : ",query);
+    
+    // Support pagination for infinite scroll if page/limit parameters are provided
+    if (req.query.page || req.query.limit) {
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 10;
+        const skip = (page - 1) * limit;
+
+        const totalNotes = await UserNote.countDocuments(query);
+        const notes = await UserNote.find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        return res.status(200).json(new ApiResponse(200, {
+            notes,
+            pagination: {
+                totalNotes,
+                currentPage: page,
+                totalPages: Math.ceil(totalNotes / limit),
+                hasMore: skip + notes.length < totalNotes
+            }
+        }, "Success"));
+    }
+
     const notes = await UserNote.find(query).sort({ createdAt: -1 });
     res.status(200).json(new ApiResponse(200, notes, "Success"));
 });

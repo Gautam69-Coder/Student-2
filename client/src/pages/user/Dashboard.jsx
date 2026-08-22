@@ -1,13 +1,10 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import PracticalUpload from "@/components/features/practicals/practical-upload"
 import { Link } from "react-router-dom"
-
 import { Code, FileText, Download, X, HomeIcon, Search, ArrowUpRight } from "lucide-react"
 import { BottomNavbar } from "@/components/layout/bottom-navbar"
-import { UploadModal } from "@/components/features/notes/upload-modal";
-import { NotePreviewModal } from "@/components/features/notes/note-preview-modal";
+import { NotePreviewModal } from "@/components/features/notes/note-preview-modal"
 import { downloadFile } from "@/Utils/download";
 import { useTitle } from "@/hooks/useTitle";
 import { useData } from "@/context/DataContext";
@@ -27,10 +24,8 @@ import CodeEditor from "./CodeEditor";
 import PracticeDeatils from "./PracticeDeatils";
 import Test from "@/Utils/Test";
 
-import { StudentNavbar } from "@/components/layout/student-navbar";
 import { TopNavBar } from "@/components/layout/top-navbar";
 import { DashboardSidebar } from "@/components/layout/sidebar";
-import { DashStatCard, DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
 import { DashboardLayout } from "@/components/layout/layout";
 
 import {
@@ -68,8 +63,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
     } = useData();
 
 
-    const [uploadModalOpen, setUploadModalOpen] = useState(false);
-    const [practicalUploadOpen, setPracticalUploadOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedNote, setSelectedNote] = useState(null);
     const [isBell, setisBell] = useState(false);
@@ -92,23 +85,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
     const userName = user?.username || "Student";
     const role = user?.role || "user";
-    const isGuest = !isAuthenticated;
-
-    // Limit content for guests - Memoized to prevent reference changes
-    const displayedNotes = useMemo(() =>
-        isAuthenticated ? notes : notes.slice(-3).reverse(),
-        [isAuthenticated, notes]);
-
-    const displayedPracticals = useMemo(() =>
-        isAuthenticated ? practicals : practicals.slice(-3).reverse(),
-        [isAuthenticated, practicals]);
-
-    const subjectPracticals = useMemo(() => {
-        if (!user) return [];
-        return practicals.filter(p => p.subject?._id === user.subject?._id);
-    }, [user, practicals]);
-
-
 
     const searchResults = useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [] };
@@ -119,16 +95,16 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                 (s.name)?.toLowerCase()?.includes(query) ||
                 (s.code)?.toLowerCase()?.includes(query)
             ),
-            practicals: displayedPracticals.filter(p =>
+            practicals: practicals.filter(p =>
                 (p.section)?.toLowerCase()?.includes(query) ||
                 p.questions?.some(q => q?.question?.toLowerCase()?.includes(query) || q?.code?.toLowerCase()?.includes(query))
             ),
-            notes: displayedNotes.filter(n =>
+            notes: notes.filter(n =>
                 (n.title)?.toLowerCase()?.includes(query) ||
                 (n.content)?.toLowerCase()?.includes(query)
             ),
         };
-    }, [searchQuery, subjects, displayedPracticals, displayedNotes]);
+    }, [searchQuery, subjects, practicals, notes]);
 
     const navItems = [
         { label: "Home", path: "/dashboard", icon: HomeIcon },
@@ -159,7 +135,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
 
                         }}    // Add your logout logic here
                         onShare={() => {
-                            setUploadModalOpen(true);
+                            navigate("/dashboard/notes", { state: { openShare: true } });
                         }}
                     />
                 </div>
@@ -174,7 +150,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                         onLogout={onLogout}
                         onSwitchToAdmin={onSwitchToAdmin}
                         role={role}
-                        setUploadModalOpen={() => setUploadModalOpen(true)}
                         isBell={isBell}
                         setisBell={setisBell}
                     />
@@ -215,8 +190,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                             <button
                                                 onClick={() => setActiveSearchTab("all")}
                                                 className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "all"
-                                                        ? "bg-zinc-950 text-white shadow-sm"
-                                                        : "text-zinc-650 hover:bg-zinc-50"
+                                                    ? "bg-zinc-950 text-white shadow-sm"
+                                                    : "text-zinc-650 hover:bg-zinc-50"
                                                     }`}
                                             >
                                                 All Results
@@ -228,8 +203,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                             <button
                                                 onClick={() => setActiveSearchTab("subjects")}
                                                 className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "subjects"
-                                                        ? "bg-zinc-950 text-white shadow-sm"
-                                                        : "text-zinc-650 hover:bg-zinc-50"
+                                                    ? "bg-zinc-950 text-white shadow-sm"
+                                                    : "text-zinc-650 hover:bg-zinc-50"
                                                     }`}
                                             >
                                                 Subjects
@@ -241,8 +216,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                             <button
                                                 onClick={() => setActiveSearchTab("practicals")}
                                                 className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "practicals"
-                                                        ? "bg-zinc-950 text-white shadow-sm"
-                                                        : "text-zinc-650 hover:bg-zinc-50"
+                                                    ? "bg-zinc-950 text-white shadow-sm"
+                                                    : "text-zinc-650 hover:bg-zinc-50"
                                                     }`}
                                             >
                                                 Practicals
@@ -254,8 +229,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                             <button
                                                 onClick={() => setActiveSearchTab("notes")}
                                                 className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "notes"
-                                                        ? "bg-zinc-950 text-white shadow-sm"
-                                                        : "text-zinc-650 hover:bg-zinc-50"
+                                                    ? "bg-zinc-950 text-white shadow-sm"
+                                                    : "text-zinc-650 hover:bg-zinc-50"
                                                     }`}
                                             >
                                                 My Notes
@@ -388,43 +363,16 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                             ) : (
                                 <Routes>
                                     {/* All Path */}
-                                    <Route
-                                        path="/"
-                                        element={
-                                            <Home
-                                                userName={userName}
-                                                subjects={subjects}
-                                                subjectPracticals={subjectPracticals}
-                                                practicals={displayedPracticals}
-                                                loadingPracticals={loading.practicals}
-                                                isGuest={isGuest}
-                                                stats={{
-                                                    notesCount: notes.length,
-                                                    visitCount: user?.visitCount || 0,
-                                                    lastVisit: user?.lastVisit || null,
-                                                }}
-                                            />
-                                        }
-                                    />
+                                    <Route path="/" element={<Home />} />
 
                                     {/* Test Route */}
                                     <Route path="test" element={<Test />} />
 
                                     {/* Notes Route */}
-                                    <Route path="notes" element={
-                                        <Notes
-                                            notes={displayedNotes}
-                                            user={user}
-                                            loading={loading.notes}
-                                            onRefresh={handleNoteCreated}
-                                            onShare={() => {
-                                                setUploadModalOpen(true);
-                                            }}
-                                        />
-                                    } />
+                                    <Route path="notes" element={<Notes />} />
 
                                     {/* Practicals Route */}
-                                    <Route path="practicals" element={<Practicals practicals={displayedPracticals} setPracticalUploadOpen={() => setPracticalUploadOpen(true)} subjects={subjects} />} />
+                                    <Route path="practicals" element={<Practicals />} />
 
                                     {/* ChatBot Route */}
                                     <Route path="chatbot" element={<Chatbot />} />
@@ -461,17 +409,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                 </div>
             </div>
 
-            <UploadModal
-                open={uploadModalOpen}
-                onOpenChange={setUploadModalOpen}
-                onNoteCreated={handleNoteCreated}
-            />
-
-            <PracticalUpload
-                open={practicalUploadOpen}
-                onOpenChange={setPracticalUploadOpen}
-                uniqueSubjects={subjects}
-            />
             <BottomNavbar />
         </div >
     )

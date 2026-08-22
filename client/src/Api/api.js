@@ -62,6 +62,7 @@ export const deleteContent = (id) => api.delete(`/content/${id}`);
 
 // Notes Services
 export const fetchNotes = () => api.get('/notes');
+export const fetchNotesPaginated = (page = 1, limit = 10) => api.get(`/notes?page=${page}&limit=${limit}`);
 export const fetchAllNotes = () => api.get('/notes/all');
 export const createNoteFile = (noteData) => api.post('/notes/file', noteData, {
     headers: { "Content-Type": "multipart/form-data" }

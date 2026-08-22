@@ -10,7 +10,6 @@ import {
     Code,
     File,
     Image as ImageIcon,
-    Edit,
 } from "lucide-react";
 import { Card, CardContent } from "/components/ui/card";
 import { theme } from "@/lib/theme";
@@ -27,7 +26,6 @@ export const NoteCard = memo(
         onPublic,
         onSelect,
         onShowCode,
-        onUpdate,
     }) => {
         const isOwner = user?._id === note.user;
         const hasFile = note.fileType !== "NAN";
@@ -71,20 +69,6 @@ export const NoteCard = memo(
 
                         {isOwner && (
                             <div className="flex gap-2">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onUpdate(note._id);
-                                    }}
-                                    className="p-2 rounded-xl transition-colors cursor-pointer"
-                                    style={{
-                                        background: "rgba(99,102,241,0.08)",
-                                        color: "#4F46E5",
-                                    }}
-                                    aria-label="Edit note"
-                                >
-                                    <Edit className="w-4 h-4" />
-                                </button>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();

@@ -5,20 +5,33 @@ import { useLocation } from 'react-router-dom';
 import { PracticalCard } from '@/components/features/practicals/practical-card';
 import { SEO } from '@/components/common/SEO';
 import AddSections from '@/components/features/notes/add-sections';
+import PracticalUpload from '@/components/features/practicals/practical-upload';
 import { DashboardLayout } from "@/components/layout/layout";
 import { DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
 import { DashboardSidebar } from "@/components/layout/sidebar";
 import { FileText, Users, MessageSquare, FlaskConical, Code2, Info, Home } from 'lucide-react';
 import { theme } from '@/lib/theme';
+import { useData } from '@/context/DataContext';
 
-export function Practicals({ practicals, subjects, setPracticalUploadOpen }) {
+export function Practicals() {
+    const { practicals, subjects, user } = useData();
     const location = useLocation();
     const [selectedSubject, setSelectedSubject] = useState("");
     const [selectedPracticalNo, setSelectedPracticalNo] = useState("");
     const [showAddSection, setShowAddSection] = useState(false);
+    const [practicalUploadOpen, setPracticalUploadOpen] = useState(false);
     const [uniqueSubjectSections, setUniqueSubjectSections] = useState(subjects);
     const [searchQuery, setSearchQuery] = useState("");
     const [isBell, setIsBell] = useState(false);
+
+    const isAdmin = user?.role === "admin" || user?.role === "superadmin";
+
+    // Sync uniqueSubjectSections with subjects from context when they load
+    useEffect(() => {
+        if (subjects && subjects.length > 0) {
+            setUniqueSubjectSections(subjects);
+        }
+    }, [subjects]);
 
     const navItems = [
         { label: "Home", icon: Home, path: "/dashboard" },
@@ -128,20 +141,22 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen }) {
                                     </p>
                                 </div>
 
-                                {/* <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
-                                    <button
-                                        className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
-                                        onClick={() => setShowAddSection(true)}
-                                    >
-                                        Add Section
-                                    </button>
-                                    <button
-                                        className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
-                                        onClick={() => setPracticalUploadOpen(true)}
-                                    >
-                                        Add Practical
-                                    </button>
-                                </div> */}
+                                {isAdmin && (
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
+                                        <button
+                                            className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
+                                            onClick={() => setShowAddSection(true)}
+                                        >
+                                            Add Section
+                                        </button>
+                                        <button
+                                            className="px-4 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
+                                            onClick={() => setPracticalUploadOpen(true)}
+                                        >
+                                            Add Practical
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Subject Filter Tabs */}
@@ -229,6 +244,12 @@ export function Practicals({ practicals, subjects, setPracticalUploadOpen }) {
                         setUniqueSubjectSections={setUniqueSubjectSections}
                     />
                 )}
+
+                <PracticalUpload
+                    open={practicalUploadOpen}
+                    onOpenChange={setPracticalUploadOpen}
+                    uniqueSubjects={subjects}
+                />
             </DashboardLayout>
         </motion.div>
     );

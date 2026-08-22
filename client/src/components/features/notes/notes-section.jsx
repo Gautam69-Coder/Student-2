@@ -15,11 +15,9 @@ import { deleteNote, makeNotePublic } from "@/Api/api";
 import { CodeModal } from "@/components/features/coding/code-modal";
 import RippleLoader from "@/components/ui/nurui/ripple-loader";
 import AddSections from "./add-sections";
-import { Card, CardContent } from "/components/ui/card";
 import { theme } from "@/lib/theme";
 import { NotePreviewModal } from "./note-preview-modal";
 import { NoteCard } from "./note-card";
-import { NoteEditModal } from "./note-edit-modal";
 import { downloadFile } from "@/Utils/download";
 
 export function NotesSection({ notes = [], user, loading, onRefresh, onShare }) {
@@ -28,7 +26,6 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare }) 
     const [activeSection, setActiveSection] = useState("All");
     const [showCodeModal, setShowCodeModal] = useState(false);
     const [showAddSection, setShowAddSection] = useState(false);
-    const [editNote, setEditNote] = useState(null);
 
     const groupedNotes = useMemo(() => {
         return notes.reduce((acc, note) => {
@@ -68,21 +65,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare }) 
         [onRefresh]
     );
 
-    const handleUpdate = useCallback(
-        (id) => {
-            const note = notes.find((n) => n._id === id);
-            if (note) {
-                setEditNote({
-                    _id: note._id,
-                    title: note.title,
-                    section: note.section,
-                    code: note.code || "",
-                    fileType: note.fileType,
-                });
-            }
-        },
-        [notes]
-    );
+
 
     const handleCopy = useCallback((id, content) => {
         navigator.clipboard.writeText(content);
@@ -280,7 +263,6 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare }) 
                                         onPublic={handlePublic}
                                         onSelect={handleSelect}
                                         onShowCode={handleShowCode}
-                                        onUpdate={handleUpdate}
                                     />
                                 ))}
                             </div>
@@ -317,11 +299,6 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare }) 
                 onDownload={handleDownload}
             />
 
-            <NoteEditModal
-                editNote={editNote}
-                setEditNote={setEditNote}
-                onRefresh={onRefresh}
-            />
         </div>
     );
 }

@@ -33,6 +33,8 @@ export const NoteCard = memo(
         const hasFile = note.fileType !== "NAN";
         const isImage = note.fileType?.startsWith("image/");
         const isPdf = note.fileType === "application/pdf";
+        const hasContent = note.content && note.content !== "NAN";
+        const isPreviewable = isPdf || isImage || (hasFile && hasContent);
 
         return (
             <Card
@@ -103,10 +105,19 @@ export const NoteCard = memo(
                     </div>
 
                     <div className="flex justify-between items-center mb-4 text-[11px] font-semibold uppercase tracking-wider">
-                        <span className="flex items-center gap-1.5" style={{ color: theme.colors.darkGray }}>
-                            <Calendar className="w-3.5 h-3.5" />
-                            {formatDate(note.createdAt)}
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className="flex items-center gap-1.5" style={{ color: theme.colors.darkGray }}>
+                                <Calendar className="w-3.5 h-3.5" />
+                                {formatDate(note.createdAt)}
+                            </span>
+                            {hasFile && hasContent && (
+                                <span
+                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase tracking-wide"
+                                >
+                                    Code
+                                </span>
+                            )}
+                        </div>
 
                         {(user?.role === "admin" || user?.role === "superadmin") && (
                             <button
@@ -200,7 +211,7 @@ export const NoteCard = memo(
                     <div className="flex gap-2">
                         {hasFile ? (
                             <>
-                                {isPdf ? (
+                                {isPreviewable ? (
                                     <>
                                         <button
                                             className="flex-1 hidden sm:flex justify-center items-center gap-2 py-2.5 border rounded-xl text-sm font-semibold transition-colors hover:bg-slate-50"
@@ -223,7 +234,11 @@ export const NoteCard = memo(
                                                 color: theme.colors.dark,
                                             }}
                                             onClick={() => {
-                                                window.open(note.fileData, "_blank");
+                                                if (isPdf || isImage) {
+                                                    window.open(note.fileData, "_blank");
+                                                } else {
+                                                    onSelect(note);
+                                                }
                                             }}
                                         >
                                             <Eye className="w-4 h-4" />

@@ -14,8 +14,8 @@ router.get('/all', auth, getAllNotes);
 router.post('/file', auth, uploadMulter.single("file"), createNoteFile);
 router.post('/text', auth, createNoteText);
 
-router.put('/', auth, updateNoteText);
 router.put('/file', auth, uploadMulter.single("file"), updateNoteFile);
+router.put('/text', auth, updateNoteText);
 
 router.delete('/:id', auth, deleteNote);
 router.put('/public/:id', auth, togglePublicStatus);

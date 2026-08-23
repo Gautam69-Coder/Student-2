@@ -119,7 +119,12 @@ export const Notes = memo(() => {
             <UploadModal
                 open={uploadModalOpen}
                 onUpdate={updateNoteId}
-                onOpenChange={setUploadModalOpen}
+                onOpenChange={(isOpen) => {
+                    setUploadModalOpen(isOpen);
+                    if (!isOpen) {
+                        setUpdateNoteId(null);
+                    }
+                }}
                 onNoteCreated={handleNoteCreated}
             />
 

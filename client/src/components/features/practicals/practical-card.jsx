@@ -11,8 +11,11 @@ import {
     Download,
     ExternalLink,
     Cpu,
-    Sparkles
+    Sparkles,
+    Eye
 } from "lucide-react"
+
+import { FilePreviewModal } from "../../common/file-preview-modal"
 
 import { CodeModal } from "@/components/features/coding/code-modal"
 import HighlightComponent from "react-highlight"
@@ -25,6 +28,12 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, section }) 
     const { copied, copy } = useClipboard(2000)
     const [showModal, setShowModal] = useState(false)
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false)
+    const [showPdfModal, setShowPdfModal] = useState(false)
+
+    const isPdf = question.fileType === "application/pdf" ||
+        question.fileType?.includes("pdf") ||
+        /\.pdf$/i.test(question.fileName || "") ||
+        (question.fileUrl || question.fileData)?.toLowerCase().includes('.pdf');
     const handleCopy = useCallback(() => {
         const codeToCopy = Array.isArray(question.code)
             ? question.code.map(item => `// --- ${item.languageName} ---\n${item.code}`).join('\n\n')
@@ -201,21 +210,34 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, section }) 
                                         <FileText className="w-6 h-6" />
                                     </div>
                                     <div className="space-y-0.5 text-left">
-                                        <p className="text-sm font-bold text-slate-850 group-hover/file:text-indigo-650 transition-colors">
+                                        <p className="text-sm font-bold text-slate-850 dark:tex           t-slate-200 group-hover/file:text-indigo-650 transition-colors">
                                             {question.fileName || 'Attachment'}
                                         </p>
-                                        <p className="text-[11px] font-medium text-slate-400">Application Resource</p>
+                                        <p className="text-[11px] font-medium text-slate-400">
+                                            {isPdf ? "PDF Document" : "Application Resource"}
+                                        </p>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => downloadFile(question.fileUrl || question.fileData, question.fileName || 'Attachment')}
-                                    className="h-10 px-5 w-full text-center mt-4 sm:mt-0 sm:w-fit bg-indigo-650 hover:bg-indigo-750 text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
-                                >
-                                    <div className="flex items-center justify-center w-full">
+                                <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+                                    {isPdf && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPdfModal(true)}
+                                            className="h-10 px-5 text-center bg-white hover:bg-indigo-50 text-indigo-950 border border-indigo-300 hover:border-indigo-550 text-sm font-bold rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs"
+                                        >
+                                            <Eye className="w-4 h-4" />
+                                            View PDF
+                                        </button>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => downloadFile(question.fileUrl || question.fileData, question.fileName || 'Attachment')}
+                                        className="h-10 px-5 text-center bg-indigo-650 hover:bg-indigo-750 text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
+                                    >
                                         <Download className="w-4 h-4 mr-1.5" />
                                         Download File
-                                    </div>
-                                </button>
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -236,6 +258,16 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, section }) 
                 title={question.question}
                 code={question.code}
                 section={section}
+            />
+
+            <FilePreviewModal
+                isOpen={showPdfModal}
+                onClose={() => setShowPdfModal(false)}
+                fileUrl={question.fileUrl || question.fileData}
+                fileType={question.fileType || "application/pdf"}
+                fileName={question.fileName}
+                title={question.question}
+                subtitle={`${section} • Attachment`}
             />
         </div>
     )

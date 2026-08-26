@@ -5,6 +5,7 @@ import { theme } from "@/lib/theme";
 import { downloadFile } from "@/Utils/download";
 import { formatDate } from "@/Utils/date";
 import { useClipboard } from "@/Utils/clipboard";
+import { FilePreview } from "../../common/file-preview";
 
 export function NotePreviewModal({ note, onClose, onDownload }) {
     const { copied, copy } = useClipboard(2000);
@@ -91,34 +92,13 @@ export function NotePreviewModal({ note, onClose, onDownload }) {
                             <div className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ background: theme.colors.softGray }}>
                                 {/* Left Pane: File Preview */}
                                 <div className="w-full md:w-1/2 h-[40vh] md:h-full p-4 flex flex-col justify-center items-center overflow-auto border-b md:border-b-0 md:border-r" style={{ borderColor: theme.colors.lightGray }}>
-                                    {note.fileType?.startsWith("image/") ? (
-                                        <img
-                                            src={note.fileData}
-                                            alt={note.title}
-                                            className="max-w-full max-h-full object-contain rounded-2xl shadow-xl bg-white p-2"
-                                        />
-                                    ) : note.fileType === "application/pdf" ? (
-                                        <iframe
-                                            src={note.fileData}
-                                            className="w-full h-full rounded-2xl border bg-white"
-                                            style={{ borderColor: theme.colors.lightGray }}
-                                            title={note.title}
-                                        />
-                                    ) : (
-                                        <div className="text-center p-6 bg-white rounded-2xl border border-zinc-200 shadow-sm max-w-sm">
-                                            <X className="w-10 h-10 text-red-500 mx-auto mb-3" />
-                                            <p className="text-zinc-950 font-bold mb-1 text-sm">Preview Unavailable</p>
-                                            <p className="text-zinc-400 text-xs mb-4">
-                                                This file type cannot be displayed directly in-browser.
-                                            </p>
-                                            <button
-                                                onClick={handleDownloadClick}
-                                                className="px-4 py-2 bg-zinc-950 hover:bg-zinc-800 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
-                                            >
-                                                Download to View
-                                            </button>
-                                        </div>
-                                    )}
+                                    <FilePreview
+                                        fileUrl={note.fileData}
+                                        fileType={note.fileType}
+                                        fileName={note.fileName}
+                                        title={note.title}
+                                        onDownload={handleDownloadClick}
+                                    />
                                 </div>
 
                                 {/* Right Pane: Code / Content Preview */}
@@ -151,34 +131,13 @@ export function NotePreviewModal({ note, onClose, onDownload }) {
                             </div>
                         ) : (
                             <div className="flex-1 overflow-auto p-6 flex justify-center" style={{ background: theme.colors.softGray }}>
-                                {note.fileType?.startsWith("image/") ? (
-                                    <img
-                                        src={note.fileData}
-                                        alt={note.title}
-                                        className="max-w-full max-h-full object-contain rounded-2xl shadow-xl"
-                                    />
-                                ) : note.fileType === "application/pdf" ? (
-                                    <iframe
-                                        src={note.fileData}
-                                        className="w-full h-full rounded-2xl border bg-white"
-                                        style={{ borderColor: theme.colors.lightGray }}
-                                        title={note.title}
-                                    />
-                                ) : (
-                                    <div className="text-center p-12 bg-white rounded-2xl border border-zinc-200 shadow-xs max-w-md my-auto">
-                                        <X className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                                        <p className="text-zinc-950 font-bold mb-2">Preview Unavailable</p>
-                                        <p className="text-zinc-400 text-sm mb-6">
-                                            This file type cannot be displayed directly in-browser. Please download it to view.
-                                        </p>
-                                        <button
-                                            onClick={handleDownloadClick}
-                                            className="px-6 py-2.5 bg-zinc-950 hover:bg-zinc-800 text-white rounded-xl font-bold transition-colors cursor-pointer"
-                                        >
-                                            Download to View
-                                        </button>
-                                    </div>
-                                )}
+                                <FilePreview
+                                    fileUrl={note.fileData}
+                                    fileType={note.fileType}
+                                    fileName={note.fileName}
+                                    title={note.title}
+                                    onDownload={handleDownloadClick}
+                                />
                             </div>
                         )}
                     </motion.div>

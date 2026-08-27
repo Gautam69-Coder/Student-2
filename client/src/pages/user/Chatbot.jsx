@@ -5,7 +5,6 @@ import { theme } from "@/lib/theme";
 import { useData } from "@/context/DataContext";
 import { aiChatBot } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
-import { extractPdfText } from "@/Utils/extractingText";
 import { ChatHistorySidebar } from "@/components/features/chatbot/ChatHistorySidebar";
 import { ChatFeed } from "@/components/features/chatbot/ChatFeed";
 import { ContextSidebar } from "@/components/features/chatbot/ContextSidebar";
@@ -261,52 +260,43 @@ export function Chatbot() {
             })
         );
 
-        // Compile augmented prompt context
-        let promptPayload = "";
-        const instructions = systemPromptOptions[systemPrompt] || systemPromptOptions["Default Tutor"];
-        promptPayload += `System Instructions:\n${instructions}\n\n`;
+        // Filter and compile notes context (text notes only, ignoring PDFs/files)
+        const notesPayload = attachedNotes
+            .map((nId) => notes.find((n) => n._id === nId))
+            .filter((note) => note && note.fileType === "NAN")
+            .map((note) => ({
+                title: note.title,
+                section: note.section,
+                content: note.content || "",
+            }));
 
-        if (attachedNotes.length > 0 || attachedPracticals.length > 0) {
-            promptPayload += `Attached Context details:\n`;
-
-            for (const nId of attachedNotes) {
-                const note = notes.find((n) => n._id === nId);
-
-                if (note.fileType === "NAN") {
-                    promptPayload += `[Attachment Note: ${note.title}]\nCategory: ${note.section}\nContent summary: ${note.content || "Code file uploaded"}\n\n`;
-                }
-
-                if (note.fileType === "application/pdf") {
-                    const text = await extractPdfText(note.fileData);
-                    promptPayload += `[Attachment Note: ${note.title}]\nCategory: ${note.section}\nContent summary: ${text || "Code file uploaded"}\n\n`;
-                }
-
-            }
-            attachedPracticals.forEach((pId) => {
+        // Filter and compile practical questions context
+        const practicalsPayload = attachedPracticals
+            .map((pId) => {
                 let practical;
-
                 for (const p of practicals) {
-                    practical = p.questions.find(q => q._id === pId);
+                    practical = p.questions.find((q) => q._id === pId);
                     if (practical) break;
                 }
-
-                console.log('Practical:', practical);
-                // console.log('Questions Text:', ` ${practical.question}\nCode: ${practical.code?.map((c) => c) || ""}`);
-                // // console.log('Practical being processed for prompt:', practicals.map(p => p.questions.find(q=> q._id === pId)));
-
-                if (practical) {
-                    const questionsText = `${practical.question}\nCode: ${practical.code?.map((c) => JSON.stringify(c)).join(", ") || ""}`;
-                    promptPayload += `[Attachment Practical: ${practical.code?.map((c) => c.languageName).join(", ") || ""}]\n${questionsText}\n\n`;
-                }
-            });
-            promptPayload += `\nUse the above attached resources to precisely context-match the student queries if applicable.\n\n`;
-        }
-        
-        promptPayload += `Student Query: ${queryText}`;
+                if (!practical) return null;
+                return {
+                    question: practical.question,
+                    code: practical.code || [],
+                };
+            })
+            .filter(Boolean);
 
         try {
-            // Attempt server call
-            const res = await aiChatBot(promptPayload);
+            // Attempt server call with structured parameters
+            const res = await aiChatBot({
+                queryText,
+                activeChatId,
+                systemPrompt,
+                attachedNotes: notesPayload,
+                attachedPracticals: practicalsPayload,
+                temperature,
+                maxTokens
+            });
             let assistantResponse = "";
             if (res.data && res.data.data) {
                 assistantResponse = res.data.data;

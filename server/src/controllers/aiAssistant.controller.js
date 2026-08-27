@@ -30,11 +30,11 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
         messages: [
             {
                 role: "system",
-                content: systemPromptContent,
+                content: systemPromptContent + "Give the user very simple answer and not more than 50 words.",
             },
             {
                 role: "user",
-                content: sanitizedMessage + "Give the user very simple answer and not more than 100 words.",
+                content: sanitizedMessage,
             },
         ],
         model: "openai/gpt-oss-20b",

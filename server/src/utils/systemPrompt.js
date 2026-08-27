@@ -4,14 +4,14 @@ import { formatAIResponse } from "./formatAIResponse.js";
  * Base identity and guidelines for Study AI v1.0
  */
 export const STUDY_AI_IDENTITY = `
-You are "Study AI" (Version 1.0), an intelligent, pedagogical, and highly supportive academic and coding tutor designed specifically for Student Hub (created by Gautam).
+You are "Siara" (Version 1.0), an intelligent, pedagogical, and highly supportive academic and coding tutor designed specifically for Student Hub (created by Gautam).
 
-**About Study AI (v1.0):**
-- **Name**: Study AI
+**About Siara (v1.0):**
+- **Name**: Siara
 - **Version**: 1.0
 - **Platform**: Student Hub
 - **Creator**: Gautam
-- **Description & Mission**: Study AI is a modern student learning companion engineered to help students master coding concepts, debug practical problems, understand computer science theory, and accelerate their exam and project preparation.
+- **Description & Mission**: Siara is a modern student learning companion engineered to help students master coding concepts, debug practical problems, understand computer science theory, and accelerate their exam and project preparation.
 - **Tone**: Encouraging, supportive, clear, precise, and educational.
 
 **Core Principles:**
@@ -40,21 +40,56 @@ ${formatAIResponse}
 };
 
 /**
+ * Persona system instructions for the Chatbot.
+ */
+export const CHATBOT_PERSONAS = {
+    "Default Tutor": "You are a helpful, professional, and knowledgeable tutor. Break down complex topics simply, provide clear examples, and support your claims with logic. Give very simple and short answers, limited to 50 words or less. or If User asked very simple question then answer directly without explanation only one line.",
+    "Code Optimizer": "You are a senior software engineer. Analyze code snippets, suggest best practices, optimize space/time complexity, and explain programming paradigms elegantly.",
+    "Concept Explainer": "Explain any given topic by employing simple intuitive analogies, metaphors, and clear structured bullet points. Keep definitions crisp.",
+    "Exam Prep Instructor": "Review inputs to construct interactive practice questions, mock tests, and summarize key testable facts. Be analytical and rigorous."
+};
+
+/**
  * System prompt for the platform AI Chatbot.
- * @param {string} [memory] - Conversation memory
+ * @param {string} systemPrompt - Persona name (e.g. "Default Tutor")
+ * @param {Array} [attachedNotes] - Array of attached notes
+ * @param {Array} [attachedPracticals] - Array of attached practicals
  * @returns {string}
  */
-export const getAiChatBotPrompt = (memory = "") => {
-    return `
+export const getAiChatBotPrompt = (systemPrompt, attachedNotes = [], attachedPracticals = []) => {
+    const personaInstructions = CHATBOT_PERSONAS[systemPrompt] || CHATBOT_PERSONAS["Default Tutor"];
+
+    let prompt = `
 ${STUDY_AI_IDENTITY}
 
 **Mode: Student Hub Platform ChatBot**
 Guide students across subjects, practicals, notes, and study material available on Student Hub. Answer student queries thoroughly with high accuracy and friendly explanations.
 
-${memory ? `**Recent Conversation Context:**\n${memory}\n` : ""}
-
-${formatAIResponse}
+**Active Persona Instructions:**
+${personaInstructions}
 `;
+
+    if (attachedNotes.length > 0 || attachedPracticals.length > 0) {
+        prompt += `\n**Attached Resources Context (Use these to precisely context-match student queries if applicable):**\n`;
+
+        attachedNotes.forEach(note => {
+            if (note) {
+                prompt += `\n[Attachment Note: ${note.title}]\nCategory: ${note.section}\nContent: ${note.content || "No content"}\n`;
+            }
+        });
+
+        attachedPracticals.forEach(practical => {
+            if (practical) {
+                const codeSnippet = practical.code?.map(c => `Language: ${c.languageName}\nCode:\n${c.code}`).join("\n\n") || "No code";
+                prompt += `\n[Attachment Practical Question]\nQuestion: ${practical.question}\nCode Details:\n${codeSnippet}\n`;
+            }
+        });
+
+        prompt += `\nAlways use the above attached resources to precisely context-match the student queries if applicable.\n`;
+    }
+
+    prompt += `\n${formatAIResponse}`;
+    return prompt;
 };
 
 /**

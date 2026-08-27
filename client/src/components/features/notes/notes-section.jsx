@@ -20,6 +20,44 @@ import { NotePreviewModal } from "./note-preview-modal";
 import { NoteCard } from "./note-card";
 import { downloadFile } from "@/Utils/download";
 
+export function NoteCardSkeleton() {
+    return (
+        <div
+            className="rounded-2xl overflow-hidden border p-5 flex flex-col h-[280px] justify-between animate-pulse"
+            style={{
+                background: theme.colors.white,
+                borderColor: theme.colors.lightGray,
+                boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
+            }}
+        >
+            <div>
+                {/* Top row: Icon + Title */}
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="h-10 w-10 rounded-xl bg-slate-200/70 shrink-0" />
+                    <div className="h-4 bg-slate-200/70 rounded w-2/3" />
+                </div>
+
+                {/* Middle row: Date / Badge */}
+                <div className="flex gap-2 mb-4">
+                    <div className="h-3 bg-slate-200/70 rounded w-1/4" />
+                    <div className="h-3 bg-slate-200/70 rounded w-1/6" />
+                </div>
+
+                {/* Main content: file or code box */}
+                <div className="mb-4">
+                    <div className="h-20 bg-slate-200/50 rounded-2xl w-full" />
+                </div>
+            </div>
+
+            {/* Bottom row: Button placeholders */}
+            <div className="flex gap-2 mt-auto">
+                <div className="h-9 bg-slate-200/70 rounded-xl flex-1" />
+                <div className="h-9 bg-slate-200/70 rounded-xl flex-1" />
+            </div>
+        </div>
+    );
+}
+
 export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onUpdate }) {
     const [selectedNote, setSelectedNote] = useState(null);
     const [copying, setCopying] = useState(null);
@@ -104,17 +142,6 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
         setShowCodeModal(true);
     }, []);
 
-    if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[300px] gap-4">
-                <RippleLoader />
-                <p className="text-sm font-semibold" style={{ color: theme.colors.darkGray }}>
-                    Loading your notes...
-                </p>
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-6">
             {/* Header Card */}
@@ -198,44 +225,83 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
                 >
                     <div>
                         <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Notes</p>
-                        <p className="text-xl font-black text-slate-900 mt-0.5">{notes.length}</p>
+                        {loading ? (
+                            <div className="h-6 bg-slate-200/70 rounded w-12 mt-1.5 animate-pulse" />
+                        ) : (
+                            <p className="text-xl font-black text-slate-900 mt-0.5">{notes.length}</p>
+                        )}
                     </div>
                     <div>
                         <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sections</p>
-                        <p className="text-xl font-black text-slate-900 mt-0.5">{sections.length - 1}</p>
+                        {loading ? (
+                            <div className="h-6 bg-slate-200/70 rounded w-12 mt-1.5 animate-pulse" />
+                        ) : (
+                            <p className="text-xl font-black text-slate-900 mt-0.5">{sections.length - 1}</p>
+                        )}
                     </div>
                     <div>
                         <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Files / Documents</p>
-                        <p className="text-xl font-black text-slate-900 mt-0.5">{totalFiles}</p>
+                        {loading ? (
+                            <div className="h-6 bg-slate-200/70 rounded w-12 mt-1.5 animate-pulse" />
+                        ) : (
+                            <p className="text-xl font-black text-slate-900 mt-0.5">{totalFiles}</p>
+                        )}
                     </div>
                     <div>
                         <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Code Snippets</p>
-                        <p className="text-xl font-black text-slate-900 mt-0.5">{totalCodeNotes}</p>
+                        {loading ? (
+                            <div className="h-6 bg-slate-200/70 rounded w-12 mt-1.5 animate-pulse" />
+                        ) : (
+                            <p className="text-xl font-black text-slate-900 mt-0.5">{totalCodeNotes}</p>
+                        )}
                     </div>
                 </div>
             </div>
 
             {/* Section Filter Tabs */}
-            {sections.length > 2 && (
+            {loading ? (
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
                     <Filter className="w-4 h-4 text-slate-400 shrink-0 ml-1 mr-1" />
-                    {sections.map((sec) => (
-                        <button
-                            key={sec}
-                            onClick={() => setActiveSection(sec)}
-                            className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${activeSection === sec
-                                ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
-                                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-                                }`}
-                        >
-                            {sec}
-                        </button>
-                    ))}
+                    <div className="h-9 bg-slate-200/70 rounded-xl w-16 animate-pulse" />
+                    <div className="h-9 bg-slate-200/70 rounded-xl w-24 animate-pulse" />
+                    <div className="h-9 bg-slate-200/70 rounded-xl w-20 animate-pulse" />
                 </div>
+            ) : (
+                sections.length > 2 && (
+                    <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                        <Filter className="w-4 h-4 text-slate-400 shrink-0 ml-1 mr-1" />
+                        {sections.map((sec) => (
+                            <button
+                                key={sec}
+                                onClick={() => setActiveSection(sec)}
+                                className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${activeSection === sec
+                                    ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
+                                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                                    }`}
+                            >
+                                {sec}
+                            </button>
+                        ))}
+                    </div>
+                )
             )}
 
             {/* Main Content Area */}
-            {filteredGroups.length === 0 ? (
+            {loading ? (
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="h-5 bg-slate-200/70 rounded w-28 animate-pulse" />
+                        <div className="h-5 bg-slate-200/70 rounded-full w-8 animate-pulse" />
+                        <div className="h-[1px] flex-1 bg-slate-200/60" />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {Array.from({ length: 6 }).map((_, idx) => (
+                            <NoteCardSkeleton key={idx} />
+                        ))}
+                    </div>
+                </div>
+            ) : filteredGroups.length === 0 ? (
                 <div className="text-center py-20 bg-white rounded-3xl border border-slate-200">
                     <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                     <p className="text-lg font-bold text-slate-700">No notes found</p>

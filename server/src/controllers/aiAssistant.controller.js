@@ -4,11 +4,14 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import { sanitizeForPrompt } from '../utils/sanitize.js';
 import { getUserGroqClient } from '../utils/aiClient.js';
 import { getAiAssistantPrompt } from '../utils/systemPrompt.js';
+import { UserPersonalInfo } from "../utils/UserPersonalInfo.js";
 
 export const handleAiAssistantChat = asyncHandler(async (req, res) => {
     const { message } = req.body;
     const groq = await getUserGroqClient(req.user.id);
     const sanitizedMessage = sanitizeForPrompt(message);
+
+    const getUserPersonalInfo = await UserPersonalInfo(message, req.user.id);
 
     const memory = await AICodeHelperMemory.findOneAndUpdate(
         { userId: req.user.id },
@@ -30,7 +33,9 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
         messages: [
             {
                 role: "system",
-                content: systemPromptContent + "Give the user very simple answer and not more than 50 words.",
+                content: systemPromptContent + `Give the user very simple answer and not more than 50 words.
+                 ${getUserPersonalInfo} this is user personal info if you need this use it .     
+                `,
             },
             {
                 role: "user",

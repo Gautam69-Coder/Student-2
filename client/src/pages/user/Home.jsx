@@ -33,6 +33,7 @@ import { fetchUserProgress } from "@/Api/api";
 import { Link } from "react-router-dom";
 import { DotLoader } from "@/Utils/loaders";
 import { useData } from "@/context/DataContext"
+import { canAccessPracticals } from "@/Utils/vesCheck";
 
 function SubjectProgressRow({ name, progress, done, total, Icon }) {
     const remaining = Math.max(0, total - done);
@@ -211,7 +212,7 @@ export function Home() {
 
     const quickActions = [
         { label: "Add Note", path: "notes", icon: Notebook },
-        { label: "Browse Practicals", path: "practicals", icon: FlaskConical },
+        ...(canAccessPracticals(user) ? [{ label: "Browse Practicals", path: "practicals", icon: FlaskConical }] : []),
         { label: "AI Chatbot", path: "chatbot", icon: Sparkles },
         { label: "Ask Community", path: "community", icon: Users },
         { label: "Start Practice", path: "coding-practice", icon: Code2 },
@@ -270,7 +271,7 @@ export function Home() {
             name: "Rahul Kadam",
             role: "B.Tech CSE Student",
             rating: "★★★★★",
-            comment: "Clean UI, instant access to notes & PYQs without annoying popups. The community discussion and coding tracks are the best features of this platform!",
+            comment: "Clean UI, instant access to study notes without annoying popups. The community discussion and coding tracks are the best features of this platform!",
             avatarBg: "bg-amber-100 text-amber-800 border border-amber-200/60"
         }
     ]
@@ -328,8 +329,8 @@ export function Home() {
                             <BookOpen size={18} />
                         </div>
                         <div>
-                            <div className="font-bold text-xs text-slate-900">Notes & PYQs</div>
-                            <div className="text-[11px] text-slate-500 font-medium">Syllabus & Practicals</div>
+                            <div className="font-bold text-xs text-slate-900">Study Notes</div>
+                            <div className="text-[11px] text-slate-500 font-medium">{canAccessPracticals(user) ? "Syllabus & Practicals" : "Syllabus & Study Material"}</div>
                         </div>
                     </div>
                     <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
@@ -395,13 +396,15 @@ export function Home() {
             {/* Stat cards row */}
             <div className="flex items-center sm:flex-nowrap flex-wrap justify-between gap-4 ">
 
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-                    <DashStatCard
-                        icon={stats.subjects.icon}
-                        title="Practicals Sections"
-                        value={dashboardStats.practicalSections || 0}
-                        trend={stats.subjects.trend}
-                    />
+                <div className={`grid grid-cols-2 sm:grid-cols-2 ${canAccessPracticals(user) ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-4 w-full`}>
+                    {canAccessPracticals(user) && (
+                        <DashStatCard
+                            icon={stats.subjects.icon}
+                            title="Practicals Sections"
+                            value={dashboardStats.practicalSections || 0}
+                            trend={stats.subjects.trend}
+                        />
+                    )}
                     <DashStatCard
                         icon={stats.subjects.icon}
                         title="Note Sections"
@@ -409,12 +412,14 @@ export function Home() {
                         trend={stats.subjects.trend}
                     />
 
-                    <DashStatCard
-                        icon={stats.notes.icon}
-                        title="Total Practicals"
-                        value={dashboardStats.totalPracticals || 0}
-                        trend={stats.notes.trend}
-                    />
+                    {canAccessPracticals(user) && (
+                        <DashStatCard
+                            icon={stats.notes.icon}
+                            title="Total Practicals"
+                            value={dashboardStats.totalPracticals || 0}
+                            trend={stats.notes.trend}
+                        />
+                    )}
                     <DashStatCard
                         icon={stats.visits.icon}
                         title="Platform Visits"

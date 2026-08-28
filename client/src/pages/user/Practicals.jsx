@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
 import { PracticalCard } from '@/components/features/practicals/practical-card';
 import { SEO } from '@/components/common/SEO';
 import AddSections from '@/components/features/notes/add-sections';
@@ -12,10 +12,15 @@ import { DashboardSidebar } from "@/components/layout/sidebar";
 import { FileText, Users, MessageSquare, FlaskConical, Code2, Info, Home } from 'lucide-react';
 import { theme } from '@/lib/theme';
 import { useData } from '@/context/DataContext';
+import { canAccessPracticals } from '@/Utils/vesCheck';
 
 export function Practicals() {
     const { practicals, subjects, user } = useData();
     const location = useLocation();
+
+    if (!canAccessPracticals(user)) {
+        return <Navigate to="/dashboard" replace />;
+    }
     const [selectedSubject, setSelectedSubject] = useState("");
     const [selectedPracticalNo, setSelectedPracticalNo] = useState("");
     const [showAddSection, setShowAddSection] = useState(false);

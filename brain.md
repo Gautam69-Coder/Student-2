@@ -1,7 +1,7 @@
 # Student Hub - Project Brain (Architecture & Logic)
 
 ## Overview
-Student Hub is an all-in-one platform for modern students featuring organized practicals, previous year questions (PYQs), AI-powered assistance, and real-time collaboration tools. It separates access into Student and Administrator roles.
+Student Hub is an all-in-one platform for modern students featuring organized study notes, coding practice tracks, AI-powered assistance, and real-time collaboration tools. It separates access into Student and Administrator roles.
 
 ## Tech Stack
 - **Frontend**: React 18, Vite, Tailwind CSS, Framer Motion for animations, React Router for navigation, Socket.io Client for real-time features.

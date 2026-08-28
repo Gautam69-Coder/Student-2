@@ -8,6 +8,7 @@ import { NotePreviewModal } from "@/components/features/notes/note-preview-modal
 import { downloadFile } from "@/Utils/download";
 import { useTitle } from "@/hooks/useTitle";
 import { useData } from "@/context/DataContext";
+import { canAccessPracticals } from "@/Utils/vesCheck";
 
 import { Home } from "./Home";
 import { Notes } from "./Notes";
@@ -94,26 +95,27 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [] };
 
         const query = searchQuery.toLowerCase();
+        const hasPracticalAccess = canAccessPracticals(user);
         return {
             subjects: subjects.filter(s =>
                 (s.name)?.toLowerCase()?.includes(query) ||
                 (s.code)?.toLowerCase()?.includes(query)
             ),
-            practicals: practicals.filter(p =>
+            practicals: hasPracticalAccess ? practicals.filter(p =>
                 (p.section)?.toLowerCase()?.includes(query) ||
                 p.questions?.some(q => q?.question?.toLowerCase()?.includes(query) || q?.code?.toLowerCase()?.includes(query))
-            ),
+            ) : [],
             notes: notes.filter(n =>
                 (n.title)?.toLowerCase()?.includes(query) ||
                 (n.content)?.toLowerCase()?.includes(query)
             ),
         };
-    }, [searchQuery, subjects, practicals, notes]);
+    }, [searchQuery, subjects, practicals, notes, user]);
 
     const navItems = [
         { label: "Home", path: "/dashboard", icon: HomeIcon },
         { label: "Notes", path: "/dashboard/notes", icon: FileText },
-        { label: "Practicals", path: "/dashboard/practicals", icon: FlaskConical },
+        ...(canAccessPracticals(user) ? [{ label: "Practicals", path: "/dashboard/practicals", icon: FlaskConical }] : []),
         { label: "Practice", path: "/dashboard/coding-practice", icon: Code2 },
         { label: "AI Chatbot", path: "/dashboard/chatbot", icon: Sparkles },
         { label: "Community", path: "/dashboard/community", icon: Users },
@@ -219,19 +221,21 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                                     {searchResults.subjects.length}
                                                 </span>
                                             </button>
-                                            <button
-                                                onClick={() => setActiveSearchTab("practicals")}
-                                                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "practicals"
-                                                    ? "bg-zinc-950 text-white shadow-sm"
-                                                    : "text-zinc-650 hover:bg-zinc-50"
-                                                    }`}
-                                            >
-                                                Practicals
-                                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${activeSearchTab === "practicals" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
-                                                    }`}>
-                                                    {searchResults.practicals.length}
-                                                </span>
-                                            </button>
+                                            {canAccessPracticals(user) && (
+                                                <button
+                                                    onClick={() => setActiveSearchTab("practicals")}
+                                                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "practicals"
+                                                        ? "bg-zinc-950 text-white shadow-sm"
+                                                        : "text-zinc-650 hover:bg-zinc-50"
+                                                        }`}
+                                                >
+                                                    Practicals
+                                                    <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${activeSearchTab === "practicals" ? "bg-zinc-800 text-white" : "bg-zinc-100 text-zinc-400"
+                                                        }`}>
+                                                        {searchResults.practicals.length}
+                                                    </span>
+                                                </button>
+                                            )}
                                             <button
                                                 onClick={() => setActiveSearchTab("notes")}
                                                 className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "notes"
@@ -378,7 +382,11 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                     <Route path="notes" element={<Notes />} />
 
                                     {/* Practicals Route */}
-                                    <Route path="practicals" element={<Practicals />} />
+                                    {canAccessPracticals(user) ? (
+                                        <Route path="practicals" element={<Practicals />} />
+                                    ) : (
+                                        <Route path="practicals" element={<Navigate to="/dashboard" replace />} />
+                                    )}
 
                                     {/* ChatBot Route */}
                                     <Route path="chatbot" element={<Chatbot />} />

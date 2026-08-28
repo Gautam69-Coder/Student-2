@@ -1,10 +1,25 @@
 import Practical from '../models/Practical.js';
+import User from '../models/User.js';
 import { uploadCloudinary } from '../utils/uploadCloudinary.js';
 import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
 export const getPracticals = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        throw new ApiError(401, 'Unauthorized');
+    }
+
+    const email = user.email || '';
+    const domain = email.split('@')[1]?.toLowerCase();
+    const isVesUser = domain === 'ves.ac.in' || domain === 'ves.edu.in' || domain === 'vesit.edu.in';
+    const isAuthorized = user.role === 'admin' || user.role === 'superadmin' || isVesUser;
+
+    if (!isAuthorized) {
+        throw new ApiError(403, 'Forbidden: Practicals are only accessible with a VES college ID');
+    }
+
     const practicals = await Practical.find().collation({ locale: "en", numericOrdering: true });
     res.status(200).json(new ApiResponse(200, practicals, "Success"));
 });

@@ -5,11 +5,12 @@
 [![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-9.0+-green.svg)](https://www.mongodb.com/)
 
-A modern student portal that brings practicals, PYQs, notes, AI assistance, community collaboration, and real-time tools into one workspace.
+A modern student portal that brings personal notes management, coding practice tracks, AI-powered assistance, community collaboration, and real-time tools into one workspace.
 
 ## 🌟 What’s Included
 
-- **Organized Study Materials**: Notes, practicals, and previous year questions
+- **Organized Study Materials**: Personal and shared study notes
+- **Coding Practice Tracks**: Preloaded challenges in JavaScript, Python, C++, Java, and DSA
 - **AI Assistant**: Help with coding, academics, and concept explanation
 - **Community Hub**: Create posts, comment, and engage with peers
 - **Real-time Chat & Notifications**: Live communication and alerts
@@ -128,10 +129,11 @@ npm run dev
 
 ### Student Flow
 1. Register or log in
-2. Access notes, practicals, and PYQs
-3. Use the AI assistant for learning support
-4. Join community discussions
-5. Track progress and receive notifications
+2. Access study notes
+3. Practice coding on language tracks
+4. Use the AI assistant for learning support
+5. Join community discussions
+6. Track progress and receive notifications
 
 ### Admin Flow
 1. Manage users and permissions

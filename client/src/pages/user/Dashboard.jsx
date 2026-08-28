@@ -67,6 +67,18 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
     const [selectedNote, setSelectedNote] = useState(null);
     const [isBell, setisBell] = useState(false);
     const [activeSearchTab, setActiveSearchTab] = useState("all"); // "all" | "subjects" | "practicals" | "notes"
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+        return localStorage.getItem("sidebar_collapsed") === "true";
+    });
+
+    const toggleSidebarCollapse = useCallback(() => {
+        setIsSidebarCollapsed(prev => {
+            const next = !prev;
+            localStorage.setItem("sidebar_collapsed", String(next));
+            return next;
+        });
+    }, []);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -112,28 +124,30 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
     return (
         <div className="flex flex-col min-h-screen bg-background  transition-colors duration-300">
             <div className="flex">
-                <div>
-                    <DashboardSidebar
-                        navItems={navItems}
-                        userName={userName || "Student Name"}
-                        userEmail={user?.email || "student@email.com"}
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
-                        isBell={isBell}
-                        setisBell={setisBell}
-                        onLogout={() => {
-                            // Handle logout
-                            onLogout();
+                <DashboardSidebar
+                    isCollapsed={isSidebarCollapsed}
+                    onToggleCollapse={toggleSidebarCollapse}
+                    navItems={navItems}
+                    userName={userName || "Student Name"}
+                    userEmail={user?.email || "student@email.com"}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    isBell={isBell}
+                    setisBell={setisBell}
+                    onLogout={() => {
+                        // Handle logout
+                        onLogout();
 
-                        }}    // Add your logout logic here
-                        onShare={() => {
-                            navigate("/dashboard/notes", { state: { openShare: true } });
-                        }}
-                    />
-                </div>
+                    }}    // Add your logout logic here
+                    onShare={() => {
+                        navigate("/dashboard/notes", { state: { openShare: true } });
+                    }}
+                />
 
                 <div className="flex-1 min-w-0">
                     <TopNavBar
+                        isSidebarCollapsed={isSidebarCollapsed}
+                        onToggleSidebar={toggleSidebarCollapse}
                         userName={userName}
                         userEmail={user?.email}
                         userAvatar={user?.avatar}

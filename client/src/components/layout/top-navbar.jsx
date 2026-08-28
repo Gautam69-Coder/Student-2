@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Bell, ChevronDown, Search, Shield, Key } from "lucide-react";
+import { motion } from "framer-motion";
+import { Bell, ChevronDown, Search, Shield, Key, PanelLeftOpen, PanelLeftClose } from "lucide-react";
 import { theme } from "@/lib/theme";
 import { useNavigate } from "react-router-dom";
 import { saveApiKey } from "@/Api/api";
@@ -15,7 +16,9 @@ export function TopNavBar({
     setSearchQuery,
     isBell,
     setisBell,
-    onLogout
+    onLogout,
+    isSidebarCollapsed,
+    onToggleSidebar,
 }) {
 
     const { user } = useData();
@@ -28,6 +31,7 @@ export function TopNavBar({
     const [isApiKey, setIsApiKey] = useState(true);
 
     const navigate = useNavigate();
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     const checkApikey = () => {
         if (user?.apiKey) {
@@ -46,6 +50,13 @@ export function TopNavBar({
         checkApikey();
     }, [showAddKeyModal]);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const handleSaveApiKey = async () => {
         setSavingApiKey(true);
@@ -66,27 +77,41 @@ export function TopNavBar({
     };
 
     return (
-        <div
-            className="flex flex-1 fixed top-0 right-0 md:left-[250px] left-0 z-50 items-center justify-between sm:px-6 px-2 py-4 border-b shadow-sm"
+        <motion.div
+            animate={{
+                left: isMobile ? 0 : (isSidebarCollapsed ? 0 : 250)
+            }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="flex flex-1 fixed top-0 right-0 left-0 z-50 items-center justify-between sm:px-6 px-2 py-4 border-b shadow-sm"
             style={{
                 background: theme.colors.white,
                 borderColor: theme.colors.lightGray,
             }}
         >
-            {/* Profile Dropdown - Left */}
-            <div className="relative">
+            <div className="flex items-center gap-3">
+                {/* Sidebar Toggle Button */}
                 <button
-                    onClick={() => setShowProfile(!showProfile)}
-                    className="flex items-center gap-3 sm:px-3 px-1 sm:py-2 rounded-lg hover:bg-slate-100 transition-all"
-                    style={{ background: "transparent" }}
+                    onClick={onToggleSidebar}
+                    className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-all cursor-pointer hidden md:flex items-center justify-center border border-slate-200"
+                    title={isSidebarCollapsed ? "Show Sidebar" : "Hide Sidebar"}
                 >
-                    {userAvatar && (
-                        <img
-                            src={userAvatar}
-                            alt={userName}
-                            className="w-8 h-8 rounded-lg"
-                        />
-                    )}
+                    {isSidebarCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+                </button>
+
+                {/* Profile Dropdown - Left */}
+                <div className="relative">
+                    <button
+                        onClick={() => setShowProfile(!showProfile)}
+                        className="flex items-center gap-3 sm:px-3 px-1 sm:py-2 rounded-lg hover:bg-slate-100 transition-all"
+                        style={{ background: "transparent" }}
+                    >
+                        {userAvatar && (
+                            <img
+                                src={userAvatar}
+                                alt={userName}
+                                className="w-8 h-8 rounded-lg"
+                            />
+                        )}
                     <div className="text-left hidden sm:block">
                         <div className="text-sm font-semibold" style={{ color: theme.colors.dark }}>
                             {userName}
@@ -144,6 +169,7 @@ export function TopNavBar({
                     </>
                 )}
             </div>
+        </div>
 
             {/* Search Bar - Center */}
             <div className="flex-1 sm:mx-6 mx-2 shadow-2xl ">
@@ -328,6 +354,6 @@ export function TopNavBar({
 
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

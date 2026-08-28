@@ -20,7 +20,11 @@ export const SocketProvider = ({ children, user }) => {
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
         const socketInstance = io(SOCKET_URL, {
+            auth: {
+                token: token
+            },
             withCredentials: true,
             transports: ['websocket', 'polling']
         });
@@ -46,7 +50,7 @@ export const SocketProvider = ({ children, user }) => {
         return () => {
             socketInstance.disconnect();
         };
-    }, []);
+    }, [user]);
 
     // Separate effect to handle user registration when user OR connection changes
     useEffect(() => {

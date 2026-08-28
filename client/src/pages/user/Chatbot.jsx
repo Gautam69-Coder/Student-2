@@ -463,22 +463,21 @@ I have received your prompt. Here are some options you can explore:
     const activeChat = conversations.find((c) => c.id === activeChatId) || conversations[0];
 
     return (
-        <DashboardLayout>
-            <div className="flex flex-col gap-4 w-full">
-                {/* Workspace card */}
-                <Card
-                    className={`rounded-2xl overflow-hidden transition-all duration-300 ${isFullscreen ? "fixed inset-0 z-50 rounded-none m-0 border-0" : ""
-                        }`}
-                    style={{ borderColor: theme.colors.lightGray, background: theme.colors.white }}
-                >
-                    <CardContent className="p-0">
-                        <div
-                            className="flex w-full h-full"
-                            style={{
-                                height: isFullscreen ? "90vh" : "75vh",
-                                minHeight: isFullscreen ? "90vh" : "75vh",
-                            }}
-                        >
+        <DashboardLayout css="p-0 flex flex-col h-[calc(100vh-148px)] md:h-[calc(100vh-80px)] overflow-hidden">
+            {/* Workspace card */}
+            <Card
+                className={`w-full h-full border-0 rounded-none m-0 shadow-none flex flex-col overflow-hidden transition-all duration-300 ${isFullscreen ? "fixed inset-0 z-50 rounded-none m-0 border-0" : ""
+                    }`}
+                style={{ borderColor: theme.colors.lightGray, background: theme.colors.white }}
+            >
+                <CardContent className="p-0 flex-1 flex flex-col min-h-0">
+                    <div
+                        className="flex w-full h-full flex-1 max-h-[80vh] "
+                        style={{
+                            height: "100%",
+                            minHeight: "100%",
+                        }}
+                    >
                             <ChatHistorySidebar
                                 conversations={conversations}
                                 activeChatId={activeChatId}
@@ -522,7 +521,6 @@ I have received your prompt. Here are some options you can explore:
                         </div>
                     </CardContent>
                 </Card>
-            </div>
             {showApiKeyModal && (
                 <ApiKeyModal
                     isOpen={showApiKeyModal}

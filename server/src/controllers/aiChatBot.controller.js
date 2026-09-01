@@ -1,12 +1,10 @@
 import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
-import { sanitizeForPrompt } from '../utils/sanitize.js';
 import { getUserGroqClient } from '../utils/aiClient.js';
 import { getAiChatBotPrompt } from '../utils/systemPrompt.js';
 import ChatbotMemory from '../models/ChatbotMemory.js';
-import UserMemory from '../models/UserMemory.js';
 import { UserPersonalInfo } from '../utils/UserPersonalInfo.js';
-
+import { ApiError } from '../utils/ApiError.js';
 
 export const handleAiChatBot = asyncHandler(async (req, res) => {
     const {
@@ -78,3 +76,21 @@ Current user query: ${queryText}`
     );
     res.status(200).json(new ApiResponse(200, result, "Success"));
 });
+
+export const deleteConversation = asyncHandler(async (req, res) => {
+   
+    const { deleteId } = req.body;
+    
+    if (!deleteId) {
+        throw new ApiError(400, "Delete Id is required");
+    }
+
+    const deleteData = await ChatbotMemory.findOneAndDelete(
+        { conversationId: deleteId },
+        { returnDocument: 'after' }
+    );
+
+    console.log(deleteData);
+
+    res.status(200).json(new ApiResponse(200, deleteData , "Conversation delete SuccessFully"))
+})

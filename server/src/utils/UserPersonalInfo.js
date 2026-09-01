@@ -28,15 +28,15 @@ Respond ONLY with valid JSON in this exact shape, no markdown fences, no extra t
     const response = completion.choices[0]?.message?.content;
     console.log(response);
 
-    const userPersonalIfo = JSON.parse(response).personalInfo
+    const userPersonalInfo = JSON.parse(response).personalInfo
 
-    if (userPersonalIfo !== null) {
+    if (userPersonalInfo !== null) {
         await UserMemory.findOneAndUpdate(
             { userId },
             {
                 $push: {
                     personalInfo: {
-                        $each: [userPersonalIfo]
+                        $each: [userPersonalInfo]
                     }
                 }
             },

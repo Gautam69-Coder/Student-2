@@ -135,6 +135,7 @@ export const fetchDashboardStats = () => api.get('/stats/dashboard')
 export const aiAssistant = (data) => api.post('/aiassistant', { message: data })
 export const aiCodeHelper = (context) => api.post('/aicodehelper', { context })
 export const aiChatBot = (data) => api.post('/aichatbot', { message: data })
+export const aiChatBotDeleteConversation = (data) => api.post('/aichatbot/delete', { deleteId: data })
 
 
 //AI code Checker 

@@ -9,6 +9,7 @@ import { ChatHistorySidebar } from "@/components/features/chatbot/ChatHistorySid
 import { ChatFeed } from "@/components/features/chatbot/ChatFeed";
 import { ContextSidebar } from "@/components/features/chatbot/ContextSidebar";
 import { ApiKeyModal } from "@/components/common/ApiKeyModal";
+import { aiChatBotDeleteConversation } from "@/Api/api";
 
 export function Chatbot() {
     const { user, notes, practicals } = useData();
@@ -36,19 +37,11 @@ export function Chatbot() {
     const [attachedNotes, setAttachedNotes] = useState([]);
     const [attachedPracticals, setAttachedPracticals] = useState([]);
 
-    const localStorageKey = useMemo(() => `studhub_chat_history_${user?.email || "guest"}`, [user]);
-
     const systemPromptOptions = {
         "Default Tutor": "You are a helpful, professional, and knowledgeable tutor. Break down complex topics simply, provide clear examples, and support your claims with logic. give me him very short answers and  pinpoint answers",
         "Code Optimizer": "You are a senior software engineer. Analyze code snippets, suggest best practices, optimize space/time complexity, and explain programming paradigms elegantly.",
         "Concept Explainer": "Explain any given topic by employing simple intuitive analogies, metaphors, and clear structured bullet points. Keep definitions crisp.",
         "Exam Prep Instructor": "Review inputs to construct interactive practice questions, mock tests, and summarize key testable facts. Be analytical and rigorous."
-    };
-
-    // Load Chat History from LocalStorage
-    // Save Chat History to LocalStorage on modifications
-    const saveToLocalStorage = (updatedConversations) => {
-        localStorage.setItem(localStorageKey, JSON.stringify(updatedConversations));
     };
 
     const loadConversationState = (chat) => {
@@ -79,28 +72,11 @@ export function Chatbot() {
         setConversations([newChat]);
         setActiveChatId(newChat.id);
         loadConversationState(newChat);
-        saveToLocalStorage([newChat]);
     };
 
     useEffect(() => {
-        const stored = localStorage.getItem(localStorageKey);
-        if (stored) {
-            try {
-                const parsed = JSON.parse(stored);
-                if (parsed.length > 0) {
-                    setConversations(parsed);
-                    // Select first chat
-                    setActiveChatId(parsed[0].id);
-                    loadConversationState(parsed[0]);
-                    return;
-                }
-            } catch (e) {
-                console.error("Failed to parse chat history:", e);
-            }
-        }
-        // Initialize an empty first chat if none exists
         initFirstChat();
-    }, [localStorageKey]);
+    }, []);
 
     // Sync active chat configuration with local states
     useEffect(() => {
@@ -115,14 +91,12 @@ export function Chatbot() {
     // Sync active configuration changes back into the conversations list
     const updateActiveChatConfig = (field, value) => {
         setConversations((prev) => {
-            const updated = prev.map((c) => {
+            return prev.map((c) => {
                 if (c.id === activeChatId) {
                     return { ...c, [field]: value };
                 }
                 return c;
             });
-            saveToLocalStorage(updated);
-            return updated;
         });
     };
 
@@ -181,23 +155,24 @@ export function Chatbot() {
         setConversations(updated);
         setActiveChatId(newChat.id);
         loadConversationState(newChat);
-        saveToLocalStorage(updated);
     };
 
-    const handleDeleteChat = (id, e) => {
-        e.stopPropagation();
-        const updated = conversations.filter((c) => c.id !== id);
-        if (updated.length === 0) {
-            initFirstChat();
-            return;
+    const handleDeleteChat = async (id, e) => {
+        console.log(id);
+        const deleteConversation = await aiChatBotDeleteConversation(id);
+        if (deleteConversation.data.success) {
+            const updated = conversations.filter((c) => c.id !== id);
+            if (updated.length === 0) {
+                initFirstChat();
+                return;
+            }
+            setConversations(updated);
+            if (activeChatId === id) {
+                setActiveChatId(updated[0].id);
+                loadConversationState(updated[0]);
+            }
+            customMessage({ type: "success", content: "Conversation deleted" });
         }
-        setConversations(updated);
-        saveToLocalStorage(updated);
-        if (activeChatId === id) {
-            setActiveChatId(updated[0].id);
-            loadConversationState(updated[0]);
-        }
-        customMessage({ type: "success", content: "Conversation deleted" });
     };
 
     const handleRenameChat = (id, newTitle) => {
@@ -208,7 +183,6 @@ export function Chatbot() {
             return c;
         });
         setConversations(updated);
-        saveToLocalStorage(updated);
     };
 
     const handleToggleNote = (id) => {
@@ -308,14 +282,12 @@ export function Chatbot() {
 
             const updatedMessagesWithBot = [...updatedMessagesWithUser, { role: "assistant", content: assistantResponse }];
             setConversations((prev) => {
-                const updated = prev.map((c) => {
+                return prev.map((c) => {
                     if (c.id === activeChatId) {
                         return { ...c, messages: updatedMessagesWithBot };
                     }
                     return c;
                 });
-                saveToLocalStorage(updated);
-                return updated;
             });
 
         } catch (error) {
@@ -327,14 +299,12 @@ export function Chatbot() {
             const assistantResponse = generateLocalFallback(queryText);
             const updatedMessagesWithBot = [...updatedMessagesWithUser, { role: "assistant", content: assistantResponse }];
             setConversations((prev) => {
-                const updated = prev.map((c) => {
+                return prev.map((c) => {
                     if (c.id === activeChatId) {
                         return { ...c, messages: updatedMessagesWithBot };
                     }
                     return c;
                 });
-                saveToLocalStorage(updated);
-                return updated;
             });
             customMessage({ type: "info", content: "Local Fallback response rendered" });
         } finally {
@@ -478,49 +448,49 @@ I have received your prompt. Here are some options you can explore:
                             minHeight: "100%",
                         }}
                     >
-                            <ChatHistorySidebar
-                                conversations={conversations}
-                                activeChatId={activeChatId}
-                                setActiveChatId={setActiveChatId}
-                                onNewChat={handleNewChat}
-                                onDeleteChat={handleDeleteChat}
-                                onRenameChat={handleRenameChat}
-                            />
+                        <ChatHistorySidebar
+                            conversations={conversations}
+                            activeChatId={activeChatId}
+                            setActiveChatId={setActiveChatId}
+                            onNewChat={handleNewChat}
+                            onDeleteChat={handleDeleteChat}
+                            onRenameChat={handleRenameChat}
+                        />
 
-                            <ChatFeed
-                                activeChat={activeChat}
-                                systemPrompt={systemPrompt}
-                                attachedNotesCount={attachedNotes.length}
-                                attachedPracticalsCount={attachedPracticals.length}
-                                isFullscreen={isFullscreen}
-                                setIsFullscreen={setIsFullscreen}
-                                isRightPanelOpen={isRightPanelOpen}
-                                setIsRightPanelOpen={setIsRightPanelOpen}
-                                isLoadingResponse={isLoadingResponse}
-                                onSend={handleSend}
-                            />
+                        <ChatFeed
+                            activeChat={activeChat}
+                            systemPrompt={systemPrompt}
+                            attachedNotesCount={attachedNotes.length}
+                            attachedPracticalsCount={attachedPracticals.length}
+                            isFullscreen={isFullscreen}
+                            setIsFullscreen={setIsFullscreen}
+                            isRightPanelOpen={isRightPanelOpen}
+                            setIsRightPanelOpen={setIsRightPanelOpen}
+                            isLoadingResponse={isLoadingResponse}
+                            onSend={handleSend}
+                        />
 
-                            <ContextSidebar
-                                currentTokenCount={currentTokenCount}
-                                tokenPercentage={tokenPercentage}
-                                systemPrompt={systemPrompt}
-                                setSystemPrompt={setSystemPrompt}
-                                systemPromptOptions={systemPromptOptions}
-                                temperature={temperature}
-                                setTemperature={setTemperature}
-                                maxTokens={maxTokens}
-                                setMaxTokens={setMaxTokens}
-                                attachedNotes={attachedNotes}
-                                attachedPracticals={attachedPracticals}
-                                handleToggleNote={handleToggleNote}
-                                handleTogglePractical={handleTogglePractical}
-                                updateActiveChatConfig={updateActiveChatConfig}
-                                isRightPanelOpen={isRightPanelOpen}
-                                setIsRightPanelOpen={setIsRightPanelOpen}
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
+                        <ContextSidebar
+                            currentTokenCount={currentTokenCount}
+                            tokenPercentage={tokenPercentage}
+                            systemPrompt={systemPrompt}
+                            setSystemPrompt={setSystemPrompt}
+                            systemPromptOptions={systemPromptOptions}
+                            temperature={temperature}
+                            setTemperature={setTemperature}
+                            maxTokens={maxTokens}
+                            setMaxTokens={setMaxTokens}
+                            attachedNotes={attachedNotes}
+                            attachedPracticals={attachedPracticals}
+                            handleToggleNote={handleToggleNote}
+                            handleTogglePractical={handleTogglePractical}
+                            updateActiveChatConfig={updateActiveChatConfig}
+                            isRightPanelOpen={isRightPanelOpen}
+                            setIsRightPanelOpen={setIsRightPanelOpen}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
             {showApiKeyModal && (
                 <ApiKeyModal
                     isOpen={showApiKeyModal}

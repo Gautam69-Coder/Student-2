@@ -1,6 +1,31 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Base cursor pointer for all interactive elements */
+button,
+[role="button"],
+[type="button"],
+[type="reset"],
+[type="submit"],
+select,
+summary,
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"],
+input[type="file"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"]:disabled,
+[type="button"]:disabled,
+[type="reset"]:disabled,
+[type="submit"]:disabled,
+select:disabled,
+input:disabled {
+  cursor: not-allowed;
+}
+
 /* Lenis Smooth Scrolling */
 html.lenis,
 html.lenis body {

@@ -37,8 +37,6 @@ export function Chatbot() {
     const [attachedNotes, setAttachedNotes] = useState([]);
     const [attachedPracticals, setAttachedPracticals] = useState([]);
 
-    const localStorageKey = useMemo(() => `studhub_chat_history_${user?.email || "guest"}`, [user]);
-
     const systemPromptOptions = {
         "Default Tutor": "You are a helpful, professional, and knowledgeable tutor. Break down complex topics simply, provide clear examples, and support your claims with logic. give me him very short answers and  pinpoint answers",
         "Code Optimizer": "You are a senior software engineer. Analyze code snippets, suggest best practices, optimize space/time complexity, and explain programming paradigms elegantly.",
@@ -46,30 +44,12 @@ export function Chatbot() {
         "Exam Prep Instructor": "Review inputs to construct interactive practice questions, mock tests, and summarize key testable facts. Be analytical and rigorous."
     };
 
-    // Load Chat History from LocalStorage
-    useEffect(() => {
-        const stored = localStorage.getItem(localStorageKey);
-        if (stored) {
-            try {
-                const parsed = JSON.parse(stored);
-                if (parsed.length > 0) {
-                    setConversations(parsed);
-                    // Select first chat
-                    setActiveChatId(parsed[0].id);
-                    loadConversationState(parsed[0]);
-                    return;
-                }
-            } catch (e) {
-                console.error("Failed to parse chat history:", e);
-            }
-        }
-        // Initialize an empty first chat if none exists
-        initFirstChat();
-    }, [localStorageKey]);
-
-    // Save Chat History to LocalStorage on modifications
-    const saveToLocalStorage = (updatedConversations) => {
-        localStorage.setItem(localStorageKey, JSON.stringify(updatedConversations));
+    const loadConversationState = (chat) => {
+        setSystemPrompt(chat.systemPrompt || "Default Tutor");
+        setTemperature(chat.temperature !== undefined ? chat.temperature : 0.7);
+        setMaxTokens(chat.maxTokens !== undefined ? chat.maxTokens : 2048);
+        setAttachedNotes(chat.attachedNotes || []);
+        setAttachedPracticals(chat.attachedPracticals || []);
     };
 
     const initFirstChat = () => {
@@ -92,17 +72,11 @@ export function Chatbot() {
         setConversations([newChat]);
         setActiveChatId(newChat.id);
         loadConversationState(newChat);
-        saveToLocalStorage([newChat]);
     };
 
-    const loadConversationState = (chat) => {
-        setSystemPrompt(chat.systemPrompt || "Default Tutor");
-        setTemperature(chat.temperature !== undefined ? chat.temperature : 0.7);
-        setMaxTokens(chat.maxTokens !== undefined ? chat.maxTokens : 2048);
-        setAttachedNotes(chat.attachedNotes || []);
-        setAttachedPracticals(chat.attachedPracticals || []);
-
-    };
+    useEffect(() => {
+        initFirstChat();
+    }, []);
 
     // Sync active chat configuration with local states
     useEffect(() => {
@@ -117,14 +91,12 @@ export function Chatbot() {
     // Sync active configuration changes back into the conversations list
     const updateActiveChatConfig = (field, value) => {
         setConversations((prev) => {
-            const updated = prev.map((c) => {
+            return prev.map((c) => {
                 if (c.id === activeChatId) {
                     return { ...c, [field]: value };
                 }
                 return c;
             });
-            saveToLocalStorage(updated);
-            return updated;
         });
     };
 
@@ -183,7 +155,6 @@ export function Chatbot() {
         setConversations(updated);
         setActiveChatId(newChat.id);
         loadConversationState(newChat);
-        saveToLocalStorage(updated);
     };
 
     const handleDeleteChat = (id, e) => {
@@ -194,7 +165,6 @@ export function Chatbot() {
             return;
         }
         setConversations(updated);
-        saveToLocalStorage(updated);
         if (activeChatId === id) {
             setActiveChatId(updated[0].id);
             loadConversationState(updated[0]);
@@ -210,7 +180,6 @@ export function Chatbot() {
             return c;
         });
         setConversations(updated);
-        saveToLocalStorage(updated);
     };
 
     const handleToggleNote = (id) => {
@@ -319,14 +288,12 @@ export function Chatbot() {
 
             const updatedMessagesWithBot = [...updatedMessagesWithUser, { role: "assistant", content: assistantResponse }];
             setConversations((prev) => {
-                const updated = prev.map((c) => {
+                return prev.map((c) => {
                     if (c.id === activeChatId) {
                         return { ...c, messages: updatedMessagesWithBot };
                     }
                     return c;
                 });
-                saveToLocalStorage(updated);
-                return updated;
             });
 
         } catch (error) {
@@ -338,14 +305,12 @@ export function Chatbot() {
             const assistantResponse = generateLocalFallback(queryText);
             const updatedMessagesWithBot = [...updatedMessagesWithUser, { role: "assistant", content: assistantResponse }];
             setConversations((prev) => {
-                const updated = prev.map((c) => {
+                return prev.map((c) => {
                     if (c.id === activeChatId) {
                         return { ...c, messages: updatedMessagesWithBot };
                     }
                     return c;
                 });
-                saveToLocalStorage(updated);
-                return updated;
             });
             customMessage({ type: "info", content: "Local Fallback response rendered" });
         } finally {

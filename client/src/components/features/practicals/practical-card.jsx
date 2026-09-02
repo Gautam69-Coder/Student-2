@@ -128,7 +128,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, section }) 
                 </div>
 
                 {/* Cyber IDE Container */}
-                <div className="relative group/code rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-2xl shadow-black/5">
+                <div className="relative group/code rounded-xl overflow-hidden h-[30vh] border border-slate-200 dark:border-white/10 shadow-2xl shadow-black/5">
                     <div className="flex items-center justify-between px-4 py-2 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-white/5">
                         <div className="flex items-center justify-between gap-2 w-full">
                             <div className="flex gap-1.5">

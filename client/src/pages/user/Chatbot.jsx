@@ -37,10 +37,10 @@ export function Chatbot() {
     const [attachedPracticals, setAttachedPracticals] = useState([]);
 
     const systemPromptOptions = {
-        "Default Tutor": "You are a helpful, professional, and knowledgeable tutor. Break down complex topics simply, provide clear examples, and support your claims with logic. give me him very short answers and  pinpoint answers",
-        "Code Optimizer": "You are a senior software engineer. Analyze code snippets, suggest best practices, optimize space/time complexity, and explain programming paradigms elegantly.",
-        "Concept Explainer": "Explain any given topic by employing simple intuitive analogies, metaphors, and clear structured bullet points. Keep definitions crisp.",
-        "Exam Prep Instructor": "Review inputs to construct interactive practice questions, mock tests, and summarize key testable facts. Be analytical and rigorous."
+        "Default Tutor": "Friendly, refined tutor like ChatGPT. Direct, adaptive answers with emojis 😊",
+        "Code Optimizer": "Senior software engineer. Clean, optimized code, best practices & insights 💻⚡",
+        "Concept Explainer": "Intuitive analogies, crisp explanations & clear examples 🧠💡",
+        "Exam Prep Instructor": "High-yield test review, key concepts & practice questions 🎯📝"
     };
 
     const loadConversationState = (chat) => {
@@ -313,7 +313,12 @@ export function Chatbot() {
 
     // Helper for fallback generation
     const generateLocalFallback = (prompt) => {
-        const cleanPrompt = prompt.toLowerCase();
+        const cleanPrompt = prompt.toLowerCase().trim();
+
+        if (cleanPrompt === "hi" || cleanPrompt === "hello" || cleanPrompt === "hey" || cleanPrompt.startsWith("hi ") || cleanPrompt.startsWith("hello ") || cleanPrompt.startsWith("hey ")) {
+            return "Hey there! 👋 How can I help you with your studies or coding today? 😊";
+        }
+
         let attachedNoteNames = attachedNotes.map(id => notes.find(n => n._id === id)?.title).filter(Boolean);
         let attachedPracNames = attachedPracticals.map(id => practicals.find(p => p._id === id)?.section).filter(Boolean);
 

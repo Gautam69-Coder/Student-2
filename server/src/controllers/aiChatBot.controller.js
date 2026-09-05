@@ -31,22 +31,36 @@ export const handleAiChatBot = asyncHandler(async (req, res) => {
     const systemPromptContent = getAiChatBotPrompt(systemPrompt, attachedNotes, attachedPracticals);
 
 
+    const personalInfoText = getUserPersonalInfo?.personalInfo?.length
+        ? getUserPersonalInfo.personalInfo.filter(Boolean).join("; ")
+        : "";
+
+    let conversationHistory = "";
+    if (getConversationMemory?.message && Array.isArray(getConversationMemory.message)) {
+        conversationHistory = getConversationMemory.message
+            .filter(m => m.userPrompt || m.aiResponse)
+            .map(m => `User: ${m.userPrompt}\nSiara: ${m.aiResponse}`)
+            .join("\n\n");
+    }
+
+    let systemMessage = systemPromptContent;
+    if (personalInfoText) {
+        systemMessage += `\n\n**Known User Info:**\n${personalInfoText}`;
+    }
+    if (conversationHistory) {
+        systemMessage += `\n\n**Recent Conversation Context:**\n${conversationHistory}`;
+    }
+
     const completion = await groq.chat.completions.create({
         messages: [
-
             {
-                role: "user",
-                content: systemPromptContent
+                role: "system",
+                content: systemMessage
             },
             {
-                role: "assistant",
-                content: `You are an assistant with memory. 
-            ${getUserPersonalInfo} this is user personal info if you need this use it .
-Previous conversation summary: ${getConversationMemory?.message || "None"}
-
-Current user query: ${queryText}`
+                role: "user",
+                content: queryText
             }
-
         ],
         model: "openai/gpt-oss-20b",
         temperature: Number(temperature),

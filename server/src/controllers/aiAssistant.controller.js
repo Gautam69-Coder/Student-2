@@ -29,13 +29,20 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
     const saveMemory = memory?.messages?.join("\n");
     const systemPromptContent = getAiAssistantPrompt(saveMemory);
 
+    const personalInfoText = getUserPersonalInfo?.personalInfo?.length
+        ? getUserPersonalInfo.personalInfo.filter(Boolean).join("; ")
+        : "";
+
+    let systemMessage = systemPromptContent;
+    if (personalInfoText) {
+        systemMessage += `\n\n**Known User Info:**\n${personalInfoText}`;
+    }
+
     const completion = await groq.chat.completions.create({
         messages: [
             {
                 role: "system",
-                content: systemPromptContent + `Give the user very simple answer and not more than 50 words.
-                 ${getUserPersonalInfo} this is user personal info if you need this use it .     
-                `,
+                content: systemMessage,
             },
             {
                 role: "user",

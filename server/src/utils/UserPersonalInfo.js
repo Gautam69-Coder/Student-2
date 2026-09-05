@@ -26,17 +26,26 @@ Respond ONLY with valid JSON in this exact shape, no markdown fences, no extra t
     });
 
     const response = completion.choices[0]?.message?.content;
-    console.log(response);
+    console.log("personalInfo extraction response:", response);
 
-    const userPersonalInfo = JSON.parse(response).personalInfo
+    let userPersonalInfo = null;
+    if (response) {
+        try {
+            const cleaned = response.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
+            const parsed = JSON.parse(cleaned);
+            userPersonalInfo = parsed?.personalInfo ?? null;
+        } catch (err) {
+            console.error("Failed to parse personalInfo JSON:", err.message);
+        }
+    }
 
-    if (userPersonalInfo !== null) {
+    if (userPersonalInfo && typeof userPersonalInfo === 'string' && userPersonalInfo.toLowerCase() !== 'null' && userPersonalInfo.trim() !== '') {
         await UserMemory.findOneAndUpdate(
             { userId },
             {
                 $push: {
                     personalInfo: {
-                        $each: [userPersonalInfo]
+                        $each: [userPersonalInfo.trim()]
                     }
                 }
             },

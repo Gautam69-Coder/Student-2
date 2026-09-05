@@ -10,9 +10,9 @@ export const handleAiCodeHelperChat = asyncHandler(async (req, res) => {
     const userId = req.user.id;
 
     const groq = await getUserGroqClient(userId);
-
     // Sanitize context message
     const sanitizedUserMessage = sanitizeForPrompt(context.message);
+    console.log(`Sanitized user message: ${sanitizedUserMessage}`);
 
     const memory = await AIMemory.findOneAndUpdate(
         { userId },

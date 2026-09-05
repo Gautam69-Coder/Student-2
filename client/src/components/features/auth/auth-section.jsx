@@ -52,8 +52,10 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                     // Send token to backend
                     const res = await googleLogin(token);
 
-                    // BUG-18 fix: Do not save JWT in localStorage
                     localStorage.setItem('isAuthenticated', 'true');
+                    if (res.data.data?.token) {
+                        localStorage.setItem('token', res.data.data.token);
+                    }
 
                     if (res.data.data?.user) {
                         onAuth(res.data.data.user.role, res.data.data.user.username);
@@ -125,7 +127,9 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
             // Send token to backend
             const res = await googleLogin(token);
             localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('token', token);
+            if (res.data.data?.token) {
+                localStorage.setItem('token', res.data.data.token);
+            }
 
             if (res.data.data?.user) {
                 onAuth(res.data.data.user.role, res.data.data.user.username);

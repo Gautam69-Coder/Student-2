@@ -5,7 +5,7 @@ import { getPracticals, createPractical, updatePractical, deletePractical } from
 
 const router = express.Router();
 
-router.get('/', getPracticals);
+router.get('/', auth, getPracticals);
 router.post('/', auth, uploadMulter.array("files"), createPractical);
 router.put('/:id', auth, uploadMulter.array("files"), updatePractical);
 router.delete('/:id', auth, deletePractical);

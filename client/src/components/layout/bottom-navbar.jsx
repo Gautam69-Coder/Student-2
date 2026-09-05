@@ -4,7 +4,8 @@ import { Home, FileText, FlaskConical, User, Users, Code2 } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { theme } from "@/lib/theme";
-
+import { useData } from "@/context/DataContext";
+import { canAccessPracticals } from "@/Utils/vesCheck";
 
 const navItems = [
     { id: "home", label: "Home", icon: Home },
@@ -18,11 +19,14 @@ const navItems = [
 
 export function BottomNavbar() {
     const location = useLocation();
+    const { user } = useData();
+
+    const allowedNavItems = navItems.filter(item => item.id !== 'practicals' || canAccessPracticals(user));
 
     return (
         <div className="fixed bottom-0 left-0 right-0 md:hidden border rounded-2xl z-40 mx-2 my-2" style={{ background:theme.colors.dark }}>
             <nav className="flex justify-around items-center px-1 py-3 pb-4">
-                {navItems.map((item) => {
+                {allowedNavItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = item.id === 'home'
                         ? location.pathname === '/dashboard' || location.pathname === '/dashboard/'

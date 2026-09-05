@@ -62,12 +62,18 @@ export const deleteContent = (id) => api.delete(`/content/${id}`);
 
 // Notes Services
 export const fetchNotes = () => api.get('/notes');
+export const fetchNotesPaginated = (page = 1, limit = 10) => api.get(`/notes?page=${page}&limit=${limit}`);
 export const fetchAllNotes = () => api.get('/notes/all');
 export const createNoteFile = (noteData) => api.post('/notes/file', noteData, {
     headers: { "Content-Type": "multipart/form-data" }
 })
 export const createNoteText = (noteData) => api.post('/notes/text', noteData);
-export const updateNote = (id, noteData) => api.put(`/notes/${id}`, noteData);
+
+export const updateNoteText = (noteData) => api.put(`/notes/text`, noteData);
+export const updateNoteFile = (noteData) => api.put('/notes/file', noteData, {
+    headers: { "Content-Type": "multipart/form-data" }
+})
+
 export const deleteNote = (id) => api.delete(`/notes/${id}`);
 export const makeNotePublic = (id) => api.put(`/notes/public/${id}`);
 
@@ -109,8 +115,6 @@ export const toggleCommunityLike = (id) => api.post(`/community/${id}/like`);
 
 // Tracking Api
 export const sendTrackerHome = (section) => api.post('/hometracking', { section: section })
-export const sendGuestTracker = (guestData) => api.post('/guesttrack', guestData)
-export const fetchGuestVisits = () => api.get('/guesttrack')
 export const getTrackerData = () => api.get('/trackingData')
 
 // Coding Practice Tracks
@@ -131,6 +135,7 @@ export const fetchDashboardStats = () => api.get('/stats/dashboard')
 export const aiAssistant = (data) => api.post('/aiassistant', { message: data })
 export const aiCodeHelper = (context) => api.post('/aicodehelper', { context })
 export const aiChatBot = (data) => api.post('/aichatbot', { message: data })
+export const aiChatBotDeleteConversation = (data) => api.post('/aichatbot/delete', { deleteId: data })
 
 
 //AI code Checker 

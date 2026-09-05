@@ -1,72 +1,96 @@
-import Groq from "groq-sdk";
-import AICodeHelperMemory from "../models/AICodeHelperMemory.js";
-import { decrypt } from "../utils/crypto.js";
-import User from "../models/User.js";
 import { asyncHandler } from '../utils/AsyncHandler.js';
-import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
-
-// BUG-15 fix: Sanitize user messages to reduce prompt injection risk
-function sanitizeForPrompt(text) {
-    if (typeof text !== 'string') return '';
-    return text
-        .replace(/\bsystem\s*:/gi, '[filtered]:')
-        .replace(/\bignore\s+(all\s+)?previous\s+instructions?\b/gi, '[filtered]')
-        .replace(/\byou\s+are\s+now\b/gi, '[filtered]')
-        .replace(/\bnew\s+instructions?\s*:/gi, '[filtered]:');
-}
+import { getUserGroqClient } from '../utils/aiClient.js';
+import { getAiChatBotPrompt } from '../utils/systemPrompt.js';
+import ChatbotMemory from '../models/ChatbotMemory.js';
+import { UserPersonalInfo } from '../utils/UserPersonalInfo.js';
+import { ApiError } from '../utils/ApiError.js';
 
 export const handleAiChatBot = asyncHandler(async (req, res) => {
-    const { message } = req.body;
+    const {
+        queryText,
+        activeChatId,
+        systemPrompt,
+        attachedNotes = [],
+        attachedPracticals = [],
+        temperature = 0.7,
+        maxTokens = 2048
+    } = req.body.message || {};
 
-    const user = await User.findById(req.user.id);
-    if (!user.apiKey && !user.iv) {
-        throw new ApiError(400, "Please add your api key");
-    }
+    const userId = req.user.id;
+    const groq = await getUserGroqClient(userId);
 
-    const apiKey = decrypt(
-        user.apiKey,
-        user.iv
+    const getUserPersonalInfo = await UserPersonalInfo(queryText, userId);
+
+    const getConversationMemory = await ChatbotMemory.findOne(
+        { userId, conversationId: activeChatId },
+        { message: { $slice: -15 } }
     );
 
 
-    const groq = new Groq({ apiKey: apiKey });
+    const systemPromptContent = getAiChatBotPrompt(systemPrompt, attachedNotes, attachedPracticals);
 
-    const sanitizedMessage = sanitizeForPrompt(message);
 
-    // const memory = await AICodeHelperMemory.findOneAndUpdate(
-    //     { userId: req.user.id },
-    //     {
-    //         $push: {
-    //             messages: {
-    //                 $each: [sanitizedMessage],
-    //                 $slice: -10
-    //             }
-    //         },
-    //     },
-    //     { upsert: true, new: true }
-    // );
-
-    // const saveMemory = memory?.messages?.join("\n");
-
-    //Ai result;
     const completion = await groq.chat.completions.create({
         messages: [
-            {
-                role: "system",
-                content: `if user have any attachement show them sections about thier query : ${sanitizedMessage} and answer them in a detailed manner, if user have no attachement then answer them in a detailed manner`,
-            },
+
             {
                 role: "user",
-                content: sanitizedMessage,
+                content: systemPromptContent
             },
+            {
+                role: "assistant",
+                content: `You are an assistant with memory. 
+            ${getUserPersonalInfo} this is user personal info if you need this use it .
+Previous conversation summary: ${getConversationMemory?.message || "None"}
+
+Current user query: ${queryText}`
+            }
+
         ],
         model: "openai/gpt-oss-20b",
+        temperature: Number(temperature),
+        max_tokens: Number(maxTokens)
     });
 
     const result = completion.choices[0]?.message?.content;
 
-    console.log("result:",result)
-
+    await ChatbotMemory.findOneAndUpdate(
+        { userId, conversationId: activeChatId },
+        {
+            $push: {
+                message: {
+                    $each: [
+                        {
+                            userPrompt: queryText,
+                            aiResponse: result
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            upsert: true,
+            new: true
+        }
+    );
     res.status(200).json(new ApiResponse(200, result, "Success"));
 });
+
+export const deleteConversation = asyncHandler(async (req, res) => {
+   
+    const { deleteId } = req.body;
+    
+    if (!deleteId) {
+        throw new ApiError(400, "Delete Id is required");
+    }
+
+    const deleteData = await ChatbotMemory.findOneAndDelete(
+        { conversationId: deleteId },
+        { returnDocument: 'after' }
+    );
+
+    console.log(deleteData);
+
+    res.status(200).json(new ApiResponse(200, deleteData , "Conversation delete SuccessFully"))
+})

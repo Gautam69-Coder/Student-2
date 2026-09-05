@@ -4,8 +4,10 @@ import { fetchCommunityPosts, createCommunityPost, toggleCommunityLike, getMe } 
 import { SEO } from "@/components/common/SEO";
 import { DashboardLayout } from "@/components/layout/layout";
 import { theme } from "@/lib/theme";
+import { formatTimeAgo } from "@/Utils/date";
+import { copyToClipboard } from "@/Utils/clipboard";
 
-export function Community({ requireAuth }) {
+export function Community() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [creating, setCreating] = useState(false);
@@ -46,55 +48,50 @@ export function Community({ requireAuth }) {
 
     const handleCreate = async (e) => {
         e.preventDefault();
-        requireAuth(async () => {
-            if (!content.trim()) {
-                setError("Share something with the community first.");
-                return;
-            }
-            setCreating(true);
-            setError("");
-            try {
-                const res = await createCommunityPost({
-                    title: title.trim() || undefined,
-                    content: content.trim(),
-                    username: currentUsername,
-                });
-                setPosts((prev) => [res.data.data, ...prev]);
-                setContent("");
-                setTitle("");
-            } catch (err) {
-                setError(err.response?.data?.msg || "Could not share your post. Try again.");
-            } finally {
-                setCreating(false);
-            }
-        });
+        if (!content.trim()) {
+            setError("Share something with the community first.");
+            return;
+        }
+        setCreating(true);
+        setError("");
+        try {
+            const res = await createCommunityPost({
+                title: title.trim() || undefined,
+                content: content.trim(),
+                username: currentUsername,
+            });
+            setPosts((prev) => [res.data.data, ...prev]);
+            setContent("");
+            setTitle("");
+        } catch (err) {
+            setError(err.response?.data?.msg || "Could not share your post. Try again.");
+        } finally {
+            setCreating(false);
+        }
     };
 
     const handleLike = async (postId) => {
-        requireAuth(async () => {
-            try {
-                const res = await toggleCommunityLike(postId);
-                setPosts((prev) =>
-                    prev.map((p) =>
-                        p._id === postId
-                            ? { ...p, likedBy: res.data.likedBy, likesCount: res.data.likesCount }
-                            : p
-                    )
-                );
-            } catch {
-                // Non-blocking – ignore like failures silently
-            }
-        });
+        try {
+            const res = await toggleCommunityLike(postId);
+            setPosts((prev) =>
+                prev.map((p) =>
+                    p._id === postId
+                        ? { ...p, likedBy: res.data.likedBy, likesCount: res.data.likesCount }
+                        : p
+                )
+            );
+        } catch {
+            // Non-blocking – ignore like failures silently
+        }
     };
 
-    const handleShare = (post) => {
+    const handleShare = async (post) => {
         const textToCopy = `${post.title ? post.title + "\n\n" : ""}${post.content}\n\n- Shared from Student Community by @${post.username}`;
-        navigator.clipboard.writeText(textToCopy)
-            .then(() => {
-                setCopiedPostId(post._id);
-                setTimeout(() => setCopiedPostId(null), 2000);
-            })
-            .catch(() => {});
+        const success = await copyToClipboard(textToCopy);
+        if (success) {
+            setCopiedPostId(post._id);
+            setTimeout(() => setCopiedPostId(null), 2000);
+        }
     };
 
     const getAvatarColors = (username) => {
@@ -110,28 +107,6 @@ export function Community({ requireAuth }) {
             "from-sky-500 to-indigo-600",
         ];
         return { bg: gradients[hash % gradients.length], text: "text-white" };
-    };
-
-    const formatDate = (date) => {
-        const d = new Date(date);
-        if (Number.isNaN(d.getTime())) return "";
-        const now = new Date();
-        const diffMs = now - d;
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMs / 3600000);
-        const diffDays = Math.floor(diffMs / 86400000);
-
-        if (diffMins < 1) return "Just now";
-        if (diffMins < 60) return `${diffMins}m ago`;
-        if (diffHours < 24) return `${diffHours}h ago`;
-        if (diffDays < 7) return `${diffDays}d ago`;
-
-        return d.toLocaleDateString("en-IN", {
-            day: "numeric",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
     };
 
     const filteredAndEnrichedPosts = useMemo(() => {
@@ -359,7 +334,7 @@ export function Community({ requireAuth }) {
                                                         @{post.username?.toLowerCase()}
                                                     </p>
                                                     <p className="text-[10px] text-slate-400 mt-0.5 font-semibold">
-                                                        {formatDate(post.createdAt)}
+                                                        {formatTimeAgo(post.createdAt)}
                                                     </p>
                                                 </div>
                                             </div>

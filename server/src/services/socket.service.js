@@ -5,11 +5,9 @@ const userMap = new Map(); // socket.id -> { userId, username }
 
 export const initSocket = (io) => {
     io.on('connection', (socket) => {
-        // console.log('🔌 New connection attempt:', socket.id);
+        console.log('🔌 New connection attempt:', socket.id);
 
         socket.on('user_online', async (userData) => {
-            // BUG-3 fix: Authenticate the user using socket.user set by handshake.
-            // Do not trust the client-provided userData ID to prevent impersonation.
             if (!socket.user) {
                 console.log('⚠️ Rejected unauthenticated user_online emit on socket:', socket.id);
                 return;

@@ -8,21 +8,21 @@ export function StatsCard({ title, value, change, icon: Icon, color }) {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            whileHover={{ y: -4, boxShadow: "0 10px 30px -10px rgba(0,0,0,0.08)" }}
-            className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-zinc-200 dark:border-slate-800 transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-700"
+            whileHover={{ y: -2 }}
+            className="neo-flat p-6 transition-all duration-300"
         >
             <div className="flex items-start justify-between mb-2">
-                <div className="p-3 rounded-[10px] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+                <div className="p-3 rounded-xl shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#0f121b,inset_-2px_-2px_4px_#272e41]">
                     <Icon className="w-5 h-5" style={{ color }} />
                 </div>
-                <div className="flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-900/30">
+                <div className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-[inset_1px_1px_2px_#c8d0e7,inset_-1px_-1px_2px_#ffffff] dark:shadow-[inset_1px_1px_2px_#0f121b,inset_-1px_-1px_2px_#272e41] text-emerald-600 dark:text-emerald-400">
                     <TrendingUp className="w-3 h-3" />
                     {change}
                 </div>
             </div>
             <div className="mt-4">
-                <p className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">{value}</p>
-                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">{title}</p>
+                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{value}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-1">{title}</p>
             </div>
         </motion.div>
     )

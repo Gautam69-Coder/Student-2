@@ -14,6 +14,8 @@ import { Progress } from "/components/ui/progress";
 import { Badge } from "/components/ui/badge";
 import { useData } from "@/context/DataContext";
 import { customMessage } from "@/Utils/customMessage";
+import { copyToClipboard } from "@/Utils/clipboard";
+import { canAccessPracticals } from "@/Utils/vesCheck";
 
 export function ContextSidebar({
     currentTokenCount,
@@ -32,7 +34,7 @@ export function ContextSidebar({
     updateActiveChatConfig,
     isRightPanelOpen,
 }) {
-    const { notes, practicals } = useData();
+    const { notes, practicals, user } = useData();
 
     // Local search states
     const [noteSearch, setNoteSearch] = useState("");
@@ -48,11 +50,13 @@ export function ContextSidebar({
     const [activeAccordion, setActiveAccordion] = useState(null);
     const [copiedText, setCopiedText] = useState("");
 
-    const handleCopyQuestion = (text) => {
-        navigator.clipboard.writeText(text);
-        setCopiedText(text);
-        customMessage({ type: "success", content: "Question copied to clipboard!" });
-        setTimeout(() => setCopiedText(""), 2000);
+    const handleCopyQuestion = async (text) => {
+        const success = await copyToClipboard(text);
+        if (success) {
+            setCopiedText(text);
+            customMessage({ type: "success", content: "Question copied to clipboard!" });
+            setTimeout(() => setCopiedText(""), 2000);
+        }
     };
 
     const filteredQuestionsData = useMemo(() => {
@@ -269,57 +273,60 @@ export function ContextSidebar({
                             </div>
 
                             {/* Practicals selection list */}
-                            <div className="border-t border-slate-200 pt-4 space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                                        Attach Practicals
-                                    </h4>
-                                    <Badge className="bg-indigo-600 text-white text-[10px] font-bold font-sans">
-                                        {attachedPracticals.length} attached
-                                    </Badge>
-                                </div>
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        placeholder="Search Practicals..."
-                                        value={practicalSearch}
-                                        onChange={(e) => setPracticalSearch(e.target.value)}
-                                        className="w-full pl-8 pr-3 py-1.5 rounded-lg text-xs outline-none bg-slate-100 border border-slate-300 text-slate-700"
-                                    />
-                                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
-                                </div>
-                                <div className="max-h-36 overflow-y-auto space-y-1.5 pr-1" data-lenis-prevent>
-                                    {filteredPracticals.map((prac, index) => {
-                                        const isChecked = attachedPracticals.includes(index);
-                                        return (
-                                            <div
-                                                key={index}
-                                                onClick={() => {
-                                                    handleTogglePractical(index);
-                                                    getPracticalQuestions(prac);
-                                                    setIsQuestionModel(true);
-                                                }}
-                                                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors border ${isChecked
-                                                        ? "bg-indigo-50 border-indigo-100 text-indigo-900 font-semibold"
-                                                        : "bg-slate-50 border-transparent hover:bg-slate-200 text-slate-450"
-                                                    }`}
-                                            >
-                                                <div className="flex items-center gap-2 truncate">
-                                                    <FlaskConical className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                                                    <span className="truncate">{prac || "Untitled Practical"}</span>
+                            {canAccessPracticals(user) && (
+                                <div className="border-t border-slate-200 pt-4 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                            Attach Practicals
+                                        </h4>
+                                        <Badge className="bg-indigo-600 text-white text-[10px] font-bold font-sans">
+                                            {attachedPracticals.length} attached
+                                        </Badge>
+                                    </div>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            placeholder="Search Practicals..."
+                                            value={practicalSearch}
+                                            onChange={(e) => setPracticalSearch(e.target.value)}
+                                            className="w-full pl-8 pr-3 py-1.5 rounded-lg text-xs outline-none bg-slate-100 border border-slate-300 text-slate-700"
+                                        />
+                                        <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
+                                    </div>
+                                    <div className="max-h-36 overflow-y-auto space-y-1.5 pr-1" data-lenis-prevent>
+                                        {filteredPracticals.map((prac, index) => {
+                                            const isChecked = attachedPracticals.includes(index);
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    onClick={() => {
+                                                        handleTogglePractical(index);
+                                                        getPracticalQuestions(prac);
+                                                        setIsQuestionModel(true);
+                                                    }}
+                                                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors border ${isChecked
+                                                            ? "bg-indigo-50 border-indigo-100 text-indigo-900 font-semibold"
+                                                            : "bg-slate-50 border-transparent hover:bg-slate-200 text-slate-450"
+                                                        }`}
+                                                >
+                                                    <div className="flex items-center gap-2 truncate">
+                                                        <FlaskConical className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                                                        <span className="truncate">{prac || "Untitled Practical"}</span>
+                                                    </div>
+                                                    <span className="text-[10px] px-1 text-slate-400 shrink-0">
+                                                        Practicals
+                                                    </span>
                                                 </div>
-                                                <span className="text-[10px] px-1 text-slate-400 shrink-0">
-                                                    Practicals
-                                                </span>
+                                            );
+                                        })}
+                                        {filteredPracticals.length === 0 && (
+                                            <div className="text-slate-400 text-xs py-2 text-center">
+                                                No matching practicals found.
                                             </div>
-                                        );
-                                    })}
-                                    {filteredPracticals.length === 0 && (
-                                        <div className="text-slate-400 text-xs py-2 text-center">
-                                            No matching practicals found.
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
                                 </div>
+                            )}
 
                                 {isQuestionModal && (
                                     <div className="fixed inset-0 bg-slate-955/65 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
@@ -426,7 +433,6 @@ export function ContextSidebar({
                                     </div>
                                 )}
                             </div>
-                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

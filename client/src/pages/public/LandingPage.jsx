@@ -56,14 +56,14 @@ export default function LandingPage() {
     const faqs = [
         {
             q: "Is Student Hub completely free for students?",
-            a: "Yes, Student Hub is designed as an open-access platform for students to share notes, practice code, and access previous year papers at no cost."
+            a: "Yes, Student Hub is designed as an open-access platform for students to save notes, practice coding, and learn with an AI tutor at no cost."
         },
         {
             q: "How does the AI Assistant help with my coursework?",
             a: "The built-in AI assistant can answer conceptual questions, debug programming code, suggest optimizations, and explain complicated topics with clear step-by-step guides."
         },
         {
-            q: "Can I upload my own notes or practical solutions?",
+            q: "Can I upload my own notes or study materials?",
             a: "Currently, administrators review and upload resources to maintain verified and high-quality materials. If you have great resources, you can submit them to any admin."
         },
         {
@@ -111,8 +111,8 @@ export default function LandingPage() {
             }}
         >
             <SEO
-                title="Student Hub | Student Notes Management System"
-                description="Student Hub — Access premium study materials, programming practicals, previous year questions (PYQs), and chat with an intelligent AI helper."
+                title="Student Hub | Study Notes, Coding Practice & AI Assistant"
+                description="Save study notes, practice coding tracks, and collaborate with an AI tutor in one unified student workspace."
                 url="/"
                 schema={[homeSchema, breadcrumbSchema]}
             />
@@ -289,7 +289,7 @@ export default function LandingPage() {
                     className="text-muted-foreground text-base sm:text-lg max-w-2xl mt-8 leading-relaxed"
                     style={{ color: 'hsl(var(--muted-foreground))' }}
                 >
-                    Tired of scattered notes, missing PYQs, and no guidance when stuck? Student Hub brings all your study materials, AI assistance, and peers together into one powerful, distraction-free platform.
+                    Tired of scattered notes and no guidance when stuck? Student Hub brings all your study notes, coding challenges, AI assistance, and peers together into one powerful, distraction-free platform.
                 </p>
 
                 <Link
@@ -320,7 +320,7 @@ export default function LandingPage() {
                                 Simplifying academic collaboration.
                             </h2>
                             <p className="text-slate-350 leading-relaxed text-lg">
-                                Student Hub was born out of a simple realization: students waste too much time searching for disorganized notes, searching for past question papers, and struggling alone with complex programming practicals.
+                                Student Hub was born out of a simple realization: students waste too much time searching for disorganized notes, searching for past question papers, and struggling alone with complex coding challenges.
                             </p>
                             <p className="text-slate-400 leading-relaxed text-base">
                                 We built a centralized, distraction-free environment that combines premium study resources, real-time peer collaboration, and an intelligent AI assistant trained to help you code and learn.
@@ -358,7 +358,7 @@ export default function LandingPage() {
                                     {[
                                         { title: "One-Stop Portal", desc: "No more switching between Drive links and chat groups." },
                                         { title: "AI-Powered Help", desc: "Get debugging assistance and concept summaries instantly." },
-                                        { title: "Organized Practicals", desc: "View multi-language code snippets with clean interactive layout." },
+                                        { title: "Coding Practice Tracks", desc: "View multi-language coding tracks with clean interactive layouts." },
                                         { title: "Active Community", desc: "Discuss topics, share blogs, and send direct messages." }
                                     ].map((item, idx) => (
                                         <li key={idx} className="flex gap-3 items-start">
@@ -394,9 +394,9 @@ export default function LandingPage() {
                                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
                                     <Code2 className="w-7 h-7 text-indigo-500" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-3 text-slate-100">Interactive Practicals</h3>
+                                <h3 className="text-xl font-bold mb-3 text-slate-100">Coding Practice Tracks</h3>
                                 <p className="text-slate-300 leading-relaxed">
-                                    Access a library of programming practicals with clean code previews and multi-language support.
+                                    Access preloaded coding practice tracks with a built-in Monaco editor and multi-language support.
                                 </p>
                             </div>
 
@@ -414,9 +414,9 @@ export default function LandingPage() {
                                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
                                     <Zap className="w-7 h-7 text-indigo-500" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-3 text-slate-100">Instant PYQs</h3>
+                                <h3 className="text-xl font-bold mb-3 text-slate-100">Live Code Compiler</h3>
                                 <p className="text-slate-300 leading-relaxed">
-                                    Never miss important questions with our curated collection of previous year examination papers.
+                                    Write, run, and test code directly in your browser with our integrated Monaco-powered editor.
                                 </p>
                             </div>
 

@@ -5,11 +5,11 @@ import { theme } from "@/lib/theme";
 import { useData } from "@/context/DataContext";
 import { aiChatBot } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
-import { extractPdfText } from "@/Utils/extractingText";
 import { ChatHistorySidebar } from "@/components/features/chatbot/ChatHistorySidebar";
 import { ChatFeed } from "@/components/features/chatbot/ChatFeed";
 import { ContextSidebar } from "@/components/features/chatbot/ContextSidebar";
 import { ApiKeyModal } from "@/components/common/ApiKeyModal";
+import { aiChatBotDeleteConversation } from "@/Api/api";
 
 export function Chatbot() {
     const { user, notes, practicals } = useData();
@@ -157,19 +157,22 @@ export function Chatbot() {
         loadConversationState(newChat);
     };
 
-    const handleDeleteChat = (id, e) => {
-        e.stopPropagation();
-        const updated = conversations.filter((c) => c.id !== id);
-        if (updated.length === 0) {
-            initFirstChat();
-            return;
+    const handleDeleteChat = async (id, e) => {
+        console.log(id);
+        const deleteConversation = await aiChatBotDeleteConversation(id);
+        if (deleteConversation.data.success) {
+            const updated = conversations.filter((c) => c.id !== id);
+            if (updated.length === 0) {
+                initFirstChat();
+                return;
+            }
+            setConversations(updated);
+            if (activeChatId === id) {
+                setActiveChatId(updated[0].id);
+                loadConversationState(updated[0]);
+            }
+            customMessage({ type: "success", content: "Conversation deleted" });
         }
-        setConversations(updated);
-        if (activeChatId === id) {
-            setActiveChatId(updated[0].id);
-            loadConversationState(updated[0]);
-        }
-        customMessage({ type: "success", content: "Conversation deleted" });
     };
 
     const handleRenameChat = (id, newTitle) => {
@@ -231,52 +234,43 @@ export function Chatbot() {
             })
         );
 
-        // Compile augmented prompt context
-        let promptPayload = "";
-        const instructions = systemPromptOptions[systemPrompt] || systemPromptOptions["Default Tutor"];
-        promptPayload += `System Instructions:\n${instructions}\n\n`;
+        // Filter and compile notes context (text notes only, ignoring PDFs/files)
+        const notesPayload = attachedNotes
+            .map((nId) => notes.find((n) => n._id === nId))
+            .filter((note) => note && note.fileType === "NAN")
+            .map((note) => ({
+                title: note.title,
+                section: note.section,
+                content: note.content || "",
+            }));
 
-        if (attachedNotes.length > 0 || attachedPracticals.length > 0) {
-            promptPayload += `Attached Context details:\n`;
-
-            for (const nId of attachedNotes) {
-                const note = notes.find((n) => n._id === nId);
-
-                if (note.fileType === "NAN") {
-                    promptPayload += `[Attachment Note: ${note.title}]\nCategory: ${note.section}\nContent summary: ${note.content || "Code file uploaded"}\n\n`;
-                }
-
-                if (note.fileType === "application/pdf") {
-                    const text = await extractPdfText(note.fileData);
-                    promptPayload += `[Attachment Note: ${note.title}]\nCategory: ${note.section}\nContent summary: ${text || "Code file uploaded"}\n\n`;
-                }
-
-            }
-            attachedPracticals.forEach((pId) => {
+        // Filter and compile practical questions context
+        const practicalsPayload = attachedPracticals
+            .map((pId) => {
                 let practical;
-
                 for (const p of practicals) {
-                    practical = p.questions.find(q => q._id === pId);
+                    practical = p.questions.find((q) => q._id === pId);
                     if (practical) break;
                 }
-
-                console.log('Practical:', practical);
-                // console.log('Questions Text:', ` ${practical.question}\nCode: ${practical.code?.map((c) => c) || ""}`);
-                // // console.log('Practical being processed for prompt:', practicals.map(p => p.questions.find(q=> q._id === pId)));
-
-                if (practical) {
-                    const questionsText = `${practical.question}\nCode: ${practical.code?.map((c) => JSON.stringify(c)) || ""}` || "";
-                    promptPayload += `[Attachment Practical: ${practical.code?.map((c) => JSON.stringify(c.languageName)) || ""}]\n${questionsText}\n\n`;
-                }
-            });
-            promptPayload += `\nUse the above attached resources to precisely context-match the student queries if applicable.\n\n`;
-        }
-        
-        promptPayload += `Student Query: ${queryText}`;
+                if (!practical) return null;
+                return {
+                    question: practical.question,
+                    code: practical.code || [],
+                };
+            })
+            .filter(Boolean);
 
         try {
-            // Attempt server call
-            const res = await aiChatBot(promptPayload);
+            // Attempt server call with structured parameters
+            const res = await aiChatBot({
+                queryText,
+                activeChatId,
+                systemPrompt,
+                attachedNotes: notesPayload,
+                attachedPracticals: practicalsPayload,
+                temperature,
+                maxTokens
+            });
             let assistantResponse = "";
             if (res.data && res.data.data) {
                 assistantResponse = res.data.data;
@@ -439,66 +433,64 @@ I have received your prompt. Here are some options you can explore:
     const activeChat = conversations.find((c) => c.id === activeChatId) || conversations[0];
 
     return (
-        <DashboardLayout>
-            <div className="flex flex-col gap-4 w-full">
-                {/* Workspace card */}
-                <Card
-                    className={`rounded-2xl overflow-hidden transition-all duration-300 ${isFullscreen ? "fixed inset-0 z-50 rounded-none m-0 border-0" : ""
-                        }`}
-                    style={{ borderColor: theme.colors.lightGray, background: theme.colors.white }}
-                >
-                    <CardContent className="p-0">
-                        <div
-                            className="flex w-full h-full"
-                            style={{
-                                height: isFullscreen ? "90vh" : "75vh",
-                                minHeight: isFullscreen ? "90vh" : "75vh",
-                            }}
-                        >
-                            <ChatHistorySidebar
-                                conversations={conversations}
-                                activeChatId={activeChatId}
-                                setActiveChatId={setActiveChatId}
-                                onNewChat={handleNewChat}
-                                onDeleteChat={handleDeleteChat}
-                                onRenameChat={handleRenameChat}
-                            />
+        <DashboardLayout css="p-0 flex flex-col h-[calc(100vh-148px)] md:h-[calc(100vh-80px)] overflow-hidden">
+            {/* Workspace card */}
+            <Card
+                className={`w-full h-full border-0 rounded-none m-0 shadow-none flex flex-col overflow-hidden transition-all duration-300 ${isFullscreen ? "fixed inset-0 z-50 rounded-none m-0 border-0" : ""
+                    }`}
+                style={{ borderColor: theme.colors.lightGray, background: theme.colors.white }}
+            >
+                <CardContent className="p-0 flex-1 flex flex-col min-h-0">
+                    <div
+                        className="flex w-full h-full flex-1 max-h-[80vh] "
+                        style={{
+                            height: "100%",
+                            minHeight: "100%",
+                        }}
+                    >
+                        <ChatHistorySidebar
+                            conversations={conversations}
+                            activeChatId={activeChatId}
+                            setActiveChatId={setActiveChatId}
+                            onNewChat={handleNewChat}
+                            onDeleteChat={handleDeleteChat}
+                            onRenameChat={handleRenameChat}
+                        />
 
-                            <ChatFeed
-                                activeChat={activeChat}
-                                systemPrompt={systemPrompt}
-                                attachedNotesCount={attachedNotes.length}
-                                attachedPracticalsCount={attachedPracticals.length}
-                                isFullscreen={isFullscreen}
-                                setIsFullscreen={setIsFullscreen}
-                                isRightPanelOpen={isRightPanelOpen}
-                                setIsRightPanelOpen={setIsRightPanelOpen}
-                                isLoadingResponse={isLoadingResponse}
-                                onSend={handleSend}
-                            />
+                        <ChatFeed
+                            activeChat={activeChat}
+                            systemPrompt={systemPrompt}
+                            attachedNotesCount={attachedNotes.length}
+                            attachedPracticalsCount={attachedPracticals.length}
+                            isFullscreen={isFullscreen}
+                            setIsFullscreen={setIsFullscreen}
+                            isRightPanelOpen={isRightPanelOpen}
+                            setIsRightPanelOpen={setIsRightPanelOpen}
+                            isLoadingResponse={isLoadingResponse}
+                            onSend={handleSend}
+                        />
 
-                            <ContextSidebar
-                                currentTokenCount={currentTokenCount}
-                                tokenPercentage={tokenPercentage}
-                                systemPrompt={systemPrompt}
-                                setSystemPrompt={setSystemPrompt}
-                                systemPromptOptions={systemPromptOptions}
-                                temperature={temperature}
-                                setTemperature={setTemperature}
-                                maxTokens={maxTokens}
-                                setMaxTokens={setMaxTokens}
-                                attachedNotes={attachedNotes}
-                                attachedPracticals={attachedPracticals}
-                                handleToggleNote={handleToggleNote}
-                                handleTogglePractical={handleTogglePractical}
-                                updateActiveChatConfig={updateActiveChatConfig}
-                                isRightPanelOpen={isRightPanelOpen}
-                                setIsRightPanelOpen={setIsRightPanelOpen}
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+                        <ContextSidebar
+                            currentTokenCount={currentTokenCount}
+                            tokenPercentage={tokenPercentage}
+                            systemPrompt={systemPrompt}
+                            setSystemPrompt={setSystemPrompt}
+                            systemPromptOptions={systemPromptOptions}
+                            temperature={temperature}
+                            setTemperature={setTemperature}
+                            maxTokens={maxTokens}
+                            setMaxTokens={setMaxTokens}
+                            attachedNotes={attachedNotes}
+                            attachedPracticals={attachedPracticals}
+                            handleToggleNote={handleToggleNote}
+                            handleTogglePractical={handleTogglePractical}
+                            updateActiveChatConfig={updateActiveChatConfig}
+                            isRightPanelOpen={isRightPanelOpen}
+                            setIsRightPanelOpen={setIsRightPanelOpen}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
             {showApiKeyModal && (
                 <ApiKeyModal
                     isOpen={showApiKeyModal}

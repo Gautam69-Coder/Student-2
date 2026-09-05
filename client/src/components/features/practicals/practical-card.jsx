@@ -11,40 +11,43 @@ import {
     Download,
     ExternalLink,
     Cpu,
-    Sparkles
+    Sparkles,
+    Eye
 } from "lucide-react"
+
+import { FilePreviewModal } from "../../common/file-preview-modal"
 
 import { CodeModal } from "@/components/features/coding/code-modal"
 import HighlightComponent from "react-highlight"
 const Highlight = HighlightComponent.default || HighlightComponent
 import "highlight.js/styles/atom-one-dark.css"
+import { useClipboard } from "@/Utils/clipboard";
+import { downloadFile } from "@/Utils/download";
 
-const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth, section }) {
-    const [copied, setCopied] = useState(false)
+const QuestionBlock = memo(function QuestionBlock({ question, index, section }) {
+    const { copied, copy } = useClipboard(2000)
     const [showModal, setShowModal] = useState(false)
     const [showModalCodeHelper, setShowModalCodeHelper] = useState(false)
+    const [showPdfModal, setShowPdfModal] = useState(false)
+
+    const isPdf = question.fileType === "application/pdf" ||
+        question.fileType?.includes("pdf") ||
+        /\.pdf$/i.test(question.fileName || "") ||
+        (question.fileUrl || question.fileData)?.toLowerCase().includes('.pdf');
     const handleCopy = useCallback(() => {
-        requireAuth(() => {
-            const codeToCopy = Array.isArray(question.code)
-                ? question.code.map(item => `// --- ${item.languageName} ---\n${item.code}`).join('\n\n')
-                : question.code || "";
-            navigator.clipboard.writeText(codeToCopy)
-            setCopied(true)
-            setTimeout(() => setCopied(false), 2000)
-        })
-    }, [question.code, requireAuth])
+        const codeToCopy = Array.isArray(question.code)
+            ? question.code.map(item => `// --- ${item.languageName} ---\n${item.code}`).join('\n\n')
+            : question.code || "";
+        copy(codeToCopy)
+    }, [question.code, copy])
 
     const handleOpenModal = useCallback(() => {
-        requireAuth(() => {
-            setShowModal(true)
-        })
-    }, [requireAuth])
+        setShowModal(true)
+    }, [])
 
     const handleOpenCodeHelper = useCallback(() => {
-        requireAuth(() => {
-            setShowModalCodeHelper(true)
-        })
-    }, [requireAuth])
+        setShowModalCodeHelper(true)
+    }, [])
 
     const handleCloseCodeHelper = useCallback(() => {
         setShowModalCodeHelper(false)
@@ -125,7 +128,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                 </div>
 
                 {/* Cyber IDE Container */}
-                <div className="relative group/code rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-2xl shadow-black/5">
+                <div className="relative group/code rounded-xl overflow-hidden h-[30vh] border border-slate-200 dark:border-white/10 shadow-2xl shadow-black/5">
                     <div className="flex items-center justify-between px-4 py-2 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-white/5">
                         <div className="flex items-center justify-between gap-2 w-full">
                             <div className="flex gap-1.5">
@@ -161,7 +164,7 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                 </div>
 
                 {/* Multimedia Attachments */}
-                {question.fileUrl && (
+                {(question.fileUrl || question.fileData) && (
                     <div className="mt-6 flex flex-col gap-4">
                         <div className="flex items-center gap-2">
                             <div className="h-[1px] flex-1 bg-slate-100 dark:bg-white/5" />
@@ -169,43 +172,34 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                             <div className="h-[1px] flex-1 bg-slate-100 dark:bg-white/5" />
                         </div>
 
-                        {question.fileType?.startsWith('image/') ? (
+                        {(question.fileType?.startsWith('image/') || (question.fileUrl || question.fileData)?.startsWith('data:image/')) ? (
                             <div className="relative group/asset rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50">
                                 <img
-                                    src={question.fileUrl}
+                                    src={question.fileUrl || question.fileData}
                                     alt="Practical Reference"
                                     className="w-full h-auto max-h-[500px] object-contain transition-transform duration-500 group-hover/asset:scale-[1.02]"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-0 group-hover/asset:opacity-100 transition-all duration-300 flex items-end justify-center p-8">
                                     <div className="flex gap-3">
                                         <button
-                                            onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
+                                            onClick={() => {
+                                                const url = question.fileUrl || question.fileData;
+                                                if (url.startsWith('data:')) {
+                                                    downloadFile(url, question.fileName || 'image');
+                                                } else {
+                                                    window.open(url, '_blank');
+                                                }
+                                            }}
                                             className="px-5 py-2.5 bg-white text-slate-900 text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer"
                                         >
                                             <ExternalLink className="w-4 h-4" /> Expand View
                                         </button>
-                                        {/* <button
-                                            onClick={() => requireAuth(() => {
-                                                const link = document.createElement('a')
-                                                link.href = question.fileUrl
-                                                link.download = question.fileName || 'asset'
-                                                link.click()
-                                            })}
+                                        <button
+                                            onClick={() => downloadFile(question.fileUrl || question.fileData, question.fileName || 'asset')}
                                             className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors cursor-pointer"
                                         >
                                             <Download className="w-4 h-4" /> Get Asset
-                                        </button> */}
-                                        <a className="" href={question.fileUrl} download target="_blank" rel="noopener noreferrer"
-                                            onClick={(e) => {
-                                                // e.preventDefault();
-                                                console.log("Downloading asset");
-                                            }}
-                                        >
-
-                                            <button className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 hover:bg-slate-700 transition-colors cursor-pointer">
-                                                <Download className="w-4 h-4" /> Get Asset
-                                            </button>
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -216,21 +210,34 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                                         <FileText className="w-6 h-6" />
                                     </div>
                                     <div className="space-y-0.5 text-left">
-                                        <p className="text-sm font-bold text-slate-850 group-hover/file:text-indigo-650 transition-colors">
+                                        <p className="text-sm font-bold text-slate-850 dark:tex           t-slate-200 group-hover/file:text-indigo-650 transition-colors">
                                             {question.fileName || 'Attachment'}
                                         </p>
-                                        <p className="text-[11px] font-medium text-slate-400">Application Resource</p>
+                                        <p className="text-[11px] font-medium text-slate-400">
+                                            {isPdf ? "PDF Document" : "Application Resource"}
+                                        </p>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => requireAuth(() => window.open(question.fileUrl, '_blank'))}
-                                    className="h-10 px-5 w-full text-center mt-4 sm:mt-0 sm:w-fit bg-indigo-600  hover:bg-indigo-700 text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
-                                >
-                                    <div className="flex items-center justify-center w-full">
+                                <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+                                    {isPdf && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPdfModal(true)}
+                                            className="h-10 px-5 text-center bg-white hover:bg-indigo-50 text-indigo-950 border border-indigo-300 hover:border-indigo-550 text-sm font-bold rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs"
+                                        >
+                                            <Eye className="w-4 h-4" />
+                                            View PDF
+                                        </button>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => downloadFile(question.fileUrl || question.fileData, question.fileName || 'Attachment')}
+                                        className="h-10 px-5 text-center bg-indigo-650 hover:bg-indigo-750 text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs shadow-indigo-100"
+                                    >
                                         <Download className="w-4 h-4 mr-1.5" />
-                                        View File
-                                    </div>
-                                </button>
+                                        Download File
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -252,11 +259,21 @@ const QuestionBlock = memo(function QuestionBlock({ question, index, requireAuth
                 code={question.code}
                 section={section}
             />
+
+            <FilePreviewModal
+                isOpen={showPdfModal}
+                onClose={() => setShowPdfModal(false)}
+                fileUrl={question.fileUrl || question.fileData}
+                fileType={question.fileType || "application/pdf"}
+                fileName={question.fileName}
+                title={question.question}
+                subtitle={`${section} • Attachment`}
+            />
         </div>
     )
 })
 
-export const PracticalCard = memo(function PracticalCard({ practical, requireAuth }) {
+export const PracticalCard = memo(function PracticalCard({ practical }) {
     return (
         <div className="relative h-full">
             <div className="max-w-sm sm:max-w-full relative h-full rounded-[10px] overflow-hidden border border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 shadow-2xl antialiased">
@@ -272,7 +289,7 @@ export const PracticalCard = memo(function PracticalCard({ practical, requireAut
                 {/* Content Section */}
                 <div>
                     {practical.questions.map((question, index) => (
-                        <QuestionBlock key={index} question={question} index={index} requireAuth={requireAuth} section={practical.section} />
+                        <QuestionBlock key={index} question={question} index={index} section={practical.section} />
                     ))}
                 </div>
 

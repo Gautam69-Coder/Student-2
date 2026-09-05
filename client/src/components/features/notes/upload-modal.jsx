@@ -2,18 +2,15 @@ import React from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Upload, FileText, X, Check, Code, Plus, ChevronDown, Layout, File, Image as ImageIcon } from "lucide-react"
 import { useState, useEffect } from "react"
-import { createNoteFile } from "@/Api/api"
-import { createNoteText } from "@/Api/api"
+import { createNoteFile, updateNoteFile } from "@/Api/api"
 import { customMessage } from "@/Utils/customMessage"
 import { DotLoader } from "@/Utils/loaders.jsx"
 import { theme } from "@/lib/theme"
 import { useData } from "@/context/DataContext"
 
-export function UploadModal({ open, onOpenChange, onNoteCreated }) {
-
+export function UploadModal({ open, onOpenChange, onNoteCreated, onUpdate }) {
     const { notes } = useData();
 
-    const [fileType, setFileType] = useState("text");
     const [newSection, setNewSection] = useState(true);
     const [noteData, setNoteData] = useState({
         title: "",
@@ -23,15 +20,44 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
     const [fileUpload, setFileUpload] = useState(null);
     const [allSections, setallSections] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [updateFileName, setUpdateFileName] = useState(null);
+    const [previousFileUrl, setPreviousFileUrl] = useState(null);
+    const [isNewFile, setIsNewFile] = useState(false);
 
     const handleChanged = (e) => {
         setNoteData({ ...noteData, [e.target.name]: e.target.value })
     }
-    
+
+    // Reset state on open/close and when onUpdate changes
+    useEffect(() => {
+        if (!open) return;
+        if (onUpdate && notes?.length) {
+            const particularNote = notes.find(i => i._id == onUpdate);
+            if (particularNote) {
+                setNoteData({
+                    title: particularNote.title ?? "",
+                    section: particularNote.section ?? "",
+                    code: particularNote.content === "NAN" ? "" : (particularNote.content ?? "")
+                });
+                setUpdateFileName(particularNote.fileName ?? "");
+                setPreviousFileUrl(particularNote.fileData);
+                setIsNewFile(false);
+            }
+        } else {
+            setNoteData({
+                title: "",
+                section: "General",
+                code: ""
+            });
+            setFileUpload(null);
+            setUpdateFileName(null);
+            setPreviousFileUrl(null);
+            setIsNewFile(false);
+        }
+    }, [open, onUpdate, notes]);
 
     const loadSections = async () => {
         try {
-
             const sections = notes.map(item => item.section);
             setallSections([...new Set(sections)]);
         } catch (err) {
@@ -40,64 +66,74 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
         }
     }
 
-    // Only fetch sections when the modal actually opens
     useEffect(() => {
         if (open) loadSections();
-    }, [open])
+    }, [open, notes]);
 
     const handleFileUpload = (e) => {
-        setFileUpload(e.target.files[0])
+        if (e.target.files && e.target.files[0]) {
+            setFileUpload(e.target.files[0]);
+            setIsNewFile(true);
+        }
     }
 
     const handleSubmit = async () => {
-        // Basic validation for text notes and file uploads
-        // For text notes, ensure title, section, and code are provided
-        if (fileType === "text") {
-            if (!noteData.title || !noteData.section || !noteData.code) return customMessage({ content: "All fields are required", type: "error" });
-            try {
-                setLoading(true);
-                const code = await createNoteText(noteData);
-                console.log("Note upload response:", code.data.success, code.data.message);
-                if (code.data.success) {
-                    customMessage({ content: code.data.message || "Note uploaded successfully", type: "success" });
-                    setNoteData({ title: "", section: "General", code: "" });
-                    onOpenChange(false);
-                    onNoteCreated?.(); 
-                    setLoading(false);
-                }
-            } catch (err) {
-                console.error("Note not uploaded", err);
-                customMessage({ content: "Note not uploaded", type: "error" });
-                setLoading(false);
-            }
+        if (!noteData.title.trim()) {
+            return customMessage({ content: "Title is required", type: "error" });
         }
-        // For file uploads, you would handle the file input and send it to the server using createNoteFile
-        else {
-            if (!noteData.title || !noteData.section || !fileUpload) return customMessage({ content: "All fields are required", type: "error" });
-            try {
-                setLoading(true);
-                const formData = new FormData();
-                formData.append("file", fileUpload);
-                formData.append("title", noteData.title);
-                formData.append("section", noteData.section);
-                const file = await createNoteFile(formData);
-                if (file.data.success) {
-                    customMessage({ content: file.data.msg, type: "success" });
-                    setNoteData({ title: "", section: "General" });
+        if (!noteData.section.trim()) {
+            return customMessage({ content: "Section is required", type: "error" });
+        }
+
+        const hasSelectedFile = !!fileUpload;
+        const hasExistingFile = !!updateFileName && updateFileName !== "NAN";
+        const hasTextContent = !!noteData.code.trim();
+
+        if (!hasSelectedFile && !hasExistingFile && !hasTextContent) {
+            return customMessage({ content: "Please upload a document or enter some content/code text", type: "error" });
+        }
+
+        try {
+            setLoading(true);
+            const formData = new FormData();
+            formData.append("title", noteData.title.trim());
+            formData.append("section", noteData.section.trim());
+            formData.append("content", noteData.code.trim() || "NAN");
+
+            if (onUpdate) {
+                formData.append("noteId", onUpdate.toString());
+                formData.append("previousFileUrl", previousFileUrl || "NAN");
+                formData.append("isNewFile", isNewFile ? "true" : "false");
+                if (fileUpload) {
+                    formData.append("file", fileUpload);
+                }
+                const response = await updateNoteFile(formData);
+                if (response.data.success) {
+                    customMessage({ content: response.data.msg || "Note updated successfully", type: "success" });
                     setFileUpload(null);
                     onOpenChange(false);
-                    onNoteCreated?.(); // Trigger notes refresh in parent
-                    setLoading(false);
+                    onNoteCreated?.();
                 }
-            } catch (err) {
-                console.error("File not uploaded", err);
-                customMessage({ content: "File not uploaded", type: "error" });
-                setLoading(false);
+            } else {
+                if (fileUpload) {
+                    formData.append("file", fileUpload);
+                }
+                const response = await createNoteFile(formData);
+                if (response.data.success) {
+                    customMessage({ content: response.data.msg || "Note uploaded successfully", type: "success" });
+                    setFileUpload(null);
+                    onOpenChange(false);
+                    onNoteCreated?.();
+                }
             }
+        } catch (err) {
+            console.error("Upload failed", err);
+            customMessage({ content: err.response?.data?.message || "Upload failed", type: "error" });
+        } finally {
+            setLoading(false);
         }
     }
 
-    // Handle section creation or selection 
     const handleSection = () => {
         if (newSection) {
             setNewSection(false);
@@ -134,46 +170,18 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                             borderColor: theme.colors.lightGray,
                         }}
                     >
-                        <div className="p-6 sm:p-7">
+                        <div className="p-6 sm:p-7 max-h-[85vh] overflow-y-auto" data-lenis-prevent>
                             {/* Header */}
                             <div className="flex flex-col gap-1 mb-6">
                                 <h2 className="text-xl font-bold tracking-tight" style={{ color: theme.colors.dark }}>
-                                    Share Your Notes
+                                    {onUpdate ? "Update Study Note" : "Share Your Notes"}
                                 </h2>
                                 <p className="text-sm" style={{ color: theme.colors.darkGray }}>
-                                    Upload files or save code snippets with clean section organization.
+                                    Upload documents and add optional content or code snippets with clean section organization.
                                 </p>
                             </div>
 
-                            {/* Upload Type Switcher (Home-style segmented UI) */}
-                            <div className="flex p-1 rounded-xl mb-5" style={{ background: theme.colors.softGray, border: `1px solid ${theme.colors.lightGray}` }}>
-                                <button
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all shadow-sm`}
-                                    style={{
-                                        background: fileType === "text" ? theme.colors.white : "transparent",
-                                        color: fileType === "text" ? theme.colors.dark : theme.colors.darkGray,
-                                        border: `1px solid ${fileType === "text" ? theme.colors.lightGray : "transparent"}`,
-                                    }}
-                                    onClick={() => { setFileType("text") }}
-                                >
-                                    <Code className="w-4 h-4" style={{ color: fileType === "text" ? theme.colors.lime : theme.colors.darkGray }} />
-                                    Text / Code
-                                </button>
-                                <button
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-all shadow-sm`}
-                                    style={{
-                                        background: fileType === "file" ? theme.colors.white : "transparent",
-                                        color: fileType === "file" ? theme.colors.dark : theme.colors.darkGray,
-                                        border: `1px solid ${fileType === "file" ? theme.colors.lightGray : "transparent"}`,
-                                    }}
-                                    onClick={() => { setFileType("file"); }}
-                                >
-                                    <FileText className="w-4 h-4" style={{ color: fileType === "file" ? theme.colors.lime : theme.colors.darkGray }} />
-                                    Upload File
-                                </button>
-                            </div>
-
-                            <div className="space-y-4">
+                            <div className="space-y-5">
                                 {/* Title */}
                                 <div>
                                     <label className="text-sm font-medium" style={{ color: theme.colors.darkGray }}>
@@ -190,7 +198,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                             border: `1px solid ${theme.colors.lightGray}`,
                                             color: theme.colors.dark,
                                         }}
-                                        onChange={(e) => { handleChanged(e) }}
+                                        onChange={handleChanged}
                                     />
                                 </div>
 
@@ -204,9 +212,9 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                         {newSection ? (
                                             <div className="relative flex-1">
                                                 <select
-                                                    className="w-full h-10 px-3 rounded-lg text-sm appearance-none transition-all outline-none"
+                                                    className="w-full h-10 px-3 rounded-lg text-sm appearance-none transition-all outline-none animate-none"
                                                     name="section"
-                                                    onChange={(e) => { handleChanged(e); }}
+                                                    onChange={handleChanged}
                                                     value={noteData.section}
                                                     style={{
                                                         background: theme.colors.softGray,
@@ -214,7 +222,8 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                                         color: theme.colors.dark,
                                                     }}
                                                 >
-                                                    {allSections.map((item, index) => {
+                                                    <option value="General">General</option>
+                                                    {allSections.filter(sec => sec !== "General").map((item, index) => {
                                                         return <option key={index} value={item}>{item}</option>
                                                     })}
                                                 </select>
@@ -228,9 +237,9 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                                 <input
                                                     className="w-full h-10 px-3 rounded-lg text-sm appearance-none transition-all outline-none"
                                                     name="section"
-                                                    onChange={(e) => { handleChanged(e); }}
+                                                    onChange={handleChanged}
                                                     value={noteData.section}
-                                                    placeholder="Enter the section"
+                                                    placeholder="Enter new section name"
                                                     style={{
                                                         background: theme.colors.softGray,
                                                         border: `1px solid ${theme.colors.lightGray}`,
@@ -254,9 +263,7 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                                 borderColor: theme.colors.lightGray,
                                                 color: theme.colors.darkGray,
                                             }}
-                                            onClick={() => {
-                                                handleSection();
-                                            }}
+                                            onClick={handleSection}
                                         >
                                             <Plus className="w-4 h-4" style={{ color: theme.colors.lime }} />
                                             <span className="hidden sm:inline" >New</span>
@@ -264,37 +271,49 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                     </div>
                                 </div>
 
-                                {/* Content */}
-                                {fileType === "text" && (
-                                    <div>
-                                        <label className="text-sm font-medium flex items-center gap-2" style={{ color: theme.colors.darkGray }}>
-                                            <Code className="w-4 h-4" style={{ color: theme.colors.darkGray }} />
-                                            Content / Code
-                                        </label>
-                                        <textarea
-                                            placeholder="Paste your code or text here..."
-                                            className="mt-1.5 w-full px-3 py-3 rounded-lg text-sm min-h-62.5 font-mono transition-all resize-y outline-none"
-                                            style={{
-                                                background: theme.colors.softGray,
-                                                border: `1px solid ${theme.colors.lightGray}`,
-                                                color: theme.colors.dark,
-                                            }}
-                                            name="code"
-                                            value={noteData.code}
-                                            onChange={(e) => { handleChanged(e) }}
-                                        />
-                                    </div>
-                                )}
-
-                                {fileType === "file" && (
-                                    <div>
-                                        <label className="text-sm font-medium flex items-center gap-2" style={{ color: theme.colors.darkGray }}>
-                                            <ImageIcon className="w-4 h-4" style={{ color: theme.colors.darkGray }} />
-                                            Upload Document
-                                        </label>
-                                        <div className="mt-2">
+                                {/* Upload Document (Optional) */}
+                                <div>
+                                    <label className="text-sm font-medium flex items-center gap-2" style={{ color: theme.colors.darkGray }}>
+                                        <ImageIcon className="w-4 h-4" style={{ color: theme.colors.darkGray }} />
+                                        Upload Document (Optional)
+                                    </label>
+                                    <div className="mt-2">
+                                        {updateFileName && updateFileName !== "NAN" ? (
+                                            <div
+                                                className="flex items-center justify-between p-4 rounded-xl border bg-slate-50"
+                                                style={{ borderColor: theme.colors.lightGray }}
+                                            >
+                                                <div className="flex items-center gap-3 overflow-hidden min-w-0">
+                                                    <FileText className="w-5 h-5 text-indigo-600 shrink-0" />
+                                                    <span className="text-sm font-bold text-slate-800 truncate">
+                                                        {updateFileName}
+                                                    </span>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <label className="text-xs font-bold text-indigo-600 hover:text-indigo-700 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer select-none">
+                                                        Replace
+                                                        <input
+                                                            type="file"
+                                                            className="hidden"
+                                                            onChange={handleFileUpload}
+                                                        />
+                                                    </label>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setUpdateFileName("NAN");
+                                                            setPreviousFileUrl("NAN");
+                                                            setIsNewFile(true);
+                                                        }}
+                                                        className="text-xs font-bold text-red-600 hover:text-red-700 px-3 py-1.5 rounded-lg border border-red-200 bg-white hover:bg-red-50"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
                                             <label
-                                                className="w-full h-32 border-2 border-dashed rounded-lg cursor-pointer flex flex-col items-center justify-center gap-2 text-sm transition-all"
+                                                className="w-full h-28 border-2 border-dashed rounded-xl cursor-pointer flex flex-col items-center justify-center gap-1.5 text-xs transition-all p-4"
                                                 style={{
                                                     background: theme.colors.softGray,
                                                     borderColor: theme.colors.lightGray,
@@ -302,44 +321,68 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                                                 }}
                                             >
                                                 <FileText className="w-6 h-6" style={{ color: theme.colors.lime }} />
-                                                {!fileUpload ? (
-                                                    <span>Click to select a file (Only PDF,DOCX, TXT, IMG)</span>
+                                                {fileUpload ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-semibold text-zinc-800">{fileUpload.name}</span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setFileUpload(null);
+                                                            }}
+                                                            className="text-red-500 hover:text-red-700 p-1"
+                                                        >
+                                                            <X className="w-3.5 h-3.5" />
+                                                        </button>
+                                                    </div>
                                                 ) : (
-                                                    <span className="font-semibold" style={{ color: theme.colors.dark }}>
-                                                        {fileUpload.name}
-                                                    </span>
+                                                    <span className="text-center">Click to select a file (PDF, DOCX, TXT, IMG, PPTX, etc.)</span>
                                                 )}
                                                 <input
                                                     type="file"
                                                     className="hidden"
-                                                    onChange={(e) => {
-                                                        handleFileUpload(e);
-                                                    }}
+                                                    onChange={handleFileUpload}
                                                 />
                                             </label>
-                                        </div>
+                                        )}
                                     </div>
-                                )}
+                                </div>
+
+                                {/* Content / Code (Optional) */}
+                                <div>
+                                    <label className="text-sm font-medium flex items-center gap-2" style={{ color: theme.colors.darkGray }}>
+                                        <Code className="w-4 h-4" style={{ color: theme.colors.darkGray }} />
+                                        Content / Code (Optional)
+                                    </label>
+                                    <textarea
+                                        data-lenis-prevent
+                                        placeholder="Paste your code or text here..."
+                                        className="mt-1.5 w-full px-3 py-3 rounded-lg text-sm min-h-[160px] font-mono transition-all resize-y outline-none"
+                                        style={{
+                                            background: theme.colors.softGray,
+                                            border: `1px solid ${theme.colors.lightGray}`,
+                                            color: theme.colors.dark,
+                                        }}
+                                        name="code"
+                                        value={noteData.code}
+                                        onChange={handleChanged}
+                                    />
+                                </div>
 
                                 {/* Primary CTA */}
                                 <button
                                     className="w-full h-12 flex items-center justify-center gap-2 font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all active:scale-[0.99] shadow-md shadow-indigo-100"
-                                    onClick={() => {
-                                        handleSubmit();
-                                        setLoading(true);
-
-                                    }}
+                                    onClick={handleSubmit}
                                 >
-                                    {
-                                        loading ? (
-                                            <DotLoader size={20} color={"white"} />
-                                        ) : (
-                                            <>
-                                                <Upload className="w-4 h-4" />
-                                                {fileType === "text" ? "Save Note" : "Upload Note"}
-                                            </>
-                                        )
-                                    }
+                                    {loading ? (
+                                        <DotLoader size={20} color={"white"} />
+                                    ) : (
+                                        <>
+                                            <Upload className="w-4 h-4" />
+                                            {onUpdate ? "Update Note" : "Save Note"}
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </div>
@@ -357,9 +400,8 @@ export function UploadModal({ open, onOpenChange, onNoteCreated }) {
                             <X className="w-5 h-5" />
                         </button>
                     </motion.div>
-                </div >
+                </div>
             )}
-        </AnimatePresence >
+        </AnimatePresence>
     )
 }
-

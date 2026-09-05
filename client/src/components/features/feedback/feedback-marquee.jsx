@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils"
 import { Marquee } from "/components/ui/marquee"
 
-
-
 const ReviewCard = ({
   rating,
   comment,
@@ -12,7 +10,7 @@ const ReviewCard = ({
 }) => {
   return (
     <div
-      className="p-4 rounded-xl border w-[350px]   border-slate-200 flex flex-col justify-between space-y-3 bg-slate-50/60 hover:bg-slate-50 transition-all shadow-2xs"
+      className="p-4 rounded-xl border w-[350px] border-slate-200 flex flex-col justify-between space-y-3 bg-slate-50/60 hover:bg-slate-50 transition-all shadow-2xs"
     >
       <div className="space-y-2">
         <div className="text-amber-500 text-xs font-black tracking-widest">{rating}</div>
@@ -33,13 +31,12 @@ const ReviewCard = ({
   )
 }
 
-function Feedback({ feedbacks }) {
-
+function FeedbackMarquee({ feedbacks }) {
   const firstRow = feedbacks.slice(feedbacks.length / 2)
 
   return (
-    <div className="relative flex  flex-col items-center justify-center overflow-hidden">
-      <Marquee pauseOnHover className="[--duration:20s] ">
+    <div className="relative flex flex-col items-center justify-center overflow-hidden">
+      <Marquee pauseOnHover className="[--duration:20s]">
         {firstRow.map((review) => (
           <ReviewCard key={review.name} {...review} />
         ))}
@@ -48,4 +45,4 @@ function Feedback({ feedbacks }) {
   )
 }
 
-export default Feedback
+export default FeedbackMarquee

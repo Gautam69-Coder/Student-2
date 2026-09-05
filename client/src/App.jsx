@@ -23,7 +23,7 @@ const AdminPanel = lazy(() =>
 const LoginPage = lazy(() => import('./pages/auth/Login'));
 const SignupPage = lazy(() => import('./pages/auth/Signup'));
 const AIAssistant = lazy(() =>
-    import('@/components/common/ai-assistant').then(m => ({ default: m.AIAssistant }))
+    import('@/components/features/chatbot/ai-assistant').then(m => ({ default: m.AIAssistant }))
 );
 const BlogList = lazy(() => import('./pages/blog/BlogList'));
 const BlogPost = lazy(() => import('./pages/blog/BlogPost'));

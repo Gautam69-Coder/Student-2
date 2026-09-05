@@ -13,7 +13,7 @@ import {
 import { useTitle } from "@/hooks/useTitle";
 import { theme } from "@/lib/theme";
 
-export const Feedback = ({ user, requireAuth }) => {
+export const Feedback = ({ user }) => {
     useTitle("Feedback Center");
     const [formData, setFormData] = useState({
         title: '',
@@ -32,20 +32,18 @@ export const Feedback = ({ user, requireAuth }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        requireAuth(async () => {
-            setLoading(true);
-            setStatus({ type: '', message: '' });
+        setLoading(true);
+        setStatus({ type: '', message: '' });
 
-            try {
-                await submitFeedback(formData);
-                setStatus({ type: 'success', message: 'Feedback submitted successfully! Thank you for helping us improve.' });
-                setFormData({ title: '', message: '', category: 'General' });
-            } catch (err) {
-                setStatus({ type: 'error', message: err.response?.data?.msg || 'Failed to submit feedback. Please try again.' });
-            } finally {
-                setLoading(false);
-            }
-        });
+        try {
+            await submitFeedback(formData);
+            setStatus({ type: 'success', message: 'Feedback submitted successfully! Thank you for helping us improve.' });
+            setFormData({ title: '', message: '', category: 'General' });
+        } catch (err) {
+            setStatus({ type: 'error', message: err.response?.data?.msg || 'Failed to submit feedback. Please try again.' });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

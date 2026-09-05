@@ -46,14 +46,14 @@ export const register = asyncHandler(async (req, res) => {
     await user.save();
 
     const payload = { id: user.id, role: user.role };
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 * 24 }, (err, token) => {
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "30d" }, (err, token) => {
         if (err) throw err;
         // BUG-11 fix: Use sameSite 'none' with secure for cross-origin cookies
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            maxAge: 3600 * 24 * 1000 // 1 day
+            maxAge: 30 * 24 * 3600 * 1000 // 30 days
         });
         res.status(201).json(new ApiResponse(201, { token, user: { id: user.id, username: user.username, role: user.role, email: user.email } }, "User registered successfully"));
     });
@@ -142,30 +142,43 @@ export const googleLogin = asyncHandler(async (req, res) => {
 
     const existingUser = await User.findOne({ email });
 
+    let targetUser;
     // BUG-10 fix: Don't overwrite existing non-Google users (prevents admin account hijack)
     if (existingUser && !existingUser.isGoogleUser) {
         // Existing user registered with email/password — don't overwrite their data
         // Just return the existing user without modifying their role/username
-        return res.status(200).json(new ApiResponse(200, { user: existingUser }, "Login successful"));
+        targetUser = existingUser;
+    } else {
+        targetUser = await User.findOneAndUpdate(
+            { email },
+            {
+                $set: {
+                    avatar: picture,
+                    username: name,
+                    uid: user_id,
+                    isGoogleUser: true
+                },
+            },
+            {
+                upsert: true,
+                new: true
+            }
+        );
     }
 
-    const newUser = await User.findOneAndUpdate(
-        { email },
-        {
-            $set: {
-                avatar: picture,
-                username : name,
-                uid: user_id,
-                isGoogleUser: true
-            },
-        },
-        {
-            upsert: true,
-            new: true
-        }
-    );
+    const payload = { id: targetUser.id, role: targetUser.role };
 
-    res.status(200).json(new ApiResponse(200, { user: newUser }, "Login successful"));
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "30d" }, (err, jwtToken) => {
+        if (err) throw err;
+        // BUG-11 fix: Use sameSite 'none' with secure for cross-origin cookies
+        res.cookie('token', jwtToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            maxAge: 30 * 24 * 3600 * 1000 // 30 days
+        });
+        res.status(200).json(new ApiResponse(200, { token: jwtToken, user: targetUser }, "Login successful"));
+    });
 });
 
 export const adminAccess = asyncHandler(async (req, res) => {

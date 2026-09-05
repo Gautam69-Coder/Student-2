@@ -7,6 +7,8 @@ import { Logo } from "../common/logo/logo";
 import { useData } from "@/context/DataContext";
 
 export function DashboardSidebar({
+    isCollapsed,
+    onToggleCollapse,
     navItems,
     userName,
     userEmail,
@@ -26,10 +28,14 @@ export function DashboardSidebar({
 
     return (
         <motion.aside
-            className="hidden md:flex sticky flex-col h-screen overflow-y-auto gap-3 p-4 top-0 left-0 bg-white border-r border-slate-200 text-slate-800"
-            style={{
-                width: "250px",
+            animate={{
+                width: isCollapsed ? 0 : 250,
+                padding: isCollapsed ? 0 : 16,
+                borderRightWidth: isCollapsed ? 0 : 1,
+                opacity: isCollapsed ? 0 : 1,
             }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="hidden md:flex sticky flex-col h-screen overflow-y-auto gap-3 top-0 left-0 bg-white border-slate-200 text-slate-800 border-r overflow-hidden"
         >
             {/* Logo */}
             <div className="text-2xl mb-12 font-bold px-2 pt-2">

@@ -1,8 +1,8 @@
 # Student Hub - Features
 
 ## For Students
-1. **Study Materials & Practicals**: Access an organized library of notes, programming practicals (with code previews), and learning resources.
-2. **Previous Year Questions (PYQs)**: Instantly view and download past examination papers for targeted revision.
+1. **Study Notes**: Save, access, and organize a library of study notes and learning materials.
+2. **Coding Practice Tracks**: Practice coding challenges with a built-in Monaco editor supporting multiple languages (JS, Python, C++, Java, DSA).
 3. **AI Assistant**: An integrated AI helper to assist with academic queries, debug code, and explain complex concepts.
 4. **Community & Collaboration**: Connect with peers, share knowledge, and participate in discussion posts.
 5. **Real-time Chat**: Send direct messages to peers and collaborate instantly.
@@ -11,7 +11,7 @@
 
 ## For Administrators
 1. **User Management**: A comprehensive dashboard to view, manage, and update student accounts and their permissions.
-2. **Content Management**: Tools to easily upload, organize, edit, and delete study materials, practicals, and PYQs.
+2. **Content Management**: Tools to easily upload, organize, edit, and delete study notes, coding challenges, and study resources.
 3. **Analytics**: Monitor platform usage, student engagement, and overall activity trends.
 4. **Broadcast & Notifications**: Send critical announcements and targeted messages to all or specific users.
 

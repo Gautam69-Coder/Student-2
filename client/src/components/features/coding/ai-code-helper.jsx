@@ -16,6 +16,7 @@ import { theme } from "@/lib/theme";
 import { customMessage } from "@/Utils/customMessage";
 import { useData } from "@/context/DataContext";
 import { ApiKeyModal } from "@/components/common/ApiKeyModal";
+import { copyToClipboard } from "@/Utils/clipboard";
 
 import ChatInput from "@/components/common/chat-input";
 
@@ -84,8 +85,11 @@ function MarkdownMessage({ content, sender }) {
                             <div className="flex items-center justify-between px-4 py-2" style={{ background: "#111827" }}>
                                 <span className="text-xs font-semibold text-white">{match[1]}</span>
                                 <button
-                                    onClick={() => navigator.clipboard.writeText(String(children).replace(/\n$/, ""))}
-                                    className="text-xs font-medium text-slate-300 hover:text-white transition-colors"
+                                    onClick={async () => {
+                                        const ok = await copyToClipboard(String(children).replace(/\n$/, ""));
+                                        if (ok) customMessage({ type: "success", content: "Code copied to clipboard!" });
+                                    }}
+                                    className="text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer"
                                 >
                                     Copy
                                 </button>

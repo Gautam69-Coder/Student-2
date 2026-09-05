@@ -494,5 +494,3 @@ const Icons = {
     </svg>
   ),
 };
-
-export { AnimatedLoading };

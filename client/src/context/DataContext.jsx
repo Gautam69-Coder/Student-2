@@ -73,10 +73,10 @@ export const DataProvider = ({ children }) => {
         enabled: !!user,
     });
 
-    // Use ReactQuery fro ALL Users
+    // Use React Query for ALL Users
     const { 
         data: allusersData, 
-        isLoading: alluersloading
+        isLoading: allUsersLoading
     } = useQuery({
         queryKey: ['allusers'],
         queryFn: async () => {
@@ -99,12 +99,13 @@ export const DataProvider = ({ children }) => {
         subjects: subjectsData || [],
         practicals: practicalsData || [],
         notes: notesData || [],
-        allusers:allusersData || [],
+        allusers: allusersData || [],
         loading: {
             user: userLoading,
             subjects: subjectsLoading,
             practicals: practicalsLoading,
-            notes: notesLoading
+            notes: notesLoading,
+            allUsers: allUsersLoading
         },
         refreshNotes: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
         refreshPracticals: () => queryClient.invalidateQueries({ queryKey: ['practicals'] }),

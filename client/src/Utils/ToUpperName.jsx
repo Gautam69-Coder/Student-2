@@ -1,3 +1,2 @@
-export const toUpperName = (name) => {
-    return name?.charAt(0)?.toUpperCase() + name?.slice(1) || name;
-}
+export * from './toUpperName.js';
+export { toUpperName as default } from './toUpperName.js';

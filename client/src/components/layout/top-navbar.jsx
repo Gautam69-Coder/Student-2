@@ -22,32 +22,24 @@ export function TopNavBar({
 }) {
 
     const { user } = useData();
-    const [isAdmin, setIsAdmin] = useState(false);
+    const isAdmin = user?.role === "admin" || user?.role === "superadmin";
+    const hasApiKey = Boolean(user?.apiKey);
+
     const [showProfile, setShowProfile] = useState(false);
     const [showAddKeyModal, setShowAddKeyModal] = useState(false);
     const [apiKeyInput, setApiKeyInput] = useState("");
     const [savingApiKey, setSavingApiKey] = useState(false);
     const [apiKeyError, setApiKeyError] = useState("");
-    const [isApiKey, setIsApiKey] = useState(true);
 
     const navigate = useNavigate();
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-    const checkApikey = () => {
-        if (user?.apiKey) {
-            setIsApiKey(false);
-        }
-        setIsAdmin(user.role === "admin" || user.role === "superadmin");
-    }
-
     useEffect(() => {
-
         if (!showAddKeyModal) {
             setApiKeyInput("");
             setApiKeyError("");
             setSavingApiKey(false);
         }
-        checkApikey();
     }, [showAddKeyModal]);
 
     useEffect(() => {
@@ -296,7 +288,7 @@ export function TopNavBar({
                     )}
 
                     {/* Enhanced Add Key Button */}
-                    {isApiKey && (
+                    {!hasApiKey && (
                         <button
                             onClick={() => setShowAddKeyModal(true)}
                             className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden group"

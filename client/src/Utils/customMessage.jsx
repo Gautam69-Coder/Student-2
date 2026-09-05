@@ -1,6 +1,2 @@
-import { message } from 'antd';
-import { toUpperName } from './ToUpperName';
-
-export const customMessage = ({ content, type }) => {
-    message[type](toUpperName(content));
-};
+export * from './customMessage.js';
+export { customMessage as default } from './customMessage.js';

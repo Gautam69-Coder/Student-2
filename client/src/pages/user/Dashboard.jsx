@@ -1,11 +1,8 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react"
-import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
-import { motion, AnimatePresence } from "framer-motion"
-import { Link } from "react-router-dom"
-import { Code, FileText, Download, X, HomeIcon, Search, ArrowUpRight } from "lucide-react"
-import { BottomNavbar } from "@/components/layout/bottom-navbar"
-import { NotePreviewModal } from "@/components/features/notes/note-preview-modal"
-import { downloadFile } from "@/Utils/download";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { FileText, HomeIcon, Search, ArrowUpRight } from "lucide-react";
+import { BottomNavbar } from "@/components/layout/bottom-navbar";
+import { NotePreviewModal } from "@/components/features/notes/note-preview-modal";
 import { useTitle } from "@/hooks/useTitle";
 import { useData } from "@/context/DataContext";
 import { canAccessPracticals } from "@/Utils/vesCheck";
@@ -22,27 +19,18 @@ import { Upgrade } from "./Upgrade";
 import { PracticalCard } from "@/components/features/practicals/practical-card";
 import { CodingPractice } from "./CodingPractice";
 import CodeEditor from "./CodeEditor";
-import PracticeDeatils from "./PracticeDeatils";
-import Test from "@/Utils/Test";
+import PracticeDetails from "./PracticeDetails";
 
 import { TopNavBar } from "@/components/layout/top-navbar";
 import { DashboardSidebar } from "@/components/layout/sidebar";
 import { DashboardLayout } from "@/components/layout/layout";
 
 import {
-    Bell,
-    CheckCircle2,
-    Clock,
-    Plus,
-    TrendingUp,
-    Zap,
     BookOpen,
-    LayoutGrid,
     FlaskConical,
     Users,
     MessageSquare,
     Info,
-    BarChart3,
     Code2,
     Sparkles,
 } from "lucide-react";
@@ -50,7 +38,7 @@ import {
 // NOTE: sidebar nav items expect icon COMPONENTS (functions/classes), not JSX literals like <Home />
 
 
-export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
+export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
     useTitle("Dashboard");
     // Theme toggle is disabled (dark mode only enforced by ThemeContext)
 
@@ -59,8 +47,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
         subjects,
         practicals,
         notes,
-        loading,
-        refreshNotes,
     } = useData();
 
 
@@ -128,19 +114,10 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
             <div className="flex">
                 <DashboardSidebar
                     isCollapsed={isSidebarCollapsed}
-                    onToggleCollapse={toggleSidebarCollapse}
                     navItems={navItems}
-                    userName={userName || "Student Name"}
-                    userEmail={user?.email || "student@email.com"}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
                     isBell={isBell}
                     setisBell={setisBell}
-                    onLogout={() => {
-                        // Handle logout
-                        onLogout();
-
-                    }}    // Add your logout logic here
+                    onLogout={onLogout}
                     onShare={() => {
                         navigate("/dashboard/notes", { state: { openShare: true } });
                     }}
@@ -375,9 +352,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                     {/* All Path */}
                                     <Route path="/" element={<Home />} />
 
-                                    {/* Test Route */}
-                                    <Route path="test" element={<Test />} />
-
                                     {/* Notes Route */}
                                     <Route path="notes" element={<Notes />} />
 
@@ -398,9 +372,9 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin, onAuth }) {
                                     {/* Upgrade Route */}
                                     <Route path="upgrade" element={<Upgrade />} />
 
-                                    {/* Code pratice */}
+                                    {/* Code practice */}
                                     <Route path="coding-practice" element={<CodingPractice user={user} />} />
-                                    <Route path="coding-practice/:language" element={<PracticeDeatils />} />
+                                    <Route path="coding-practice/:language" element={<PracticeDetails />} />
 
                                     {/* Profile route */}
                                     <Route path="profile" element={

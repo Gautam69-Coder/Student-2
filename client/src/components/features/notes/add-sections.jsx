@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Trash, X, Sparkles, Layers, BookOpen, Plus } from "lucide-react";
 import { createSection, deleteSection } from "@/Api/api";
 import { getLenis } from "@/hooks/useLenis";
-import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { theme } from "@/lib/theme";
 
 const StatTile = ({ label, value }) => {

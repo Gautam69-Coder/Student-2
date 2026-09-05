@@ -11,7 +11,7 @@ import HighlightComponent from "react-highlight";
 const Highlight = HighlightComponent.default || HighlightComponent;
 
 import { aiCodeHelper } from "@/Api/api";
-import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { theme } from "@/lib/theme";
 import { customMessage } from "@/Utils/customMessage";
 import { useData } from "@/context/DataContext";

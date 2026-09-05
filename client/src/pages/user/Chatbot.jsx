@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Card, CardContent } from "/components/ui/card";
+import { useState, useEffect, useMemo } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { DashboardLayout } from "@/components/layout/layout";
 import { theme } from "@/lib/theme";
 import { useData } from "@/context/DataContext";
-import { aiChatBot } from "@/Api/api";
+import { aiChatBot, aiChatBotDeleteConversation } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
 import { ChatHistorySidebar } from "@/components/features/chatbot/ChatHistorySidebar";
 import { ChatFeed } from "@/components/features/chatbot/ChatFeed";
 import { ContextSidebar } from "@/components/features/chatbot/ContextSidebar";
 import { ApiKeyModal } from "@/components/common/ApiKeyModal";
-import { aiChatBotDeleteConversation } from "@/Api/api";
 
 export function Chatbot() {
     const { user, notes, practicals } = useData();

@@ -4,7 +4,7 @@ import { X, Trash, FlaskConical, FileUp, FileText, Image as ImageIcon, Loader2, 
 import { createPractical, updatePractical } from "@/Api/api";
 import { getLenis } from "@/hooks/useLenis";
 import { useData } from "@/context/DataContext";
-import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { theme } from "@/lib/theme";
 import { customMessage } from "@/Utils/customMessage";
 

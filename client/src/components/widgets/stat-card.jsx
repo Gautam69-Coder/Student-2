@@ -1,6 +1,6 @@
 import React from "react";
 import { theme } from "@/lib/theme";
-import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function TrendBadge({ text, variant = "success" }) {
     const variants = {

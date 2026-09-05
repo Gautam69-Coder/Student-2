@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShineBorder } from "/components/ui/shine-border";
+import { ShineBorder } from "@/components/ui/shine-border";
 import { aiAssistant } from "@/Api/api";
 import { Sparkles, X, Send, Minimize2, Maximize2 } from "lucide-react";
 import { theme } from "@/lib/theme";

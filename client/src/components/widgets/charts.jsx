@@ -14,7 +14,7 @@ import {
     LineChart,
     Line,
 } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { theme } from "@/lib/theme";
 
 export function PieChartCard({ title, subtitle, data, colors }) {

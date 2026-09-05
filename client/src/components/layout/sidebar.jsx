@@ -1,29 +1,20 @@
-import React, { useState } from "react";
 import { LayoutGroup, motion } from "framer-motion";
-import { theme } from "@/lib/theme";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Bell, LogOut, Upload, Search, X } from "lucide-react";
+import { Bell, LogOut, Upload } from "lucide-react";
 import { Logo } from "../common/logo/logo";
 import { useData } from "@/context/DataContext";
 
 export function DashboardSidebar({
     isCollapsed,
-    onToggleCollapse,
     navItems,
-    userName,
-    userEmail,
-    userAvatar,
     onLogout,
     onShare,
-    searchQuery,
-    setSearchQuery,
     isBell,
     setisBell,
     Notification,
 }) {
     const navigate = useNavigate();
     const location = useLocation();
-    const [showSearch, setShowSearch] = useState(false);
     const { user } = useData();
 
     return (

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchCodingPractices } from "@/Api/api";
+import { fetchCodingPractices, updateProblemStatus, codeChecker } from "@/Api/api";
 import { theme } from "@/lib/theme";
 import { copyToClipboard } from "@/Utils/clipboard";
 import { 
@@ -18,11 +18,9 @@ import {
     Copy, 
     Check 
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardLayout } from "@/components/layout/layout";
-import { updateProblemStatus } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
-import { codeChecker } from "@/Api/api";
 
 const DEFAULT_TEMPLATES = {
     javascript: `// Write your JavaScript solution here
@@ -170,7 +168,7 @@ export default function CodeEditor() {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState({});
     const [fetching, setFetching] = useState(true);
-    const [submitLaoding, setSubmitLaoding] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
     
     // Editor controls state
     const [fontSize, setFontSize] = useState(15);
@@ -266,7 +264,7 @@ export default function CodeEditor() {
 
     const handleSubmit = async () => {
         try {
-            setSubmitLaoding(true);
+            setSubmitLoading(true);
             await runCode();
             
             const question = data?.question || "hello";
@@ -315,7 +313,7 @@ export default function CodeEditor() {
                 content: `Error submitting solution.`
             });
         } finally {
-            setSubmitLaoding(false);
+            setSubmitLoading(false);
         }
     };
 
@@ -658,14 +656,14 @@ export default function CodeEditor() {
 
                                 <button
                                     onClick={handleSubmit}
-                                    disabled={submitLaoding || loading}
+                                    disabled={submitLoading || loading}
                                     className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-2.5 text-xs font-black text-black transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md hover:brightness-105"
                                     style={{
                                         background: theme.colors.lime,
                                         boxShadow: "0 4px 10px rgba(204,255,0,0.15)",
                                     }}
                                 >
-                                    {submitLaoding ? (
+                                    {submitLoading ? (
                                         <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
                                     ) : (
                                         <Send className="w-4 h-4" />

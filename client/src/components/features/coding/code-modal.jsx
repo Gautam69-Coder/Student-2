@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check, Sparkles, Code2 } from "lucide-react";
 import CodeTabs from "@/components/features/practicals/practical-code-tab";
 import { AICodeHelper } from "@/components/features/coding/ai-code-helper";
-import { CardContent } from "/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { theme } from "@/lib/theme";
 import { useClipboard } from "@/Utils/clipboard";
 

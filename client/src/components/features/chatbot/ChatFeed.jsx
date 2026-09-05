@@ -12,7 +12,7 @@ import {
     Clock,
     FileText,
 } from "lucide-react";
-import { Badge } from "/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { MarkdownContent } from "@/Utils/MarkdownContent";
 import ChatInput from "@/components/common/chat-input";
 

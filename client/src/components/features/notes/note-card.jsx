@@ -12,7 +12,7 @@ import {
     Image as ImageIcon,
     Edit
 } from "lucide-react";
-import { Card, CardContent } from "/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { theme } from "@/lib/theme";
 import { formatDate } from "@/Utils/date";
 

@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
     FileText,
-    Zap,
     BookOpen,
     Home as HomeIcon,
     Users,
@@ -9,9 +8,10 @@ import {
     Code2,
     FlaskConical,
     Sparkles,
+    Zap,
 } from "lucide-react";
 
-import { Card, CardTitle } from "/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import FeedbackMarquee from "@/components/features/feedback/feedback-marquee";
 import { formatDate } from "@/Utils/date";
 
@@ -19,21 +19,20 @@ import {
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
-    // ChartConfig
-} from "/components/ui/chart";
+} from "@/components/ui/chart";
 
-import { Progress } from "/components/ui/progress";
-import { Separator } from "/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import { DashboardLayout } from "@/components/layout/layout";
-import { DashStatCard, DashStatCard as DashboardStatCard } from "@/components/widgets/stat-card";
+import { DashStatCard } from "@/components/widgets/stat-card";
 import RippleLoader from "@/components/ui/nurui/ripple-loader";
-import { theme } from "@/lib/theme";
-import { BarChart, Bar, XAxis, ResponsiveContainer, Cell, CartesianGrid, YAxis } from "recharts";
+import { BarChart, Bar, XAxis, ResponsiveContainer, CartesianGrid, YAxis } from "recharts";
 import { fetchUserProgress } from "@/Api/api";
 import { Link } from "react-router-dom";
-import { DotLoader } from "@/Utils/loaders";
-import { useData } from "@/context/DataContext"
+import { useData } from "@/context/DataContext";
 import { canAccessPracticals } from "@/Utils/vesCheck";
+
+const DEFAULT_TRACK_LANGUAGES = ["javascript", "python", "cpp", "java", "dsa"];
 
 function SubjectProgressRow({ name, progress, done, total, Icon }) {
     const remaining = Math.max(0, total - done);
@@ -151,13 +150,11 @@ export function Home() {
         return (totalWeeklyQuestions / 7).toFixed(1);
     }, [totalWeeklyQuestions]);
 
-    const defaultTrackLanguages = ["javascript", "python", "cpp", "java", "dsa"];
-
     const mergedUserProgress = useMemo(() => {
         const list = Array.isArray(userProgress) ? userProgress : [];
         const trackMap = {};
 
-        defaultTrackLanguages.forEach(lang => {
+        DEFAULT_TRACK_LANGUAGES.forEach(lang => {
             trackMap[lang] = {
                 codingLanguage: lang,
                 done: 0,
@@ -217,17 +214,6 @@ export function Home() {
         { label: "Ask Community", path: "community", icon: Users },
         { label: "Start Practice", path: "coding-practice", icon: Code2 },
     ];
-
-    const chartiData = [
-        { day: "Mon", questions: 4 },
-        { day: "Tue", questions: 7 },
-        { day: "Wed", questions: 3 },
-        { day: "Thu", questions: 9 },
-        { day: "Fri", questions: 6 },
-        { day: "Sat", questions: 2 },
-        { day: "Sun", questions: 5 },
-    ];
-
 
     const chartConfig = {
         desktop: {
@@ -568,7 +554,7 @@ export function Home() {
                             <div className="my-6 " style={{ overflow: "hidden" }}>
                                 <ChartContainer config={chartConfig}>
                                     <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={chartData || chartiData}>
+                                        <BarChart data={chartData || []}>
                                             <CartesianGrid vertical={false} stroke="#F1F5F9" />
 
                                             <XAxis

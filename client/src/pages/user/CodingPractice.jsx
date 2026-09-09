@@ -4,41 +4,40 @@ import * as icons from 'simple-icons';
 import { fetchCodingPractices } from '@/Api/api';
 import { DashboardLayout } from "@/components/layout/layout";
 import { theme } from '@/lib/theme';
+import { useData } from '@/context/DataContext';
 
 const CodingPractice = () => {
     const navigate = useNavigate();
-    const [cards, setCards] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { codingPractices, loading: contextLoading } = useData();
+    const [localCards, setLocalCards] = useState([]);
+    const [localLoading, setLocalLoading] = useState(false);
     const [error, setError] = useState(null);
-    
+
+    const cards = codingPractices && codingPractices.length > 0 ? codingPractices : localCards;
+    const loading = (cards.length === 0 && contextLoading?.codingPractices) || localLoading;
 
     useEffect(() => {
-        let isMounted = true;
-
-        const run = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-
-                const res = await fetchCodingPractices();
-                if (!isMounted) return;
-
-                setCards(Array.isArray(res?.data.data) ? res.data.data : []);
-            } catch (e) {
-                if (!isMounted) return;
-                setError(e);
-                setCards([]);
-            } finally {
-                if (isMounted) setLoading(false);
-            }
-        };
-
-        run();
-
-        return () => {
-            isMounted = false;
-        };
-    }, []);
+        if (!codingPractices || codingPractices.length === 0) {
+            let isMounted = true;
+            const run = async () => {
+                try {
+                    setLocalLoading(true);
+                    setError(null);
+                    const res = await fetchCodingPractices();
+                    if (!isMounted) return;
+                    setLocalCards(Array.isArray(res?.data.data) ? res.data.data : []);
+                } catch (e) {
+                    if (!isMounted) return;
+                    setError(e);
+                    setLocalCards([]);
+                } finally {
+                    if (isMounted) setLocalLoading(false);
+                }
+            };
+            run();
+            return () => { isMounted = false; };
+        }
+    }, [codingPractices]);
 
     function getBrandColor(language = '') {
         const normalized = String(language);

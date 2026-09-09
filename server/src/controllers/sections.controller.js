@@ -2,6 +2,7 @@ import Section from '../models/Section.js';
 import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
+import { emitSocketEvent } from '../services/socket.service.js';
 
 export const getSections = asyncHandler(async (req, res) => {
     const sections = await Section.find();
@@ -16,6 +17,7 @@ export const createSection = asyncHandler(async (req, res) => {
     }
     const newSection = new Section({ name });
     const section = await newSection.save();
+    emitSocketEvent('sections_updated', { type: 'created', sectionId: section._id, name: section.name });
     res.status(201).json(new ApiResponse(201, section, "Section created successfully"));
 });
 
@@ -28,5 +30,7 @@ export const deleteSection = asyncHandler(async (req, res) => {
     if (!section) {
         throw new ApiError(404, 'Section not found');
     }
+    emitSocketEvent('sections_updated', { type: 'deleted', sectionId: req.params.id });
     res.status(200).json(new ApiResponse(200, null, 'Section removed'));
 });
+

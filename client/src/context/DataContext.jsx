@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { setUser as setReduxUser, logout as reduxLogout } from '@/store/slices/authSlice';
-import { fetchSections, fetchPracticals, fetchNotes,fetchUsers } from '@/Api/api';
+import { fetchSections, fetchPracticals, fetchNotes, fetchUsers, fetchCodingPractices } from '@/Api/api';
 import { userDetail } from '@/lib/user';
 
 const DataContext = createContext();
@@ -86,6 +86,18 @@ export const DataProvider = ({ children }) => {
         enabled: !!user,
     });
 
+    // Use React Query for Coding Practices
+    const {
+        data: codingPracticesData,
+        isLoading: codingPracticesLoading
+    } = useQuery({
+        queryKey: ['codingPractices'],
+        queryFn: async () => {
+            const res = await fetchCodingPractices();
+            return Array.isArray(res?.data?.data) ? res.data.data : [];
+        },
+        enabled: !!user,
+    });
 
     const logout = () => {
         setUser(null);
@@ -100,13 +112,16 @@ export const DataProvider = ({ children }) => {
         practicals: practicalsData || [],
         notes: notesData || [],
         allusers: allusersData || [],
+        codingPractices: codingPracticesData || [],
         loading: {
             user: userLoading,
             subjects: subjectsLoading,
             practicals: practicalsLoading,
             notes: notesLoading,
-            allUsers: allUsersLoading
+            allUsers: allUsersLoading,
+            codingPractices: codingPracticesLoading
         },
+        refreshCodingPractices: () => queryClient.invalidateQueries({ queryKey: ['codingPractices'] }),
         refreshNotes: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
         refreshPracticals: () => queryClient.invalidateQueries({ queryKey: ['practicals'] }),
         refreshSubjects: () => queryClient.invalidateQueries({ queryKey: ['subjects'] }),

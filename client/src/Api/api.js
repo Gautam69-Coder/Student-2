@@ -33,10 +33,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (!error.response || error.code === 'ERR_NETWORK') {
-            // Trigger a custom event for server offline
-            window.dispatchEvent(new CustomEvent('server-offline'));
-        }
         return Promise.reject(error);
     }
 );

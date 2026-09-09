@@ -4,6 +4,7 @@ import { uploadCloudinary } from '../utils/uploadCloudinary.js';
 import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
+import { emitSocketEvent } from '../services/socket.service.js';
 
 export const getPracticals = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user.id);
@@ -75,6 +76,7 @@ export const createPractical = asyncHandler(async (req, res) => {
     });
 
     const practical = await newPractical.save();
+    emitSocketEvent('practicals_updated', { type: 'created', practicalId: practical._id, section: practical.section });
     res.status(201).json(new ApiResponse(201, practical, "Practical Created Successfully"));
 
 });
@@ -121,6 +123,7 @@ export const updatePractical = asyncHandler(async (req, res) => {
     practical.questions = questions;
 
     await practical.save();
+    emitSocketEvent('practicals_updated', { type: 'updated', practicalId: practical._id, section: practical.section });
     res.status(200).json(new ApiResponse(200, practical, "Practical updated successfully"));
 });
 
@@ -129,5 +132,6 @@ export const deletePractical = asyncHandler(async (req, res) => {
     if (!practical) {
         throw new ApiError(404, 'Practical not found');
     }
+    emitSocketEvent('practicals_updated', { type: 'deleted', practicalId: req.params.id });
     res.status(200).json(new ApiResponse(200, null, 'Practical deleted'));
 });

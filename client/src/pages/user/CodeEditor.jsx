@@ -216,8 +216,15 @@ export default function CodeEditor() {
         };
 
         fetchData();
+
+        const handleSync = () => {
+            fetchData();
+        };
+        window.addEventListener('coding-practice-sync', handleSync);
+
         return () => {
             mounted = false;
+            window.removeEventListener('coding-practice-sync', handleSync);
         };
     }, [language, problemId]);
 

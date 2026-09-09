@@ -5,6 +5,7 @@ import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import auth from '../middleware/auth.js';
+import { emitSocketEvent } from '../services/socket.service.js';
 
 
 export const getNotes = asyncHandler(async (req, res) => {
@@ -87,7 +88,7 @@ export const createNoteFile = asyncHandler(async (req, res) => {
         content: content || 'NAN'
     });
     const note = await newNote.save();
-
+    emitSocketEvent('notes_updated', { type: 'created', noteId: note._id });
     res.status(201).json(new ApiResponse(201, { noteData: note }, "Note Uploaded Successfully"));
 });
 
@@ -100,6 +101,7 @@ export const createNoteText = asyncHandler(async (req, res) => {
         section: section || 'General',
     });
     const note = await newNote.save();
+    emitSocketEvent('notes_updated', { type: 'created', noteId: note._id });
     res.status(201).json(new ApiResponse(201, { noteData: note }, "Code Uploaded Successfully"));
 });
 
@@ -121,7 +123,7 @@ export const updateNoteText = asyncHandler(async (req, res) => {
         { new: true }
     )
 
-
+    emitSocketEvent('notes_updated', { type: 'updated', noteId });
     res.status(201).json(new ApiResponse(201, { noteData: updateData }, "File Uploaded Successfully"));
 
 });
@@ -176,6 +178,7 @@ export const updateNoteFile = asyncHandler(async (req, res) => {
         { new: true }
     )
     console.log(updateNote);
+    emitSocketEvent('notes_updated', { type: 'updated', noteId });
     res.status(201).json(new ApiResponse(201, { noteData: updateData }, "Note Update Successfully"));
 
 });
@@ -191,6 +194,7 @@ export const deleteNote = asyncHandler(async (req, res) => {
     }
 
     await UserNote.findByIdAndDelete(req.params.id);
+    emitSocketEvent('notes_updated', { type: 'deleted', noteId: req.params.id });
     res.status(200).json(new ApiResponse(200, null, 'Note removed'));
 });
 
@@ -213,5 +217,6 @@ export const togglePublicStatus = asyncHandler(async (req, res) => {
     }
 
     await userFind.save();
+    emitSocketEvent('notes_updated', { type: 'toggled_public', noteId: note.id, isGlobal: userFind.isGlobal });
     res.status(200).json(new ApiResponse(200, userFind, "Note visibility updated"));
 });

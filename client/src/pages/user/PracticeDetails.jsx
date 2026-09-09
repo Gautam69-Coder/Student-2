@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fetchCodingPractices, fetchUserProgress } from "@/Api/api";
 import { theme } from "@/lib/theme";
+import { useData } from "@/context/DataContext";
 import {
     ArrowUpRight,
     BookOpen,
@@ -163,6 +164,7 @@ function ProblemRow({ problem, index, language, navigate, completedProblems }) {
 export default function PracticeDetails() {
     const { language } = useParams();
     const navigate = useNavigate();
+    const { codingPractices } = useData();
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
     const [completedProblems, setCompletedProblems] = useState([]);
@@ -182,18 +184,25 @@ export default function PracticeDetails() {
         }
     };
 
+    const applyTrackData = (list) => {
+        if (!Array.isArray(list)) return;
+        const currentLanguage = String(language || "").toLowerCase();
+        const filtered = list.find(
+            (item) =>
+                String(item?.language || "").toLowerCase() === currentLanguage ||
+                String(item?.language || item?.title || "").toLowerCase().replace(/^practice\s*/i, '') === currentLanguage
+        );
+        if (filtered) {
+            setData(filtered);
+        }
+    };
+
     const fetchData = async () => {
         setLoading(true);
         try {
             const res = await fetchCodingPractices();
-            const list = res.data.data;
-            const currentLanguage = String(language || "").toLowerCase();
-
-            const filtered = list.find(
-                (item) => String(item?.language || "").toLowerCase() === currentLanguage
-            );
-
-            setData(filtered || {});
+            const list = res?.data?.data || [];
+            applyTrackData(list);
         } catch (error) {
             console.error("Error fetching coding practices:", error);
             setData({});
@@ -205,6 +214,23 @@ export default function PracticeDetails() {
     useEffect(() => {
         updateStatus();
         fetchData();
+    }, [language]);
+
+    // Automatically update problem list when codingPractices changes in DataContext
+    useEffect(() => {
+        if (codingPractices && codingPractices.length > 0) {
+            applyTrackData(codingPractices);
+            setLoading(false);
+        }
+    }, [codingPractices, language]);
+
+    // Live update when coding-practice-sync event fires from socket
+    useEffect(() => {
+        const handleSync = () => {
+            fetchData();
+        };
+        window.addEventListener('coding-practice-sync', handleSync);
+        return () => window.removeEventListener('coding-practice-sync', handleSync);
     }, [language]);
 
     const problems = useMemo(() => data?.problemList || [], [data]);

@@ -5,13 +5,12 @@ const NotFoundPage = lazy(() =>
 );
 import { ThemeProvider } from './context/ThemeContext';
 import { useLenis } from '@/hooks/useLenis';
+import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 import { CyberLoader } from '@/components/common/cyber-loader';
 import { SocketProvider } from './context/SocketContext';
 import { DataProvider, useData } from './context/DataContext';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout as reduxLogout } from '@/store/slices/authSlice';
-import { ServerOffline } from '@/components/common/server-offline';
-
 // Lazy-load heavy ka use for  route components —  reduces initial bundle size
 const LandingPage = lazy(() => import('./pages/public/LandingPage'));
 const StudentDashboard = lazy(() =>
@@ -45,23 +44,12 @@ const ProtectedRoute = ({ isAuthenticated, children, redirectPath = "/" }) => {
 
 function AppContent() {
     useLenis();
+    useRealtimeSync();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
     const { loading: dataLoading, logout: contextLogout } = useData();
-    const [isServerOffline, setIsServerOffline] = useState(false);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const handleOffline = () => setIsServerOffline(true);
-        window.addEventListener('server-offline', handleOffline);
-        return () => window.removeEventListener('server-offline', handleOffline);
-    }, []);
-
-    const handleRetry = () => {
-        setIsServerOffline(false);
-        window.location.reload();
-    };
 
     const handleAuth = async (role, name) => {
         const auth= localStorage.setItem('isAuthenticated', 'true');
@@ -80,10 +68,6 @@ function AppContent() {
         dispatch(reduxLogout());
         navigate('/');
     };
-
-    if (isServerOffline) {
-        return <ServerOffline onRetry={handleRetry} />;
-    }
 
     if (dataLoading.user) {
         return <PageLoader />;

@@ -3,7 +3,18 @@ import User from '../models/User.js';
 const onlineUsers = new Set();
 const userMap = new Map(); // socket.id -> { userId, username }
 
+let ioInstance = null;
+
+export const getIO = () => ioInstance;
+
+export const emitSocketEvent = (event, payload = {}) => {
+    if (ioInstance) {
+        ioInstance.emit(event, payload);
+    }
+};
+
 export const initSocket = (io) => {
+    ioInstance = io;
     io.on('connection', (socket) => {
         console.log('🔌 New connection attempt:', socket.id);
 

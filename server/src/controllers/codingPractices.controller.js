@@ -4,6 +4,7 @@ import { initialPracticeTracks, autoSeedCodingPractices } from '../seeds/seedCod
 import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
+import { emitSocketEvent } from '../services/socket.service.js';
 
 export const getCodingPractices = asyncHandler(async (req, res) => {
     let tracks = await CodingPractice.find().sort({ createdAt: -1 });
@@ -73,6 +74,7 @@ export const addCodingPracticeTrack = asyncHandler(async (req, res) => {
         problemList: []
     });
 
+    emitSocketEvent('coding_practice_updated', { type: 'track_created', trackId: track._id, language: track.language });
     res.status(201).json(new ApiResponse(201, track, 'Coding practice track created successfully'));
 });
 
@@ -96,6 +98,7 @@ export const updateCodingPracticeTrack = asyncHandler(async (req, res) => {
 
     await track.save();
 
+    emitSocketEvent('coding_practice_updated', { type: 'track_updated', trackId: track._id, language: track.language });
     res.status(200).json(new ApiResponse(200, track, 'Coding practice track updated successfully'));
 });
 
@@ -110,6 +113,7 @@ export const deleteCodingPracticeTrack = asyncHandler(async (req, res) => {
         throw new ApiError(404, 'Track not found');
     }
 
+    emitSocketEvent('coding_practice_updated', { type: 'track_deleted', trackId: id, language: track.language });
     res.status(200).json(new ApiResponse(200, null, 'Coding practice track deleted successfully'));
 });
 
@@ -139,6 +143,7 @@ export const addCodingPracticeProblem = asyncHandler(async (req, res) => {
     track.totalProblems = track.problemList.length;
     await track.save();
 
+    emitSocketEvent('coding_practice_updated', { type: 'problem_added', trackId, language: track.language, problem: newProblem });
     res.status(201).json(new ApiResponse(201, track, 'Problem added successfully'));
 });
 
@@ -166,6 +171,7 @@ export const updateCodingPracticeProblem = asyncHandler(async (req, res) => {
 
     await track.save();
 
+    emitSocketEvent('coding_practice_updated', { type: 'problem_updated', trackId, problemId, language: track.language });
     res.status(200).json(new ApiResponse(200, track, 'Problem updated successfully'));
 });
 
@@ -189,5 +195,6 @@ export const deleteCodingPracticeProblem = asyncHandler(async (req, res) => {
     track.totalProblems = track.problemList.length;
     await track.save();
 
+    emitSocketEvent('coding_practice_updated', { type: 'problem_deleted', trackId, problemId, language: track.language });
     res.status(200).json(new ApiResponse(200, track, 'Problem deleted successfully'));
 });

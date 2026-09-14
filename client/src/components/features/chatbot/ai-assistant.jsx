@@ -15,6 +15,7 @@ export function AIAssistant() {
     const [showApiKeyModal, setShowApiKeyModal] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
     const [message, setMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState([
         { role: "assistant", content: "Hi there! I'm your study assistant. Need help with any concepts today?" },
     ]);
@@ -26,29 +27,32 @@ export function AIAssistant() {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messages, isLoading]);
 
     const handleSend = async () => {
-        if (!message.trim()) return;
+        if (!message.trim() || isLoading) return;
         if (user && !user.apiKey) {
             setShowApiKeyModal(true);
             return;
         }
 
-        const nextMessages = [...messages, { role: "user", content: message }];
+        const userText = message;
+        const nextMessages = [...messages, { role: "user", content: userText }];
         setMessages(nextMessages);
         setMessage("");
+        setIsLoading(true);
 
         try {
-            const res = await aiAssistant(message);
-            if (!res.data.message) {
-                setMessages((prev) => [...prev, { role: "assistant", content: res.data.message }]);
+            const res = await aiAssistant(userText);
+            if (!res?.data?.message && !res?.data?.data) {
+                setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, I could not generate a response." }]);
                 return customMessage({
                     type: "error",
-                    content: `${res.data.message} !`
+                    content: "Failed to generate a response!"
                 });
             }
-            setMessages((prev) => [...prev, { role: "assistant", content: res.data.data }]);
+            const reply = res?.data?.data || res?.data?.message;
+            setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
 
         } catch (error) {
             console.error(error);
@@ -56,8 +60,11 @@ export function AIAssistant() {
                 ...prev,
                 { role: "assistant", content: "Sorry, something went wrong while generating a response." },
             ]);
+        } finally {
+            setIsLoading(false);
         }
     };
+
 
     return (
         <>
@@ -164,6 +171,19 @@ export function AIAssistant() {
                                     </div>
                                 </motion.div>
                             ))}
+                            {isLoading && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="flex justify-start"
+                                >
+                                    <div className="px-4 py-3 rounded-2xl rounded-bl-none border border-slate-200 bg-white shadow-sm flex items-center gap-1.5">
+                                        <span className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+                                        <span className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+                                        <span className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+                                    </div>
+                                </motion.div>
+                            )}
                             <div ref={messagesEndRef} />
                         </div>
 
@@ -176,17 +196,23 @@ export function AIAssistant() {
                                         type="text"
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
-                                        onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                                        placeholder="Ask a question..."
-                                        className="w-full h-full px-4 text-sm outline-none bg-transparent text-slate-900 placeholder-slate-500"
+                                        onKeyDown={(e) => e.key === "Enter" && !isLoading && handleSend()}
+                                        placeholder={isLoading ? "Thinking..." : "Ask a question..."}
+                                        disabled={isLoading}
+                                        className="w-full h-full px-4 text-sm outline-none bg-transparent text-slate-900 placeholder-slate-500 disabled:opacity-60"
                                     />
                                 </div>
                                 <button
-                                    className="flex items-center justify-center w-11 h-11 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] shadow-md shadow-indigo-100 cursor-pointer shrink-0"
+                                    className="flex items-center justify-center w-11 h-11 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.98] shadow-md shadow-indigo-100 cursor-pointer shrink-0 disabled:opacity-60 disabled:cursor-not-allowed"
                                     onClick={handleSend}
+                                    disabled={isLoading || !message.trim()}
                                     aria-label="Send message"
                                 >
-                                    <Send className="w-4 h-4" />
+                                    {isLoading ? (
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    ) : (
+                                        <Send className="w-4 h-4" />
+                                    )}
                                 </button>
                             </div>
                         </div>

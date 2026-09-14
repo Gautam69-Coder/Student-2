@@ -12,7 +12,6 @@ export const handleAiCodeHelperChat = asyncHandler(async (req, res) => {
     const groq = await getUserGroqClient(userId);
     // Sanitize context message
     const sanitizedUserMessage = sanitizeForPrompt(context.message);
-    console.log(`Sanitized user message: ${sanitizedUserMessage}`);
 
     const memory = await AIMemory.findOneAndUpdate(
         { userId },
@@ -32,6 +31,7 @@ export const handleAiCodeHelperChat = asyncHandler(async (req, res) => {
     const memoryHistory = memory?.messages?.join("\n");
     const prompt = systemPrompt(sanitizedUserMessage, context.code, context.section, context.question, memoryHistory);
 
+    console.log(context);
     // Ai result
     const completion = await groq.chat.completions.create({
         messages: [

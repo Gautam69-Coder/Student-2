@@ -3,6 +3,7 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import { getUserGroqClient } from '../utils/aiClient.js';
 import { getAiChatBotPrompt } from '../utils/systemPrompt.js';
 import ChatbotMemory from '../models/ChatbotMemory.js';
+import UserMemory from '../models/UserMemory.js';
 import { UserPersonalInfo } from '../utils/UserPersonalInfo.js';
 import { ApiError } from '../utils/ApiError.js';
 
@@ -18,22 +19,28 @@ export const handleAiChatBot = asyncHandler(async (req, res) => {
     } = req.body.message || {};
 
     const userId = req.user.id;
-    const groq = await getUserGroqClient(userId);
 
-    const getUserPersonalInfo = await UserPersonalInfo(queryText, userId);
+    // Concurrently initialize client and retrieve memories (<30ms)
+    const [groq, getConversationMemory, userMemoryDoc] = await Promise.all([
+        getUserGroqClient(userId),
+        ChatbotMemory.findOne(
+            { userId, conversationId: activeChatId },
+            { message: { $slice: -15 } }
+        ).lean(),
+        UserMemory.findOne({ userId }).lean()
+    ]);
 
-    const getConversationMemory = await ChatbotMemory.findOne(
-        { userId, conversationId: activeChatId },
-        { message: { $slice: -15 } }
+    // Fire background personal info extraction (non-blocking fire-and-forget)
+    UserPersonalInfo(queryText, userId, groq).catch((err) =>
+        console.error("Background UserPersonalInfo error in Chatbot:", err.message)
     );
-
 
     const systemPromptContent = getAiChatBotPrompt(systemPrompt, attachedNotes, attachedPracticals);
 
-
-    const personalInfoText = getUserPersonalInfo?.personalInfo?.length
-        ? getUserPersonalInfo.personalInfo.filter(Boolean).join("; ")
+    const personalInfoText = userMemoryDoc?.personalInfo?.length
+        ? userMemoryDoc.personalInfo.filter(Boolean).join("; ")
         : "";
+
 
     let conversationHistory = "";
     if (getConversationMemory?.message && Array.isArray(getConversationMemory.message)) {

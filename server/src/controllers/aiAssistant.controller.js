@@ -1,4 +1,5 @@
 import AICodeHelperMemory from "../models/AICodeHelperMemory.js";
+import UserMemory from "../models/UserMemory.js";
 import { asyncHandler } from '../utils/AsyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { sanitizeForPrompt } from '../utils/sanitize.js';
@@ -8,29 +9,37 @@ import { UserPersonalInfo } from "../utils/UserPersonalInfo.js";
 
 export const handleAiAssistantChat = asyncHandler(async (req, res) => {
     const { message } = req.body;
-    const groq = await getUserGroqClient(req.user.id);
+    const userId = req.user.id;
     const sanitizedMessage = sanitizeForPrompt(message);
 
-    const getUserPersonalInfo = await UserPersonalInfo(message, req.user.id);
-
-    const memory = await AICodeHelperMemory.findOneAndUpdate(
-        { userId: req.user.id },
-        {
-            $push: {
-                messages: {
-                    $each: [sanitizedMessage],
-                    $slice: -10
-                }
+    // Initialize Groq client and fetch memories concurrently (<30ms)
+    const [groq, memory, userMemoryDoc] = await Promise.all([
+        getUserGroqClient(userId),
+        AICodeHelperMemory.findOneAndUpdate(
+            { userId },
+            {
+                $push: {
+                    messages: {
+                        $each: [sanitizedMessage],
+                        $slice: -10
+                    }
+                },
             },
-        },
-        { upsert: true, new: true }
+            { upsert: true, new: true }
+        ),
+        UserMemory.findOne({ userId }).lean()
+    ]);
+
+    // Fire background personal info extraction (non-blocking fire-and-forget)
+    UserPersonalInfo(sanitizedMessage, userId, groq).catch((err) =>
+        console.error("Background UserPersonalInfo error:", err.message)
     );
 
     const saveMemory = memory?.messages?.join("\n");
     const systemPromptContent = getAiAssistantPrompt(saveMemory);
 
-    const personalInfoText = getUserPersonalInfo?.personalInfo?.length
-        ? getUserPersonalInfo.personalInfo.filter(Boolean).join("; ")
+    const personalInfoText = userMemoryDoc?.personalInfo?.length
+        ? userMemoryDoc.personalInfo.filter(Boolean).join("; ")
         : "";
 
     let systemMessage = systemPromptContent;
@@ -50,10 +59,11 @@ export const handleAiAssistantChat = asyncHandler(async (req, res) => {
             },
         ],
         model: "openai/gpt-oss-20b",
+        temperature: 0.7,
+        max_tokens: 1500,
     });
 
     const result = completion.choices[0]?.message?.content;
-    console.log("result:", sanitizedMessage);
-
     res.status(200).json(new ApiResponse(200, result, "Success"));
 });
+

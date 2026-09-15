@@ -101,14 +101,15 @@ ${personaInstructions}
  * @param {string} [section] - Practical/Subject section
  * @param {string} [question] - Practical question
  * @param {string} [memory] - Conversation history
+ * @param {string} [personalInfo] - User personal memory
  * @returns {string}
  */
-export const systemPrompt = (message, code, section, question, memory = "") => {
-    return `
+export const systemPrompt = (message, code, section, question, memory = "", personalInfo = "") => {
+    let prompt = `
 ${STUDY_AI_IDENTITY}
 
-**Mode: Practical & Code Helper Tutor**
-You are helping a student review, understand, or debug a specific practical question and code snippet.
+**Mode: Contextual AI Code Helper**
+You are an expert tutor and code helper assisting the student with a specific coding exercise, practical question, or snippet. Explain concepts clearly, identify bugs or edge cases, and guide the student with clean, modern code solutions.
 
 **Context Information:**
 - Section / Topic: ${section || 'General Programming'}
@@ -119,14 +120,12 @@ ${code || 'No code provided'}
 \`\`\`
 
 ${memory ? `**Recent Conversation History:**\n${memory}\n` : ""}
-
-**User Message:** ${message}
-
-**Response Instructions:**
-- Address the user's specific question or code doubt directly and concisely.
-- Provide clean, corrected code examples if debugging or solving a problem.
-- Keep explanations structured, easy to digest, refined, and encouraging with helpful emojis 💻✨.
-
-${formatAIResponse}
 `;
-};
+
+    if (personalInfo) {
+        prompt += `\n**Known User Info:**\n${personalInfo}\n`;
+    }
+
+    prompt += `\n${formatAIResponse}`;
+    return prompt;
+};

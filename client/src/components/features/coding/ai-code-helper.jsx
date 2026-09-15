@@ -2,15 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check, Send, Sparkles, Code2, MessageCircle, } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { aiCodeHelper } from "@/Api/api";
+import { MarkdownContent } from "@/Utils/MarkdownContent";
 import HighlightComponent from "react-highlight";
 const Highlight = HighlightComponent.default || HighlightComponent;
-
-import { aiCodeHelper } from "@/Api/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { theme } from "@/lib/theme";
 import { customMessage } from "@/Utils/customMessage";
@@ -43,96 +38,6 @@ function PanelTitle({ title, subtitle }) {
     );
 }
 
-function MarkdownMessage({ content, sender }) {
-    return (
-        <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
-            components={{
-                h1: ({ children }) => <h1 className="text-lg font-bold mt-3 mb-2">{children}</h1>,
-                h2: ({ children }) => <h2 className="text-base font-bold mt-2 mb-2">{children}</h2>,
-                h3: ({ children }) => <h3 className="text-sm font-bold mt-2 mb-2">{children}</h3>,
-                p: ({ children }) => <p className="mb-2 leading-relaxed">{children}</p>,
-                ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                li: ({ children }) => <li className="text-sm">{children}</li>,
-                a: ({ href, children }) => (
-                    <a
-                        href={href}
-                        className={sender === "user" ? "text-blue-100 hover:underline" : "text-blue-600 hover:underline"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        {children}
-                    </a>
-                ),
-                strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-                em: ({ children }) => <em className="italic">{children}</em>,
-                blockquote: ({ children }) => (
-                    <blockquote
-                        className={`border-l-4 pl-3 italic my-2 opacity-80 ${sender === "user" ? "border-blue-200" : "border-blue-300"
-                            }`}
-                    >
-                        {children}
-                    </blockquote>
-                ),
-                code({ className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || "");
-                    const isInline = !match;
-
-                    return !isInline ? (
-                        <div className="relative group rounded-xl overflow-hidden my-4">
-                            <div className="flex items-center justify-between px-4 py-2" style={{ background: "#111827" }}>
-                                <span className="text-xs font-semibold text-white">{match[1]}</span>
-                                <button
-                                    onClick={async () => {
-                                        const ok = await copyToClipboard(String(children).replace(/\n$/, ""));
-                                        if (ok) customMessage({ type: "success", content: "Code copied to clipboard!" });
-                                    }}
-                                    className="text-xs font-medium text-slate-300 hover:text-white transition-colors cursor-pointer"
-                                >
-                                    Copy
-                                </button>
-                            </div>
-                            <SyntaxHighlighter
-                                style={oneDark}
-                                language={match[1]}
-                                PreTag="div"
-                                customStyle={{
-                                    borderRadius: "0 0 8px 8px",
-                                    padding: "12px",
-                                    fontSize: "13px",
-                                    margin: "0",
-                                    backgroundColor: "#0d1117",
-                                    border: "1px solid #1f2937",
-                                }}
-                                {...props}
-                            >
-                                {String(children).replace(/\n$/, "")}
-                            </SyntaxHighlighter>
-                        </div>
-                    ) : (
-                        <code
-                            className={
-                                sender === "user"
-                                    ? "bg-blue-700 bg-opacity-40 px-2 py-1 rounded text-blue-100 text-sm font-mono"
-                                    : "bg-zinc-700 bg-opacity-50 px-2 py-1 rounded text-orange-300 text-sm font-mono"
-                            }
-                            {...props}
-                        >
-                            {children}
-                        </code>
-                    );
-                },
-                br: () => <br className="my-1" />,
-                hr: () => <hr className="my-3 border-slate-300 dark:border-slate-600" />,
-            }}
-        >
-            {content}
-        </ReactMarkdown>
-    );
-}
-
 export function AICodeHelper({ isOpen, onClose, title, code, section }) {
     const { user } = useData();
     const [copied, setCopied] = useState(false);
@@ -140,6 +45,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
         { id: 1, text: "Hello! I'm your AI Code Helper. Ask me anything about this code.", sender: "bot" },
     ]);
     const [inputValue, setInputValue] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const [showApiKeyModal, setShowApiKeyModal] = useState(false);
     const messagesEndRef = useRef(null);
 
@@ -159,26 +65,28 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
-
+    }, [messages, isLoading]);
 
     const handleSendMessage = async () => {
-        if (!inputValue.trim()) return;
+        if (!inputValue.trim() || isLoading) return;
         if (user && !user.apiKey) {
             setShowApiKeyModal(true);
             return;
         }
 
+        const userText = inputValue;
         const userMessage = {
             id: messages.length + 1,
-            text: inputValue,
+            text: userText,
             sender: "user",
         };
 
         setMessages((prev) => [...prev, userMessage]);
+        setInputValue("");
+        setIsLoading(true);
 
         const context = {
-            message: inputValue,
+            message: userText,
             code: displayCode,
             section: section,
             question: title,
@@ -186,21 +94,19 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
 
         try {
             const res = await aiCodeHelper(context);
-            if (!res.data.message) {
+            if (!res?.data?.data && !res?.data?.message) {
                 return customMessage({
                     type: "error",
-                    content: `${res.data.message} !`
+                    content: "Failed to generate response!"
                 });
             }
-            setTimeout(() => {
-                const botMessage = {
-                    id: messages.length + 2,
-                    text: res.data.data || "Sorry, I couldn't understand that. Could you please rephrase?",
-                    sender: "bot",
-                };
-                setMessages((prev) => [...prev, botMessage]);
-            }, 100);
-            setInputValue("");
+            const botText = res?.data?.data || res?.data?.message || "Sorry, I couldn't understand that. Could you please rephrase?";
+            const botMessage = {
+                id: messages.length + 2,
+                text: botText,
+                sender: "bot",
+            };
+            setMessages((prev) => [...prev, botMessage]);
         } catch (error) {
             console.error(error);
             setMessages((prev) => [
@@ -211,9 +117,9 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                     sender: "bot",
                 },
             ]);
+        } finally {
+            setIsLoading(false);
         }
-
-        setInputValue("");
     };
 
     const handleKeyPress = (e) => {
@@ -300,7 +206,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
 
                         <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-5 gap-4  overflow-y-auto">
                             <Card
-                                className="lg:col-span-3 rounded-2xl overflow-hidden p-0"
+                                className="lg:col-span-3 rounded-r-2xl rounded-l-none overflow-hidden p-0"
                                 style={{
                                     background: theme.colors.white,
                                     borderColor: theme.colors.lightGray,
@@ -342,10 +248,26 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                                             }
                                                     }
                                                 >
-                                                    <MarkdownMessage content={message.text} sender={message.sender} />
+                                                    <MarkdownContent
+                                                        content={message.text}
+                                                        role={message.sender === "user" ? "user" : "assistant"}
+                                                    />
                                                 </div>
                                             </motion.div>
                                         ))}
+                                        {isLoading && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 5 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="flex justify-start"
+                                            >
+                                                <div className="px-4 py-3 rounded-2xl rounded-bl-none border border-slate-200 bg-white shadow-sm flex items-center gap-1.5">
+                                                    <span className="w-2 h-2 rounded-full bg-lime-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+                                                    <span className="w-2 h-2 rounded-full bg-lime-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+                                                    <span className="w-2 h-2 rounded-full bg-lime-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+                                                </div>
+                                            </motion.div>
+                                        )}
                                         <div ref={messagesEndRef} />
                                     </div>
 
@@ -358,14 +280,19 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                         />
                                         <button
                                             onClick={handleSendMessage}
-                                            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-bold transition-transform active:scale-[0.98] cursor-pointer"
+                                            disabled={isLoading || !inputValue.trim()}
+                                            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-bold transition-transform active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                             style={{
                                                 background: theme.colors.lime,
                                                 color: theme.colors.dark,
                                                 borderColor: theme.colors.lime,
                                             }}
                                         >
-                                            <Send className="w-4 h-4 fill-current" />
+                                            {isLoading ? (
+                                                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                                            ) : (
+                                                <Send className="w-4 h-4 fill-current" />
+                                            )}
                                             Send
                                         </button>
                                     </div>
@@ -373,7 +300,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                             </Card>
 
                             <Card
-                                className="lg:col-span-2 rounded-2xl sm:block hidden overflow-y-auto"
+                                className="lg:col-span-2 rounded-l-2xl rounded-r-none sm:block hidden overflow-y-auto"
                                 style={{
                                     background: theme.colors.white,
                                     borderColor: theme.colors.lightGray,

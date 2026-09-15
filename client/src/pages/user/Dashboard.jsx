@@ -77,6 +77,8 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
     const userName = user?.username || "Student";
     const role = user?.role || "user";
 
+    console.log(practicals.map((q) => q.questions.map((p) => p.code.map(i=>i))))
+
     const searchResults = useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [] };
 
@@ -89,7 +91,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
             ),
             practicals: hasPracticalAccess ? practicals.filter(p =>
                 (p.section)?.toLowerCase()?.includes(query) ||
-                p.questions?.some(q => q?.question?.toLowerCase()?.includes(query) || q?.code?.toLowerCase()?.includes(query))
+                p.questions?.some(q => q?.question?.toLowerCase()?.includes(query) || q?.code?.map(i => i)?.includes(query))
             ) : [],
             notes: notes.filter(n =>
                 (n.title)?.toLowerCase()?.includes(query) ||
@@ -150,7 +152,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                         <div className="flex items-center justify-between gap-4 p-5 bg-white border border-zinc-200 rounded-2xl shadow-sm">
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-xs font-black uppercase tracking-wider text-indigo-650 px-2 py-0.5 bg-indigo-50 border border-indigo-200 rounded">
+                                                    <span className="text-xs font-black uppercase tracking-wider text-indigo-600 px-2 py-0.5 bg-indigo-50 border border-indigo-200 rounded">
                                                         Search Center
                                                     </span>
                                                 </div>
@@ -176,7 +178,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                                 onClick={() => setActiveSearchTab("all")}
                                                 className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "all"
                                                     ? "bg-zinc-950 text-white shadow-sm"
-                                                    : "text-zinc-650 hover:bg-zinc-50"
+                                                    : "text-zinc-600 hover:bg-zinc-50"
                                                     }`}
                                             >
                                                 All Results
@@ -189,7 +191,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                                 onClick={() => setActiveSearchTab("subjects")}
                                                 className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "subjects"
                                                     ? "bg-zinc-950 text-white shadow-sm"
-                                                    : "text-zinc-650 hover:bg-zinc-50"
+                                                    : "text-zinc-600 hover:bg-zinc-50 "
                                                     }`}
                                             >
                                                 Subjects
@@ -203,7 +205,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                                     onClick={() => setActiveSearchTab("practicals")}
                                                     className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "practicals"
                                                         ? "bg-zinc-950 text-white shadow-sm"
-                                                        : "text-zinc-650 hover:bg-zinc-50"
+                                                        : "text-zinc-600 hover:bg-zinc-50"
                                                         }`}
                                                 >
                                                     Practicals
@@ -217,7 +219,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                                 onClick={() => setActiveSearchTab("notes")}
                                                 className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-nowrap cursor-pointer flex items-center gap-2 ${activeSearchTab === "notes"
                                                     ? "bg-zinc-950 text-white shadow-sm"
-                                                    : "text-zinc-650 hover:bg-zinc-50"
+                                                    : "text-zinc-600 hover:bg-zinc-50"
                                                     }`}
                                             >
                                                 My Notes
@@ -248,10 +250,10 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                                                     className="bg-white border border-zinc-200 hover:border-indigo-500 rounded-2xl p-5 hover:shadow-md cursor-pointer transition-all duration-300 transform hover:-translate-y-0.5 flex flex-col justify-between h-32 group"
                                                                 >
                                                                     <div>
-                                                                        <span className="text-[10px] font-black text-zinc-450 uppercase tracking-wider group-hover:text-indigo-655 transition-colors">
-                                                                            {subject.code || "SUBJ"}
+                                                                        <span className="text-[10px] font-black text-zinc-500 uppercase tracking-wider group-hover:text-indigo-600 transition-colors">
+                                                                            {subject.code || "SUBJECT"}
                                                                         </span>
-                                                                        <h4 className="text-sm font-black text-zinc-850 truncate mt-1">
+                                                                        <h4 className="text-sm font-black text-zinc-800 truncate mt-1">
                                                                             {subjectName}
                                                                         </h4>
                                                                     </div>
@@ -299,7 +301,7 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                                                 onClick={() => setSelectedNote(note)}
                                                             >
                                                                 <div className="flex items-center gap-4 min-w-0 flex-1">
-                                                                    <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-150 text-indigo-650 shrink-0">
+                                                                    <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 text-indigo-600 shrink-0">
                                                                         <FileText className="w-5 h-5" />
                                                                     </div>
                                                                     <div className="min-w-0 flex-1">

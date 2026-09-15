@@ -1,6 +1,7 @@
 import React from "react";
 import { theme } from "@/lib/theme";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DotLoader } from "@/Utils/loaders";
 
 export function TrendBadge({ text, variant = "success" }) {
     const variants = {
@@ -40,6 +41,8 @@ export function TrendBadge({ text, variant = "success" }) {
 }
 
 export function DashStatCard({ icon: Icon, title, value, trend, variant = "primary" }) {
+  console.log(value)
+  console.log(typeof(value))
     return (
       <Card
         className="rounded-2xl h-full transition-all hover:shadow-md border border-slate-200 bg-white"
@@ -63,8 +66,8 @@ export function DashStatCard({ icon: Icon, title, value, trend, variant = "prima
         <CardContent className="pt-0">
           <div
             className="text-xl sm:text-2xl lg:text-3xl font-extrabold break-words text-slate-900"
-          >
-            {value}
+          > 
+            {value === null || value === '' || value === 0 ? <DotLoader size={"20"} color={"#4f39f6"} /> : value }
           </div>
         </CardContent>
       </Card>

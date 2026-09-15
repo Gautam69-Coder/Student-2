@@ -14,6 +14,7 @@ import {
 import { Card, CardTitle } from "@/components/ui/card";
 import FeedbackMarquee from "@/components/features/feedback/feedback-marquee";
 import { formatDate } from "@/Utils/date";
+import { DotLoader } from "@/Utils/loaders";
 
 import {
     ChartContainer,
@@ -418,21 +419,27 @@ export function Home() {
                         className="h-12 p-3 w-60 rounded-xl border border-slate-200 bg-slate-50/50 transition-all flex items-center justify-between font-bold text-sm hover:border-indigo-300 text-slate-800"
                     >
                         Notes saved
-                        <p className="mx-2 text-indigo-600 font-extrabold"> {dashboardStats.totalNotes}</p>
+                        <p className="mx-2 text-indigo-600 font-extrabold">
+                            {dashboardStats.totalNotes === null || dashboardStats.totalNotes === '' || dashboardStats.totalNotes === 0 ? <DotLoader size={"20"} color={"#4f39f6"} /> : dashboardStats.totalNotes}
+                        </p>
                     </div>
 
                     <div
                         className="h-12 p-3 w-60 rounded-xl border border-slate-200 bg-slate-50/50 transition-all flex items-center justify-between font-bold text-sm hover:border-indigo-300 text-slate-800"
                     >
                         Private Note
-                        <p className="mx-2 text-indigo-600 font-extrabold"> {dashboardStats.privateNotes}</p>
+                        <p className="mx-2 text-indigo-600 font-extrabold">
+                            {dashboardStats.privateNotes === null || dashboardStats.privateNotes === '' || dashboardStats.privateNotes === 0 ? <DotLoader size={"20"} color={"#4f39f6"} /> : dashboardStats.privateNotes}
+                        </p>
                     </div>
 
                     <div
                         className="h-12 p-3 w-60 rounded-xl border border-slate-200 bg-slate-50/50 transition-all flex items-center justify-between font-bold text-sm hover:border-indigo-300 text-slate-800"
                     >
                         Public Note
-                        <p className="mx-2 text-indigo-600 font-extrabold"> {dashboardStats.publicNotes}</p>
+                        <p className="mx-2 text-indigo-600 font-extrabold">
+                            {dashboardStats.publicNotes === null || dashboardStats.publicNotes === '' || dashboardStats.publicNotes === 0 ? <DotLoader size={"20"} color={"#4f39f6"} /> : dashboardStats.publicNotes}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -600,7 +607,7 @@ export function Home() {
             <Card
                 className="rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-xs"
             >
-               <FeedbackMarquee feedbacks={userFeedback} />
+                <FeedbackMarquee feedbacks={userFeedback} />
             </Card>
 
             {/* Quick Actions - Full width */}

@@ -2,7 +2,8 @@ import { getUserGroqClient } from '../utils/aiClient.js';
 import UserMemory from '../models/UserMemory.js';
 
 // Fast heuristic to avoid calling LLM when message has zero personal indicators
-const PERSONAL_INFO_HEURISTIC_REGEX = /\b(my name|i am|i'm|call me|i study|my college|my school|my project|i live|i prefer|my favorite|i like to|i work as|i usually|my hobby|my interest|i specialize)\b/i;
+const PERSONAL_INFO_HEURISTIC_REGEX = /\b(my name|i am|i'm|call me|i study|my college|my school|my project|my stack|my tech stack|i code in|i program in|i develop in|i learn|i'm learning|i am learning|i prefer|my favorite|i like to|i work as|i work with|i usually|my hobby|my interest|i specialize|my major|my branch|my semester|my goal)\b/i;
+
 
 export const UserPersonalInfo = async (message, userId, existingGroqClient = null) => {
     try {

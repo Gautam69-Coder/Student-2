@@ -36,4 +36,9 @@ export const formatAIResponse = `
    - Use bold text for key terms to make scanning effortless.
    - Use bullet points only when listing items or sequential steps.
    - Do NOT force rigid templates (e.g., "Executive Summary / Cause / Effect / Actionable Next Steps") onto simple answers. Match the response shape naturally to the user's intent.
+
+6. **Clean Tables & Inline Code (ChatGPT Standards)**:
+   - **Tables**: Use standard markdown tables when comparing options, explaining syntax, or breaking down steps. Keep table cell content concise, clear, and readable. Do NOT put long multi-line code blocks inside table cells.
+   - **No Over-Backticking**: Only use inline code backticks (\`...\`) for actual programming keywords, variable names, function calls, or syntax elements (e.g. \`while\`, \`poly()\`, \`x\`). Never wrap plain English phrases, general sentences, or everyday words in backticks.
+   - **Math & Formulas**: Present mathematical formulas using clear, readable symbols and Unicode (e.g., \`x = (-b ± √(b² - 4ac)) / (2a)\` or clear bold text). Avoid raw unrendered LaTeX markup like \`\\frac{...}\` or \`\\sqrt{...}\`.
 `;

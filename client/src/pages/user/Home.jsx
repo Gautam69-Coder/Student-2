@@ -448,7 +448,7 @@ export function Home() {
             <div className="space-y-4">
                 {/* Subject Progress - Col 1 */}
                 <Card
-                    className="rounded-2xl bg-white border border-slate-200 shadow-xs"
+                    className="rounded-2xl p-0 bg-white border border-slate-200 shadow-xs"
                 >
                     <div className="sm:p-6 p-4">
                         <div className="flex items-center justify-between gap-2">
@@ -487,7 +487,7 @@ export function Home() {
                 <div className="grid sm:grid-cols-2 grid-cols-1  gap-6 w-full">
                     {/* Recent Notes - Col 2-3 (middle) */}
                     <Card
-                        className="rounded-2xl w-full bg-white border border-slate-200 shadow-xs"
+                        className="rounded-2xl p-0 w-full  bg-white border border-slate-200 shadow-xs"
                     >
                         <div className="p-6">
                             <CardTitle
@@ -503,10 +503,10 @@ export function Home() {
 
                             <div className="mt-6 space-y-0">
                                 {dashboardStats.recentNotes?.map((note, idx) => (
-                                    <div key={idx} className="py-4">
+                                    <div key={idx} className="py-2">
                                         <div className="flex items-start gap-3">
                                             <div
-                                                className="inline-block bg-indigo-50 text-indigo-700 border border-indigo-200/60 rounded-md font-extrabold px-2.5 py-1 text-[11px] shrink-0"
+                                                className="inline-block bg-indigo-50 text-indigo-700  border-indigo-200/60 rounded-md font-extrabold px-2.5 py-1 text-[11px] shrink-0"
                                             >
                                                 {note.section}
                                             </div>
@@ -543,7 +543,7 @@ export function Home() {
 
                     {/* Activity This Week - Col 4-5 */}
                     <Card
-                        className="rounded-2xl w-full bg-white border border-slate-200 shadow-xs"
+                        className="rounded-2xl w-full p-0 h-fit bg-white border border-slate-200 shadow-xs"
                     >
                         <div className="p-6">
                             <CardTitle
@@ -594,7 +594,7 @@ export function Home() {
                                 </ChartContainer>
                             </div>
                             <div
-                                className="text-[12px] mb-20 font-medium text-center mt-4 text-slate-500"
+                                className="text-[12px]  font-medium text-center mt-4 text-slate-500"
                             >
                                 Avg {avgDailyQuestions} questions/day · Best: {bestActivityDay}
                             </div>

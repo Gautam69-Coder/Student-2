@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo, useState } from "react";
 import {
     FileText,
     Download,
@@ -10,11 +10,13 @@ import {
     Code,
     File,
     Image as ImageIcon,
-    Edit
+    Edit,
+    Sparkles
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { theme } from "@/lib/theme";
 import { formatDate } from "@/Utils/date";
+import { ImproveNoteModal } from "./improve-note";
 
 export const NoteCard = memo(
     ({
@@ -28,7 +30,9 @@ export const NoteCard = memo(
         onPublic,
         onSelect,
         onShowCode,
+        onAiReview,
     }) => {
+        const [showImproveModal, setShowImproveModal] = useState(false);
         const isOwner = user?._id === note.user;
         const hasFile = note.fileType !== "NAN";
         const isImage = note.fileType?.startsWith("image/");
@@ -38,7 +42,7 @@ export const NoteCard = memo(
 
         return (
             <Card
-                className="rounded-2xl overflow-hidden h-full"
+                className="rounded-2xl p-0 overflow-hidden h-full"
                 style={{
                     background: theme.colors.white,
                     borderColor: theme.colors.lightGray,
@@ -74,7 +78,7 @@ export const NoteCard = memo(
                         {isOwner && (
                             <div className="flex gap-2">
                                 <button
-                                    onClick={(e) => {
+                                    onClick={() => {
                                         onUpdate(note._id);
                                     }}
                                     className="p-2 rounded-xl transition-colors cursor-pointer"
@@ -119,18 +123,47 @@ export const NoteCard = memo(
                             )}
                         </div>
 
-                        {(user?.role === "admin" || user?.role === "superadmin") && (
-                            <button
-                                className={`rounded-full border px-3 py-1.5 text-[11px] font-bold transition-colors ${
-                                    note.isGlobal
+                        <div className="flex gap-2 items-center">
+                            {hasFile && hasContent && (
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (onAiReview) onAiReview(note);
+                                        else setShowImproveModal(true);
+                                    }}
+                                    className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-xs cursor-pointer active:scale-95"
+                                >
+                                    <Sparkles className="w-3 h-3" /> AI Review
+                                </button>
+                            )}
+
+                            {!hasFile && (
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (onAiReview) onAiReview(note);
+                                        else setShowImproveModal(true);
+                                    }}
+                                    className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-xs cursor-pointer active:scale-95"
+                                >
+                                    <Sparkles className="w-3 h-3" /> AI Review
+                                </button>
+                            )}
+                            {(user?.role === "admin" || user?.role === "superadmin") && (
+                                <button
+                                    className={`rounded-full border px-3 py-1.5 text-[11px] font-bold transition-colors ${note.isGlobal
                                         ? "bg-indigo-600 text-white border-indigo-600"
                                         : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-                                }`}
-                                onClick={() => onPublic(note._id)}
-                            >
-                                {note.isGlobal ? "Public" : "Private"}
-                            </button>
-                        )}
+                                        }`}
+                                    onClick={() => onPublic(note._id)}
+                                >
+                                    {note.isGlobal ? "Public" : "Private"}
+                                </button>
+                            )}
+
+                        </div>
                     </div>
 
                     <div className="flex-1 mb-4">
@@ -266,6 +299,14 @@ export const NoteCard = memo(
                         )}
                     </div>
                 </CardContent>
+
+                {showImproveModal && (
+                    <ImproveNoteModal
+                        isOpen={showImproveModal}
+                        onClose={() => setShowImproveModal(false)}
+                        note={note}
+                    />
+                )}
             </Card>
         );
     }

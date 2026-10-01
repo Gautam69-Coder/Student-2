@@ -77,8 +77,6 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
     const userName = user?.username || "Student";
     const role = user?.role || "user";
 
-    console.log(practicals.map((q) => q.questions.map((p) => p.code.map(i=>i))))
-
     const searchResults = useMemo(() => {
         if (!searchQuery) return { subjects: [], practicals: [], notes: [] };
 

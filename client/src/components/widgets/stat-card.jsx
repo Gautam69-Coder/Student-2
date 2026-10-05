@@ -41,8 +41,6 @@ export function TrendBadge({ text, variant = "success" }) {
 }
 
 export function DashStatCard({ icon: Icon, title, value, trend, variant = "primary" }) {
-  console.log(value)
-  console.log(typeof(value))
     return (
       <Card
         className="rounded-2xl h-full transition-all hover:shadow-md border border-slate-200 bg-white"

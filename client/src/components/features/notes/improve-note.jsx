@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { improveNote } from "@/Api/api";
+import { useState } from "react";
 import {
     X,
     Sparkles,
@@ -16,9 +18,47 @@ import {
     Cpu,
 } from "lucide-react";
 import { theme } from "@/lib/theme";
+import { customMessage } from "@/Utils/customMessage";
+import { MarkdownContent } from "@/Utils/MarkdownContent";
+
 
 export function ImproveNoteModal({ isOpen = true, onClose, note }) {
     if (typeof document === "undefined") return null;
+    const [aiNote, setAiNote] = useState(null);
+    const [input, setInput] = useState("");
+    const [aiNoteUpdate, setAiUpdateNote] = useState("");
+    const [editNote, setEditNote] = useState(note.content);
+
+
+    const quick = [
+        "Fix Grammer & Polish",
+        "Summarize Key Points",
+        "Optimize and Clean Code",
+        "Add Explanations"
+    ]
+
+
+    const handleSubmit = async () => {
+
+        if (input === "" || input === null) {
+            return customMessage({
+                type: "error",
+                content: "Prompt is Required",
+            });
+        }
+
+        const prompt = "User Note: \n" + editNote.trim() + "\n prompt: \n" + input.trim();
+        console.log(prompt)
+
+        try {
+            const res = await improveNote({ prompt });
+            console.log(res.data);
+            setAiNote(res.data.data);
+        }
+        catch (e) {
+            console.error(e)
+        }
+    }
 
     return ReactDOM.createPortal(
         <AnimatePresence>
@@ -109,35 +149,47 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                     className="flex items-center justify-between px-4 py-3 border-b shrink-0 bg-slate-50/70"
                                     style={{ borderColor: theme.colors.lightGray }}
                                 >
-                                    <div className="flex items-center gap-2 min-w-0">
-                                        <FileText className="w-4 h-4 shrink-0" style={{ color: theme.colors.darkGray }} />
-                                        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: theme.colors.dark }}>
-                                            User Note
-                                        </span>
+                                    <div className="flex items-center gap-2 w-full justify-between">
+                                        <div className="flex items-center gap-1">
+                                            <FileText className="w-4 h-4 shrink-0" style={{ color: theme.colors.darkGray }} />
+                                            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: theme.colors.dark }}>
+                                                User Note
+                                            </span>
+                                        </div>
+                                        <div className="text-[11px]  font-bold px-2 rounded-2xl border border-lime-600 tracking-wider text-lime-500">
+                                            Edit
+                                        </div>
                                     </div>
 
-                                    <button
-                                        type="button"
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors hover:bg-slate-100 cursor-pointer"
-                                        style={{
-                                            background: theme.colors.white,
-                                            borderColor: theme.colors.lightGray,
-                                            color: theme.colors.dark,
-                                        }}
-                                        title="Copy User Note"
-                                    >
-                                        <Copy className="w-3.5 h-3.5" style={{ color: theme.colors.darkGray }} />
-                                        <span className="text-[11px]">Copy</span>
-                                    </button>
+
                                 </div>
 
                                 <div
                                     className="flex-1 overflow-y-auto p-4 select-text font-mono text-[13px] leading-relaxed text-slate-800 space-y-2"
                                     data-lenis-prevent
                                 >
-                                    <pre className="whitespace-pre-wrap break-words font-mono text-[12.5px] sm:text-[13px] text-slate-800 leading-6">
-                                       {note.content }
-                                    </pre>
+                                    {aiNoteUpdate ? (
+                                        <textarea
+                                            className="w-full h-full focus:border-0 "
+                                            value={aiNote}
+                                            onClick={()=>{console.log(editNote)}}
+                                        />
+
+                                    ) : (
+                                        <textarea
+                                            className="w-full h-full resize-none"
+                                            style={{
+                                                border: "none",
+                                                outline: "none",
+                                                boxShadow: "none",
+                                                appearance: "none",
+                                            }}
+                                            value={editNote}
+                                            onChange={(e)=>{
+                                                setEditNote(e.target.value);
+                                            }} 
+                                        />
+                                    )}
                                 </div>
                             </div>
 
@@ -152,35 +204,22 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                 <div
                                     className="flex items-center justify-between px-4 py-3 border-b shrink-0 bg-slate-50/70"
                                     style={{ borderColor: theme.colors.lightGray }}
+
                                 >
-                                    <div className="flex items-center gap-2 min-w-0">
-                                        <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
-                                        <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">
-                                            AI Update Note
-                                        </span>
-                                        <span className="text-[11px]  font-bold px-2 rounded-2xl border border-lime-600 tracking-wider text-lime-500">
+
+                                    <div className="flex items-center justify-between w-full ">
+                                        <div className="flex gap-1 items-center">
+                                            <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+                                            <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">
+                                                AI Update Note
+                                            </span>
+                                        </div>
+                                        <div className="text-[11px]  font-bold px-2 rounded-2xl border border-lime-600 tracking-wider text-lime-500">
                                             Ready-Only
-                                        </span>
-
+                                        </div>
                                     </div>
 
-                                    <div className="flex items-center gap-2">
 
-
-                                        <button
-                                            type="button"
-                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors hover:bg-slate-100 cursor-pointer"
-                                            style={{
-                                                background: theme.colors.white,
-                                                borderColor: theme.colors.lightGray,
-                                                color: theme.colors.dark,
-                                            }}
-                                            title="Copy AI Note"
-                                        >
-                                            <Copy className="w-3.5 h-3.5" style={{ color: theme.colors.darkGray }} />
-                                            <span className="text-[11px]">Copy</span>
-                                        </button>
-                                    </div>
                                 </div>
 
                                 <div
@@ -188,13 +227,20 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                     data-lenis-prevent
                                 >
                                     <div className="rounded-xl border p-4 bg-slate-50 space-y-3" style={{ borderColor: theme.colors.lightGray }}>
-                                        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                                            <Sparkles className="w-4 h-4 text-indigo-600" />
-                                            AI Improved & Optimized Note
-                                        </h3>
-                                        <p className="text-xs text-slate-600 leading-relaxed">
-                                            Modernized syntax using functional array reducers, added comprehensive JSDoc type annotations, and safe input validation.
-                                        </p>
+                                        {aiNote ? (
+                                            < MarkdownContent content={aiNote} role={""} />
+
+                                        ) : (
+                                            <>
+                                                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                                    <Sparkles className="w-4 h-4 text-indigo-600" />
+                                                    AI Improved & Optimized Note
+                                                </h3>
+                                                <p className="text-xs text-slate-600 leading-relaxed">
+                                                    Modernized syntax using functional array reducers, added comprehensive JSDoc type annotations, and safe input validation.
+                                                </p>
+                                            </>
+                                        )}
                                     </div>
 
 
@@ -216,54 +262,26 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                     >
                                         Quick:
                                     </span>
-                                    <button
-                                        type="button"
-                                        className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all cursor-pointer hover:bg-slate-50"
-                                        style={{
-                                            background: theme.colors.white,
-                                            borderColor: theme.colors.lightGray,
-                                            color: theme.colors.dark,
-                                        }}
-                                    >
-                                        <Wand2 className="w-3 h-3 text-indigo-600" />
-                                        <span>Fix Grammar & Polish</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all cursor-pointer hover:bg-slate-50"
-                                        style={{
-                                            background: theme.colors.white,
-                                            borderColor: theme.colors.lightGray,
-                                            color: theme.colors.dark,
-                                        }}
-                                    >
-                                        <AlignLeft className="w-3 h-3 text-indigo-600" />
-                                        <span>Summarize Key Points</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all cursor-pointer hover:bg-slate-50"
-                                        style={{
-                                            background: theme.colors.white,
-                                            borderColor: theme.colors.lightGray,
-                                            color: theme.colors.dark,
-                                        }}
-                                    >
-                                        <Zap className="w-3 h-3 text-indigo-600" />
-                                        <span>Optimize & Clean Code</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all cursor-pointer hover:bg-slate-50"
-                                        style={{
-                                            background: theme.colors.white,
-                                            borderColor: theme.colors.lightGray,
-                                            color: theme.colors.dark,
-                                        }}
-                                    >
-                                        <Lightbulb className="w-3 h-3 text-indigo-600" />
-                                        <span>Add Explanations</span>
-                                    </button>
+                                    {quick.map((item, index) => (
+                                        <button
+                                            type="button"
+                                            key={index}
+                                            className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all cursor-pointer hover:bg-slate-50"
+                                            style={{
+                                                background: theme.colors.white,
+                                                borderColor: theme.colors.lightGray,
+                                                color: theme.colors.dark,
+                                            }}
+                                            onClick={() => {
+                                                setInput(quick[index]);
+
+                                            }}
+                                        >
+                                            <Wand2 className="w-3 h-3 text-indigo-600" />
+                                            <span>{item}</span>
+                                        </button>
+                                    ))}
+
                                 </div>
 
                                 <div className="relative flex items-center mb-2 sm:mb-0">
@@ -276,11 +294,19 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                             borderColor: theme.colors.lightGray,
                                             color: theme.colors.dark,
                                         }}
+                                        value={input}
+                                        onChange={(e) => {
+                                            setInput(e.target.value);
+                                        }}
+
                                     />
                                     <button
                                         type="button"
                                         className="absolute right-1.5 p-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-all cursor-pointer active:scale-90 shadow-xs"
                                         title="Send prompt to AI"
+                                        onClick={() => {
+                                            handleSubmit();
+                                        }}
                                     >
                                         <Send className="w-3.5 h-3.5" />
                                     </button>
@@ -296,6 +322,9 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                         background: theme.colors.white,
                                         borderColor: theme.colors.lightGray,
                                         color: theme.colors.dark,
+                                    }}
+                                    onClick={() => {
+                                        setAiUpdateNote(aiNote);
                                     }}
                                 >
                                     <RefreshCw className="w-4 h-4 text-indigo-600" />

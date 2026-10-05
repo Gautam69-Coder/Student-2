@@ -167,7 +167,7 @@ export function AIAssistant() {
                                                 : "rounded-bl-none border border-slate-200 bg-white "
                                         }`}
                                     >
-                                        <MarkdownContent content={msg.content} role={msg.role} />
+                                        <MarkdownContent content={msg.content} role={msg.role}  />
                                     </div>
                                 </motion.div>
                             ))}

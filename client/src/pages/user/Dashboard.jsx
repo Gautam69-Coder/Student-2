@@ -20,6 +20,7 @@ import { PracticalCard } from "@/components/features/practicals/practical-card";
 import { CodingPractice } from "./CodingPractice";
 import CodeEditor from "./CodeEditor";
 import PracticeDetails from "./PracticeDetails";
+import {Test} from "./Test"
 
 import { TopNavBar } from "@/components/layout/top-navbar";
 import { DashboardSidebar } from "@/components/layout/sidebar";
@@ -390,6 +391,9 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                     <Route path="about-contact" element={<AboutContact />} />
                                     <Route path="code-editor/:language/:problemId" element={<CodeEditor />} />
                                     <Route path="*" element={<Navigate to="" replace />} />
+
+                                    {/* Test Pages */}
+                                    <Route path="test" element={<Test />} />
                                 </Routes>
                             )}
                         </div>

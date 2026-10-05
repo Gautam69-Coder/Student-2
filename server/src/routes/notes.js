@@ -3,8 +3,10 @@ import auth from '../middleware/auth.js';
 import uploadMulter from '../middleware/multer.js';
 import { 
     getNotes, getAllNotes, createNoteFile, createNoteText, 
-    updateNoteText, deleteNote, togglePublicStatus ,updateNoteFile
+    updateNoteText, deleteNote, togglePublicStatus ,updateNoteFile,
 } from '../controllers/notes.controller.js';
+import { handleImproveNote } from '../controllers/improveNote.controller.js';
+
 
 const router = express.Router();
 
@@ -19,5 +21,7 @@ router.put('/text', auth, updateNoteText);
 
 router.delete('/:id', auth, deleteNote);
 router.put('/public/:id', auth, togglePublicStatus);
+
+router.post("/improve-note", auth, handleImproveNote);
 
 export default router;

@@ -2,7 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { improveNote } from "@/Api/api";
+import { updateNoteText } from "@/Api/api";
 import { useState } from "react";
+import { DotLoader } from "@/Utils/loaders";
 import {
     X,
     Sparkles,
@@ -26,9 +28,10 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
     if (typeof document === "undefined") return null;
     const [aiNote, setAiNote] = useState(null);
     const [input, setInput] = useState("");
-    const [aiNoteUpdate, setAiUpdateNote] = useState("");
     const [editNote, setEditNote] = useState(note.content);
-
+    const [isLoading, setIsLoading] = useState(false);
+    const [isUpdateNote,setIsUpdateNote] = useState(false);
+    const [isSaveLoading, setIsSaveLoading] = useState(false);
 
     const quick = [
         "Fix Grammer & Polish",
@@ -36,7 +39,6 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
         "Optimize and Clean Code",
         "Add Explanations"
     ]
-
 
     const handleSubmit = async () => {
 
@@ -48,12 +50,28 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
         }
 
         const prompt = "User Note: \n" + editNote.trim() + "\n prompt: \n" + input.trim();
-        console.log(prompt)
 
         try {
+
+            setIsLoading(true);
             const res = await improveNote({ prompt });
-            console.log(res.data);
             setAiNote(res.data.data);
+            setInput("");
+            setIsLoading(false);
+        }
+        catch (e) {
+            console.error(e)
+        }
+    }
+
+    const handleSaveNote = async () => {
+        try {
+            setIsSaveLoading(true);
+            console.log("Note id  : ", note);
+            const res = await updateNoteText({ noteId: note._id, code: editNote, isAiNote: true });
+            console.log(res.data.data);
+            setIsSaveLoading(false);
+            onClose();
         }
         catch (e) {
             console.error(e)
@@ -63,7 +81,7 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
     return ReactDOM.createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 overflow-hidden">
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-5 overflow-hidden">
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -165,31 +183,22 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                 </div>
 
                                 <div
-                                    className="flex-1 overflow-y-auto p-4 select-text font-mono text-[13px] leading-relaxed text-slate-800 space-y-2"
+                                    className="flex-1  p-4 select-text font-mono text-[13px] leading-relaxed text-slate-800 space-y-2"
                                     data-lenis-prevent
                                 >
-                                    {aiNoteUpdate ? (
-                                        <textarea
-                                            className="w-full h-full focus:border-0 "
-                                            value={aiNote}
-                                            onClick={()=>{console.log(editNote)}}
-                                        />
-
-                                    ) : (
-                                        <textarea
-                                            className="w-full h-full resize-none"
-                                            style={{
-                                                border: "none",
-                                                outline: "none",
-                                                boxShadow: "none",
-                                                appearance: "none",
-                                            }}
-                                            value={editNote}
-                                            onChange={(e)=>{
-                                                setEditNote(e.target.value);
-                                            }} 
-                                        />
-                                    )}
+                                    <textarea
+                                        className="w-full h-full resize-none"
+                                        style={{
+                                            border: "none",
+                                            outline: "none",
+                                            boxShadow: "none",
+                                            appearance: "none",
+                                        }}
+                                        value={editNote}
+                                        onChange={(e) => {
+                                            setEditNote(e.target.value);
+                                        }}
+                                    />
                                 </div>
                             </div>
 
@@ -226,22 +235,28 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                     className="flex-1 overflow-y-auto p-4 select-text space-y-4"
                                     data-lenis-prevent
                                 >
-                                    <div className="rounded-xl border p-4 bg-slate-50 space-y-3" style={{ borderColor: theme.colors.lightGray }}>
-                                        {aiNote ? (
-                                            < MarkdownContent content={aiNote} role={""} />
+                                    {isLoading ? (
+                                        <div className="w-full h-full flex justify-center items-center">
+                                            <DotLoader color="blue" />
+                                        </div>
+                                    ) : (
+                                        <div className="rounded-xl border p-4 bg-slate-50 space-y-3" style={{ borderColor: theme.colors.lightGray }}>
+                                            {aiNote ? (
+                                                < MarkdownContent content={aiNote} role={""} />
 
-                                        ) : (
-                                            <>
-                                                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                                                    <Sparkles className="w-4 h-4 text-indigo-600" />
-                                                    AI Improved & Optimized Note
-                                                </h3>
-                                                <p className="text-xs text-slate-600 leading-relaxed">
-                                                    Modernized syntax using functional array reducers, added comprehensive JSDoc type annotations, and safe input validation.
-                                                </p>
-                                            </>
-                                        )}
-                                    </div>
+                                            ) : (
+                                                <>
+                                                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                                        <Sparkles className="w-4 h-4 text-indigo-600" />
+                                                        AI Improved & Optimized Note
+                                                    </h3>
+                                                    <p className="text-xs text-slate-600 leading-relaxed">
+                                                        Modernized syntax using functional array reducers, added comprehensive JSDoc type annotations, and safe input validation.
+                                                    </p>
+                                                </>
+                                            )}
+                                        </div>
+                                    )}
 
 
                                 </div>
@@ -312,7 +327,6 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                     </button>
                                 </div>
                             </div>
-
                             {/* Action Buttons */}
                             <div className="flex items-center justify-end gap-3 self-end pt-1 sm:pt-0">
                                 <button
@@ -324,7 +338,7 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
                                         color: theme.colors.dark,
                                     }}
                                     onClick={() => {
-                                        setAiUpdateNote(aiNote);
+                                        setEditNote(aiNote);
                                     }}
                                 >
                                     <RefreshCw className="w-4 h-4 text-indigo-600" />
@@ -333,11 +347,21 @@ export function ImproveNoteModal({ isOpen = true, onClose, note }) {
 
                                 <button
                                     type="button"
-                                    onClick={onClose}
+                                    onClick={() => {
+                                        handleSaveNote()
+
+                                    }}
                                     className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all shadow-md shadow-indigo-100 cursor-pointer"
+
                                 >
-                                    <Save className="w-4 h-4" />
-                                    <span>Save Note</span>
+                                    {isSaveLoading ? (
+                                        <DotLoader color="blue" size="20" />
+                                    ) : (
+                                        <>
+                                            <Save className="w-4 h-4" />
+                                            <span>Save Note</span>
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </div>

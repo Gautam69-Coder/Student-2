@@ -12,7 +12,6 @@ import {
     Upload,
 } from "lucide-react";
 import { deleteNote, makeNotePublic } from "@/Api/api";
-import { CodeModal } from "@/components/features/coding/code-modal";
 import RippleLoader from "@/components/ui/nurui/ripple-loader";
 import AddSections from "./add-sections";
 import { theme } from "@/lib/theme";
@@ -62,7 +61,6 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
     const [selectedNote, setSelectedNote] = useState(null);
     const [copying, setCopying] = useState(null);
     const [activeSection, setActiveSection] = useState("All");
-    const [showCodeModal, setShowCodeModal] = useState(false);
     const [showAddSection, setShowAddSection] = useState(false);
 
     const groupedNotes = useMemo(() => {
@@ -139,7 +137,6 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
 
     const handleShowCode = useCallback((note) => {
         setSelectedNote(note);
-        setShowCodeModal(true);
     }, []);
 
     return (
@@ -343,19 +340,6 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
                 </div>
             )}
 
-            {/* Modals */}
-            {showCodeModal && selectedNote && (
-                <CodeModal
-                    isOpen={showCodeModal}
-                    onClose={() => {
-                        setShowCodeModal(false);
-                        setSelectedNote(null);
-                    }}
-                    title={selectedNote.title}
-                    code={selectedNote.content}
-                />
-            )}
-
             {showAddSection && (
                 <AddSections
                     isOpen={showAddSection}
@@ -369,6 +353,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
                 note={selectedNote}
                 onClose={() => setSelectedNote(null)}
                 onDownload={handleDownload}
+                onRefresh={onRefresh}
             />
 
         </div>

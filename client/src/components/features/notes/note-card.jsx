@@ -217,11 +217,13 @@ export const NoteCard = memo(
                                 </button>
 
                                 <div
-                                    className="p-4 rounded-2xl border max-h-40 overflow-hidden relative"
+                                    onClick={() => onSelect(note)}
+                                    className="p-4 rounded-2xl border max-h-40 overflow-hidden relative cursor-pointer hover:border-slate-300 transition-colors"
                                     style={{
                                         background: theme.colors.softGray,
                                         borderColor: theme.colors.lightGray,
                                     }}
+                                    title="Click to view note"
                                 >
                                     <pre
                                         className="font-mono text-xs whitespace-pre-wrap"
@@ -290,11 +292,11 @@ export const NoteCard = memo(
                             </>
                         ) : (
                             <button
-                                onClick={() => onShowCode(note)}
-                                className="w-full flex justify-center items-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.99] shadow-md shadow-indigo-100"
+                                onClick={() => onSelect(note)}
+                                className="w-full flex justify-center items-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-[0.99] shadow-md shadow-indigo-100 cursor-pointer"
                             >
-                                <Code className="w-4 h-4" />
-                                View Code
+                                <Eye className="w-4 h-4" />
+                                View Note
                             </button>
                         )}
                     </div>

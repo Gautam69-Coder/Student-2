@@ -9,6 +9,7 @@ const UserNoteSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    
     content: {
         type: String,
         default: "NAN"
@@ -30,6 +31,10 @@ const UserNoteSchema = new mongoose.Schema({
         default: "NAN"
     },
     isGlobal: {
+        type: Boolean,
+        default: false
+    },
+    isAiNote: {
         type: Boolean,
         default: false
     }

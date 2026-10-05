@@ -36,7 +36,7 @@ export const handleImproveNote = asyncHandler(async (req, res) => {
     });
     
     const result = completion.choices[0]?.message?.content;
-    // console.log(result);
+    
 
     res.status(200).json(new ApiResponse(200, result, "Success"));
 })

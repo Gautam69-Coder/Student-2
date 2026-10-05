@@ -106,13 +106,13 @@ export const createNoteText = asyncHandler(async (req, res) => {
 });
 
 export const updateNoteText = asyncHandler(async (req, res) => {
-    const { title, code, section,noteId } = req.body;
-
+    const { title, code, section,noteId,isAiNote } = req.body;
     const updateNote = {};
 
     if (title !== undefined) updateNote.title = title;
     if (section !== undefined) updateNote.section = section;
     if (code !== undefined) updateNote.content = code;
+    if (isAiNote !== undefined) updateNote.isAiNote = isAiNote;
 
 
     const updateData = await UserNote.findByIdAndUpdate(
@@ -124,7 +124,7 @@ export const updateNoteText = asyncHandler(async (req, res) => {
     )
 
     emitSocketEvent('notes_updated', { type: 'updated', noteId });
-    res.status(201).json(new ApiResponse(201, { noteData: updateData }, "File Uploaded Successfully"));
+    res.status(201).json(new ApiResponse(201, { noteData: updateData }, "Note Update Successfully"));
 
 });
 
@@ -146,7 +146,6 @@ export const updateNoteFile = asyncHandler(async (req, res) => {
         try {
             const public_id = await publicId(previousFileUrl);
             const result = await deleteCloudinary(public_id);
-            console.log("Cloudinary deleted: ", result);
         } catch (err) {
             console.error("Failed to delete old file from Cloudinary: ", err);
         }
@@ -177,7 +176,6 @@ export const updateNoteFile = asyncHandler(async (req, res) => {
         },
         { new: true }
     )
-    console.log(updateNote);
     emitSocketEvent('notes_updated', { type: 'updated', noteId });
     res.status(201).json(new ApiResponse(201, { noteData: updateData }, "Note Update Successfully"));
 

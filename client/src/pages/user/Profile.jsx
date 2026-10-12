@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import {
     User,
     Mail,
@@ -28,7 +27,7 @@ import { DashboardLayout } from "@/components/layout/layout";
 import { useData } from "@/context/DataContext";
 
 export function Profile({ onLogout }) {
-    const { user, setUser, notes } = useData();
+    const { user, setUser, notes = [] } = useData();
     useTitle("Profile Settings");
 
     const [showPassword, setShowPassword] = useState(false);
@@ -165,13 +164,15 @@ export function Profile({ onLogout }) {
     };
 
     // Calculate dynamic stats
-    const userNotesCount = notes?.filter(note => note.user === user._id || note.user?._id === user._id).length || 0;
-    const bookmarksCount = user.bookmarks?.length || 0;
-    const visitCount = user.visitCount || 1;
+    const userNotesCount = Array.isArray(notes)
+        ? notes.filter(note => note.user === user?._id || note.user?._id === user?._id).length
+        : (user?.notesCount || 0);
+    const bookmarksCount = user?.bookmarks?.length || 0;
+    const visitCount = user?.visitCount || 1;
 
     // Determine Subscription Tier Badge
     const renderSubscriptionBadge = () => {
-        const tier = user.subscription || "free";
+        const tier = user?.subscription || "free";
         if (tier === "lifetime") {
             return (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200 shadow-xs">

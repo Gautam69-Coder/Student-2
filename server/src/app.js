@@ -41,7 +41,6 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(bodyParser.text({ limit: '1mb' }));
 
-// BUG-13 fix: Apply global rate limiter
 app.use(generalLimiter);
 
 // API Routes mounting — with targeted rate limiters
@@ -62,6 +61,16 @@ app.use('/api/code-checker', aiLimiter, codechecker);
 app.use('/api/hometracking', activityTrack);
 app.use('/api/trackingData', activityTrack);
 app.use('/api/save-apikey', apiKeyController);
+
+
+app.use((err, req, res, next) => {
+    res.status(err.statusCode || 500).json({
+        statusCode: err.statusCode || 500,
+        message: err.message || "Something went wrong",
+        success: false,
+        errors: err.errors || []
+    });
+});
 
 // Root route
 app.get('/', (req, res) => {

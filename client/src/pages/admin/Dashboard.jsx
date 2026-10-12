@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, lazy, Suspense } from "react"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import {
     fetchUsers,
@@ -6,21 +6,26 @@ import {
     fetchSections
 } from "@/Api/api"
 
-
 import { GraduationCap, Menu, X } from "lucide-react"
 import { AdminSidebar } from "@/components/layout/admin-sidebar"
 import { useSocket } from "@/context/SocketContext"
-
-import { ManageUsers } from "./ManageUsers"
-import { ManageSubjects } from "./ManageSubjects"
-import { ManagePracticals } from "./ManagePracticals"
-import { ManageNotification } from "./ManageNotification"
-import { AnalyticsDashboard } from "./AnalyticsDashboard"
-import { ManageFeedback } from "./ManageFeedback"
-import { MessageSender } from "./MessageSender"
-import { ManagePractice } from "./ManagePractice"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTitle } from "@/hooks/useTitle"
+
+const ManageUsers = lazy(() => import("./ManageUsers").then(m => ({ default: m.ManageUsers })));
+const ManageSubjects = lazy(() => import("./ManageSubjects").then(m => ({ default: m.ManageSubjects })));
+const ManagePracticals = lazy(() => import("./ManagePracticals").then(m => ({ default: m.ManagePracticals })));
+const ManagePractice = lazy(() => import("./ManagePractice").then(m => ({ default: m.ManagePractice })));
+const AnalyticsDashboard = lazy(() => import("./AnalyticsDashboard").then(m => ({ default: m.AnalyticsDashboard })));
+const ManageFeedback = lazy(() => import("./ManageFeedback").then(m => ({ default: m.ManageFeedback })));
+const MessageSender = lazy(() => import("./MessageSender").then(m => ({ default: m.MessageSender })));
+const ManageNotification = lazy(() => import("./ManageNotification").then(m => ({ default: m.ManageNotification })));
+
+const AdminSubLoader = () => (
+    <div className="flex items-center justify-center min-h-[300px]">
+        <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+    </div>
+);
 
 export function AdminPanel({ userName, onLogout }) {
     useTitle("Admin Panel");
@@ -138,17 +143,19 @@ export function AdminPanel({ userName, onLogout }) {
                 </header>
 
                 <div className="sm:p-8  mx-auto overflow-hidden relative">
-                    <Routes>
-                        <Route path="/" element={<ManageUsers users={users} setUsers={setUsers} subjects={subjects} />} />
-                        <Route path="subjects" element={<ManageSubjects subjects={subjects} uniqueSubjectSections={uniqueSubjectSections} setUniqueSubjectSections={setUniqueSubjectSections} />} />
-                        <Route path="practicals" element={<ManagePracticals uniqueSubjectSections={uniqueSubjectSections} />} />
-                        <Route path="practice" element={<ManagePractice />} />
-                        <Route path="analytics" element={<AnalyticsDashboard users={users} />} />
-                        <Route path="feedback" element={<ManageFeedback />} />
-                        <Route path="messages" element={<MessageSender users={users} />} />
-                        <Route path="notifications" element={<ManageNotification />} />
-                        <Route path="*" element={<Navigate to="" replace />} />
-                    </Routes>
+                    <Suspense fallback={<AdminSubLoader />}>
+                        <Routes>
+                            <Route path="/" element={<ManageUsers users={users} setUsers={setUsers} subjects={subjects} />} />
+                            <Route path="subjects" element={<ManageSubjects subjects={subjects} uniqueSubjectSections={uniqueSubjectSections} setUniqueSubjectSections={setUniqueSubjectSections} />} />
+                            <Route path="practicals" element={<ManagePracticals uniqueSubjectSections={uniqueSubjectSections} />} />
+                            <Route path="practice" element={<ManagePractice />} />
+                            <Route path="analytics" element={<AnalyticsDashboard users={users} />} />
+                            <Route path="feedback" element={<ManageFeedback />} />
+                            <Route path="messages" element={<MessageSender users={users} />} />
+                            <Route path="notifications" element={<ManageNotification />} />
+                            <Route path="*" element={<Navigate to="" replace />} />
+                        </Routes>
+                    </Suspense>
                 </div>
 
                 {/* Real-time Notifications */}

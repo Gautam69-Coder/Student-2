@@ -61,12 +61,11 @@ export const register = asyncHandler(async (req, res) => {
 
 export const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    // BUG-5 fix: Removed console.log(password) — never log plaintext passwords
+    
     const user = await User.findOne({ email });
     if (!user) {
         throw new ApiError(400, 'Invalid credentials');
     }
-    // BUG-5 fix: Removed console.log("User :", user) — leaks hashed password
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -217,7 +216,9 @@ export const getUsers = asyncHandler(async (req, res) => {
         throw new ApiError(403, 'Access denied');
     }
 
-    const users = await User.find().select('-password').sort({ visitCount: -1 });
+    const users = await User.find()
+        .select('username email avatar role visitCount currentVisit currentVisitTime createdAt')
+        .sort({ visitCount: -1 });
     res.status(200).json(new ApiResponse(200, users, "Success"));
 });
 

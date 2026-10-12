@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { setUser as setReduxUser, logout as reduxLogout } from '@/store/slices/authSlice';
-import { fetchSections, fetchPracticals, fetchNotes, fetchUsers, fetchCodingPractices } from '@/Api/api';
 import { userDetail } from '@/lib/user';
 
 const DataContext = createContext();
@@ -13,7 +12,7 @@ export const DataProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [userLoading, setUserLoading] = useState(true);
 
-    // Fetch User Profile (Keeping this manual as it relates to auth state)
+    // Fetch User Profile (Bootstrap auth state)
     useEffect(() => {
         const loadUser = async () => {
             const authFlag = localStorage.getItem('isAuthenticated');
@@ -34,92 +33,36 @@ export const DataProvider = ({ children }) => {
         loadUser();
     }, [dispatch]);
 
-    // Use React Query for Subjects
-    const { 
-        data: subjectsData, 
-        isLoading: subjectsLoading
-    } = useQuery({
-        queryKey: ['subjects'],
-        queryFn: async () => {
-            const res = await fetchSections();
-            return res.data.data;
-        },
-        enabled: !!user,
-    });
-
-    // Use React Query for Practicals
-    const { 
-        data: practicalsData, 
-        isLoading: practicalsLoading
-    } = useQuery({
-        queryKey: ['practicals'],
-        queryFn: async () => {
-            const res = await fetchPracticals();
-            return res.data.data;
-        },
-        enabled: !!user,
-    });
-
-    // Use React Query for Notes
-    const { 
-        data: notesData, 
-        isLoading: notesLoading
-    } = useQuery({
-        queryKey: ['notes'],
-        queryFn: async () => {
-            const res = await fetchNotes();
-            return res.data.data;
-        },
-        enabled: !!user,
-    });
-
-    // Use React Query for ALL Users
-    const { 
-        data: allusersData, 
-        isLoading: allUsersLoading
-    } = useQuery({
-        queryKey: ['allusers'],
-        queryFn: async () => {
-            const res = await fetchUsers();
-            return res.data.data;
-        },
-        enabled: !!user,
-    });
-
-    // Use React Query for Coding Practices
-    const {
-        data: codingPracticesData,
-        isLoading: codingPracticesLoading
-    } = useQuery({
-        queryKey: ['codingPractices'],
-        queryFn: async () => {
-            const res = await fetchCodingPractices();
-            return Array.isArray(res?.data?.data) ? res.data.data : [];
-        },
-        enabled: !!user,
-    });
-
     const logout = () => {
         setUser(null);
         dispatch(reduxLogout());
         queryClient.clear();
     };
 
+    // Backward-compatible adapter reading from TanStack Query cache on-demand without eager root fetching
     const value = {
         user,
         setUser,
-        subjects: subjectsData || [],
-        practicals: practicalsData || [],
-        notes: notesData || [],
-        allusers: allusersData || [],
-        codingPractices: codingPracticesData || [],
+        get subjects() {
+            return queryClient.getQueryData(['subjects']) || [];
+        },
+        get practicals() {
+            return queryClient.getQueryData(['practicals']) || [];
+        },
+        get notes() {
+            return queryClient.getQueryData(['notes']) || [];
+        },
+        get codingPractices() {
+            return queryClient.getQueryData(['codingPractices']) || [];
+        },
+        allusers: [],
         loading: {
             user: userLoading,
-            subjects: subjectsLoading,
-            practicals: practicalsLoading,
-            notes: notesLoading,
-            allUsers: allUsersLoading,
-            codingPractices: codingPracticesLoading
+            subjects: false,
+            practicals: false,
+            notes: false,
+            allUsers: false,
+            codingPractices: false
         },
         refreshCodingPractices: () => queryClient.invalidateQueries({ queryKey: ['codingPractices'] }),
         refreshNotes: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),

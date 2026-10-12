@@ -9,15 +9,18 @@ export const useSocket = () => useContext(SocketContext);
 //     ? `http://${window.location.hostname}:5001`
 //     : 'https://student-2-3ow8.onrender.com';
 
-const SOCKET_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? `http://${window.location.hostname}:5001`
-    : 'https://student-2-temprory.onrender.com';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (
+    typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? `http://${window.location.hostname}:5001`
+        : 'https://student-2-temprory.onrender.com'
+);
 
 export const SocketProvider = ({ children, user }) => {
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [lastVisit, setLastVisit] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
+    const userId = user?._id || user?.id;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -50,7 +53,7 @@ export const SocketProvider = ({ children, user }) => {
         return () => {
             socketInstance.disconnect();
         };
-    }, [user]);
+    }, [userId]);
 
     // Separate effect to handle user registration when user OR connection changes
     useEffect(() => {

@@ -5,16 +5,12 @@ import { NotesSection } from '@/components/features/notes/notes-section';
 import { SEO } from '@/components/common/SEO';
 import { UploadModal } from "@/components/features/notes/upload-modal";
 import { useData } from "@/context/DataContext";
+import { useNotes } from "@/hooks/useNotes";
 
 export const Notes = memo(() => {
     const location = useLocation();
-
-    const {
-        user,
-        loading,
-        refreshNotes,
-        notes,
-    } = useData();
+    const { user } = useData();
+    const { notes, isLoading: notesLoading, invalidateNotes } = useNotes();
 
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
     const [updateNoteId, setUpdateNoteId] = useState(null);
@@ -29,8 +25,8 @@ export const Notes = memo(() => {
 
     // When a note is created (e.g. uploaded), refresh global cached notes
     const handleNoteCreated = useCallback(() => {
-        refreshNotes();
-    }, [refreshNotes]);
+        invalidateNotes();
+    }, [invalidateNotes]);
 
     return (
         <>
@@ -44,7 +40,7 @@ export const Notes = memo(() => {
                     <NotesSection
                         notes={notes}
                         user={user}
-                        loading={loading?.notes}
+                        loading={notesLoading}
                         onRefresh={handleNoteCreated}
                         onShare={() => { setUploadModalOpen(true) }}
                         onUpdate={(id) => { setUploadModalOpen(true); setUpdateNoteId(id) }}

@@ -21,7 +21,6 @@ import { ImproveNoteModal } from "./improve-note";
 export function NotePreviewModal({ note, onClose, onDownload, onRefresh }) {
     const { copied, copy } = useClipboard(2000);
     const [showImproveModal, setShowImproveModal] = useState(false);
-
     const hasFile = Boolean(
         note &&
         note.fileType &&
@@ -46,9 +45,6 @@ export function NotePreviewModal({ note, onClose, onDownload, onRefresh }) {
         return note.content.trim().split(/\s+/).filter(Boolean).length;
     }, [hasContent, note?.content]);
 
-    const readTime = useMemo(() => {
-        return Math.max(1, Math.ceil(wordCount / 200));
-    }, [wordCount]);
 
     const handleDownloadClick = () => {
         if (!note) return;
@@ -109,7 +105,7 @@ export function NotePreviewModal({ note, onClose, onDownload, onRefresh }) {
                     >
                         {/* Header Bar */}
                         <div
-                            className="flex items-center justify-between p-4 sm:p-5 border-b bg-white shrink-0 gap-3"
+                            className="flex items-center flex-wrap justify-between p-4 sm:p-5 border-b bg-white shrink-0 gap-3"
                             style={{ borderColor: theme.colors.lightGray }}
                         >
                             <div className="flex items-center gap-3 min-w-0">
@@ -140,20 +136,13 @@ export function NotePreviewModal({ note, onClose, onDownload, onRefresh }) {
                                         </span>
                                         <span>•</span>
                                         <span>Uploaded: {formatDate(note.createdAt)}</span>
-                                        {hasContent && !hasFile && (
-                                            <>
-                                                <span>•</span>
-                                                <span className="text-slate-400 font-medium">
-                                                    ~{readTime} min read
-                                                </span>
-                                            </>
-                                        )}
+
                                     </div>
                                 </div>
                             </div>
 
                             {/* Header Actions */}
-                            <div className="flex items-center gap-2 shrink-0">
+                            <div className="flex items-center gap-2 shrink-0 ">
                                 {hasContent && (
                                     <>
                                         <button
@@ -211,24 +200,25 @@ export function NotePreviewModal({ note, onClose, onDownload, onRefresh }) {
                                     </button>
                                 )}
 
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    className="p-2 rounded-xl transition-colors cursor-pointer hover:bg-slate-100"
-                                    style={{
-                                        background: theme.colors.softGray,
-                                        color: theme.colors.darkGray,
-                                    }}
-                                    aria-label="Close note preview"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
                             </div>
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="p-2 rounded-xl transition-colors cursor-pointer hover:bg-slate-100"
+                                style={{
+                                    background: theme.colors.softGray,
+                                    color: theme.colors.darkGray,
+                                }}
+                                aria-label="Close note preview"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
                         </div>
 
                         {/* Content Area */}
                         {isSplit ? (
-                            <div className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ background: theme.colors.softGray }}>
+                            <div className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ background: theme.colors.softGray }} >
+
                                 {/* Left Pane: File Preview */}
                                 <div
                                     className="w-full md:w-1/2 h-[45vh] md:h-full p-4 flex flex-col justify-center items-center overflow-auto border-b md:border-b-0 md:border-r"
@@ -244,7 +234,7 @@ export function NotePreviewModal({ note, onClose, onDownload, onRefresh }) {
                                 </div>
 
                                 {/* Right Pane: Note Content (Formatted Reader) */}
-                                <div className="w-full md:w-1/2 h-[45vh] md:h-full p-4 sm:p-6 flex flex-col bg-white overflow-hidden">
+                                <div className="w-full md:w-1/2 h-[45vh] md:h-full p-4 sm:p-6 flex flex-col bg-white overflow-hidden" data-lenis-prevent>
                                     <div className="flex items-center justify-between mb-3 shrink-0">
                                         <span className="text-xs font-black uppercase tracking-wider text-slate-400">
                                             Note Content
@@ -268,12 +258,23 @@ export function NotePreviewModal({ note, onClose, onDownload, onRefresh }) {
                                         </button>
                                     </div>
 
-                                    <div
-                                        className="flex-1 overflow-auto rounded-2xl border p-5 bg-slate-50/60 select-text"
-                                        style={{ borderColor: theme.colors.lightGray }}
-                                    >
-                                        <MarkdownContent content={note.content} />
-                                    </div>
+                                    {(note?.isAiNote || false) ? (
+                                        <div
+                                            className="flex-1 overflow-auto rounded-2xl border p-5 bg-slate-50/60 select-text"
+                                            style={{ borderColor: theme.colors.lightGray }}
+
+                                        >
+                                            <MarkdownContent content={note.content} />
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className="h-full overflow-y-auto whitespace-pre-wrap sm:leading-8 w-fit mx-auto text-black flex-1 overflow-auto rounded-2xl border p-5 bg-slate-50/60 select-text"
+                                            style={{ borderColor: theme.colors.lightGray }}
+                                        >
+
+                                            {note.content}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ) : hasFile ? (
@@ -292,13 +293,22 @@ export function NotePreviewModal({ note, onClose, onDownload, onRefresh }) {
                             </div>
                         ) : hasContent ? (
                             /* Pure Note / Formatted Reader View */
-                            <div className="flex-1 overflow-auto p-4 sm:p-8 bg-slate-50/40">
-                                <div
-                                    className="max-w-4xl mx-auto rounded-2xl border bg-white p-6 sm:p-10 shadow-xs"
-                                    style={{ borderColor: theme.colors.lightGray }}
-                                >
-                                    <MarkdownContent content={note.content} />
-                                </div>
+                                    <div className="flex-1 overflow-auto p-4  bg-slate-50/40" data-lenis-prevent>
+                                {(note?.isAiNote || false) ? (
+                                    <div
+                                        className="flex-1 overflow-auto rounded-2xl border p-5 bg-slate-50/60 select-text"
+                                        style={{ borderColor: theme.colors.lightGray }}
+                                    >
+                                        <MarkdownContent content={note.content} />
+                                    </div>
+                                ) : (
+                                    <div
+                                        className="h-full overflow-y-auto whitespace-pre-wrap w-fit mx-auto text-black flex-1 overflow-auto rounded-2xl border p-5 bg-slate-50/60 select-text"
+                                        style={{ borderColor: theme.colors.lightGray }}
+                                    >
+                                        {note.content}
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             /* Empty State */
@@ -309,21 +319,24 @@ export function NotePreviewModal({ note, onClose, onDownload, onRefresh }) {
                             </div>
                         )}
                     </motion.div>
-                </div>
-            )}
+                </div >
+            )
+            }
 
             {/* AI Assistant Modal */}
-            {showImproveModal && note && (
-                <ImproveNoteModal
-                    isOpen={showImproveModal}
-                    onClose={() => {
-                        setShowImproveModal(false);
-                        onRefresh?.();
-                    }}
-                    note={note}
-                />
-            )}
-        </AnimatePresence>,
+            {
+                showImproveModal && note && (
+                    <ImproveNoteModal
+                        isOpen={showImproveModal}
+                        onClose={() => {
+                            setShowImproveModal(false);
+                            onRefresh?.();
+                        }}
+                        note={note}
+                    />
+                )
+            }
+        </AnimatePresence >,
         document.body
     );
 }

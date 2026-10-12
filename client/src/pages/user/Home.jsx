@@ -31,6 +31,8 @@ import { BarChart, Bar, XAxis, ResponsiveContainer, CartesianGrid, YAxis } from 
 import { fetchUserProgress } from "@/Api/api";
 import { Link } from "react-router-dom";
 import { useData } from "@/context/DataContext";
+import { usePracticals } from "@/hooks/usePracticals";
+import { useNotes } from "@/hooks/useNotes";
 import { canAccessPracticals } from "@/Utils/vesCheck";
 
 const DEFAULT_TRACK_LANGUAGES = ["javascript", "python", "cpp", "java", "dsa"];
@@ -81,12 +83,9 @@ function SubjectProgressRow({ name, progress, done, total, Icon }) {
 }
 
 export function Home() {
-
-    const {
-        user,
-        practicals,
-        notes,
-    } = useData();
+    const { user } = useData();
+    const { practicals } = usePracticals();
+    const { notes } = useNotes();
 
     const [userProgress, setUserProgress] = useState(null);
     const [chartData, setChartData] = useState(null);

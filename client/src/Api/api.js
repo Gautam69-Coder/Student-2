@@ -4,9 +4,11 @@ import axios from 'axios';
 //     ? 'http://localhost:5001/api'
 //     : 'https://student-2-3ow8.onrender.com/api';
 
-const API_URL = window.location.hostname === 'localhost'
-    ? 'http://localhost:5001/api'
-    : 'https://student-2-temprory.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL || (
+    typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:5001/api'
+        : 'https://student-2-temprory.onrender.com/api'
+);
 
 const api = axios.create({
     baseURL: API_URL,
@@ -33,6 +35,15 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
+        if (error.response && error.response.status === 401) {
+            const isAuthRoute = typeof window !== 'undefined' &&
+                (window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/signup'));
+            if (!isAuthRoute && localStorage.getItem('isAuthenticated')) {
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('token');
+                window.dispatchEvent(new CustomEvent('auth-unauthorized'));
+            }
+        }
         return Promise.reject(error);
     }
 );

@@ -8,10 +8,14 @@ import { DashboardLayout } from "@/components/layout/layout";
 import { FlaskConical } from 'lucide-react';
 import { theme } from '@/lib/theme';
 import { useData } from '@/context/DataContext';
+import { usePracticals } from '@/hooks/usePracticals';
+import { useSubjects } from '@/hooks/useSubjects';
 import { canAccessPracticals } from '@/Utils/vesCheck';
 
 export function Practicals() {
-    const { practicals, subjects, user } = useData();
+    const { user } = useData();
+    const { practicals } = usePracticals();
+    const { subjects } = useSubjects();
     const location = useLocation();
 
     const [selectedSubject, setSelectedSubject] = useState("");

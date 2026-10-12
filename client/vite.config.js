@@ -15,9 +15,10 @@ export default defineConfig({
             output: {
                 manualChunks: {
                     'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+                    'query-vendor': ['@tanstack/react-query'],
+                    'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
                     'motion': ['framer-motion'],
                     'ui-icons': ['lucide-react'],
-                    'antd-vendor': ['antd'],
                 },
             },
         },

@@ -1,26 +1,33 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, lazy, Suspense } from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { FileText, HomeIcon, Search, ArrowUpRight } from "lucide-react";
 import { BottomNavbar } from "@/components/layout/bottom-navbar";
 import { NotePreviewModal } from "@/components/features/notes/note-preview-modal";
 import { useTitle } from "@/hooks/useTitle";
 import { useData } from "@/context/DataContext";
+import { useNotes } from "@/hooks/useNotes";
+import { usePracticals } from "@/hooks/usePracticals";
+import { useSubjects } from "@/hooks/useSubjects";
 import { canAccessPracticals } from "@/Utils/vesCheck";
 
-import { Home } from "./Home";
-import { Notes } from "./Notes";
-import { Chatbot } from "./Chatbot";
-import { Practicals } from "./Practicals";
-import { Feedback } from "./Feedback";
-import { Profile } from "./Profile";
-import { AboutContact } from "./AboutContact";
-import { Community } from "./Community";
-import { Upgrade } from "./Upgrade";
-import { PracticalCard } from "@/components/features/practicals/practical-card";
-import { CodingPractice } from "./CodingPractice";
-import CodeEditor from "./CodeEditor";
-import PracticeDetails from "./PracticeDetails";
-import {Test} from "./Test"
+const Home = lazy(() => import("./Home").then(m => ({ default: m.Home })));
+const Notes = lazy(() => import("./Notes").then(m => ({ default: m.Notes })));
+const Chatbot = lazy(() => import("./Chatbot").then(m => ({ default: m.Chatbot })));
+const Practicals = lazy(() => import("./Practicals").then(m => ({ default: m.Practicals })));
+const Feedback = lazy(() => import("./Feedback").then(m => ({ default: m.Feedback })));
+const Profile = lazy(() => import("./Profile").then(m => ({ default: m.Profile })));
+const AboutContact = lazy(() => import("./AboutContact").then(m => ({ default: m.AboutContact })));
+const Community = lazy(() => import("./Community").then(m => ({ default: m.Community })));
+const Upgrade = lazy(() => import("./Upgrade").then(m => ({ default: m.Upgrade })));
+const CodingPractice = lazy(() => import("./CodingPractice").then(m => ({ default: m.CodingPractice })));
+const CodeEditor = lazy(() => import("./CodeEditor"));
+const PracticeDetails = lazy(() => import("./PracticeDetails"));
+
+const SubpageLoader = () => (
+    <div className="flex items-center justify-center min-h-[350px]">
+        <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+    </div>
+);
 
 import { TopNavBar } from "@/components/layout/top-navbar";
 import { DashboardSidebar } from "@/components/layout/sidebar";
@@ -43,15 +50,12 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
     useTitle("Dashboard");
     // Theme toggle is disabled (dark mode only enforced by ThemeContext)
 
-    const {
-        user,
-        subjects,
-        practicals,
-        notes,
-    } = useData();
-
-
+    const { user } = useData();
     const [searchQuery, setSearchQuery] = useState("");
+    const isSearching = !!searchQuery.trim();
+    const { subjects = [] } = useSubjects({ enabled: isSearching });
+    const { practicals = [] } = usePracticals({ enabled: isSearching && canAccessPracticals(user) });
+    const { notes = [] } = useNotes({ enabled: isSearching });
     const [selectedNote, setSelectedNote] = useState(null);
     const [isBell, setisBell] = useState(false);
     const [activeSearchTab, setActiveSearchTab] = useState("all"); // "all" | "subjects" | "practicals" | "notes"
@@ -349,52 +353,51 @@ export function StudentDashboard({ onLogout, onSwitchToAdmin }) {
                                     </div>
                                 </DashboardLayout>
                             ) : (
-                                <Routes>
-                                    {/* All Path */}
-                                    <Route path="/" element={<Home />} />
+                                <Suspense fallback={<SubpageLoader />}>
+                                    <Routes>
+                                        {/* All Path */}
+                                        <Route path="/" element={<Home />} />
 
-                                    {/* Notes Route */}
-                                    <Route path="notes" element={<Notes />} />
+                                        {/* Notes Route */}
+                                        <Route path="notes" element={<Notes />} />
 
-                                    {/* Practicals Route */}
-                                    {canAccessPracticals(user) ? (
-                                        <Route path="practicals" element={<Practicals />} />
-                                    ) : (
-                                        <Route path="practicals" element={<Navigate to="/dashboard" replace />} />
-                                    )}
-
-                                    {/* ChatBot Route */}
-                                    <Route path="chatbot" element={<Chatbot />} />
-
-                                    {/* Feedback and Community Routes */}
-                                    <Route path="feedback" element={<Feedback user={user} />} />
-                                    <Route path="community" element={<Community />} />
-
-                                    {/* Upgrade Route */}
-                                    <Route path="upgrade" element={<Upgrade />} />
-
-                                    {/* Code practice */}
-                                    <Route path="coding-practice" element={<CodingPractice user={user} />} />
-                                    <Route path="coding-practice/:language" element={<PracticeDetails />} />
-
-                                    {/* Profile route */}
-                                    <Route path="profile" element={
-                                        isAuthenticated ? (
-
-                                            <Profile onLogout={onLogout} />
+                                        {/* Practicals Route */}
+                                        {canAccessPracticals(user) ? (
+                                            <Route path="practicals" element={<Practicals />} />
                                         ) : (
-                                            <Navigate to="/dashboard" replace />
-                                        )
-                                    } />
+                                            <Route path="practicals" element={<Navigate to="/dashboard" replace />} />
+                                        )}
 
-                                    {/* About and Contact Route */}
-                                    <Route path="about-contact" element={<AboutContact />} />
-                                    <Route path="code-editor/:language/:problemId" element={<CodeEditor />} />
-                                    <Route path="*" element={<Navigate to="" replace />} />
+                                        {/* ChatBot Route */}
+                                        <Route path="chatbot" element={<Chatbot />} />
 
-                                    {/* Test Pages */}
-                                    <Route path="test" element={<Test />} />
-                                </Routes>
+                                        {/* Feedback and Community Routes */}
+                                        <Route path="feedback" element={<Feedback user={user} />} />
+                                        <Route path="community" element={<Community />} />
+
+                                        {/* Upgrade Route */}
+                                        <Route path="upgrade" element={<Upgrade />} />
+
+                                        {/* Code practice */}
+                                        <Route path="coding-practice" element={<CodingPractice user={user} />} />
+                                        <Route path="coding-practice/:language" element={<PracticeDetails />} />
+
+                                        {/* Profile route */}
+                                        <Route path="profile" element={
+                                            isAuthenticated ? (
+
+                                                <Profile onLogout={onLogout} />
+                                            ) : (
+                                                <Navigate to="/dashboard" replace />
+                                            )
+                                        } />
+
+                                        {/* About and Contact Route */}
+                                        <Route path="about-contact" element={<AboutContact />} />
+                                        <Route path="code-editor/:language/:problemId" element={<CodeEditor />} />
+                                        <Route path="*" element={<Navigate to="" replace />} />
+                                    </Routes>
+                                </Suspense>
                             )}
                         </div>
                     </main >

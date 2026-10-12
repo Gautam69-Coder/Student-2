@@ -11,6 +11,8 @@ import { SocketProvider } from './context/SocketContext';
 import { DataProvider, useData } from './context/DataContext';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout as reduxLogout } from '@/store/slices/authSlice';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { logoutUser } from '@/Api/api';
 // Lazy-load heavy ka use for  route components —  reduces initial bundle size
 const LandingPage = lazy(() => import('./pages/public/LandingPage'));
 const StudentDashboard = lazy(() =>
@@ -59,7 +61,6 @@ function AppContent() {
 
     const handleLogout = async () => {
         try {
-            const { logoutUser } = await import('@/Api/api');
             await logoutUser();
         } catch (err) {
             console.error("Logout failed", err);
@@ -79,7 +80,8 @@ function AppContent() {
 
     return (
         <div className="min-h-screen max-w-full sm:max-w-screen ">
-            <Suspense fallback={<PageLoader />}>
+            <ErrorBoundary>
+                <Suspense fallback={<PageLoader />}>
                 <Routes>
                     <Route
                         path="/"
@@ -151,6 +153,7 @@ function AppContent() {
                     />
                 </Routes>
             </Suspense>
+            </ErrorBoundary>
             {isAuthenticated && (
                 <Suspense fallback={null}>
                     <AIAssistant />

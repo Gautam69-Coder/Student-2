@@ -5,14 +5,14 @@ import { theme } from "@/lib/theme";
 export function FilePreview({ fileUrl, fileType, fileName, title, onDownload, customClass = "" }) {
     if (!fileUrl) return null;
 
-    const isImage = fileType?.startsWith("image/") || 
-                    fileUrl.startsWith("data:image/") || 
-                    (!fileType && /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(fileUrl));
-    
-    const isPdf = fileType === "application/pdf" || 
-                  fileType?.includes("pdf") ||
-                  /\.pdf$/i.test(fileName || "") || 
-                  fileUrl.toLowerCase().includes('.pdf');
+    const isImage = fileType?.startsWith("image/") ||
+        fileUrl.startsWith("data:image/") ||
+        (!fileType && /\.(png|jpg|jpeg|webp|gif|svg)$/i.test(fileUrl));
+
+    const isPdf = fileType === "application/pdf" ||
+        fileType?.includes("pdf") ||
+        /\.pdf$/i.test(fileName || "") ||
+        fileUrl.toLowerCase().includes('.pdf');
 
     if (isImage) {
         return (
@@ -20,6 +20,7 @@ export function FilePreview({ fileUrl, fileType, fileName, title, onDownload, cu
                 src={fileUrl}
                 alt={title || fileName || "Reference attachment"}
                 className={`max-w-full max-h-full object-contain rounded-2xl shadow-xl bg-white p-2 ${customClass}`}
+                loading='lazy'
             />
         );
     }
@@ -31,6 +32,7 @@ export function FilePreview({ fileUrl, fileType, fileName, title, onDownload, cu
                 className={`w-full h-full rounded-2xl border bg-white ${customClass}`}
                 style={{ borderColor: theme.colors.lightGray }}
                 title={title || fileName || "Document Preview"}
+                loading='lazy'
             />
         );
     }

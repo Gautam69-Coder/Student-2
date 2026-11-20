@@ -9,6 +9,7 @@ import { useNotes } from "@/hooks/useNotes";
 import { usePracticals } from "@/hooks/usePracticals";
 import { useSubjects } from "@/hooks/useSubjects";
 import { canAccessPracticals } from "@/Utils/vesCheck";
+import { PracticalCard } from "@/components/features/practicals/practical-card"
 
 const Home = lazy(() => import("./Home").then(m => ({ default: m.Home })));
 const Notes = lazy(() => import("./Notes").then(m => ({ default: m.Notes })));

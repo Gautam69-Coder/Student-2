@@ -1,69 +1,68 @@
-
-import React, { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { DotLoader } from "@/Utils/loaders"
-import { signInWithPopup } from "firebase/auth";
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { signInWithPopup, getRedirectResult } from "firebase/auth";
 import { auth, provider } from "../../../firebase";
-import { customMessage } from "@/Utils/customMessage"
-import { Link } from "react-router-dom"
-import { googleLogin } from "@/Api/api"
-import { getRedirectResult } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-
-import { GraduationCap, Shield, Eye, EyeOff, Mail, Lock, User, CloudCog } from "lucide-react"
-import { registerUser, loginUser } from "@/Api/api"
-import { useTitle } from "@/hooks/useTitle"
+import { customMessage } from "@/Utils/customMessage";
+import { Link } from "react-router-dom";
+import { googleLogin, registerUser, loginUser } from "@/Api/api";
+import { useTitle } from "@/hooks/useTitle";
+import { ThemeToggle } from "@/components/common/theme-toggle";
+import {
+    GraduationCap,
+    Shield,
+    Eye,
+    EyeOff,
+    Mail,
+    Lock,
+    User,
+    KeyRound,
+    Code2,
+    BookOpen,
+    Sparkles,
+    ArrowLeft,
+    Loader2,
+    AlertCircle,
+} from "lucide-react";
 
 const quotes = [
     { text: "The only way to learn a new programming language is by writing programs in it.", author: "Dennis Ritchie" },
     { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
     { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
-]
-
-
-
+];
 
 export function AuthSection({ authState, setAuthState, onAuth, isModal = false }) {
     useTitle(authState === "login" ? "Login" : "Sign Up");
-    const [role, setRole] = useState("user")
-    const [showPassword, setShowPassword] = useState(false)
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [name, setName] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [googleLoading, setGoogleLoading] = useState(false)
-    const [error, setError] = useState(null)
-    const [adminSecret, setAdminSecret] = useState("")
-    const [currentQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)])
-
-    const navigate = useNavigate();
+    const [role, setRole] = useState("user");
+    const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [adminSecret, setAdminSecret] = useState("");
+    const [currentQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
     useEffect(() => {
         const handleRedirect = async () => {
             try {
-
                 const result = await getRedirectResult(auth);
                 if (result) {
                     const user = result.user;
-
-                    // 🔑 Get Firebase ID Token
                     const token = await user.getIdToken();
-
-                    // Send token to backend
                     const res = await googleLogin(token);
 
-                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem("isAuthenticated", "true");
                     if (res.data.data?.token) {
-                        localStorage.setItem('token', res.data.data.token);
+                        localStorage.setItem("token", res.data.data.token);
                     }
 
                     if (res.data.data?.user) {
                         onAuth(res.data.data.user.role, res.data.data.user.username);
                         customMessage({
                             type: "success",
-                            content: `${res.data.message}, ${res.data.data.user.username}!`
+                            content: `${res.data.message}, ${res.data.data.user.username}!`,
                         });
-
                     }
                 }
             } catch (err) {
@@ -75,196 +74,263 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
     }, []);
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-        setError(null)
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
         try {
             const userData = {
                 username: name,
                 email,
                 password,
                 role,
-                adminSecret
-            }
+                adminSecret,
+            };
 
             const loginData = {
                 email,
-                password
-            }
+                password,
+            };
 
-            const res = authState === "login" ? await loginUser(loginData) : await registerUser(userData)
-            localStorage.setItem('isAuthenticated', 'true');
+            const res = authState === "login" ? await loginUser(loginData) : await registerUser(userData);
+            localStorage.setItem("isAuthenticated", "true");
             if (res.data.data?.token) {
-                localStorage.setItem('token', res.data.data.token);
+                localStorage.setItem("token", res.data.data.token);
             }
 
             if (res.data.data?.user) {
                 onAuth(res.data.data.user.role, res.data.data.user.username);
-                customMessage(
-                    {
-                        type: "success",
-                        content: `${authState === "login" ? "Login" : "Sign Up"} successful! ${authState === "login" ? "Welcome back" : "Welcome"}, ${res.data.data.user.username}!`
-                    }
-                );
+                customMessage({
+                    type: "success",
+                    content: `${authState === "login" ? "Login" : "Sign Up"} successful! ${authState === "login" ? "Welcome back" : "Welcome"}, ${res.data.data.user.username}!`,
+                });
             }
         } catch (err) {
             console.error(err);
-            const message = err.response?.data?.msg || err.response?.data?.message || err.message || "An error occurred during authentication";
-            setError(message)
+            const message =
+                err.response?.data?.msg ||
+                err.response?.data?.message ||
+                err.message ||
+                "An error occurred during authentication";
+            setError(message);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     const handleGoogleLogin = async () => {
         try {
             setGoogleLoading(true);
+            setError(null);
             const result = await signInWithPopup(auth, provider);
-
             const user = result.user;
-
-            // 🔑 Get Firebase ID Token
             const token = await user.getIdToken();
-
-            // Send token to backend
             const res = await googleLogin(token);
-            localStorage.setItem('isAuthenticated', 'true');
+
+            localStorage.setItem("isAuthenticated", "true");
             if (res.data.data?.token) {
-                localStorage.setItem('token', res.data.data.token);
+                localStorage.setItem("token", res.data.data.token);
             }
 
             if (res.data.data?.user) {
                 onAuth(res.data.data.user.role, res.data.data.user.username);
-                customMessage(
-                    {
-                        type: "success",
-                        content: `${res.data.message}, ${res.data.data.user.username}!`
-                    }
-                );
-                setGoogleLoading(false)
+                customMessage({
+                    type: "success",
+                    content: `${res.data.message}, ${res.data.data.user.username}!`,
+                });
             }
-
         } catch (err) {
             console.error(err);
-            const message = err.response?.data?.msg || err.response?.data?.message || err.message || "An error occurred during authentication";
-            setError(message)
+            const message =
+                err.response?.data?.msg ||
+                err.response?.data?.message ||
+                err.message ||
+                "An error occurred during authentication";
+            setError(message);
         } finally {
             setGoogleLoading(false);
-
         }
     };
 
     return (
-        <div className={`${isModal ? "w-full" : "min-h-screen flex"} overflow-hidden transition-colors duration-300 relative`}>
-            {/* Theme Toggle Button */}
-            {/* Left Side - Quote Section (Minimal Pattern) */}
+        <div className={`${isModal ? "w-full" : "min-h-screen flex flex-col lg:flex-row"} w-full relative`}>
+            {/* Top Utility Bar */}
+            {!isModal && (
+                <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between max-w-7xl mx-auto">
+                    <Link
+                        to="/"
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-border bg-card/90 backdrop-blur-md text-xs font-semibold text-foreground hover:bg-secondary transition-colors"
+                    >
+                        <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+                        Back to Home
+                    </Link>
+                    <ThemeToggle />
+                </div>
+            )}
+
+            {/* Left Brand & Value Showcase Panel */}
             {!isModal && (
                 <motion.div
-                    initial={{ opacity: 0, x: -50 }}
+                    initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="hidden lg:flex lg:w-1/2 relative overflow-hidden  "
+                    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                    className="hidden lg:flex lg:w-1/2 relative flex-col justify-center px-12 xl:px-20 py-16 border-r border-border bg-card/40 backdrop-blur-sm"
                 >
+                    <div className="max-w-lg space-y-8">
+                        <Link to="/" className="inline-flex items-center gap-3 group w-fit">
+                            <img
+                                src="/circle_logo.png"
+                                alt="Student Hub Logo"
+                                className="h-10 w-10 object-contain group-hover:scale-105 transition-transform duration-200"
+                            />
+                            <span className="text-2xl font-extrabold tracking-tight text-foreground">
+                                Student Hub
+                            </span>
+                        </Link>
 
-                    <div className="relative z-10 flex flex-col justify-center px-12 lg:px-16 w-full">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3, duration: 0.6 }}
-                        >
-                            <Link to="/" className="mb-12 group w-fit block">
-                                <img
-                                    src="/logo.png"
-                                    alt="Student Hub Logo"
-                                    className="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
-                                />
-                            </Link>
+                        <div className="space-y-3">
+                            <h2 className="text-3xl xl:text-4xl font-extrabold tracking-tight text-foreground leading-tight">
+                                Your unified workspace for notes, labs, and coding practice.
+                            </h2>
+                            <p className="text-muted-foreground text-sm leading-relaxed">
+                                Pick up right where you left off across curated subject notes, verified practical sheets, and 50+ browser-ready coding challenges.
+                            </p>
+                        </div>
 
-                            <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-slate-900 dark:text-white  mb-4 font-serif italic">
+                        <div className="grid grid-cols-1 gap-3">
+                            {[
+                                {
+                                    icon: Code2,
+                                    title: "50+ Preloaded Coding Problems",
+                                    desc: "JavaScript, Python, C++, Java & DSA inside a Monaco IDE.",
+                                    color: "text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 border-indigo-500/20",
+                                },
+                                {
+                                    icon: BookOpen,
+                                    title: "Organized Notes & Practicals",
+                                    desc: "Inline file previews, markdown notes, and lab solutions.",
+                                    color: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+                                },
+                                {
+                                    icon: Sparkles,
+                                    title: "24/7 AI Study & Code Helper",
+                                    desc: "Debug edge cases and simplify tough syllabus topics fast.",
+                                    color: "text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 border-indigo-500/20",
+                                },
+                            ].map((item) => {
+                                const Icon = item.icon;
+                                return (
+                                    <div
+                                        key={item.title}
+                                        className="flex items-start gap-3.5 p-4 rounded-2xl border border-border bg-card shadow-2xs"
+                                    >
+                                        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${item.color}`}>
+                                            <Icon className="w-5 h-5" aria-hidden="true" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-bold text-foreground">{item.title}</h3>
+                                            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="pt-4 border-t border-border">
+                            <blockquote className="text-sm italic text-muted-foreground leading-relaxed">
                                 "{currentQuote.text}"
                             </blockquote>
-                            <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-medium">— {currentQuote.author}</p>
-                        </motion.div>
+                            <p className="text-xs font-semibold text-foreground mt-1.5">— {currentQuote.author}</p>
+                        </div>
                     </div>
                 </motion.div>
             )}
 
             {/* Right Side - Auth Form */}
-            <div className={`${isModal ? "w-full" : "w-full lg:w-1/2"} flex items-center justify-center  lg:p-2`}>
+            <div className={`${isModal ? "w-full" : "w-full lg:w-1/2 min-h-screen"} flex items-center justify-center p-4 sm:p-8 pt-20 lg:pt-8`}>
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="w-[90vw] sm:max-w-lg  "
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    className="w-full max-w-md"
                 >
-                    {/* Paper Card */}
-                    <div className=" glass-card rounded-xl sm:p-10 py-10 px-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-[#E5E5E5] dark:border-slate-800">
-                        <div className="text-center  mb-4">
-                            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
-                                {authState === "login" ? "Welcome Back" : "Create Account"}
+                    <div className="surface-card rounded-3xl p-6 sm:p-8">
+                        <div className="text-center mb-6 space-y-1.5">
+                            <div className="lg:hidden flex justify-center mb-3">
+                                <img src="/circle_logo.png" alt="Student Hub" className="h-10 w-10 object-contain" />
+                            </div>
+                            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
+                                {authState === "login" ? "Welcome back" : "Create your account"}
                             </h1>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm">
+                            <p className="text-muted-foreground text-sm">
                                 {authState === "login"
-                                    ? "Enter your details to access your account"
-                                    : "Start your learning journey today"}
+                                    ? "Sign in to access your study workspace"
+                                    : "Start organizing notes and solving challenges"}
                             </p>
                         </div>
 
-                        {/* Role Toggle */}
-                        <div className="flex gap-2 p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/50  mb-4">
+                        {/* Role Selector */}
+                        <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-secondary border border-border mb-5">
                             <button
-                                onClick={() => setRole("student")}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${role === "student"
-                                    ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                                    }`}
+                                type="button"
+                                onClick={() => setRole("user")}
+                                className={`flex items-center justify-center gap-2 min-h-[40px] px-3 rounded-lg text-xs font-bold transition-all ${
+                                    role === "user"
+                                        ? "bg-card text-foreground shadow-xs border border-border"
+                                        : "text-muted-foreground hover:text-foreground"
+                                }`}
                             >
-                                <GraduationCap className="w-4 h-4" />
+                                <GraduationCap className="w-4 h-4 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
                                 Student
                             </button>
                             <button
+                                type="button"
                                 onClick={() => setRole("admin")}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${role === "admin"
-                                    ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                                    }`}
+                                className={`flex items-center justify-center gap-2 min-h-[40px] px-3 rounded-lg text-xs font-bold transition-all ${
+                                    role === "admin"
+                                        ? "bg-card text-foreground shadow-xs border border-border"
+                                        : "text-muted-foreground hover:text-foreground"
+                                }`}
                             >
-                                <Shield className="w-4 h-4" />
+                                <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
                                 Admin
                             </button>
                         </div>
 
                         {error && (
                             <motion.div
-                                initial={{ opacity: 0, y: -10 }}
+                                initial={{ opacity: 0, y: -6 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="mb-6 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm font-medium text-center"
+                                role="alert"
+                                className="mb-5 p-3 rounded-xl bg-destructive/10 border border-destructive/25 text-destructive text-xs font-semibold flex items-center gap-2"
                             >
-                                {error}
+                                <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
+                                <span>{error}</span>
                             </motion.div>
                         )}
 
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            <AnimatePresence mode="wait">
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <AnimatePresence initial={false}>
                                 {authState === "signup" && (
                                     <motion.div
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: "auto" }}
                                         exit={{ opacity: 0, height: 0 }}
                                         transition={{ duration: 0.2 }}
+                                        className="overflow-hidden"
                                     >
-                                        <label htmlFor="name" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        <label htmlFor="name" className="block text-xs font-semibold text-foreground mb-1.5">
                                             Full Name
                                         </label>
-                                        <div className="relative mt-2">
-                                            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                        <div className="relative">
+                                            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                             <input
                                                 id="name"
                                                 type="text"
-                                                placeholder="John Doe"
+                                                required={authState === "signup"}
+                                                placeholder="Aarav Sharma"
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
-                                                className="w-full h-11 pl-10 pr-4 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                                className="w-full min-h-[44px] pl-10 pr-4 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
                                             />
                                         </div>
                                     </motion.div>
@@ -272,50 +338,51 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                             </AnimatePresence>
 
                             <div>
-                                <label htmlFor="email" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                <label htmlFor="email" className="block text-xs font-semibold text-foreground mb-1.5">
                                     Email Address
                                 </label>
-                                <div className="relative mt-2">
-                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                <div className="relative">
+                                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                     <input
                                         id="email"
                                         type="email"
                                         placeholder="student@university.edu"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                        className="w-full min-h-[44px] pl-10 pr-4 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
                                         required
                                     />
                                 </div>
                             </div>
 
-                            <div className={`${authState === "signup" && role === "admin" ? "sm:flex gap-4" : null}`}>
-                                <div >
-                                    <label htmlFor="password" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                            <div className="space-y-4">
+                                <div>
+                                    <label htmlFor="password" className="block text-xs font-semibold text-foreground mb-1.5">
                                         Password
                                     </label>
-                                    <div className="relative mt-2">
-                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                    <div className="relative">
+                                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                         <input
                                             id="password"
                                             type={showPassword ? "text" : "password"}
                                             placeholder="••••••••"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
-                                            className="w-full h-11 pl-10 pr-10 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                            className="w-full min-h-[44px] pl-10 pr-11 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
                                             required
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                            aria-label={showPassword ? "Hide password" : "Show password"}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground transition-colors"
                                         >
-                                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                            {showPassword ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
                                         </button>
                                     </div>
                                 </div>
 
-                                <AnimatePresence>
+                                <AnimatePresence initial={false}>
                                     {authState === "signup" && role === "admin" && (
                                         <motion.div
                                             initial={{ opacity: 0, height: 0 }}
@@ -323,18 +390,18 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                                             exit={{ opacity: 0, height: 0 }}
                                             className="overflow-hidden"
                                         >
-                                            <label htmlFor="adminSecret" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                            <label htmlFor="adminSecret" className="block text-xs font-semibold text-foreground mb-1.5">
                                                 Admin Secret Key
                                             </label>
-                                            <div className="relative mt-2">
-                                                <CloudCog className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+                                            <div className="relative">
+                                                <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                                 <input
                                                     id="adminSecret"
                                                     type="password"
                                                     placeholder="Enter admin secret"
                                                     value={adminSecret}
                                                     onChange={(e) => setAdminSecret(e.target.value)}
-                                                    className="w-full h-11 pl-10 pr-4 bg-slate-50/50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-slate-400 dark:focus:border-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 rounded-lg transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                                    className="w-full min-h-[44px] pl-10 pr-4 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
                                                     required={role === "admin"}
                                                 />
                                             </div>
@@ -345,37 +412,39 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
 
                             <button
                                 type="submit"
-                                className="w-full bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 h-11 rounded-lg font-bold transition-all shadow-sm active:scale-[0.98]"
+                                disabled={loading}
+                                className="w-full min-h-[44px] rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm transition-all active:scale-[0.98] shadow-sm shadow-indigo-500/20 flex items-center justify-center gap-2 disabled:opacity-60"
                             >
                                 {loading ? (
-                                    <div className="flex justify-center">
-                                        <DotLoader size={20} color={"black"} />
-                                    </div>
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                                        <span>{authState === "login" ? "Signing in..." : "Creating account..."}</span>
+                                    </>
                                 ) : (
-                                    authState === "login" ? "Sign In" : "Create Account"
+                                    <span>{authState === "login" ? "Sign In" : "Create Account"}</span>
                                 )}
                             </button>
-                            <div className="relative my-6">
+
+                            <div className="relative my-5">
                                 <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
+                                    <div className="w-full border-t border-border" />
                                 </div>
-                                <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="  px-2 text-slate-300 font-medium">Or continue with</span>
+                                <div className="relative flex justify-center text-[11px] uppercase tracking-wider font-semibold">
+                                    <span className="bg-card px-3 text-muted-foreground">Or continue with</span>
                                 </div>
                             </div>
 
                             <button
                                 type="button"
-                                className="w-full inline-flex items-center justify-center   dark:border-slate-800 bg-slate-50 dark:bg-white-800 dark:hover:glass-card  dark:text-black h-11 rounded-lg font-bold transition-all shadow-sm"
-                                onClick={() => { handleGoogleLogin() }}
+                                disabled={googleLoading}
+                                onClick={handleGoogleLogin}
+                                className="w-full min-h-[44px] inline-flex items-center justify-center gap-2.5 rounded-xl border border-border bg-background hover:bg-secondary text-foreground text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-60"
                             >
                                 {googleLoading ? (
-                                    <div className="flex justify-center">
-                                        <DotLoader size={20} color={"black"} />
-                                    </div>
+                                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                                 ) : (
                                     <>
-                                        <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                                        <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
                                             <path
                                                 fill="#4285F4"
                                                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -393,24 +462,32 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                                                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                                             />
                                         </svg>
-                                        Google
+                                        <span>Continue with Google</span>
                                     </>
                                 )}
                             </button>
                         </form>
 
-                        <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-8">
+                        <p className="text-center text-xs sm:text-sm text-muted-foreground mt-6">
                             {authState === "login" ? (
                                 <>
-                                    {"Don't have an account? "}
-                                    <button onClick={() => setAuthState("signup")} className="text-slate-900 dark:text-white font-semibold hover:underline transition-colors">
+                                    Don't have an account?{" "}
+                                    <button
+                                        type="button"
+                                        onClick={() => setAuthState("signup")}
+                                        className="text-primary font-bold hover:underline"
+                                    >
                                         Sign up
                                     </button>
                                 </>
                             ) : (
                                 <>
                                     Already have an account?{" "}
-                                    <button onClick={() => setAuthState("login")} className="text-slate-900 dark:text-white font-semibold hover:underline transition-colors">
+                                    <button
+                                        type="button"
+                                        onClick={() => setAuthState("login")}
+                                        className="text-primary font-bold hover:underline"
+                                    >
                                         Sign in
                                     </button>
                                 </>
@@ -418,7 +495,7 @@ export function AuthSection({ authState, setAuthState, onAuth, isModal = false }
                         </p>
                     </div>
                 </motion.div>
-            </div >
-        </div >
-    )
+            </div>
+        </div>
+    );
 }

@@ -1,12 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Bell, ChevronDown, Search, Shield, Key, PanelLeftOpen, PanelLeftClose } from "lucide-react";
-import { theme } from "@/lib/theme";
+import {
+    Bell,
+    ChevronDown,
+    Search,
+    Shield,
+    Key,
+    PanelLeftOpen,
+    PanelLeftClose,
+    User as UserIcon,
+    LogOut,
+    X,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { saveApiKey } from "@/Api/api";
 import { customMessage } from "@/Utils/customMessage";
 import { useData } from "@/context/DataContext";
 import NotificationPanel from "@/components/common/notification";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 
 export function TopNavBar({
     userName,
@@ -20,7 +31,6 @@ export function TopNavBar({
     isSidebarCollapsed,
     onToggleSidebar,
 }) {
-
     const { user } = useData();
     const isAdmin = user?.role === "admin" || user?.role === "superadmin";
     const hasApiKey = Boolean(user?.apiKey);
@@ -31,8 +41,11 @@ export function TopNavBar({
     const [savingApiKey, setSavingApiKey] = useState(false);
     const [apiKeyError, setApiKeyError] = useState("");
 
+    const searchInputRef = useRef(null);
     const navigate = useNavigate();
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [isMobile, setIsMobile] = useState(
+        typeof window !== "undefined" ? window.innerWidth < 768 : false
+    );
 
     useEffect(() => {
         if (!showAddKeyModal) {
@@ -43,11 +56,21 @@ export function TopNavBar({
     }, [showAddKeyModal]);
 
     useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    // Cmd/Ctrl + K quick search shortcut
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+                e.preventDefault();
+                searchInputRef.current?.focus();
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
 
     const handleSaveApiKey = async () => {
@@ -56,9 +79,10 @@ export function TopNavBar({
         try {
             const res = await saveApiKey({ apiKeyInput });
             if (res.data.message) {
+                setShowAddKeyModal(false);
                 return customMessage({
                     type: "success",
-                    content: `${res.data.message} !`
+                    content: `${res.data.message}!`,
                 });
             }
         } catch (e) {
@@ -69,283 +93,291 @@ export function TopNavBar({
     };
 
     return (
-        <motion.div
+        <motion.header
             animate={{
-                left: isMobile ? 0 : (isSidebarCollapsed ? 0 : 250)
+                left: isMobile ? 0 : isSidebarCollapsed ? 0 : 252,
             }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="flex flex-1 fixed top-0 right-0 left-0 z-50 items-center justify-between sm:px-6 px-2 py-4 border-b shadow-sm"
-            style={{
-                background: theme.colors.white,
-                borderColor: theme.colors.lightGray,
-            }}
+            transition={{ type: "spring", damping: 28, stiffness: 240 }}
+            className="flex fixed top-0 right-0 left-0 z-40 h-[68px] items-center justify-between px-3 sm:px-6 border-b border-border bg-card/85 backdrop-blur-xl"
         >
-            <div className="flex items-center gap-3">
-                {/* Sidebar Toggle Button */}
+            {/* Left: Sidebar toggle + Profile Menu */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                 <button
+                    type="button"
                     onClick={onToggleSidebar}
-                    className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-all cursor-pointer hidden md:flex items-center justify-center border border-slate-200"
+                    className="hidden md:inline-flex items-center justify-center min-h-[40px] min-w-[40px] rounded-xl border border-border bg-background hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={isSidebarCollapsed ? "Show Sidebar" : "Hide Sidebar"}
                     title={isSidebarCollapsed ? "Show Sidebar" : "Hide Sidebar"}
                 >
-                    {isSidebarCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+                    {isSidebarCollapsed ? (
+                        <PanelLeftOpen size={17} aria-hidden="true" />
+                    ) : (
+                        <PanelLeftClose size={17} aria-hidden="true" />
+                    )}
                 </button>
 
-                {/* Profile Dropdown - Left */}
                 <div className="relative">
                     <button
+                        type="button"
                         onClick={() => setShowProfile(!showProfile)}
-                        className="flex items-center gap-3 sm:px-3 px-1 sm:py-2 rounded-lg hover:bg-slate-100 transition-all"
-                        style={{ background: "transparent" }}
+                        aria-expanded={showProfile}
+                        aria-label="Open account menu"
+                        className="flex items-center gap-2.5 px-2 sm:px-2.5 py-1.5 rounded-xl hover:bg-secondary transition-colors"
                     >
-                        {userAvatar && (
+                        {userAvatar ? (
                             <img
                                 src={userAvatar}
                                 alt={userName}
-                                className="w-8 h-8 rounded-lg"
+                                className="w-8 h-8 rounded-lg object-cover border border-border"
                             />
+                        ) : (
+                            <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary border border-primary/25 flex items-center justify-center text-xs font-extrabold uppercase">
+                                {(userName || "S").charAt(0)}
+                            </div>
                         )}
-                    <div className="text-left hidden sm:block">
-                        <div className="text-sm font-semibold" style={{ color: theme.colors.dark }}>
-                            {userName}
+                        <div className="text-left hidden sm:block max-w-[140px]">
+                            <div className="text-xs font-bold text-foreground truncate">{userName}</div>
+                            <div className="text-[11px] text-muted-foreground truncate">{userEmail}</div>
                         </div>
-                        <div className="text-xs" style={{ color: theme.colors.darkGray }}>
-                            {userEmail}
-                        </div>
-                    </div>
-                    <ChevronDown
-                        size={16}
-                        style={{ color: theme.colors.darkGray }}
-                        className={`transition-transform ${showProfile ? "rotate-180" : ""}`}
+                        <ChevronDown
+                            size={14}
+                            className={`text-muted-foreground transition-transform duration-200 ${
+                                showProfile ? "rotate-180" : ""
+                            }`}
+                            aria-hidden="true"
+                        />
+                    </button>
+
+                    {showProfile && (
+                        <>
+                            <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setShowProfile(false)}
+                            />
+                            <div className="absolute left-0 top-full mt-2 w-52 rounded-2xl border border-border bg-popover text-popover-foreground shadow-xl z-20 p-1.5">
+                                <button
+                                    type="button"
+                                    className="w-full flex items-center gap-2.5 text-left px-3 py-2 rounded-xl text-xs font-semibold hover:bg-secondary transition-colors"
+                                    onClick={() => {
+                                        setShowProfile(false);
+                                        navigate("/dashboard/profile");
+                                    }}
+                                >
+                                    <UserIcon size={14} className="text-muted-foreground" aria-hidden="true" />
+                                    View Profile
+                                </button>
+                                <div className="h-px my-1 bg-border" />
+                                <button
+                                    type="button"
+                                    className="w-full flex items-center gap-2.5 text-left px-3 py-2 rounded-xl text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors"
+                                    onClick={() => {
+                                        setShowProfile(false);
+                                        onLogout?.();
+                                    }}
+                                >
+                                    <LogOut size={14} aria-hidden="true" />
+                                    Sign Out
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {/* Center: Command-style Global Search */}
+            <div className="flex-1 max-w-md mx-2 sm:mx-6">
+                <div className="relative flex items-center">
+                    <Search
+                        className="absolute left-3 w-4 h-4 text-muted-foreground pointer-events-none"
+                        aria-hidden="true"
                     />
+                    <input
+                        ref={searchInputRef}
+                        type="text"
+                        placeholder="Search notes, subjects, practicals..."
+                        aria-label="Search workspace"
+                        name="search"
+                        value={searchQuery || ""}
+                        onChange={(e) => setSearchQuery?.(e.target.value)}
+                        className="w-full h-10 pl-9 pr-14 bg-background border border-input rounded-xl text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
+                    />
+                    {searchQuery ? (
+                        <button
+                            type="button"
+                            onClick={() => setSearchQuery?.("")}
+                            aria-label="Clear search"
+                            className="absolute right-2.5 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary"
+                        >
+                            <X className="w-3.5 h-3.5" aria-hidden="true" />
+                        </button>
+                    ) : (
+                        <kbd className="hidden sm:inline-flex absolute right-2.5 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-muted-foreground bg-secondary border border-border rounded-md pointer-events-none">
+                            ⌘K
+                        </kbd>
+                    )}
+                </div>
+            </div>
+
+            {/* Right: AI Key, Theme Toggle, Notifications, Admin Switch */}
+            <div className="flex items-center gap-2 shrink-0 relative">
+                {!hasApiKey && (
+                    <button
+                        type="button"
+                        onClick={() => setShowAddKeyModal(true)}
+                        className="inline-flex items-center gap-1.5 min-h-[40px] px-3 sm:px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border dark:border-emerald-500/30 dark:hover:bg-emerald-500/25 text-white text-xs font-bold transition-all active:scale-[0.98]"
+                    >
+                        <Key size={14} aria-hidden="true" />
+                        <span className="hidden sm:inline">Add AI Key</span>
+                    </button>
+                )}
+
+                <ThemeToggle />
+
+                <button
+                    type="button"
+                    onClick={() => setisBell?.(!isBell)}
+                    aria-label="Toggle notifications"
+                    aria-expanded={isBell}
+                    className={`relative inline-flex items-center justify-center min-h-[40px] min-w-[40px] rounded-xl border transition-colors ${
+                        isBell
+                            ? "bg-primary/10 border-primary/30 text-primary"
+                            : "bg-card border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    }`}
+                >
+                    <Bell size={17} aria-hidden="true" />
+                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400" />
                 </button>
 
-                {showProfile && (
+                {isAdmin && (
+                    <button
+                        type="button"
+                        onClick={() => navigate("/admin")}
+                        aria-label="Switch to Admin Panel"
+                        title="Admin Workspace"
+                        className="inline-flex items-center justify-center gap-1.5 min-h-[40px] px-2.5 sm:px-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/20 text-xs font-bold transition-colors"
+                    >
+                        <Shield size={15} aria-hidden="true" />
+                        <span className="hidden lg:inline">Admin</span>
+                    </button>
+                )}
+
+                {isBell && (
                     <>
                         <div
                             className="fixed inset-0 z-10"
-                            onClick={() => setShowProfile(false)}
+                            onClick={() => setisBell?.(false)}
+                        />
+                        <div className="absolute right-0 top-full mt-2 z-20">
+                            <NotificationPanel onClose={() => setisBell?.(false)} />
+                        </div>
+                    </>
+                )}
+
+                {showAddKeyModal && (
+                    <>
+                        <div
+                            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs"
+                            onClick={() => setShowAddKeyModal(false)}
                         />
                         <div
-                            className="absolute left-0 top-full mt-1 w-48 rounded-lg shadow-lg z-20 py-2"
-                            style={{
-                                background: theme.colors.white,
-                                border: `1px solid ${theme.colors.lightGray}`,
-                            }}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="connect-groq-title"
+                            className="fixed right-4 left-4 sm:left-auto sm:right-6 top-20 z-50 sm:w-[28rem] rounded-3xl border border-border bg-card text-card-foreground shadow-2xl overflow-hidden"
                         >
-                            <button
-                                className="w-full text-left px-4 py-2 hover:bg-slate-100 transition-colors"
-                                style={{ color: theme.colors.dark }}
-                                onClick={() => {
-                                    navigate("/dashboard/profile")
-                                }}
-                            >
-                                View Profile
-                            </button>
-                            <button
-                                className="w-full text-left px-4 py-2 hover:bg-slate-100 transition-colors"
-                                style={{ color: theme.colors.dark }}
-                            >
-                                Settings
-                            </button>
-                            <div
-                                style={{ borderColor: theme.colors.lightGray }}
-                                className="h-px my-1 border-t"
-                            />
-                            <button
-                                className="w-full text-left px-4 py-2 hover:bg-red-50 transition-colors text-red-500"
-                                onClick={() => { onLogout() }}
-                            >
-                                Sign Out
-                            </button>
+                            <div className="px-6 py-5 border-b border-border bg-emerald-500/10 flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-emerald-600 rounded-xl text-white">
+                                        <Key size={18} aria-hidden="true" />
+                                    </div>
+                                    <div>
+                                        <h3 id="connect-groq-title" className="text-base font-bold text-foreground">
+                                            Connect Groq API
+                                        </h3>
+                                        <p className="text-xs text-muted-foreground">
+                                            Enable fast AI explanations and code help.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAddKeyModal(false)}
+                                    aria-label="Close modal"
+                                    className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary"
+                                >
+                                    <X size={16} aria-hidden="true" />
+                                </button>
+                            </div>
+
+                            <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div className="p-3.5 rounded-2xl bg-background border border-border">
+                                        <div className="w-6 h-6 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold mb-2">
+                                            1
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                            Visit the{" "}
+                                            <a
+                                                href="https://console.groq.com/"
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline"
+                                            >
+                                                Groq Console
+                                            </a>
+                                            .
+                                        </p>
+                                    </div>
+                                    <div className="p-3.5 rounded-2xl bg-background border border-border">
+                                        <div className="w-6 h-6 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold mb-2">
+                                            2
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                            Generate a new API key and paste it below.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                                    <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
+                                    <div>
+                                        <h4 className="text-xs font-bold text-foreground">Encrypted Storage</h4>
+                                        <p className="text-xs text-muted-foreground mt-0.5">
+                                            Your key is stored encrypted and never exposed publicly.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {apiKeyError && (
+                                    <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/25 text-destructive text-xs font-semibold">
+                                        {apiKeyError}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="p-5 bg-secondary/40 border-t border-border flex flex-col sm:flex-row items-center gap-2.5">
+                                <input
+                                    type="password"
+                                    name="apiKey"
+                                    aria-label="Groq API key"
+                                    value={apiKeyInput}
+                                    onChange={(e) => setApiKeyInput(e.target.value)}
+                                    placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
+                                    className="w-full flex-1 min-h-[44px] px-3.5 border border-input rounded-xl bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm font-mono"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleSaveApiKey}
+                                    disabled={savingApiKey || !apiKeyInput.trim()}
+                                    className="w-full sm:w-auto min-h-[44px] px-5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white transition-all active:scale-[0.98] disabled:opacity-50"
+                                >
+                                    {savingApiKey ? "Connecting..." : "Connect Key"}
+                                </button>
+                            </div>
                         </div>
                     </>
                 )}
             </div>
-        </div>
-
-            {/* Search Bar - Center */}
-            <div className="flex-1 sm:mx-6 mx-2 shadow-2xl ">
-                <div className="relative">
-                    <Search
-                        className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-                        style={{ color: theme.colors.darkGray }}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        name="search"
-                        value={searchQuery || ""}
-                        onChange={(e) => setSearchQuery?.(e.target.value)}
-                        className="w-full h-9 pl-10 pr-4 bg-slate-100 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
-                        style={{
-                            color: theme.colors.dark,
-                        }}
-                    />
-                </div>
-            </div>
-
-            {/* Notification Bell - Right */}
-            <div className="flex items-center  gap-3">
-                <div className="relative flex">
-
-                    {showAddKeyModal && (
-                        <>
-                            {/* Animated Backdrop */}
-                            <div
-                                className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm transition-all duration-300"
-                                onClick={() => setShowAddKeyModal(false)}
-                            />
-
-                            {/* Modal Container */}
-                            <div
-                                className="absolute right-0 top-full mt-4 z-50 w-[32rem] max-w-[95vw] rounded-3xl shadow-2xl overflow-hidden origin-top-right transform transition-all duration-300 scale-100 opacity-100"
-                                style={{
-                                    background: "rgba(255, 255, 255, 0.95)",
-                                    backdropFilter: "blur(16px)",
-                                    border: "1px solid rgba(255, 255, 255, 0.5)",
-                                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
-                                }}
-                            >
-                                {/* Header with Gradient Background */}
-                                <div className="px-6 py-5 border-b border-slate-100 bg-gradient-to-r from-emerald-50 to-teal-50">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20 text-white">
-                                            <Key size={20} />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-lg font-bold text-slate-800 tracking-tight">Connect Groq API</h3>
-                                            <p className="text-sm text-slate-500 font-medium">Power your AI experience with lightning-fast inference.</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Content Area */}
-                                <div className="px-6 py-5" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
-                                    <div className="space-y-4">
-                                        {/* Instruction Steps - Modern Cards */}
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            <div className="p-3 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                                                <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold mb-2">1</div>
-                                                <p className="text-sm text-slate-600">Go to the <a href="https://console.groq.com/" target="_blank" rel="noreferrer" className="text-emerald-600 font-semibold hover:underline">Groq Console</a>.</p>
-                                            </div>
-                                            <div className="p-3 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                                                <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold mb-2">2</div>
-                                                <p className="text-sm text-slate-600">Generate a new API key.</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Security Tip */}
-                                        <div className="flex items-start gap-3 p-4 rounded-2xl bg-emerald-50 border border-emerald-100/50">
-                                            <Shield className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                                            <div>
-                                                <h4 className="text-sm font-semibold text-emerald-800">Secure Storage</h4>
-                                                <p className="text-xs text-emerald-600 mt-0.5">Your key is encrypted locally. Never share your API key with anyone.</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Error State */}
-                                        {apiKeyError && (
-                                            <div className="mt-4 p-3 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                                                {apiKeyError}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Input and Action Footer */}
-                                <div className="p-6 bg-slate-50 border-t border-slate-100">
-                                    <div className="flex flex-col sm:flex-row items-center gap-3">
-                                        <div className="relative flex-1 w-full">
-                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <Key className="h-4 w-4 text-slate-400" />
-                                            </div>
-                                            <input
-                                                type="password"
-                                                name="apiKey"
-                                                value={apiKeyInput}
-                                                onChange={(e) => setApiKeyInput(e.target.value)}
-                                                placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
-                                                className="block w-full pl-10 pr-3 py-3 border text-black border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm transition-all shadow-sm font-mono"
-                                            />
-                                        </div>
-                                        <button
-                                            onClick={handleSaveApiKey}
-                                            disabled={savingApiKey || !apiKeyInput.trim()}
-                                            className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-white transition-all duration-300 flex items-center justify-center min-w-[120px] disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
-                                            style={{
-                                                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                                                boxShadow: "0 4px 14px 0 rgba(16, 185, 129, 0.39)"
-                                            }}
-                                        >
-                                            <span className="relative z-10">{savingApiKey ? 'Connecting...' : 'Connect Key'}</span>
-                                            {!savingApiKey && <div className="absolute inset-0 h-full w-full bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-xl" />}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </>
-                    )}
-
-                    {/* Enhanced Add Key Button */}
-                    {!hasApiKey && (
-                        <button
-                            onClick={() => setShowAddKeyModal(true)}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden group"
-                            style={{
-                                background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
-                                color: "white",
-                                fontSize: 13,
-                                fontWeight: 600,
-                                border: "1px solid rgba(255,255,255,0.1)",
-                                boxShadow: "0 4px 14px 0 rgba(15, 23, 42, 0.4)"
-                            }}
-                        >
-                            {/* <div className=" w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" /> */}
-                            <Key size={15} className="text-emerald-400" />
-                            <span className="tracking-wide">Add AI Key</span>
-                        </button>
-
-                    )}
-
-                    <div>
-                        <button
-                            onClick={() => setisBell?.(!isBell)}
-                            className={`p-2 rounded-xl transition-all relative ${isBell ? "bg-indigo-50 text-indigo-600" : "hover:bg-slate-100 text-slate-700"
-                                }`}
-                        >
-                            <Bell size={20} />
-                            <span
-                                className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-600"
-                            />
-                        </button>
-
-                        {isAdmin && (
-                            <button
-                                onClick={() => navigate("/admin")}
-                                className="text-black mx-5 shadow-lg border border-yellow-100 bg-white p-2 rounded-2xl"
-                            >
-                                <Shield size={20} />
-                            </button>
-                        )}
-                    </div>
-
-                    {isBell && (
-                        <>
-                            <div
-                                className="fixed inset-0 z-10"
-                                onClick={() => setisBell?.(false)}
-                            />
-                            <div className="absolute right-0 top-full mt-2 z-20">
-                                <NotificationPanel onClose={() => setisBell?.(false)} />
-                            </div>
-                        </>
-                    )}
-
-
-
-                </div>
-            </div>
-        </motion.div>
+        </motion.header>
     );
 }

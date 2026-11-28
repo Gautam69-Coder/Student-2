@@ -1,12 +1,17 @@
 import express from 'express';
 import auth from '../middleware/auth.js';
-import { submitFeedback, getFeedback, updateFeedbackStatus } from '../controllers/feedback.controller.js';
+import { submitFeedback, getMyFeedback, getFeedback, updateFeedbackStatus } from '../controllers/feedback.controller.js';
 
 const router = express.Router();
 // @route   POST api/feedback
 // @desc    Submit feedback
 // @access  Private
 router.post('/', auth, submitFeedback);
+
+// @route   GET api/feedback/mine
+// @desc    Get logged-in user's feedback
+// @access  Private
+router.get('/mine', auth, getMyFeedback);
 
 // @route   GET api/feedback
 // @desc    Get all feedback (Admin only)

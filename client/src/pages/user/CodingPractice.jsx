@@ -1,173 +1,167 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/layout";
-import { theme } from '@/lib/theme';
-import { useCodingPractices } from '@/hooks/useCodingPractices';
+import { useCodingPractices } from "@/hooks/useCodingPractices";
+import { Code2, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 
 const BRAND_COLORS = {
-    javascript: '#F7DF1E',
-    js: '#F7DF1E',
-    python: '#3776AB',
-    py: '#3776AB',
-    cpp: '#00599C',
-    'c++': '#00599C',
-    c: '#A8B9CC',
-    java: '#007396',
-    html: '#E34F26',
-    css: '#1572B6',
-    typescript: '#3178C6',
-    ts: '#3178C6',
-    react: '#61DAFB',
-    node: '#5FA04E',
-    dsa: '#8B5CF6',
-    sql: '#CC292B',
-    go: '#00ADD8',
-    rust: '#DEA584',
-    php: '#777BB4',
-    ruby: '#CC342D',
+    javascript: "#F7DF1E",
+    js: "#F7DF1E",
+    python: "#3776AB",
+    py: "#3776AB",
+    cpp: "#00599C",
+    "c++": "#00599C",
+    c: "#64748B",
+    java: "#E76F00",
+    html: "#E34F26",
+    css: "#1572B6",
+    typescript: "#3178C6",
+    ts: "#3178C6",
+    react: "#61DAFB",
+    node: "#5FA04E",
+    dsa: "#6366F1",
+    sql: "#CC292B",
+    go: "#00ADD8",
+    rust: "#DEA584",
+    php: "#777BB4",
+    ruby: "#CC342D",
 };
 
 const CodingPractice = () => {
     const navigate = useNavigate();
     const { codingPractices: cards, isLoading: loading, error } = useCodingPractices();
 
-    function getBrandColor(language = '') {
+    function getBrandColor(language = "") {
         const key = String(language).toLowerCase().trim();
-        return BRAND_COLORS[key] || '#3B82F6';
+        return BRAND_COLORS[key] || "#4F46E5";
     }
 
     return (
-        <DashboardLayout  
-        >
+        <DashboardLayout>
             <div className="space-y-6">
-                {/* Header Section */}
-                <div>
-                    <h1 className="text-3xl font-bold mb-2" style={{ color: theme.colors.dark }}>
-                        Welcome to Coding Practice! 👋
-                    </h1>
-                    <p className="text-sm" style={{ color: theme.colors.darkGray }}>
-                        Sharpen your problem-solving by practicing small coding challenges daily—start simple, write clean logic,
-                        and improve with every attempt.
-                    </p>
+                {/* Header */}
+                <div className="surface-card rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1.5">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-bold">
+                            <Code2 className="w-3.5 h-3.5" aria-hidden="true" />
+                            <span>Monaco Coding Studio</span>
+                        </div>
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+                            Coding Practice Tracks
+                        </h1>
+                        <p className="text-sm text-muted-foreground max-w-2xl">
+                            Sharpen problem-solving daily—open any language track below to solve curated challenges inside your browser IDE.
+                        </p>
+                    </div>
                 </div>
 
-                {/* Practice Tracks Section */}
+                {/* Practice Tracks */}
                 <div>
-                    <h2 className="text-xl font-bold mb-4" style={{ color: theme.colors.dark }}>Choose a practice track</h2>
+                    <h2 className="text-base font-bold text-foreground mb-4">Choose a practice track</h2>
 
                     {loading ? (
-                        <div className="text-center py-12" style={{ color: theme.colors.darkGray }}>
-                            <div className="inline-block">
-                                <div className="animate-spin mb-2">⚙️</div>
-                                <p>Loading tracks...</p>
-                            </div>
+                        <div className="surface-card rounded-2xl py-16 flex flex-col items-center justify-center gap-3 text-muted-foreground">
+                            <Loader2 className="w-6 h-6 animate-spin text-primary" aria-hidden="true" />
+                            <p className="text-sm font-medium">Loading coding tracks...</p>
                         </div>
                     ) : error ? (
-                        <div className="text-center py-12 text-red-500">
-                            Failed to load tracks
+                        <div className="surface-card rounded-2xl py-16 flex flex-col items-center justify-center gap-2 text-destructive">
+                            <AlertCircle className="w-6 h-6" aria-hidden="true" />
+                            <p className="text-sm font-semibold">Failed to load tracks</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {cards.map((item, index) => {
                                 const color = getBrandColor(item.language);
+                                const targetLang = encodeURIComponent(
+                                    String(item.language || item.title || "html")
+                                        .replace(/^practice\s*/i, "")
+                                        .toLowerCase()
+                                );
 
                                 return (
                                     <div
                                         role="button"
                                         tabIndex={0}
                                         key={item._id || item.language || index}
-                                        onClick={() =>
-                                            navigate(
-                                                `/dashboard/coding-practice/${encodeURIComponent(
-                                                    String(item.language || item.title || 'html')
-                                                        .replace(/^practice\s*/i, '')
-                                                        .toLowerCase()
-                                                )}`
-                                            )
-                                        }
-                                        className="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-                                        style={{ background: theme.colors.white, border: `1px solid ${theme.colors.lightGray}` }}
+                                        onClick={() => navigate(`/dashboard/coding-practice/${targetLang}`)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") {
+                                                e.preventDefault();
+                                                navigate(`/dashboard/coding-practice/${targetLang}`);
+                                            }
+                                        }}
+                                        className="group relative overflow-hidden rounded-2xl surface-card hover:-translate-y-1 cursor-pointer flex flex-col"
                                     >
-                                        {/* Gradient Header */}
                                         <div
                                             className="h-24 relative"
                                             style={{
                                                 background: `linear-gradient(135deg, ${color}, ${color}99)`,
                                             }}
                                         >
-                                            <div className="absolute inset-0 bg-black/5" />
+                                            <div className="absolute inset-0 bg-black/10" />
                                         </div>
 
-                                        {/* Language Icon */}
-                                        <div className="absolute top-12 left-4">
+                                        <div className="absolute top-14 left-4">
                                             <div
-                                                className="w-16 h-16 rounded-xl shadow-md flex items-center justify-center border-4"
-                                                style={{ background: theme.colors.white, borderColor: color }}
+                                                className="w-14 h-14 rounded-2xl shadow-md flex items-center justify-center border-2 bg-card"
+                                                style={{ borderColor: color }}
                                             >
                                                 <img
-                                                     src={
-                                                         String(item.language || '').toLowerCase() === 'cpp'
-                                                             ? 'https://cdn.simpleicons.org/cplusplus'
-                                                             : String(item.language || '').toLowerCase() === 'dsa'
-                                                             ? 'https://cdn.simpleicons.org/leetcode'
-                                                             : `https://cdn.simpleicons.org/${String(item.language || '').toLowerCase()}`
-                                                     }
-                                                     alt={item.language}
-                                                     className="w-8 h-8"
-                                                     onError={(e) => {
-                                                         e.target.style.display = 'none';
-                                                     }}
-                                                 />
+                                                    src={
+                                                        String(item.language || "").toLowerCase() === "cpp"
+                                                            ? "https://cdn.simpleicons.org/cplusplus"
+                                                            : String(item.language || "").toLowerCase() === "dsa"
+                                                            ? "https://cdn.simpleicons.org/leetcode"
+                                                            : `https://cdn.simpleicons.org/${String(item.language || "").toLowerCase()}`
+                                                    }
+                                                    alt={item.language}
+                                                    className="w-7 h-7"
+                                                    onError={(e) => {
+                                                        e.target.style.display = "none";
+                                                    }}
+                                                />
                                             </div>
                                         </div>
 
-                                        {/* Content */}
-                                        <div className="px-4 pt-12 pb-4">
-                                            <div className="flex items-center justify-between gap-2 mb-2">
-                                                <h2 className="font-bold" style={{ color: theme.colors.dark }}>
+                                        <div className="px-4 pt-9 pb-4 flex-1 flex flex-col">
+                                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                                                <h3 className="font-bold text-base text-foreground truncate">
                                                     {item.title}
-                                                </h2>
-                                                <span
-                                                    className="text-xs font-semibold px-2 py-1 rounded-full"
-                                                    style={{ background: `${color}20`, color: color }}
-                                                >
+                                                </h3>
+                                                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-secondary text-foreground border border-border uppercase shrink-0">
                                                     {item.language}
                                                 </span>
                                             </div>
 
-                                            <p className="text-xs line-clamp-2 mb-4" style={{ color: theme.colors.darkGray }}>
+                                            <p className="text-xs text-muted-foreground line-clamp-2 mb-4">
                                                 {item.description}
                                             </p>
 
-                                            {/* Stats */}
-                                            <div className="grid grid-cols-2 gap-2 mb-3">
-                                                <div
-                                                    className="p-3 rounded-lg"
-                                                    style={{ background: theme.colors.softGray }}
-                                                >
-                                                    <p className="text-xs font-semibold" style={{ color: theme.colors.darkGray }}>Problems</p>
-                                                    <p className="text-lg font-bold mt-1" style={{ color: theme.colors.dark }}>
-                                                        {item.problemList.map(i => i).length}
+                                            <div className="grid grid-cols-2 gap-2 mb-4 mt-auto">
+                                                <div className="p-2.5 rounded-xl bg-background border border-border">
+                                                    <p className="text-[11px] font-semibold text-muted-foreground">
+                                                        Problems
+                                                    </p>
+                                                    <p className="text-base font-extrabold text-foreground tabular-nums mt-0.5">
+                                                        {item.problemList?.length || 0}
                                                     </p>
                                                 </div>
 
-                                                <div
-                                                    className="p-3 rounded-lg"
-                                                    style={{ background: theme.colors.softGray }}
-                                                >
-                                                    <p className="text-xs font-semibold" style={{ color: theme.colors.darkGray }}>Level</p>
-                                                    <p className="text-lg font-bold mt-1" style={{ color: theme.colors.dark }}>
+                                                <div className="p-2.5 rounded-xl bg-background border border-border">
+                                                    <p className="text-[11px] font-semibold text-muted-foreground">
+                                                        Level
+                                                    </p>
+                                                    <p className="text-base font-extrabold text-foreground mt-0.5 truncate">
                                                         {item.level}
                                                     </p>
                                                 </div>
                                             </div>
 
-                                            {/* Button */}
-                                            <button
-                                                className="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
-                                            >
-                                                Start Practice →
-                                            </button>
+                                            <span className="w-full min-h-[40px] rounded-xl text-xs font-bold text-primary-foreground bg-primary group-hover:bg-primary/90 transition-colors inline-flex items-center justify-center gap-1.5">
+                                                <span>Start Practice</span>
+                                                <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                                            </span>
                                         </div>
                                     </div>
                                 );

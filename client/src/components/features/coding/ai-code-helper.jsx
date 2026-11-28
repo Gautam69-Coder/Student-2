@@ -1,46 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, Check, Send, Sparkles, Code2, MessageCircle, } from "lucide-react";
+import { X, Send, Sparkles, Code2 } from "lucide-react";
 import { aiCodeHelper } from "@/Api/api";
 import { MarkdownContent } from "@/Utils/MarkdownContent";
 import HighlightComponent from "react-highlight";
-const Highlight = HighlightComponent.default || HighlightComponent;
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { theme } from "@/lib/theme";
 import { customMessage } from "@/Utils/customMessage";
 import { useData } from "@/context/DataContext";
 import { ApiKeyModal } from "@/components/common/ApiKeyModal";
-import { copyToClipboard } from "@/Utils/clipboard";
-
 import ChatInput from "@/components/common/chat-input";
 
-function PanelTitle({ title, subtitle }) {
-    return (
-        <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3 min-w-0">
-                <div
-                    className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: theme.colors.limeDim }}
-                >
-                    <MessageCircle className="w-5 h-5" style={{ color: theme.colors.dark }} />
-                </div>
-                <div className="min-w-0">
-                    <CardTitle className="text-[16px] sm:text-[18px] font-bold" style={{ color: theme.colors.dark }}>
-                        {title}
-                    </CardTitle>
-                    <p className="text-[13px] font-medium mt-1 line-clamp-1" style={{ color: theme.colors.darkGray }}>
-                        {subtitle}
-                    </p>
-                </div>
-            </div>
-        </div>
-    );
-}
+const Highlight = HighlightComponent.default || HighlightComponent;
 
 export function AICodeHelper({ isOpen, onClose, title, code, section }) {
     const { user } = useData();
-    const [copied, setCopied] = useState(false);
     const [messages, setMessages] = useState([
         { id: 1, text: "Hello! I'm your AI Code Helper. Ask me anything about this code.", sender: "bot" },
     ]);
@@ -56,15 +30,11 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
     }, [isOpen, user]);
 
     const displayCode = Array.isArray(code)
-        ? code.map(item => `// --- ${item.languageName} ---\n${item.code}`).join('\n\n')
+        ? code.map((item) => `// --- ${item.languageName} ---\n${item.code}`).join("\n\n")
         : code || "";
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
     useEffect(() => {
-        scrollToBottom();
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isLoading]);
 
     const handleSendMessage = async () => {
@@ -75,47 +45,27 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
         }
 
         const userText = inputValue;
-        const userMessage = {
-            id: messages.length + 1,
-            text: userText,
-            sender: "user",
-        };
-
-        setMessages((prev) => [...prev, userMessage]);
+        setMessages((prev) => [...prev, { id: prev.length + 1, text: userText, sender: "user" }]);
         setInputValue("");
         setIsLoading(true);
 
-        const context = {
-            message: userText,
-            code: displayCode,
-            section: section,
-            question: title,
-        };
-
         try {
-            const res = await aiCodeHelper(context);
+            const res = await aiCodeHelper({
+                message: userText,
+                code: displayCode,
+                section,
+                question: title,
+            });
             if (!res?.data?.data && !res?.data?.message) {
-                return customMessage({
-                    type: "error",
-                    content: "Failed to generate response!"
-                });
+                return customMessage({ type: "error", content: "Failed to generate response!" });
             }
-            const botText = res?.data?.data || res?.data?.message || "Sorry, I couldn't understand that. Could you please rephrase?";
-            const botMessage = {
-                id: messages.length + 2,
-                text: botText,
-                sender: "bot",
-            };
-            setMessages((prev) => [...prev, botMessage]);
+            const botText = res?.data?.data || res?.data?.message || "Sorry, could you rephrase that?";
+            setMessages((prev) => [...prev, { id: prev.length + 1, text: botText, sender: "bot" }]);
         } catch (error) {
             console.error(error);
             setMessages((prev) => [
                 ...prev,
-                {
-                    id: messages.length + 2,
-                    text: "Sorry, something went wrong while generating a response.",
-                    sender: "bot",
-                },
+                { id: prev.length + 1, text: "Sorry, something went wrong while generating a response.", sender: "bot" },
             ]);
         } finally {
             setIsLoading(false);
@@ -130,11 +80,8 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
     };
 
     const handleClose = () => {
-        setMessages([
-            { id: 1, text: "Hello! I'm your AI Code Helper. Ask me anything about this code.", sender: "bot" },
-        ]);
+        setMessages([{ id: 1, text: "Hello! I'm your AI Code Helper. Ask me anything about this code.", sender: "bot" }]);
         setInputValue("");
-        setCopied(false);
         onClose?.();
     };
 
@@ -143,110 +90,63 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
     return ReactDOM.createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center px-3 sm:px-4">
+                <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-6">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0"
-                        style={{ background: "rgba(17,17,19,0.30)" }}
+                        className="absolute inset-0 bg-black/55"
                         onClick={handleClose}
                     />
 
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.96, y: 16 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-8xl h-[88vh] z-10 overflow-hidden rounded-2xl border shadow-2xl flex flex-col"
-                        style={{
-                            background: theme.colors.white,
-                            borderColor: theme.colors.lightGray,
-                        }}
+                        exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                        className="relative w-full max-w-6xl h-[86vh] z-10 overflow-hidden rounded-3xl border border-border bg-card text-card-foreground shadow-2xl flex flex-col"
                     >
-                        <div
-                            className="flex items-start justify-between gap-4 p-4 sm:p-4 border-b"
-                            style={{ borderColor: theme.colors.lightGray }}
-                        >
-                            <div className="min-w-0">
-                                <div className="flex items-center gap-3">
-                                    <div
-                                        className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
-                                        style={{ background: theme.colors.limeDim }}
-                                    >
-                                        <Sparkles className="w-5 h-5" style={{ color: theme.colors.dark }} />
-                                    </div>
-                                    <div className="min-w-0">
-                                        <CardTitle className="text-[16px] sm:text-[18px] font-bold" style={{ color: theme.colors.dark }}>
-                                            AI Code Helper
-                                        </CardTitle>
-                                        <p className="text-[13px] font-medium mt-1 line-clamp-1" style={{ color: theme.colors.darkGray }}>
-                                            {title}
-                                        </p>
-                                    </div>
+                        <div className="flex items-center justify-between gap-4 p-4 sm:px-6 border-b border-border bg-secondary/40">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 bg-indigo-500/12 border border-indigo-500/25 text-primary">
+                                    <Sparkles className="w-5 h-5" aria-hidden="true" />
+                                </div>
+                                <div className="min-w-0">
+                                    <h2 className="text-base sm:text-lg font-bold text-foreground">AI Code Helper</h2>
+                                    <p className="text-xs text-muted-foreground line-clamp-1">{title}</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2 shrink-0">
-
-
-                                <button
-                                    onClick={handleClose}
-                                    className="p-2 rounded-xl transition-colors border hover:bg-slate-50"
-                                    style={{
-                                        background: theme.colors.white,
-                                        color: theme.colors.darkGray,
-                                        borderColor: theme.colors.lightGray,
-                                    }}
-                                    aria-label="Close AI helper"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                onClick={handleClose}
+                                className="p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                                aria-label="Close AI helper"
+                            >
+                                <X className="w-5 h-5" aria-hidden="true" />
+                            </button>
                         </div>
 
-                        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-5 gap-4  overflow-y-auto">
-                            <Card
-                                className="lg:col-span-3 rounded-r-2xl rounded-l-none overflow-hidden p-0"
-                                style={{
-                                    background: theme.colors.white,
-                                    borderColor: theme.colors.lightGray,
-                                    boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
-                                }}
-                            >
-                                <CardContent className="pt-0 h-full flex flex-col min-h-0 p-0 sm:p-4 p-1">
+                        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-5 gap-4 p-4 overflow-hidden">
+                            <Card className="lg:col-span-3 rounded-2xl overflow-hidden py-0 flex flex-col min-h-0">
+                                <CardContent className="p-4 h-full flex flex-col min-h-0">
                                     <div
-                                        className="flex-1 min-h-0 overflow-y-auto rounded-2xl border p-4 space-y-4"
-                                        style={{
-                                            background: theme.colors.softGray,
-                                            borderColor: theme.colors.lightGray,
-                                        }}
+                                        className="flex-1 min-h-0 overflow-y-auto rounded-2xl border border-border bg-background p-4 space-y-4"
                                         data-lenis-prevent
                                     >
                                         {messages.map((message) => (
                                             <motion.div
                                                 key={message.id}
-                                                initial={{ opacity: 0, y: 10 }}
+                                                initial={{ opacity: 0, y: 6 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
                                             >
                                                 <div
-                                                    className={` px-4 py-3 rounded-2xl text-sm leading-relaxed ${message.sender === "user"
-                                                        ? "rounded-br-none"
-                                                        : "rounded-bl-none border"
-                                                        }`}
-                                                    style={
+                                                    className={`max-w-[90%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                                                         message.sender === "user"
-                                                            ? {
-                                                                background: theme.colors.dark,
-                                                                color: theme.colors.white,
-                                                                boxShadow: "0 6px 0 rgba(17,17,19,0.14)",
-                                                            }
-                                                            : {
-                                                                background: theme.colors.white,
-                                                                color: theme.colors.dark,
-                                                                borderColor: theme.colors.lightGray,
-                                                            }
-                                                    }
+                                                            ? "rounded-br-none bg-primary text-primary-foreground"
+                                                            : "rounded-bl-none border border-border bg-card text-card-foreground"
+                                                    }`}
                                                 >
                                                     <MarkdownContent
                                                         content={message.text}
@@ -256,21 +156,16 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                             </motion.div>
                                         ))}
                                         {isLoading && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 5 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                className="flex justify-start"
-                                            >
-                                                <div className="px-4 py-3 rounded-2xl rounded-bl-none border border-slate-200 bg-white shadow-sm flex items-center gap-1.5">
-                                                    <span className="w-2 h-2 rounded-full bg-lime-500 animate-bounce" style={{ animationDelay: "0ms" }} />
-                                                    <span className="w-2 h-2 rounded-full bg-lime-500 animate-bounce" style={{ animationDelay: "150ms" }} />
-                                                    <span className="w-2 h-2 rounded-full bg-lime-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+                                            <div className="flex justify-start">
+                                                <div className="px-4 py-3 rounded-2xl rounded-bl-none border border-border bg-card flex items-center gap-1.5">
+                                                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0ms" }} />
+                                                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "150ms" }} />
+                                                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "300ms" }} />
                                                 </div>
-                                            </motion.div>
+                                            </div>
                                         )}
                                         <div ref={messagesEndRef} />
                                     </div>
-
 
                                     <div className="mt-4 flex gap-2">
                                         <ChatInput
@@ -279,19 +174,15 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                             handleKeyPress={handleKeyPress}
                                         />
                                         <button
+                                            type="button"
                                             onClick={handleSendMessage}
                                             disabled={isLoading || !inputValue.trim()}
-                                            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-bold transition-transform active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                            style={{
-                                                background: theme.colors.lime,
-                                                color: theme.colors.dark,
-                                                borderColor: theme.colors.lime,
-                                            }}
+                                            className="inline-flex items-center justify-center gap-2 rounded-xl px-4 min-h-[44px] font-bold text-xs bg-primary hover:bg-primary/90 text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
                                         >
                                             {isLoading ? (
-                                                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                             ) : (
-                                                <Send className="w-4 h-4 fill-current" />
+                                                <Send className="w-4 h-4" aria-hidden="true" />
                                             )}
                                             Send
                                         </button>
@@ -299,40 +190,19 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                                 </CardContent>
                             </Card>
 
-                            <Card
-                                className="lg:col-span-2 rounded-l-2xl rounded-r-none sm:block hidden overflow-y-auto"
-                                style={{
-                                    background: theme.colors.white,
-                                    borderColor: theme.colors.lightGray,
-                                    boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
-                                }}
-                            >
-                                <CardHeader className="pb-3 ">
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="flex items-center gap-3 min-w-0">
-                                            <div
-                                                className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
-                                                style={{ background: theme.colors.limeDim }}
-                                            >
-                                                <Code2 className="w-5 h-5" style={{ color: theme.colors.dark }} />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <CardTitle className="text-[16px] sm:text-[18px] font-bold" style={{ color: theme.colors.dark }}>
-                                                    Code Preview
-                                                </CardTitle>
-                                                <p className="text-[13px] font-medium mt-1" style={{ color: theme.colors.darkGray }}>
-                                                    Selected snippet
-                                                </p>
-                                            </div>
-                                        </div>
+                            <Card className="lg:col-span-2 rounded-2xl hidden lg:flex flex-col overflow-hidden py-0 min-h-0">
+                                <CardHeader className="p-4 border-b border-border flex flex-row items-center gap-3">
+                                    <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                        <Code2 className="w-4 h-4" aria-hidden="true" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <CardTitle className="text-sm font-bold text-foreground">Code Preview</CardTitle>
+                                        <p className="text-xs text-muted-foreground">Selected snippet</p>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="pt-0" data-lenis-prevent>
-                                    <div
-                                        className="rounded-2xl overflow-hidden border"
-                                        style={{ borderColor: theme.colors.lightGray }}
-                                    >
-                                        <Highlight className="javascript" >{displayCode}</Highlight>
+                                <CardContent className="p-4 overflow-y-auto flex-1" data-lenis-prevent>
+                                    <div className="rounded-xl overflow-hidden border border-border bg-[#0D1117]">
+                                        <Highlight className="javascript">{displayCode}</Highlight>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -341,10 +211,7 @@ export function AICodeHelper({ isOpen, onClose, title, code, section }) {
                 </div>
             )}
             {showApiKeyModal && (
-                <ApiKeyModal
-                    isOpen={showApiKeyModal}
-                    onClose={() => setShowApiKeyModal(false)}
-                />
+                <ApiKeyModal isOpen={showApiKeyModal} onClose={() => setShowApiKeyModal(false)} />
             )}
         </AnimatePresence>,
         document.body

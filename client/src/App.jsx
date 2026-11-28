@@ -26,8 +26,6 @@ const SignupPage = lazy(() => import('./pages/auth/Signup'));
 const AIAssistant = lazy(() =>
     import('@/components/features/chatbot/ai-assistant').then(m => ({ default: m.AIAssistant }))
 );
-const BlogList = lazy(() => import('./pages/blog/BlogList'));
-const BlogPost = lazy(() => import('./pages/blog/BlogPost'));
 
 const PageLoader = () => (
     <div className="flex items-center justify-center h-screen bg-background">
@@ -141,8 +139,6 @@ function AppContent() {
                             </ProtectedRoute>
                         }
                     />
-                    <Route path="/blog" element={<BlogList />} />
-                    <Route path="/blog/:slug" element={<BlogPost />} />
                     <Route
                         path="*"
                         element={

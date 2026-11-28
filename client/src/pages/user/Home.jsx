@@ -9,19 +9,14 @@ import {
     FlaskConical,
     Sparkles,
     Zap,
+    ArrowRight,
 } from "lucide-react";
 
 import { Card, CardTitle } from "@/components/ui/card";
 import FeedbackMarquee from "@/components/features/feedback/feedback-marquee";
 import { formatDate } from "@/Utils/date";
 import { DotLoader } from "@/Utils/loaders";
-
-import {
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart";
-
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { DashboardLayout } from "@/components/layout/layout";
@@ -44,40 +39,29 @@ function SubjectProgressRow({ name, progress, done, total, Icon }) {
     return (
         <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5 min-w-0">
-                    <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-indigo-50 border border-indigo-100 text-indigo-600 font-bold"
-                    >
-                        <Icon size={16} className="text-indigo-600" />
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400">
+                        <Icon size={15} aria-hidden="true" />
                     </div>
                     <div className="min-w-0">
-                        <div className="font-bold text-sm capitalize truncate text-slate-900">
+                        <div className="font-bold text-sm capitalize truncate text-foreground">
                             {name}
                         </div>
-                        <div className="text-[11px] font-medium text-slate-500">
-                            <span className="text-emerald-700 font-semibold">{done} completed</span> · <span className="text-amber-700 font-semibold">{remaining} remaining</span>
+                        <div className="text-[11px] font-medium text-muted-foreground tabular-nums">
+                            <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                                {done} completed
+                            </span>{" "}
+                            · <span>{remaining} remaining</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                        {done}/{total}
-                    </span>
-                </div>
+                <span className="text-[11px] font-bold font-mono px-2.5 py-1 rounded-full bg-secondary text-foreground border border-border tabular-nums shrink-0">
+                    {done}/{total}
+                </span>
             </div>
 
-            <div className="flex flex-col gap-1 mt-0.5">
-                <Progress
-                    value={percent}
-                    style={{
-                        height: 7,
-                        borderRadius: 999,
-                        backgroundColor: "#F1F5F9",
-                        color: "#4F46E5",
-                    }}
-                />
-            </div>
+            <Progress value={percent} className="h-2" />
         </div>
     );
 }
@@ -90,22 +74,22 @@ export function Home() {
     const [userProgress, setUserProgress] = useState(null);
     const [chartData, setChartData] = useState(null);
     const [loading, setLoading] = useState(false);
+
     const dashboardStats = useMemo(() => {
         const practicalList = Array.isArray(practicals) ? practicals : [];
         const notesList = Array.isArray(notes) ? notes : [];
         return {
-            practicalSections: [...new Set(practicalList.map(p => p.section))].length,
+            practicalSections: [...new Set(practicalList.map((p) => p.section))].length,
             totalPracticals: practicalList.length,
-            noteSections: [...new Set(notesList.map(n => n.section))].length,
+            noteSections: [...new Set(notesList.map((n) => n.section))].length,
             totalNotes: notesList.length,
-            privateNotes: notesList.filter(n => n.isGlobal).length,
-            publicNotes: notesList.filter(n => !n.isGlobal).length,
+            privateNotes: notesList.filter((n) => n.isGlobal).length,
+            publicNotes: notesList.filter((n) => !n.isGlobal).length,
             recentNotes: notesList.slice(0, 4),
             platformVisits: user?.visitCount || 0,
         };
     }, [practicals, notes, user]);
 
-    // Fetch user progress data & build weekly activity chart
     const fetchUserProgressData = async () => {
         try {
             const progressData = await fetchUserProgress();
@@ -115,21 +99,21 @@ export function Home() {
             const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
             const countsMap = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 };
 
-            list.forEach(item => {
+            list.forEach((item) => {
                 const rawDay = String(item?.day || "");
                 const count = Array.isArray(item?.completedProblems) ? item.completedProblems.length : 0;
-                const matchedDay = WEEKDAYS.find(d => rawDay.toLowerCase().startsWith(d.toLowerCase()));
+                const matchedDay = WEEKDAYS.find((d) => rawDay.toLowerCase().startsWith(d.toLowerCase()));
                 if (matchedDay) {
                     countsMap[matchedDay] += count;
                 }
             });
 
-            const formattedChart = WEEKDAYS.map(day => ({
-                day,
-                questions: countsMap[day] || 0
-            }));
-
-            setChartData(formattedChart);
+            setChartData(
+                WEEKDAYS.map((day) => ({
+                    day,
+                    questions: countsMap[day] || 0,
+                }))
+            );
         } catch (error) {
             console.error("Error fetching user progress data:", error);
         }
@@ -142,7 +126,10 @@ export function Home() {
 
     const bestActivityDay = useMemo(() => {
         if (!chartData || !Array.isArray(chartData)) return "N/A";
-        const best = chartData.reduce((max, item) => (item.questions > max.questions ? item : max), { day: "N/A", questions: 0 });
+        const best = chartData.reduce(
+            (max, item) => (item.questions > max.questions ? item : max),
+            { day: "N/A", questions: 0 }
+        );
         return best.questions > 0 ? best.day : "N/A";
     }, [chartData]);
 
@@ -154,24 +141,16 @@ export function Home() {
         const list = Array.isArray(userProgress) ? userProgress : [];
         const trackMap = {};
 
-        DEFAULT_TRACK_LANGUAGES.forEach(lang => {
-            trackMap[lang] = {
-                codingLanguage: lang,
-                done: 0,
-                totalProblems: 10
-            };
+        DEFAULT_TRACK_LANGUAGES.forEach((lang) => {
+            trackMap[lang] = { codingLanguage: lang, done: 0, totalProblems: 10 };
         });
 
-        list.forEach(item => {
+        list.forEach((item) => {
             const lang = String(item?.codingLanguage || "").toLowerCase();
             if (lang) {
                 const done = Array.isArray(item?.completedProblems) ? item.completedProblems.length : 0;
                 const total = item?.totalProblems || 10;
-                trackMap[lang] = {
-                    codingLanguage: lang,
-                    done,
-                    totalProblems: total
-                };
+                trackMap[lang] = { codingLanguage: lang, done, totalProblems: total };
             }
         });
 
@@ -181,14 +160,15 @@ export function Home() {
     const overallPracticeStats = useMemo(() => {
         let completed = 0;
         let total = 0;
-        mergedUserProgress.forEach(t => {
+        mergedUserProgress.forEach((t) => {
             completed += t.done;
             total += t.totalProblems;
         });
         return {
             completed,
             total,
-            remaining: Math.max(0, total - completed)
+            remaining: Math.max(0, total - completed),
+            pct: total > 0 ? Math.round((completed / total) * 100) : 0,
         };
     }, [mergedUserProgress]);
 
@@ -210,32 +190,21 @@ export function Home() {
     const quickActions = [
         { label: "Add Note", path: "notes", icon: Notebook },
         ...(canAccessPracticals(user) ? [{ label: "Browse Practicals", path: "practicals", icon: FlaskConical }] : []),
-        { label: "AI Chatbot", path: "chatbot", icon: Sparkles },
         { label: "Ask Community", path: "community", icon: Users },
         { label: "Start Practice", path: "coding-practice", icon: Code2 },
     ];
 
     const chartConfig = {
-        desktop: {
-            label: "Questions",
+        questions: {
+            label: "Problems Solved",
             color: "#6366F1",
         },
     };
 
     const stats = {
-        subjects: {
-            icon: BookOpen,
-            trend: "up",
-        },
-        notes: {
-            icon: FileText,
-            trend: "up",
-        },
-        visits: {
-            icon: HomeIcon,
-            trend: "down",
-        },
-
+        subjects: { icon: BookOpen },
+        notes: { icon: FileText },
+        visits: { icon: HomeIcon },
     };
 
     const userFeedback = [
@@ -243,392 +212,369 @@ export function Home() {
             name: "Aarav Sharma",
             role: "Computer Engineering (3rd Year)",
             rating: "★★★★★",
-            comment: "Student Hub's 50+ built-in practice questions helped me clear my DSA technical rounds. The online Monaco editor with test cases feels just like LeetCode!",
-            avatarBg: "bg-indigo-100 text-indigo-700 border border-indigo-200/60"
+            comment:
+                "Student Hub's 50+ built-in practice questions helped me clear my DSA technical rounds. The Monaco editor feels snappy and distraction-free!",
+            avatarBg: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25",
         },
         {
             name: "Priya Mehta",
             role: "Information Technology (2nd Year)",
             rating: "★★★★★",
-            comment: "The AI Assistant combined with practical solution codes is a lifesaver during exams. Having C++, Python, and Java tracks pre-loaded makes practicing super easy.",
-            avatarBg: "bg-purple-100 text-purple-700 border border-purple-200/60"
+            comment:
+                "The AI Assistant combined with practical solution codes is a lifesaver during exams. Having C++, Python, and Java tracks preloaded makes practice effortless.",
+            avatarBg: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25",
         },
         {
             name: "Rahul Kadam",
             role: "B.Tech CSE Student",
             rating: "★★★★★",
-            comment: "Clean UI, instant access to study notes without annoying popups. The community discussion and coding tracks are the best features of this platform!",
-            avatarBg: "bg-amber-100 text-amber-800 border border-amber-200/60"
-        }
-    ]
+            comment:
+                "Clean UI and instant access to study notes without clutter. Community discussions and coding tracks keep everything in one place!",
+            avatarBg: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/25",
+        },
+    ];
 
     if (loading) {
         return (
             <DashboardLayout>
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
                     <RippleLoader />
-                    <p className="font-medium tracking-tight text-slate-500">
-                        Loading your dashboard...
+                    <p className="text-sm font-medium text-muted-foreground">
+                        Loading your study workspace...
                     </p>
                 </div>
             </DashboardLayout>
-        )
+        );
     }
 
     return (
         <DashboardLayout>
-            {/* Website Info & Platform Highlights Banner */}
-            <div className="rounded-2xl border border-indigo-100 p-6 shadow-xs bg-gradient-to-r from-indigo-50/80 via-white to-purple-50/80">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="space-y-2 max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 border border-indigo-200/60">
-                            <Sparkles size={14} /> Welcome to Student Hub Platform
+            {/* Study Cockpit Hero */}
+            <div className="surface-card rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-indigo-500/[0.07] via-card to-emerald-500/[0.06]">
+                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                    <div className="space-y-2.5 max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20">
+                            <Sparkles size={13} aria-hidden="true" />
+                            <span>Welcome back, {user?.username || "Student"}</span>
                         </div>
-                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                            Learn, Practice & Master Coding
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+                            Your Study & Coding Cockpit
                         </h1>
-                        <p className="text-sm text-slate-600 font-medium">
-                            Everything you need in one place: 50+ practice problems in JavaScript, Python, C++, Java & DSA, study notes, AI assistance, and student community!
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            Jump back into your 50+ coding challenges across JavaScript, Python, C++, Java & DSA, manage study notes, and collaborate with peers.
                         </p>
                     </div>
-                    <Link
-                        to="/dashboard/coding-practice"
-                        className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200 hover:scale-105 shrink-0"
-                    >
-                        <Code2 size={18} /> Start Coding Practice
-                    </Link>
+
+                    <div className="flex flex-wrap items-center gap-3 shrink-0 w-full lg:w-auto">
+                        <div className="px-4 py-2.5 rounded-2xl bg-background/80 border border-border flex items-center gap-3">
+                            <div>
+                                <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                    Overall Mastery
+                                </div>
+                                <div className="text-lg font-extrabold text-foreground tabular-nums">
+                                    {overallPracticeStats.completed}/{overallPracticeStats.total}{" "}
+                                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                        ({overallPracticeStats.pct}%)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <Link
+                            to="/dashboard/coding-practice"
+                            className="inline-flex items-center justify-center gap-2 px-5 min-h-[44px] rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 transition-all active:scale-[0.98] shadow-sm shadow-indigo-500/20"
+                        >
+                            <Code2 size={17} aria-hidden="true" />
+                            <span>Start Coding</span>
+                            <ArrowRight size={15} aria-hidden="true" />
+                        </Link>
+                    </div>
                 </div>
 
-                {/* Key Platform Features Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-200/80">
-                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
-                        <div className="p-2 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
-                            <Code2 size={18} />
+                {/* Quick Highlight Pills */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6 pt-6 border-t border-border">
+                    <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-background/80 border border-border">
+                        <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                            <Code2 size={17} aria-hidden="true" />
                         </div>
                         <div>
-                            <div className="font-bold text-xs text-slate-900">50+ Challenges</div>
-                            <div className="text-[11px] text-slate-500 font-medium">JS, Python, C++, Java, DSA</div>
+                            <div className="font-bold text-xs text-foreground">50+ Challenges</div>
+                            <div className="text-[11px] text-muted-foreground">JS, Python, C++, Java, DSA</div>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
-                        <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100">
-                            <BookOpen size={18} />
+                    <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-background/80 border border-border">
+                        <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <BookOpen size={17} aria-hidden="true" />
                         </div>
                         <div>
-                            <div className="font-bold text-xs text-slate-900">Study Notes</div>
-                            <div className="text-[11px] text-slate-500 font-medium">{canAccessPracticals(user) ? "Syllabus & Practicals" : "Syllabus & Study Material"}</div>
+                            <div className="font-bold text-xs text-foreground">Study Notes</div>
+                            <div className="text-[11px] text-muted-foreground">
+                                {canAccessPracticals(user) ? "Syllabus & Practicals" : "Syllabus & Materials"}
+                            </div>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
-                        <div className="p-2 rounded-lg bg-purple-50 text-purple-600 border border-purple-100">
-                            <Sparkles size={18} />
+                    <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-background/80 border border-border">
+                        <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                            <Sparkles size={17} aria-hidden="true" />
                         </div>
                         <div>
-                            <div className="font-bold text-xs text-slate-900">AI Tutor 24/7</div>
-                            <div className="text-[11px] text-slate-500 font-medium">Instant Code Explanation</div>
+                            <div className="font-bold text-xs text-foreground">AI Tutor 24/7</div>
+                            <div className="text-[11px] text-muted-foreground">Instant Code Explanation</div>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
-                        <div className="p-2 rounded-lg bg-amber-50 text-amber-600 border border-amber-100">
-                            <Users size={18} />
+                    <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-background/80 border border-border">
+                        <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <Users size={17} aria-hidden="true" />
                         </div>
                         <div>
-                            <div className="font-bold text-xs text-slate-900">Community</div>
-                            <div className="text-[11px] text-slate-500 font-medium">Peer Collaboration</div>
+                            <div className="font-bold text-xs text-foreground">Community</div>
+                            <div className="text-[11px] text-muted-foreground">Peer Collaboration</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Featured Practice Tracks Row */}
+            {/* Featured Practice Tracks */}
             <div className="space-y-3">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-lg font-bold text-slate-900">Featured Practice Tracks</h2>
-                        <p className="text-xs text-slate-500 font-medium">10 practice problems per track ready for you to solve</p>
+                        <h2 className="text-lg font-bold text-foreground">Featured Practice Tracks</h2>
+                        <p className="text-xs text-muted-foreground">
+                            10 practice problems per track ready inside your Monaco IDE
+                        </p>
                     </div>
-                    <Link to="/dashboard/coding-practice" className="text-xs font-bold text-indigo-600 hover:underline">
-                        View All Tracks →
+                    <Link
+                        to="/dashboard/coding-practice"
+                        className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1"
+                    >
+                        View All Tracks
+                        <ArrowRight size={13} aria-hidden="true" />
                     </Link>
                 </div>
+
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                     {[
-                        { title: "JavaScript", lang: "javascript", count: "10 Problems", color: "bg-amber-50 text-amber-800", border: "hover:border-amber-400" },
-                        { title: "Python", lang: "python", count: "10 Problems", color: "bg-blue-50 text-blue-800", border: "hover:border-blue-400" },
-                        { title: "C++", lang: "cpp", count: "10 Problems", color: "bg-indigo-50 text-indigo-800", border: "hover:border-indigo-400" },
-                        { title: "Java", lang: "java", count: "10 Problems", color: "bg-orange-50 text-orange-800", border: "hover:border-orange-400" },
-                        { title: "DSA", lang: "dsa", count: "10 Problems", color: "bg-emerald-50 text-emerald-800", border: "hover:border-emerald-400" },
+                        { title: "JavaScript", lang: "javascript", badgeCls: "bg-amber-500/12 text-amber-700 dark:text-amber-300" },
+                        { title: "Python", lang: "python", badgeCls: "bg-sky-500/12 text-sky-700 dark:text-sky-300" },
+                        { title: "C++", lang: "cpp", badgeCls: "bg-indigo-500/12 text-indigo-700 dark:text-indigo-300" },
+                        { title: "Java", lang: "java", badgeCls: "bg-orange-500/12 text-orange-700 dark:text-orange-300" },
+                        { title: "DSA", lang: "dsa", badgeCls: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300" },
                     ].map((track) => (
                         <Link
                             key={track.lang}
                             to={`/dashboard/coding-practice/${track.lang}`}
-                            className={`p-4 rounded-xl border border-slate-200 bg-white transition-all hover:-translate-y-1 shadow-xs hover:shadow-md ${track.border}`}
+                            className="p-4 rounded-2xl surface-card hover:-translate-y-0.5 transition-all"
                         >
-                            <div className="flex items-center justify-between mb-2">
-                                <span className={`text-xs font-extrabold uppercase px-2 py-0.5 rounded ${track.color}`}>
+                            <div className="flex items-center justify-between mb-2.5">
+                                <span className={`text-[11px] font-bold uppercase px-2 py-0.5 rounded-md ${track.badgeCls}`}>
                                     {track.title}
                                 </span>
-                                <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200/70 px-1.5 py-0.5 rounded">
+                                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/12 border border-emerald-500/25 px-1.5 py-0.5 rounded-md">
                                     Ready
                                 </span>
                             </div>
-                            <div className="text-sm font-extrabold text-slate-900 mt-1">10 Questions</div>
-                            <div className="text-[11px] text-slate-500 font-medium mt-0.5">Easy · Medium · Hard</div>
+                            <div className="text-sm font-bold text-foreground tabular-nums">10 Questions</div>
+                            <div className="text-[11px] text-muted-foreground mt-0.5">Easy · Medium · Hard</div>
                         </Link>
                     ))}
                 </div>
             </div>
 
-            {/* Stat cards row */}
-            <div className="flex items-center sm:flex-nowrap flex-wrap justify-between gap-4 ">
-
-                <div className={`grid grid-cols-2 sm:grid-cols-2 ${canAccessPracticals(user) ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-4 w-full`}>
+            {/* Stat Cards & Notes Summary Row */}
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-stretch">
+                <div
+                    className={`xl:col-span-8 grid grid-cols-2 ${
+                        canAccessPracticals(user) ? "sm:grid-cols-4" : "sm:grid-cols-2"
+                    } gap-4`}
+                >
                     {canAccessPracticals(user) && (
                         <DashStatCard
                             icon={stats.subjects.icon}
-                            title="Practicals Sections"
+                            title="Practical Sections"
                             value={dashboardStats.practicalSections || 0}
-                            trend={stats.subjects.trend}
                         />
                     )}
                     <DashStatCard
                         icon={stats.subjects.icon}
                         title="Note Sections"
                         value={dashboardStats.noteSections || 0}
-                        trend={stats.subjects.trend}
                     />
-
                     {canAccessPracticals(user) && (
                         <DashStatCard
                             icon={stats.notes.icon}
                             title="Total Practicals"
                             value={dashboardStats.totalPracticals || 0}
-                            trend={stats.notes.trend}
                         />
                     )}
                     <DashStatCard
                         icon={stats.visits.icon}
                         title="Platform Visits"
                         value={dashboardStats.platformVisits || 0}
-                        trend={stats.visits.trend}
                     />
                 </div>
-                <div className="space-y-2.5 p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-                    <div
-                        className="h-12 p-3 w-60 rounded-xl border border-slate-200 bg-slate-50/50 transition-all flex items-center justify-between font-bold text-sm hover:border-indigo-300 text-slate-800"
-                    >
-                        Notes saved
-                        <p className="mx-2 text-indigo-600 font-extrabold">
-                            {dashboardStats.totalNotes === null || dashboardStats.totalNotes === '' || dashboardStats.totalNotes === 0 ? <DotLoader size={"20"} color={"#4f39f6"} /> : dashboardStats.totalNotes}
-                        </p>
-                    </div>
 
-                    <div
-                        className="h-12 p-3 w-60 rounded-xl border border-slate-200 bg-slate-50/50 transition-all flex items-center justify-between font-bold text-sm hover:border-indigo-300 text-slate-800"
-                    >
-                        Private Note
-                        <p className="mx-2 text-indigo-600 font-extrabold">
-                            {dashboardStats.privateNotes === null || dashboardStats.privateNotes === '' || dashboardStats.privateNotes === 0 ? <DotLoader size={"20"} color={"#4f39f6"} /> : dashboardStats.privateNotes}
-                        </p>
-                    </div>
-
-                    <div
-                        className="h-12 p-3 w-60 rounded-xl border border-slate-200 bg-slate-50/50 transition-all flex items-center justify-between font-bold text-sm hover:border-indigo-300 text-slate-800"
-                    >
-                        Public Note
-                        <p className="mx-2 text-indigo-600 font-extrabold">
-                            {dashboardStats.publicNotes === null || dashboardStats.publicNotes === '' || dashboardStats.publicNotes === 0 ? <DotLoader size={"20"} color={"#4f39f6"} /> : dashboardStats.publicNotes}
-                        </p>
-                    </div>
+                <div className="xl:col-span-4 surface-card rounded-2xl p-4 flex flex-col justify-center gap-2.5">
+                    {[
+                        { label: "Notes Saved", value: dashboardStats.totalNotes },
+                        { label: "Global Notes", value: dashboardStats.privateNotes },
+                        { label: "Personal Notes", value: dashboardStats.publicNotes },
+                    ].map((row) => (
+                        <div
+                            key={row.label}
+                            className="h-11 px-3.5 rounded-xl border border-border bg-background/70 flex items-center justify-between text-xs font-semibold text-foreground"
+                        >
+                            <span>{row.label}</span>
+                            <span className="text-primary font-extrabold tabular-nums">
+                                {row.value === null || row.value === "" || row.value === 0 ? (
+                                    <DotLoader size="18" color="#4F46E5" />
+                                ) : (
+                                    row.value
+                                )}
+                            </span>
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            {/* Subject Progpress + Recent Notes + Activity row */}
-            <div className="space-y-4">
-                {/* Subject Progress - Col 1 */}
-                <Card
-                    className="rounded-2xl p-0 bg-white border border-slate-200 shadow-xs"
-                >
-                    <div className="sm:p-6 p-4">
-                        <div className="flex items-center justify-between gap-2">
-                            <CardTitle
-                                className="text-[16px] font-bold text-slate-900"
-                            >
-                                Practices Progress
-                            </CardTitle>
-                            <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60">
-                                {overallPracticeStats.completed}/{overallPracticeStats.total} Total
-                            </span>
-                        </div>
-                        <div
-                            className="text-[12px] font-medium flex items-center gap-1.5 mt-1 text-slate-500"
-                        >
-                            <span className="text-emerald-700 font-bold">{overallPracticeStats.completed} completed</span>
-                            <span>•</span>
-                            <span className="text-amber-700 font-bold">{overallPracticeStats.remaining} remaining</span>
-                        </div>
-
-                        <div className="mt-5 space-y-4">
-                            {mergedUserProgress.map((s) => (
-                                <SubjectProgressRow
-                                    key={s.codingLanguage}
-                                    name={s.codingLanguage}
-                                    progress={(s.done / s.totalProblems) * 100}
-                                    done={s.done}
-                                    total={s.totalProblems}
-                                    Icon={Zap}
-                                />
-                            ))}
-                        </div>
+            {/* Practice Progress */}
+            <Card className="surface-card rounded-2xl py-0">
+                <div className="p-5 sm:p-6">
+                    <div className="flex items-center justify-between gap-2">
+                        <CardTitle className="text-base font-bold text-foreground">
+                            Practice Track Progress
+                        </CardTitle>
+                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 tabular-nums">
+                            {overallPracticeStats.completed}/{overallPracticeStats.total} Total
+                        </span>
                     </div>
-                </Card>
+                    <div className="text-xs font-medium flex items-center gap-1.5 mt-1 text-muted-foreground tabular-nums">
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                            {overallPracticeStats.completed} completed
+                        </span>
+                        <span>·</span>
+                        <span>{overallPracticeStats.remaining} remaining</span>
+                    </div>
 
-                <div className="grid sm:grid-cols-2 grid-cols-1  gap-6 w-full">
-                    {/* Recent Notes - Col 2-3 (middle) */}
-                    <Card
-                        className="rounded-2xl p-0 w-full  bg-white border border-slate-200 shadow-xs"
-                    >
-                        <div className="p-6">
-                            <CardTitle
-                                className="text-[16px] font-bold text-slate-900"
-                            >
-                                Recent Notes
-                            </CardTitle>
-                            <div
-                                className="text-[13px] font-medium text-slate-500 mt-1"
-                            >
-                                Your last saved notes
-                            </div>
+                    <div className="mt-5 space-y-4">
+                        {mergedUserProgress.map((s) => (
+                            <SubjectProgressRow
+                                key={s.codingLanguage}
+                                name={s.codingLanguage}
+                                progress={(s.done / s.totalProblems) * 100}
+                                done={s.done}
+                                total={s.totalProblems}
+                                Icon={Zap}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </Card>
 
-                            <div className="mt-6 space-y-0">
-                                {dashboardStats.recentNotes?.map((note, idx) => (
-                                    <div key={idx} className="py-2">
+            {/* Recent Notes + Weekly Activity */}
+            <div className="grid sm:grid-cols-2 grid-cols-1 gap-6 w-full">
+                <Card className="surface-card rounded-2xl py-0 w-full">
+                    <div className="p-6">
+                        <CardTitle className="text-base font-bold text-foreground">
+                            Recent Notes
+                        </CardTitle>
+                        <p className="text-xs text-muted-foreground mt-1">Your latest saved materials</p>
+
+                        <div className="mt-5 space-y-0">
+                            {dashboardStats.recentNotes?.length > 0 ? (
+                                dashboardStats.recentNotes.map((note, idx) => (
+                                    <div key={note._id || idx} className="py-2">
                                         <div className="flex items-start gap-3">
-                                            <div
-                                                className="inline-block bg-indigo-50 text-indigo-700  border-indigo-200/60 rounded-md font-extrabold px-2.5 py-1 text-[11px] shrink-0"
-                                            >
-                                                {note.section}
-                                            </div>
+                                            <span className="inline-block bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20 rounded-lg font-bold px-2.5 py-1 text-[11px] shrink-0">
+                                                {note.section || "General"}
+                                            </span>
                                             <div className="flex-1 min-w-0">
-                                                <div
-                                                    className="font-bold text-[13px] text-slate-900 truncate hover:text-indigo-600 transition-colors"
-                                                >
+                                                <div className="font-bold text-sm text-foreground truncate">
                                                     {note.title}
                                                 </div>
-                                                <div
-                                                    className="text-[11px] font-medium text-slate-500 mt-0.5"
-                                                >
+                                                <div className="text-[11px] text-muted-foreground mt-0.5 tabular-nums">
                                                     {formatDate(note.updatedAt)}
                                                 </div>
                                             </div>
                                         </div>
                                         {idx !== (dashboardStats.recentNotes?.length || 0) - 1 && (
-                                            <Separator className="my-4 bg-slate-100" />
+                                            <Separator className="my-3.5" />
                                         )}
                                     </div>
-                                ))}
-                            </div>
-
-                            <div className="pt-4">
-                                <Link
-                                    to={"notes"}
-                                    className="text-[13px] font-bold text-indigo-600 hover:text-indigo-700"
-                                >
-                                    View all notes →
-                                </Link>
-                            </div>
+                                ))
+                            ) : (
+                                <p className="text-xs text-muted-foreground py-6">No notes uploaded yet.</p>
+                            )}
                         </div>
-                    </Card>
 
-                    {/* Activity This Week - Col 4-5 */}
-                    <Card
-                        className="rounded-2xl w-full p-0 h-fit bg-white border border-slate-200 shadow-xs"
-                    >
-                        <div className="p-6">
-                            <CardTitle
-                                className="text-[16px] font-bold text-slate-900"
-                            >
-                                Activity This Week
-                            </CardTitle>
-                            <div
-                                className="text-[13px] font-medium text-slate-500 mt-1"
-                            >
-                                Practice sessions per day
-                            </div>
-
-
-                            <div className="my-6 " style={{ overflow: "hidden" }}>
-                                <ChartContainer config={chartConfig}>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={chartData || []}>
-                                            <CartesianGrid vertical={false} stroke="#F1F5F9" />
-
-                                            <XAxis
-                                                dataKey="day"
-                                                tickLine={false}
-                                                tickMargin={10}
-                                                axisLine={false}
-                                                tickFormatter={(value) => value.slice(0, 3)}
-                                                stroke="#64748B"
-                                            />
-
-                                            <YAxis
-                                                domain={[0, 'auto']}
-                                                allowDecimals={false}
-                                                stroke="#64748B"
-                                            />
-
-                                            <ChartTooltip
-                                                cursor={false}
-                                                content={<ChartTooltipContent />}
-                                            />
-
-                                            <Bar
-                                                dataKey="questions"
-                                                fill="#6366F1"
-                                                radius={8}
-                                            />
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                </ChartContainer>
-                            </div>
-                            <div
-                                className="text-[12px]  font-medium text-center mt-4 text-slate-500"
-                            >
-                                Avg {avgDailyQuestions} questions/day · Best: {bestActivityDay}
-                            </div>
+                        <div className="pt-4">
+                            <Link to="notes" className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1">
+                                View all notes
+                                <ArrowRight size={13} aria-hidden="true" />
+                            </Link>
                         </div>
-                    </Card>
-                </div>
+                    </div>
+                </Card>
+
+                <Card className="surface-card rounded-2xl w-full py-0 h-fit">
+                    <div className="p-6">
+                        <CardTitle className="text-base font-bold text-foreground">
+                            Activity This Week
+                        </CardTitle>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            Practice problems solved per day
+                        </p>
+
+                        <div className="my-6 overflow-hidden">
+                            <ChartContainer config={chartConfig}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={chartData || []}>
+                                        <CartesianGrid vertical={false} stroke="hsl(var(--border))" />
+                                        <XAxis
+                                            dataKey="day"
+                                            tickLine={false}
+                                            tickMargin={10}
+                                            axisLine={false}
+                                            tickFormatter={(value) => value.slice(0, 3)}
+                                            stroke="hsl(var(--muted-foreground))"
+                                        />
+                                        <YAxis
+                                            domain={[0, "auto"]}
+                                            allowDecimals={false}
+                                            stroke="hsl(var(--muted-foreground))"
+                                        />
+                                        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                                        <Bar dataKey="questions" fill="#6366F1" radius={8} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </ChartContainer>
+                        </div>
+
+                        <div className="text-xs font-medium text-center text-muted-foreground tabular-nums">
+                            Avg {avgDailyQuestions} questions/day · Best: {bestActivityDay}
+                        </div>
+                    </div>
+                </Card>
             </div>
 
-            {/* Student Reviews & Community Feedback Section */}
-            <Card
-                className="rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-xs"
-            >
+            {/* Student Reviews Marquee */}
+            <Card className="surface-card rounded-2xl overflow-hidden py-0">
                 <FeedbackMarquee feedbacks={userFeedback} />
             </Card>
 
-            {/* Quick Actions - Full width */}
-            <Card
-                className="rounded-2xl bg-white border border-slate-200 shadow-xs"
-            >
+            {/* Quick Actions */}
+            <Card className="surface-card rounded-2xl py-0">
                 <div className="p-6">
-                    <CardTitle
-                        className="text-[16px] font-bold text-slate-900"
-                    >
-                        Quick Actions
-                    </CardTitle>
+                    <CardTitle className="text-base font-bold text-foreground">Quick Actions</CardTitle>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
                         {quickActions.map((action) => (
                             <Link
                                 key={action.path}
                                 to={`/dashboard/${action.path}`}
-                                className="h-12 px-4 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-indigo-50/50 hover:border-indigo-300 transition-all flex items-center justify-center gap-2 font-bold text-sm text-slate-800 shadow-2xs"
+                                className="min-h-[46px] px-4 rounded-xl border border-border bg-background hover:bg-secondary hover:border-primary/40 transition-all flex items-center justify-center gap-2 font-bold text-xs sm:text-sm text-foreground"
                             >
-                                <action.icon size={18} className="text-indigo-600" />
-                                {action.label}
+                                <action.icon size={16} className="text-primary" aria-hidden="true" />
+                                <span>{action.label}</span>
                             </Link>
                         ))}
                     </div>

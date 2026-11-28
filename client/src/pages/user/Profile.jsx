@@ -8,7 +8,6 @@ import {
     MapPin,
     LogOut,
     MessageSquare,
-    Info,
     Lock,
     Eye,
     EyeOff,
@@ -18,7 +17,7 @@ import {
     TrendingUp,
     Star,
     Award,
-    Key
+    Key,
 } from "lucide-react";
 import { userProfileUpdate, saveApiKey } from "@/Api/api";
 import { useTitle } from "@/hooks/useTitle";
@@ -57,9 +56,9 @@ export function Profile({ onLogout }) {
             if (res.status === 200 || res.data?.message) {
                 customMessage({ content: "Groq API key connected successfully!", type: "success" });
                 setApiKeyVal("");
-                setUser(prev => ({
+                setUser((prev) => ({
                     ...prev,
-                    apiKey: "gsk_stored"
+                    apiKey: "gsk_stored",
                 }));
             }
         } catch (err) {
@@ -85,7 +84,7 @@ export function Profile({ onLogout }) {
         return (
             <DashboardLayout>
                 <div className="flex items-center justify-center min-h-[60vh]">
-                    <p className="text-sm font-semibold text-slate-500">Failed to load profile details.</p>
+                    <p className="text-sm font-semibold text-muted-foreground">Failed to load profile details.</p>
                 </div>
             </DashboardLayout>
         );
@@ -125,15 +124,9 @@ export function Profile({ onLogout }) {
 
             setIsSaving(true);
 
-            // get unique changed fields
             const uniqueFields = [...new Set(userUpdate)];
+            const updatePayload = Object.fromEntries(uniqueFields.map((key) => [key, userDetail[key]]));
 
-            // convert array to key-value pairs
-            const updatePayload = Object.fromEntries(
-                uniqueFields.map(key => [key, userDetail[key]])
-            );
-
-            // If passwords aren't set, remove them from payload
             if (!userDetail.password) {
                 delete updatePayload.password;
                 delete updatePayload.confirmPassword;
@@ -142,18 +135,16 @@ export function Profile({ onLogout }) {
             const updatedData = await userProfileUpdate(updatePayload);
             if (updatedData.data?.data?.type === "success" || updatedData.status === 200) {
                 customMessage({ content: "Profile updated successfully!", type: "success" });
-                
-                // Update frontend state context
+
                 const updatedUser = updatedData.data?.data?.user || updatedData.data?.user;
                 if (updatedUser) {
-                    setUser(prev => ({
+                    setUser((prev) => ({
                         ...prev,
-                        ...updatedUser
+                        ...updatedUser,
                     }));
                 }
                 setUserUpdate([]);
-                // Clear password fields
-                setUserDetail(prev => ({ ...prev, password: "", confirmPassword: "" }));
+                setUserDetail((prev) => ({ ...prev, password: "", confirmPassword: "" }));
             }
         } catch (error) {
             console.error(error);
@@ -163,287 +154,277 @@ export function Profile({ onLogout }) {
         }
     };
 
-    // Calculate dynamic stats
     const userNotesCount = Array.isArray(notes)
-        ? notes.filter(note => note.user === user?._id || note.user?._id === user?._id).length
-        : (user?.notesCount || 0);
+        ? notes.filter((note) => note.user === user?._id || note.user?._id === user?._id).length
+        : user?.notesCount || 0;
     const bookmarksCount = user?.bookmarks?.length || 0;
     const visitCount = user?.visitCount || 1;
 
-    // Determine Subscription Tier Badge
     const renderSubscriptionBadge = () => {
         const tier = user?.subscription || "free";
         if (tier === "lifetime") {
             return (
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200 shadow-xs">
-                    <Award size={12} className="fill-current" />
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-amber-500/12 text-amber-700 dark:text-amber-300 border border-amber-500/25">
+                    <Award size={12} aria-hidden="true" />
                     Lifetime Elite
                 </span>
             );
         }
         if (tier === "pro") {
             return (
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-xs">
-                    <Star size={11} className="fill-current animate-spin-slow" />
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-indigo-500/12 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25">
+                    <Star size={11} aria-hidden="true" />
                     Student Pro
                 </span>
             );
         }
         return (
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">
-                Basic / Free
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-secondary text-muted-foreground border border-border">
+                Standard Member
             </span>
         );
     };
 
     return (
         <DashboardLayout>
-            <div className="max-w-6xl mx-auto py-4 px-2 space-y-6">
-                
-                {/* Two-Column Responsive Layout */}
+            <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                    
-                    {/* Left Column: Profile Card & Quick Actions */}
+                    {/* Left Profile Card */}
                     <div className="space-y-6 lg:col-span-1">
-                        
-                        {/* Profile Summary Card */}
-                        <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
-                            {/* Colorful Gradient Cover */}
-                            <div className="h-28 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative" />
-                            
-                            {/* Card Body */}
+                        <div className="surface-card rounded-3xl overflow-hidden">
+                            <div className="h-28 bg-gradient-to-r from-indigo-600 via-indigo-500 to-emerald-500 relative" />
+
                             <div className="px-6 pb-6 pt-0 relative flex flex-col items-center text-center">
-                                {/* Avatar (overhangs the banner) */}
-                                <div className="-mt-12 mb-4 p-1 bg-white rounded-2xl border border-slate-100 shadow-sm shrink-0">
+                                <div className="-mt-12 mb-4 p-1 bg-card rounded-2xl border border-border shadow-sm shrink-0">
                                     {user.avatar ? (
-                                        <img src={user.avatar} alt={user.username} className="w-20 h-20 rounded-xl object-cover" />
+                                        <img
+                                            src={user.avatar}
+                                            alt={user.username}
+                                            className="w-20 h-20 rounded-xl object-cover"
+                                        />
                                     ) : (
-                                        <div className="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold text-2xl uppercase">
+                                        <div className="w-20 h-20 bg-indigo-500/10 text-primary rounded-xl flex items-center justify-center font-extrabold text-2xl uppercase">
                                             {user.username?.charAt(0)}
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Username */}
-                                <h2 className="text-xl font-extrabold text-slate-800 capitalize">
+                                <h1 className="text-xl font-extrabold text-foreground capitalize">
                                     {user.username}
-                                </h2>
-                                <p className="text-xs font-semibold text-slate-400 mt-0.5">
-                                    Student Hub Portal
+                                </h1>
+                                <p className="text-xs font-medium text-muted-foreground mt-0.5">
+                                    Student Hub Workspace
                                 </p>
 
-                                {/* Subscription Badge */}
-                                <div className="mt-3.5">
-                                    {renderSubscriptionBadge()}
-                                </div>
+                                <div className="mt-3.5">{renderSubscriptionBadge()}</div>
 
-                                <hr className="w-full border-slate-100 my-5" />
+                                <hr className="w-full border-border my-5" />
 
-                                {/* Info Rows */}
-                                <div className="w-full space-y-3.5 text-left">
-                                    <div className="flex items-center gap-3 text-xs text-slate-500 font-semibold">
-                                        <Shield size={14} className="text-indigo-500 shrink-0" />
-                                        <span className="truncate">Role: <strong className="text-slate-800 uppercase">{user.role || "user"}</strong></span>
+                                <div className="w-full space-y-3 text-left">
+                                    <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium">
+                                        <Shield size={14} className="text-primary shrink-0" aria-hidden="true" />
+                                        <span className="truncate">
+                                            Role: <strong className="text-foreground uppercase">{user.role || "user"}</strong>
+                                        </span>
                                     </div>
-                                    <div className="flex items-center gap-3 text-xs text-slate-500 font-semibold">
-                                        <Calendar size={14} className="text-purple-500 shrink-0" />
-                                        <span>Joined: <strong className="text-slate-800">{user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "N/A"}</strong></span>
+                                    <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium">
+                                        <Calendar size={14} className="text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
+                                        <span>
+                                            Joined:{" "}
+                                            <strong className="text-foreground">
+                                                {user.createdAt
+                                                    ? new Date(user.createdAt).toLocaleDateString("en-US", {
+                                                          month: "short",
+                                                          year: "numeric",
+                                                      })
+                                                    : "N/A"}
+                                            </strong>
+                                        </span>
                                     </div>
-                                    <div className="flex items-center gap-3 text-xs text-slate-500 font-semibold">
-                                        <MapPin size={14} className="text-rose-500 shrink-0" />
-                                        <span>Location: <strong className="text-slate-800">India</strong></span>
+                                    <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium">
+                                        <MapPin size={14} className="text-primary shrink-0" aria-hidden="true" />
+                                        <span>
+                                            Region: <strong className="text-foreground">India</strong>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Quick Actions Links */}
-                        <div className="bg-white rounded-3xl border border-slate-200 shadow-xs p-5 space-y-3">
-                            <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider mb-2 px-1">
+                        <div className="surface-card rounded-3xl p-5 space-y-2.5">
+                            <h2 className="text-[11px] font-bold uppercase text-muted-foreground tracking-wider px-1 mb-2">
                                 Quick Navigation
-                            </h3>
+                            </h2>
                             <Link
                                 to="/dashboard/feedback"
-                                className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-700 transition-all border border-transparent hover:border-slate-100"
+                                className="flex items-center gap-3 p-3 rounded-xl hover:bg-secondary text-xs font-bold text-foreground transition-colors"
                             >
-                                <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg shrink-0">
-                                    <MessageSquare size={14} />
+                                <div className="p-1.5 bg-indigo-500/10 text-primary rounded-lg shrink-0">
+                                    <MessageSquare size={14} aria-hidden="true" />
                                 </div>
-                                <span className="flex-1">Send Feedback / Help Request</span>
-                            </Link>
-
-                            <Link
-                                to="/dashboard/about-contact"
-                                className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-700 transition-all border border-transparent hover:border-slate-100"
-                            >
-                                <div className="p-1.5 bg-purple-50 text-purple-600 rounded-lg shrink-0">
-                                    <Info size={14} />
-                                </div>
-                                <span className="flex-1">About & Contact Us</span>
+                                <span>Send Feedback / Support</span>
                             </Link>
 
                             <button
+                                type="button"
                                 onClick={onLogout}
-                                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-rose-50/50 text-xs font-bold text-rose-600 transition-all border border-transparent hover:border-rose-100 cursor-pointer text-left"
+                                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-destructive/10 text-xs font-bold text-destructive transition-colors text-left"
                             >
-                                <div className="p-1.5 bg-rose-50 text-rose-600 rounded-lg shrink-0">
-                                    <LogOut size={14} />
+                                <div className="p-1.5 bg-destructive/10 text-destructive rounded-lg shrink-0">
+                                    <LogOut size={14} aria-hidden="true" />
                                 </div>
-                                <span className="flex-1">Sign Out Account</span>
+                                <span>Sign Out Account</span>
                             </button>
                         </div>
                     </div>
 
-                    {/* Right Column: Dynamic Statistics & Edit Profile Form */}
+                    {/* Right Column */}
                     <div className="space-y-6 lg:col-span-2">
-                        
-                        {/* Dynamic Academic Statistics */}
+                        {/* Stats */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
-                                    <FileText size={18} />
-                                </div>
-                                <div>
-                                    <p className="text-lg font-black text-slate-900">{userNotesCount}</p>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Notes Shared</p>
-                                </div>
-                            </div>
-                            <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 border border-purple-100">
-                                    <Bookmark size={18} />
-                                </div>
-                                <div>
-                                    <p className="text-lg font-black text-slate-900">{bookmarksCount}</p>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Bookmarks</p>
-                                </div>
-                            </div>
-                            <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
-                                    <TrendingUp size={18} />
-                                </div>
-                                <div>
-                                    <p className="text-lg font-black text-slate-900">{visitCount}</p>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Portal Visits</p>
-                                </div>
-                            </div>
+                            {[
+                                { label: "Notes Shared", val: userNotesCount, icon: FileText, cls: "bg-indigo-500/10 text-primary border-indigo-500/20" },
+                                { label: "Bookmarks", val: bookmarksCount, icon: Bookmark, cls: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" },
+                                { label: "Portal Visits", val: visitCount, icon: TrendingUp, cls: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" },
+                            ].map((s) => {
+                                const Icon = s.icon;
+                                return (
+                                    <div key={s.label} className="surface-card p-5 rounded-2xl flex items-center gap-4">
+                                        <div className={`w-11 h-11 rounded-xl border flex items-center justify-center shrink-0 ${s.cls}`}>
+                                            <Icon size={18} aria-hidden="true" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xl font-extrabold text-foreground tabular-nums">{s.val}</p>
+                                            <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-wider">
+                                                {s.label}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
 
-                        {/* Edit Profile Form */}
-                        <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
-                            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
-                                <div>
-                                    <h3 className="font-extrabold text-sm text-slate-800">Account Credentials</h3>
-                                    <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Manage your personal information and login credentials.</p>
-                                </div>
+                        {/* Credentials Form */}
+                        <div className="surface-card rounded-3xl overflow-hidden">
+                            <div className="px-6 py-5 border-b border-border bg-secondary/40">
+                                <h2 className="font-bold text-base text-foreground">Account Credentials</h2>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                    Update your profile information and password.
+                                </p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                    {/* Full Name */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider ml-1">Full Name</label>
+                                        <label htmlFor="profile-username" className="text-xs font-bold text-foreground">
+                                            Full Name
+                                        </label>
                                         <div className="relative">
-                                            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                             <input
+                                                id="profile-username"
                                                 type="text"
                                                 name="username"
                                                 required
                                                 value={userDetail.username}
                                                 onChange={handleChanged}
-                                                className="w-full h-11 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-slate-800"
+                                                className="w-full min-h-[44px] pl-10 pr-4 bg-background border border-input rounded-xl text-xs font-semibold text-foreground focus:ring-2 focus:ring-ring outline-none"
                                             />
                                         </div>
                                     </div>
 
-                                    {/* Email */}
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider ml-1">Email Address</label>
+                                        <label htmlFor="profile-email" className="text-xs font-bold text-foreground">
+                                            Email Address
+                                        </label>
                                         <div className="relative">
-                                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                             <input
+                                                id="profile-email"
                                                 type="email"
                                                 name="email"
                                                 required
                                                 value={userDetail.email}
                                                 onChange={handleChanged}
-                                                className="w-full h-11 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-slate-800"
+                                                className="w-full min-h-[44px] pl-10 pr-4 bg-background border border-input rounded-xl text-xs font-semibold text-foreground focus:ring-2 focus:ring-ring outline-none"
                                             />
                                         </div>
                                     </div>
 
-                                    {/* Password */}
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider ml-1">New Password (Optional)</label>
+                                        <label htmlFor="profile-password" className="text-xs font-bold text-foreground">
+                                            New Password (Optional)
+                                        </label>
                                         <div className="relative">
-                                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                             <input
+                                                id="profile-password"
                                                 type={showPassword ? "text" : "password"}
                                                 name="password"
                                                 placeholder="••••••••"
                                                 value={userDetail.password}
                                                 onChange={handleChanged}
-                                                className="w-full h-11 pl-10 pr-12 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-slate-800"
+                                                className="w-full min-h-[44px] pl-10 pr-11 bg-background border border-input rounded-xl text-xs font-semibold text-foreground focus:ring-2 focus:ring-ring outline-none"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-muted-foreground hover:text-foreground"
                                             >
-                                                {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                                                {showPassword ? <EyeOff size={15} aria-hidden="true" /> : <Eye size={15} aria-hidden="true" />}
                                             </button>
                                         </div>
                                     </div>
 
-                                    {/* Confirm Password */}
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider ml-1">Confirm Password</label>
+                                        <label htmlFor="profile-confirm" className="text-xs font-bold text-foreground">
+                                            Confirm Password
+                                        </label>
                                         <div className="relative">
-                                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                             <input
+                                                id="profile-confirm"
                                                 type={showPassword ? "text" : "password"}
                                                 name="confirmPassword"
                                                 placeholder="••••••••"
                                                 value={userDetail.confirmPassword}
                                                 onChange={handleChanged}
-                                                className="w-full h-11 pl-10 pr-12 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-slate-800"
+                                                className="w-full min-h-[44px] pl-10 pr-4 bg-background border border-input rounded-xl text-xs font-semibold text-foreground focus:ring-2 focus:ring-ring outline-none"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="pt-4 flex justify-end">
+                                <div className="pt-2 flex justify-end">
                                     <button
                                         type="submit"
                                         disabled={isSaving || userUpdate.length === 0}
-                                        className="h-11 px-6 rounded-2xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-100 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                                        className="min-h-[42px] px-6 rounded-xl text-xs font-bold text-primary-foreground bg-primary hover:bg-primary/90 shadow-sm shadow-indigo-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
                                     >
-                                        {isSaving ? (
-                                            "Saving Changes..."
-                                        ) : (
-                                            <>
-                                                <Save size={14} />
-                                                <span>Save Changes</span>
-                                            </>
-                                        )}
+                                        <Save size={14} aria-hidden="true" />
+                                        <span>{isSaving ? "Saving Changes..." : "Save Changes"}</span>
                                     </button>
                                 </div>
                             </form>
                         </div>
 
                         {/* AI API Key Configuration */}
-                        <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden mt-6">
-                            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+                        <div className="surface-card rounded-3xl overflow-hidden">
+                            <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-secondary/40">
                                 <div>
-                                    <h3 className="font-extrabold text-sm text-slate-800">AI Assistant Settings</h3>
-                                    <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Configure your API keys to enable Groq AI features.</p>
+                                    <h2 className="font-bold text-base text-foreground">AI Assistant Settings</h2>
+                                    <p className="text-xs text-muted-foreground mt-0.5">
+                                        Configure your Groq API key to enable AI features.
+                                    </p>
                                 </div>
                                 {user.apiKey ? (
-                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25">
                                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                         Connected
                                     </span>
                                 ) : (
-                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200/50">
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/12 text-amber-700 dark:text-amber-300 border border-amber-500/25">
                                         <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                                         Action Required
                                     </span>
@@ -451,36 +432,55 @@ export function Profile({ onLogout }) {
                             </div>
 
                             <div className="p-6 space-y-5">
-                                {/* Instructions */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
-                                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                                        <div className="w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-[10px] font-bold mb-2">1</div>
-                                        <p className="leading-relaxed">Go to the <a href="https://console.groq.com/" target="_blank" rel="noreferrer" className="text-indigo-600 font-bold hover:underline">Groq Console</a> and create a free account.</p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-muted-foreground">
+                                    <div className="p-3.5 rounded-2xl bg-background border border-border">
+                                        <div className="w-6 h-6 rounded-full bg-indigo-500/10 text-primary flex items-center justify-center text-[11px] font-bold mb-2">
+                                            1
+                                        </div>
+                                        <p className="leading-relaxed">
+                                            Go to the{" "}
+                                            <a
+                                                href="https://console.groq.com/"
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="text-primary font-bold hover:underline"
+                                            >
+                                                Groq Console
+                                            </a>{" "}
+                                            and create a free API key.
+                                        </p>
                                     </div>
-                                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                                        <div className="w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-[10px] font-bold mb-2">2</div>
-                                        <p className="leading-relaxed">Generate a new API key and paste it in the field below to connect.</p>
+                                    <div className="p-3.5 rounded-2xl bg-background border border-border">
+                                        <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-[11px] font-bold mb-2">
+                                            2
+                                        </div>
+                                        <p className="leading-relaxed">
+                                            Paste your API key below to unlock AI explanations and code reviews.
+                                        </p>
                                     </div>
                                 </div>
 
                                 <form onSubmit={handleSaveKey} className="space-y-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider ml-1">Groq API Key</label>
+                                        <label htmlFor="groq-key" className="text-xs font-bold text-foreground">
+                                            Groq API Key
+                                        </label>
                                         <div className="relative">
-                                            <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                             <input
+                                                id="groq-key"
                                                 type="password"
                                                 required
                                                 value={apiKeyVal}
                                                 onChange={(e) => setApiKeyVal(e.target.value)}
                                                 placeholder={user.apiKey ? "••••••••••••••••••••••••••••••••" : "gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
-                                                className="w-full h-11 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-slate-800 font-mono"
+                                                className="w-full min-h-[44px] pl-10 pr-4 bg-background border border-input rounded-xl text-xs font-mono text-foreground focus:ring-2 focus:ring-ring outline-none"
                                             />
                                         </div>
                                     </div>
 
                                     {apiKeyStatusError && (
-                                        <p className="text-[10px] text-red-500 font-semibold bg-red-50 border border-red-100 p-2.5 rounded-xl">
+                                        <p className="text-xs text-destructive font-semibold bg-destructive/10 border border-destructive/25 p-3 rounded-xl">
                                             {apiKeyStatusError}
                                         </p>
                                     )}
@@ -489,16 +489,16 @@ export function Profile({ onLogout }) {
                                         <button
                                             type="submit"
                                             disabled={isSavingKey || !apiKeyVal.trim()}
-                                            className="h-11 px-6 rounded-2xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-100 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                                            className="min-h-[42px] px-6 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
                                         >
-                                            {isSavingKey ? (
-                                                "Saving Key..."
-                                            ) : (
-                                                <>
-                                                    <Save size={14} />
-                                                    <span>{user.apiKey ? "Update API Key" : "Connect API Key"}</span>
-                                                </>
-                                            )}
+                                            <Save size={14} aria-hidden="true" />
+                                            <span>
+                                                {isSavingKey
+                                                    ? "Saving Key..."
+                                                    : user.apiKey
+                                                    ? "Update API Key"
+                                                    : "Connect API Key"}
+                                            </span>
                                         </button>
                                     </div>
                                 </form>

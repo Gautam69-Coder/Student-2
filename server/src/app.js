@@ -14,12 +14,10 @@ import feedback from './routes/feedback.js';
 import notification from './routes/notification.js';
 import community from './routes/community.js';
 import aiassistant from './routes/aiAssistant.js';
-import aiChatBot from './routes/aiChatBot.js';
 import aicodehelper from "./routes/aiCodeHelper.js";
 import codingPractices from './routes/codingPractices.js';
 import stats from './routes/stats.js';
 import codechecker from './routes/codeChecker.js';
-import activityTrack from './routes/activityTrack.js';
 import apiKeyController from "./routes/apiKey.js";
 
 const app = express();
@@ -53,13 +51,10 @@ app.use('/api/feedback', feedback);
 app.use('/api/notifications', notification);
 app.use('/api/community', community);
 app.use('/api/aiassistant', aiLimiter, aiassistant);
-app.use('/api/aichatbot', aiLimiter, aiChatBot);
 app.use('/api/aicodehelper', aiLimiter, aicodehelper);
 app.use('/api/coding-practices', codingPractices);
 app.use('/api/stats', stats);
 app.use('/api/code-checker', aiLimiter, codechecker);
-app.use('/api/hometracking', activityTrack);
-app.use('/api/trackingData', activityTrack);
 app.use('/api/save-apikey', apiKeyController);
 
 

@@ -1,8 +1,7 @@
 import { LayoutGroup, motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Bell, LogOut, Upload } from "lucide-react";
+import { Bell, LogOut, Upload, Code2, Sparkles } from "lucide-react";
 import { Logo } from "../common/logo/logo";
-import { useData } from "@/context/DataContext";
 
 export function DashboardSidebar({
     isCollapsed,
@@ -15,27 +14,38 @@ export function DashboardSidebar({
 }) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useData();
 
     return (
         <motion.aside
             animate={{
-                width: isCollapsed ? 0 : 250,
-                padding: isCollapsed ? 0 : 16,
+                width: isCollapsed ? 0 : 252,
+                paddingLeft: isCollapsed ? 0 : 14,
+                paddingRight: isCollapsed ? 0 : 14,
+                paddingTop: isCollapsed ? 0 : 16,
+                paddingBottom: isCollapsed ? 0 : 16,
                 borderRightWidth: isCollapsed ? 0 : 1,
                 opacity: isCollapsed ? 0 : 1,
             }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="hidden md:flex sticky flex-col h-screen overflow-y-auto gap-3 top-0 left-0 bg-white border-slate-200 text-slate-800 border-r overflow-hidden"
+            transition={{ type: "spring", damping: 28, stiffness: 240 }}
+            className="hidden md:flex sticky top-0 left-0 h-screen overflow-y-auto flex-col gap-4 bg-sidebar border-sidebar-border text-sidebar-foreground border-r overflow-x-hidden shrink-0 z-30"
         >
-            {/* Logo */}
-            <div className="text-2xl mb-12 font-bold px-2 pt-2">
-               <Logo/>
+            {/* Brand Logo */}
+            <div className="px-2 pt-1 pb-2 flex items-center justify-between">
+                <button
+                    type="button"
+                    onClick={() => navigate("/dashboard")}
+                    className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
+                >
+                    <Logo />
+                </button>
             </div>
 
-            {/* Navigation Items */}
+            {/* Primary Navigation */}
             <LayoutGroup>
-                <nav className="flex flex-col gap-1 flex-1 mx-1">
+                <nav aria-label="Dashboard navigation" className="flex flex-col gap-1 flex-1">
+                    <span className="px-3 mb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Workspace
+                    </span>
                     {navItems?.map((item) => {
                         const isActive =
                             item.path === "/dashboard"
@@ -43,100 +53,98 @@ export function DashboardSidebar({
                                 : location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
 
                         return (
-                            <motion.button
+                            <button
                                 key={item.path}
+                                type="button"
                                 onClick={() => navigate(item.path)}
-                                layout
-                                whileHover={{ x: 4, scale: 1.01 }}
-                                whileTap={{ scale: 0.98 }}
-                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold transition-all overflow-hidden ${
+                                className={`relative flex items-center gap-3 px-3.5 min-h-[42px] rounded-xl text-sm font-semibold transition-all duration-150 active:scale-[0.98] ${
                                     isActive
-                                        ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
-                                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+                                        ? "bg-primary text-primary-foreground shadow-sm shadow-indigo-500/20"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                                 }`}
                             >
-                                <div className="relative z-10 flex items-center gap-3 w-full">
-                                    <item.icon size={18} className={isActive ? "text-white" : "text-slate-500"} />
-                                    <span className="flex-1 text-left">{item.label}</span>
-                                    {item.badge && (
-                                        <span
-                                            className={`ml-auto px-2 py-0.5 rounded-full text-xs font-black ${
-                                                isActive
-                                                    ? "bg-white text-indigo-700"
-                                                    : "bg-indigo-100 text-indigo-700"
-                                            }`}
-                                        >
-                                            {item.badge}
-                                        </span>
-                                    )}
-                                </div>
-                            </motion.button>
+                                <item.icon
+                                    size={18}
+                                    className={isActive ? "text-primary-foreground" : "text-muted-foreground"}
+                                    aria-hidden="true"
+                                />
+                                <span className="flex-1 text-left truncate">{item.label}</span>
+                                {item.badge && (
+                                    <span
+                                        className={`ml-auto px-2 py-0.5 rounded-full text-[11px] font-bold tabular-nums ${
+                                            isActive
+                                                ? "bg-white/20 text-white"
+                                                : "bg-primary/10 text-primary"
+                                        }`}
+                                    >
+                                        {item.badge}
+                                    </span>
+                                )}
+                            </button>
                         );
                     })}
                 </nav>
             </LayoutGroup>
 
-            {/* Action Buttons Section */}
-            <div className="space-y-2 mx-1 border-t border-slate-200/80 pt-3">
-                {/* Share Button */}
+            {/* Quick Workspace Actions */}
+            <div className="space-y-1.5 border-t border-border pt-3">
                 {onShare && (
                     <button
+                        type="button"
                         onClick={onShare}
-                        className="w-full flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200/60 transition-all"
+                        className="w-full flex items-center gap-2.5 px-3.5 min-h-[40px] rounded-xl text-xs font-bold bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/15 border border-indigo-500/20 transition-all active:scale-[0.98]"
                     >
-                        <Upload size={16} />
+                        <Upload size={15} aria-hidden="true" />
                         <span>Upload Note</span>
                     </button>
                 )}
 
-                {/* Notifications */}
                 <div className="relative">
                     <button
+                        type="button"
                         onClick={() => setisBell?.(!isBell)}
-                        className="w-full flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-100 transition-all"
+                        className="w-full flex items-center gap-2.5 px-3.5 min-h-[40px] rounded-xl text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary transition-all"
                     >
-                        <Bell size={16} className="text-slate-500" />
+                        <Bell size={15} aria-hidden="true" />
                         <span>Notifications</span>
                     </button>
                     {isBell && Notification && (
-                        <div className="absolute bottom-12 left-0 right-0 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-w-xs p-2">
+                        <div className="absolute bottom-12 left-0 right-0 bg-popover border border-border rounded-xl shadow-xl z-50 max-w-xs p-2">
                             <Notification />
                         </div>
                     )}
                 </div>
 
-                {/* Logout */}
                 {onLogout && (
                     <button
+                        type="button"
                         onClick={onLogout}
-                        className="w-full flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-all"
+                        className="w-full flex items-center gap-2.5 px-3.5 min-h-[40px] rounded-xl text-xs font-semibold text-destructive hover:bg-destructive/10 transition-all"
                     >
-                        <LogOut size={16} />
+                        <LogOut size={15} aria-hidden="true" />
                         <span>Sign Out</span>
                     </button>
                 )}
             </div>
 
-            {/* Upgrade CTA - Pushed to bottom */}
-            {user?.subscription !== "pro" && user?.subscription !== "lifetime" && (
-                <div
-                    className="p-3.5 rounded-2xl text-center mx-1 bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50/50 border border-indigo-100 shadow-2xs mt-auto"
-                >
-                    <div className="text-xs font-black text-indigo-950">
-                        Upgrade to Pro
-                    </div>
-                    <div className="text-[11px] mt-0.5 mb-2.5 text-slate-600 font-medium">
-                        Unlock premium features
-                    </div>
-                    <button
-                        onClick={() => navigate("/dashboard/upgrade")}
-                        className="w-full py-2 rounded-xl font-bold text-xs bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all cursor-pointer"
-                    >
-                        Upgrade
-                    </button>
+            {/* Practice Focus Card */}
+            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-card to-emerald-500/10 border border-border space-y-2.5 mt-auto">
+                <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+                    <span>Daily Coding Sprint</span>
                 </div>
-            )}
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Solve 1 challenge in the Monaco IDE to build your weekly streak.
+                </p>
+                <button
+                    type="button"
+                    onClick={() => navigate("/dashboard/coding-practice")}
+                    className="w-full min-h-[36px] rounded-xl font-bold text-xs bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs transition-all active:scale-[0.98] inline-flex items-center justify-center gap-1.5"
+                >
+                    <Code2 className="w-3.5 h-3.5" aria-hidden="true" />
+                    Open Practice
+                </button>
+            </div>
         </motion.aside>
     );
 }

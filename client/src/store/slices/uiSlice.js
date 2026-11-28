@@ -1,8 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const getInitialDarkMode = () => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('studenthub_theme') === 'dark';
+};
+
 const initialState = {
-    // Force dark theme only (remove white/light theme)
-    darkMode: true,
+    darkMode: getInitialDarkMode(),
     sidebarOpen: false,
     modals: {
         auth: false,
@@ -17,19 +21,23 @@ const uiSlice = createSlice({
     reducers: {
         toggleDarkMode: (state) => {
             state.darkMode = !state.darkMode;
-            localStorage.setItem('darkMode', state.darkMode);
+            localStorage.setItem('studenthub_theme', state.darkMode ? 'dark' : 'light');
+        },
+        setDarkMode: (state, action) => {
+            state.darkMode = Boolean(action.payload);
+            localStorage.setItem('studenthub_theme', state.darkMode ? 'dark' : 'light');
         },
         toggleSidebar: (state) => {
             state.sidebarOpen = !state.sidebarOpen;
         },
         setModalOpen: (state, action) => {
             const { modalName, isOpen } = action.payload;
-            if (state.modals.hasOwnProperty(modalName)) {
+            if (Object.prototype.hasOwnProperty.call(state.modals, modalName)) {
                 state.modals[modalName] = isOpen;
             }
         },
     },
 });
 
-export const { toggleDarkMode, toggleSidebar, setModalOpen } = uiSlice.actions;
+export const { toggleDarkMode, setDarkMode, toggleSidebar, setModalOpen } = uiSlice.actions;
 export default uiSlice.reducer;

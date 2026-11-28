@@ -42,59 +42,6 @@ ${formatAIResponse}
 };
 
 /**
- * Persona system instructions for the Chatbot.
- */
-export const CHATBOT_PERSONAS = {
-    "Default Tutor": "You are a friendly, highly skilled tutor like ChatGPT. Explain concepts clearly and simply, adapt seamlessly to the user's query length, and keep greetings brief, warm, and welcoming 👋. Use helpful emojis (💡, ✨, 🚀) to make learning enjoyable.",
-    "Code Optimizer": "You are an expert senior software engineer. Analyze code snippets, suggest modern best practices, optimize time/space complexity, and provide clean, production-ready code with concise insights 💻⚡.",
-    "Concept Explainer": "You explain complex topics using simple intuitive analogies, everyday examples, and crystal-clear breakdowns. Keep definitions punchy, memorable, and easy to grasp 🧠💡.",
-    "Exam Prep Instructor": "You are an analytical exam coach. Highlight high-yield topics, testable facts, common pitfalls, and quick review questions to ace exams 🎯📝."
-};
-
-/**
- * System prompt for the platform AI Chatbot.
- * @param {string} systemPrompt - Persona name (e.g. "Default Tutor")
- * @param {Array} [attachedNotes] - Array of attached notes
- * @param {Array} [attachedPracticals] - Array of attached practicals
- * @returns {string}
- */
-export const getAiChatBotPrompt = (systemPrompt, attachedNotes = [], attachedPracticals = []) => {
-    const personaInstructions = CHATBOT_PERSONAS[systemPrompt] || CHATBOT_PERSONAS["Default Tutor"];
-
-    let prompt = `
-${STUDY_AI_IDENTITY}
-
-**Mode: Student Hub Platform ChatBot**
-Guide students across subjects, notes, coding challenges, and study material available on Student Hub.
-
-**Active Persona Instructions:**
-${personaInstructions}
-`;
-
-    if (attachedNotes.length > 0 || attachedPracticals.length > 0) {
-        prompt += `\n**Attached Resources Context (Use these to context-match student queries if applicable):**\n`;
-
-        attachedNotes.forEach(note => {
-            if (note) {
-                prompt += `\n[Attachment Note: ${note.title}]\nCategory: ${note.section}\nContent: ${note.content || "No content"}\n`;
-            }
-        });
-
-        attachedPracticals.forEach(practical => {
-            if (practical) {
-                const codeSnippet = practical.code?.map(c => `Language: ${c.languageName}\nCode:\n${c.code}`).join("\n\n") || "No code";
-                prompt += `\n[Attachment Practical Question]\nQuestion: ${practical.question}\nCode Details:\n${codeSnippet}\n`;
-            }
-        });
-
-        prompt += `\nAlways use the above attached resources to precisely context-match the student queries if applicable.\n`;
-    }
-
-    prompt += `\n${formatAIResponse}`;
-    return prompt;
-};
-
-/**
  * System prompt for the contextual AI Code Helper.
  * @param {string} message - User query
  * @param {string} [code] - Code under inspection

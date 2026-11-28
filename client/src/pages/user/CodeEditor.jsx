@@ -3,20 +3,20 @@ import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCodingPractices, updateProblemStatus, codeChecker } from "@/Api/api";
-import { theme } from "@/lib/theme";
 import { copyToClipboard } from "@/Utils/clipboard";
-import { 
-    ArrowLeft, 
-    AlertCircle, 
-    Code2, 
-    Play, 
-    Send, 
-    Sparkles, 
-    SquareCode, 
-    Terminal, 
-    RotateCcw, 
-    Copy, 
-    Check 
+import { useTheme } from "@/context/ThemeContext";
+import {
+    ArrowLeft,
+    AlertCircle,
+    Code2,
+    Play,
+    Send,
+    Sparkles,
+    SquareCode,
+    Terminal,
+    RotateCcw,
+    Copy,
+    Check,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardLayout } from "@/components/layout/layout";
@@ -54,50 +54,21 @@ public class Main {
 int main() {
     printf("Hello World\\n");
     return 0;
-}`
+}`,
 };
 
 function Badge({ children, variant = "neutral" }) {
-    const variants = {
-        neutral: {
-            background: theme.colors.softGray,
-            borderColor: theme.colors.lightGray,
-            color: theme.colors.dark,
-        },
-        primary: {
-            background: theme.colors.limeDim,
-            borderColor: theme.colors.limeMedium,
-            color: theme.colors.dark,
-        },
-        info: {
-            background: "rgba(59,130,246,0.10)",
-            borderColor: "rgba(59,130,246,0.22)",
-            color: "#2563EB",
-        },
-        success: {
-            background: "rgba(34,197,94,0.10)",
-            borderColor: "rgba(34,197,94,0.22)",
-            color: "#16A34A",
-        },
-        warning: {
-            background: "rgba(245,158,11,0.10)",
-            borderColor: "rgba(245,158,11,0.22)",
-            color: "#D97706",
-        },
-        danger: {
-            background: "rgba(239,68,68,0.10)",
-            borderColor: "rgba(239,68,68,0.22)",
-            color: "#DC2626",
-        },
-    };
-
-    const style = variants[variant] || variants.neutral;
+    const cls = {
+        neutral: "bg-secondary border-border text-foreground",
+        primary: "bg-indigo-500/12 border-indigo-500/25 text-indigo-700 dark:text-indigo-300",
+        info: "bg-sky-500/12 border-sky-500/25 text-sky-700 dark:text-sky-300",
+        success: "bg-emerald-500/12 border-emerald-500/25 text-emerald-700 dark:text-emerald-300",
+        warning: "bg-amber-500/12 border-amber-500/25 text-amber-700 dark:text-amber-300",
+        danger: "bg-rose-500/12 border-rose-500/25 text-rose-700 dark:text-rose-300",
+    }[variant] || "bg-secondary border-border text-foreground";
 
     return (
-        <span
-            className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold transition-all"
-            style={style}
-        >
+        <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold ${cls}`}>
             {children}
         </span>
     );
@@ -117,41 +88,43 @@ function ExampleCard({ index, example }) {
     };
 
     return (
-        <div className="rounded-2xl border border-zinc-200 overflow-hidden bg-zinc-50 shadow-sm transition-all hover:shadow-md">
-            <div className="h-10 bg-zinc-100/80 px-4 border-b border-zinc-200 flex items-center justify-between">
-                <span className="text-xs font-black text-zinc-700 flex items-center gap-1.5 select-none">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <div className="rounded-2xl border border-border overflow-hidden bg-background">
+            <div className="h-10 bg-secondary/50 px-4 border-b border-border flex items-center justify-between">
+                <span className="text-xs font-bold text-foreground flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true" />
                     Example {index + 1}
                 </span>
             </div>
-            <div className="p-4 space-y-4 font-mono text-xs">
+            <div className="p-4 space-y-3 font-mono text-xs">
                 <div>
-                    <div className="flex items-center justify-between text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider select-none">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
                         <span>Input</span>
                         <button
+                            type="button"
                             onClick={() => handleCopy(example.input, setCopiedInput)}
-                            className="text-[10px] text-zinc-500 hover:text-zinc-800 transition flex items-center gap-1 bg-white hover:bg-zinc-100 border border-zinc-200 rounded px-1.5 py-0.5 font-sans"
+                            className="text-[11px] text-muted-foreground hover:text-foreground transition flex items-center gap-1 bg-card border border-border rounded-md px-2 py-0.5 font-sans"
                         >
-                            {copiedInput ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            {copiedInput ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                             {copiedInput ? "Copied" : "Copy"}
                         </button>
                     </div>
-                    <pre className="bg-zinc-950 text-zinc-100 p-3 rounded-xl overflow-x-auto shadow-inner leading-relaxed select-text">
+                    <pre className="bg-[#0D1117] text-slate-100 p-3 rounded-xl overflow-x-auto leading-relaxed border border-white/5">
                         {example.input}
                     </pre>
                 </div>
                 <div>
-                    <div className="flex items-center justify-between text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider select-none">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
                         <span>Output</span>
                         <button
+                            type="button"
                             onClick={() => handleCopy(example.output, setCopiedOutput)}
-                            className="text-[10px] text-zinc-500 hover:text-zinc-800 transition flex items-center gap-1 bg-white hover:bg-zinc-100 border border-zinc-200 rounded px-1.5 py-0.5 font-sans"
+                            className="text-[11px] text-muted-foreground hover:text-foreground transition flex items-center gap-1 bg-card border border-border rounded-md px-2 py-0.5 font-sans"
                         >
-                            {copiedOutput ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            {copiedOutput ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                             {copiedOutput ? "Copied" : "Copy"}
                         </button>
                     </div>
-                    <pre className="bg-zinc-950 text-emerald-400 p-3 rounded-xl overflow-x-auto shadow-inner leading-relaxed select-text">
+                    <pre className="bg-[#0D1117] text-emerald-400 p-3 rounded-xl overflow-x-auto leading-relaxed border border-white/5">
                         {example.output}
                     </pre>
                 </div>
@@ -163,22 +136,21 @@ function ExampleCard({ index, example }) {
 export default function CodeEditor() {
     const { problemId, language } = useParams();
     const navigate = useNavigate();
+    const { darkMode } = useTheme();
 
     const [output, setOutput] = useState("");
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState({});
     const [fetching, setFetching] = useState(true);
     const [submitLoading, setSubmitLoading] = useState(false);
-    
-    // Editor controls state
+
     const [fontSize, setFontSize] = useState(15);
     const [wordWrap, setWordWrap] = useState("on");
-    const [activeTab, setActiveTab] = useState("description"); // "description" | "editor" | "console"
-    const [editorSize, setEditorSize] = useState("small"); // "small" | "big"
+    const [activeTab, setActiveTab] = useState("description");
+    const [editorSize, setEditorSize] = useState("small");
 
     const [code, setCode] = useState(`function solve() {\n  console.log("Hello World");\n}`);
 
-    // Load default templates when language changes
     useEffect(() => {
         const langKey = String(language || "").toLowerCase();
         if (DEFAULT_TEMPLATES[langKey]) {
@@ -217,14 +189,12 @@ export default function CodeEditor() {
 
         fetchData();
 
-        const handleSync = () => {
-            fetchData();
-        };
-        window.addEventListener('coding-practice-sync', handleSync);
+        const handleSync = () => fetchData();
+        window.addEventListener("coding-practice-sync", handleSync);
 
         return () => {
             mounted = false;
-            window.removeEventListener('coding-practice-sync', handleSync);
+            window.removeEventListener("coding-practice-sync", handleSync);
         };
     }, [language, problemId]);
 
@@ -232,11 +202,9 @@ export default function CodeEditor() {
 
     const getLanguageId = async (languageName) => {
         const { data } = await axios.get("https://ce.judge0.com/languages");
-
         const matchedLang = data.find((lang) =>
             lang.name.toLowerCase().includes(languageName.toLowerCase())
         );
-
         return matchedLang ? matchedLang.id : null;
     };
 
@@ -244,8 +212,7 @@ export default function CodeEditor() {
         try {
             setLoading(true);
             setOutput("Running...");
-            
-            // Auto switch to console tab on mobile devices
+
             if (window.innerWidth < 1024) {
                 setActiveTab("console");
             }
@@ -273,51 +240,50 @@ export default function CodeEditor() {
         try {
             setSubmitLoading(true);
             await runCode();
-            
+
             const question = data?.question || "hello";
             const outputVal = data?.examples?.[0]?.output || "";
 
-            // Check user submitted code 
             const check = await codeChecker({ question, code, output: outputVal });
-            
+
             if (!check.data || check.data.message === undefined) {
                 customMessage({
                     type: "error",
-                    content: "Failed to evaluate code. Check connection!"
+                    content: "Failed to evaluate code. Check connection!",
                 });
                 return;
             }
 
             if (check.data.data === "true") {
-                const day = new Date().toLocaleString('en-US', { weekday: 'long' });
+                const day = new Date().toLocaleString("en-US", { weekday: "long" });
                 const updateStatus = await updateProblemStatus({ problemId, language, day });
-                
+
                 if (updateStatus.data.success === true) {
                     customMessage({
                         type: "success",
-                        content: `Excellent! Your code submitted successfully.`
+                        content: "Excellent! Your solution passed and was saved.",
                     });
-                    
+
                     setTimeout(() => {
                         goBack();
                     }, 1500);
                 } else {
                     customMessage({
                         type: "success",
-                        content: `Code evaluated correctly! Status updated.`
+                        content: "Code evaluated correctly! Status updated.",
                     });
                 }
             } else {
                 customMessage({
                     type: "error",
-                    content: `Incorrect solution. Verify example test cases!`
+                    content: "Incorrect solution. Verify example test cases!",
                 });
             }
         } catch (err) {
             console.error(err);
             customMessage({
                 type: "error",
-                content: `Error submitting solution.`
+                content: "Error submitting solution.",
             });
         } finally {
             setSubmitLoading(false);
@@ -333,7 +299,7 @@ export default function CodeEditor() {
         }
         customMessage({
             type: "success",
-            content: "Workspace code reset to default template."
+            content: "Workspace code reset to default template.",
         });
     };
 
@@ -343,136 +309,126 @@ export default function CodeEditor() {
 
     return (
         <DashboardLayout>
-            <div className="max-w-[1600px] mx-auto space-y-6">
-                
-                {/* Sleek Breadcrumb Header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-zinc-200">
-                    <div className="flex items-center gap-3">
+            <div className="space-y-6">
+                {/* Breadcrumb Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
+                    <div className="flex items-center gap-3 min-w-0">
                         <button
+                            type="button"
                             onClick={goBack}
-                            className="inline-flex items-center justify-center p-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 transition-all shadow-sm active:scale-95 shrink-0"
+                            className="inline-flex items-center justify-center min-h-[42px] min-w-[42px] rounded-xl border border-border bg-card hover:bg-secondary text-foreground transition-all active:scale-95 shrink-0"
+                            aria-label="Go Back"
                             title="Go Back"
                         >
-                            <ArrowLeft className="w-5 h-5 text-zinc-700" />
+                            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                         </button>
                         <div className="min-w-0">
-                            <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider select-none">
+                            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                 <span>Practice</span>
                                 <span>/</span>
-                                <span className="text-zinc-700">{String(language || "").toUpperCase()}</span>
+                                <span className="text-foreground">{String(language || "").toUpperCase()}</span>
                                 <span>/</span>
-                                <span className="text-zinc-400 font-medium">Workspace</span>
+                                <span>IDE</span>
                             </div>
-                            <h1 className="text-xl sm:text-2xl font-black text-zinc-900 truncate mt-0.5">
+                            <h1 className="text-lg sm:text-2xl font-extrabold text-foreground truncate mt-0.5">
                                 {data?.question || "Solve the problem"}
                             </h1>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2.5 self-end md:self-center select-none">
+
+                    <div className="flex items-center gap-2 self-end md:self-center">
                         <Badge variant="primary">
-                            <Sparkles className="w-3.5 h-3.5 mr-1 animate-pulse" />
-                            Live Coding
+                            <Sparkles className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
+                            Live Sandbox
                         </Badge>
                         {data?.difficulty && (
-                            <Badge variant={
-                                data.difficulty.toLowerCase() === "easy" ? "success" :
-                                data.difficulty.toLowerCase() === "medium" ? "warning" :
-                                data.difficulty.toLowerCase() === "hard" ? "danger" : "neutral"
-                            }>
+                            <Badge
+                                variant={
+                                    data.difficulty.toLowerCase() === "easy"
+                                        ? "success"
+                                        : data.difficulty.toLowerCase() === "medium"
+                                        ? "warning"
+                                        : data.difficulty.toLowerCase() === "hard"
+                                        ? "danger"
+                                        : "neutral"
+                                }
+                            >
                                 {data.difficulty}
                             </Badge>
                         )}
                     </div>
                 </div>
 
-                {/* Mobile Navigation Tabs */}
-                <div className="flex lg:hidden items-center border border-zinc-200 bg-white p-1 rounded-xl gap-1 select-none">
-                    <button
-                        onClick={() => setActiveTab("description")}
-                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                            activeTab === "description"
-                                ? "bg-zinc-900 text-white shadow-sm"
-                                : "text-zinc-600 hover:bg-zinc-100"
-                        }`}
-                    >
-                        Description
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("editor")}
-                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                            activeTab === "editor"
-                                ? "bg-zinc-900 text-white shadow-sm"
-                                : "text-zinc-600 hover:bg-zinc-100"
-                        }`}
-                    >
-                        Editor
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("console")}
-                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all relative ${
-                            activeTab === "console"
-                                ? "bg-zinc-900 text-white shadow-sm"
-                                : "text-zinc-600 hover:bg-zinc-100"
-                        }`}
-                    >
-                        Console Output
-                        {output && (
-                            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping" />
-                        )}
-                    </button>
+                {/* Mobile Workspace Tabs */}
+                <div className="flex lg:hidden items-center border border-border bg-card p-1 rounded-2xl gap-1">
+                    {["description", "editor", "console"].map((tab) => (
+                        <button
+                            key={tab}
+                            type="button"
+                            onClick={() => setActiveTab(tab)}
+                            className={`flex-1 min-h-[40px] text-xs font-bold rounded-xl capitalize transition-all relative ${
+                                activeTab === tab
+                                    ? "bg-primary text-primary-foreground shadow-xs"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                            }`}
+                        >
+                            {tab === "console" ? "Console Output" : tab}
+                            {tab === "console" && output && (
+                                <span className="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            )}
+                        </button>
+                    ))}
                 </div>
 
-                {/* Main Workspace panels */}
+                {/* Split Workspace */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-                    
-                    {/* Left Column: Description & Metadata */}
-                    <div className={`lg:col-span-5 flex flex-col ${editorSize === "big" ? "lg:hidden" : ""} ${activeTab === "description" ? "block" : "hidden lg:block"}`}>
-                        <Card
-                            className="rounded-2xl border flex flex-col h-full"
-                            style={{
-                                background: theme.colors.white,
-                                borderColor: theme.colors.lightGray,
-                                boxShadow: "0 4px 12px rgba(17,17,19,0.03)",
-                            }}
-                        >
-                            <CardHeader className="pb-3 border-b border-zinc-100 flex flex-row items-center justify-between select-none">
+                    {/* Problem Description */}
+                    <div
+                        className={`lg:col-span-5 flex flex-col ${editorSize === "big" ? "lg:hidden" : ""} ${
+                            activeTab === "description" ? "block" : "hidden lg:block"
+                        }`}
+                    >
+                        <Card className="surface-card rounded-3xl py-0 flex flex-col h-full">
+                            <CardHeader className="p-5 border-b border-border flex flex-row items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <AlertCircle className="w-5 h-5 text-indigo-500" />
-                                    <CardTitle className="text-base font-bold text-zinc-900">Problem Description</CardTitle>
+                                    <AlertCircle className="w-4 h-4 text-primary" aria-hidden="true" />
+                                    <CardTitle className="text-base font-bold text-foreground">
+                                        Problem Description
+                                    </CardTitle>
                                 </div>
-                                <div className="text-xs font-semibold text-zinc-400">
+                                <span className="text-xs font-semibold text-muted-foreground tabular-nums">
                                     {examples.length} Example{examples.length === 1 ? "" : "s"}
-                                </div>
+                                </span>
                             </CardHeader>
-                            <CardContent className="pt-4 flex-1 flex flex-col overflow-y-auto max-h-[720px] custom-scrollbar">
+
+                            <CardContent className="p-5 flex-1 flex flex-col overflow-y-auto max-h-[700px]">
                                 {fetching ? (
-                                    <div className="py-20 flex flex-col items-center justify-center text-zinc-400 gap-3">
-                                        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                                        <span className="font-semibold text-sm">Loading problem details...</span>
+                                    <div className="py-20 flex flex-col items-center justify-center text-muted-foreground gap-3">
+                                        <div className="w-7 h-7 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                        <span className="font-semibold text-xs">Loading problem details...</span>
                                     </div>
                                 ) : (
                                     <div className="space-y-6">
                                         <div>
-                                            <h3 className="text-lg font-bold text-zinc-800 mb-2">
+                                            <h2 className="text-base font-bold text-foreground mb-2">
                                                 {data?.question || "No problem found"}
-                                            </h3>
-                                            <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-line">
+                                            </h2>
+                                            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
                                                 {data?.problemDiscription || "No description available."}
                                             </p>
                                         </div>
 
-                                        {/* Examples */}
                                         <div className="space-y-4">
-                                            <h4 className="text-sm font-bold text-zinc-700 flex items-center gap-2 select-none">
-                                                <Code2 className="w-4 h-4 text-zinc-500" />
+                                            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                                                <Code2 className="w-4 h-4 text-primary" aria-hidden="true" />
                                                 Examples
-                                            </h4>
+                                            </h3>
                                             {examples.length ? (
                                                 examples.map((example, index) => (
                                                     <ExampleCard key={index} index={index} example={example} />
                                                 ))
                                             ) : (
-                                                <div className="rounded-xl border border-zinc-200 border-dashed p-6 text-center text-zinc-400 text-xs font-medium select-none">
+                                                <div className="rounded-xl border border-dashed border-border p-6 text-center text-muted-foreground text-xs">
                                                     No example cases provided for this problem.
                                                 </div>
                                             )}
@@ -483,65 +439,60 @@ export default function CodeEditor() {
                         </Card>
                     </div>
 
-                    {/* Right Column: Code Editor & Console Output */}
-                    <div className={`flex flex-col ${editorSize === "big" ? "lg:col-span-12" : "lg:col-span-7"} ${activeTab === "editor" || activeTab === "console" ? "block" : "hidden lg:block"}`}>
-                        <Card
-                            className="rounded-2xl border flex flex-col overflow-hidden h-full"
-                            style={{
-                                background: theme.colors.white,
-                                borderColor: theme.colors.lightGray,
-                                boxShadow: "0 4px 12px rgba(17,17,19,0.03)",
-                            }}
-                        >
-                            {/* Editor Header Panel controls */}
-                            <div className="flex flex-wrap items-center justify-between gap-4 p-4 border-b border-zinc-100 bg-zinc-50/50 select-none">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-lg bg-zinc-950 flex items-center justify-center shadow">
-                                        <Code2 size={16} className="text-white" />
+                    {/* Monaco Editor & Console */}
+                    <div
+                        className={`flex flex-col ${editorSize === "big" ? "lg:col-span-12" : "lg:col-span-7"} ${
+                            activeTab === "editor" || activeTab === "console" ? "block" : "hidden lg:block"
+                        }`}
+                    >
+                        <Card className="surface-card rounded-3xl py-0 flex flex-col overflow-hidden h-full">
+                            {/* Toolbar */}
+                            <div className="flex flex-wrap items-center justify-between gap-3 p-4 border-b border-border bg-secondary/40">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary border border-primary/25 flex items-center justify-center">
+                                        <Code2 size={16} aria-hidden="true" />
                                     </div>
-                                    <div>
-                                        <span className="text-sm font-bold text-zinc-950">Code Workspace</span>
-                                        <span className="ml-2 text-xs font-semibold text-zinc-500 uppercase px-2 py-0.5 bg-zinc-200/60 rounded">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm font-bold text-foreground">Code Workspace</span>
+                                        <span className="text-[11px] font-mono font-bold text-muted-foreground uppercase px-2 py-0.5 bg-background border border-border rounded-md">
                                             {language || "N/A"}
                                         </span>
                                     </div>
                                 </div>
 
-                                {/* Editor controls */}
                                 <div className="flex items-center gap-2">
-                                    {/* Editor Size Selector (Big/Small) */}
-                                    <div className="hidden lg:flex items-center gap-1 bg-white border border-zinc-200 rounded-xl p-1 shadow-sm">
+                                    <div className="hidden lg:flex items-center gap-1 bg-background border border-border rounded-xl p-1">
                                         <button
+                                            type="button"
                                             onClick={() => setEditorSize("small")}
-                                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors ${
                                                 editorSize === "small"
-                                                    ? "bg-zinc-950 text-white shadow-sm"
-                                                    : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50"
+                                                    ? "bg-primary text-primary-foreground"
+                                                    : "text-muted-foreground hover:text-foreground"
                                             }`}
-                                            title="Split Layout"
                                         >
-                                            Small
+                                            Split
                                         </button>
                                         <button
+                                            type="button"
                                             onClick={() => setEditorSize("big")}
-                                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors ${
                                                 editorSize === "big"
-                                                    ? "bg-zinc-950 text-white shadow-sm"
-                                                    : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50"
+                                                    ? "bg-primary text-primary-foreground"
+                                                    : "text-muted-foreground hover:text-foreground"
                                             }`}
-                                            title="Focus Layout (Big)"
                                         >
-                                            Big
+                                            Expand
                                         </button>
                                     </div>
 
-                                    {/* Font Size Selector */}
-                                    <div className="flex items-center gap-1 bg-white border border-zinc-200 rounded-xl px-2 py-1 shadow-sm">
-                                        <span className="text-xs text-zinc-400 font-bold px-1">Aa</span>
+                                    <div className="flex items-center gap-1 bg-background border border-border rounded-xl px-2 py-1">
+                                        <span className="text-xs text-muted-foreground font-bold px-1">Aa</span>
                                         <select
+                                            aria-label="Editor font size"
                                             value={fontSize}
                                             onChange={(e) => setFontSize(Number(e.target.value))}
-                                            className="text-xs font-bold text-zinc-700 bg-transparent outline-none cursor-pointer"
+                                            className="text-xs font-bold text-foreground bg-transparent outline-none"
                                         >
                                             <option value={13}>13px</option>
                                             <option value={15}>15px</option>
@@ -550,46 +501,50 @@ export default function CodeEditor() {
                                         </select>
                                     </div>
 
-                                    {/* Word Wrap Toggle */}
                                     <button
+                                        type="button"
                                         onClick={() => setWordWrap(wordWrap === "on" ? "off" : "on")}
-                                        className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm ${
+                                        className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-colors ${
                                             wordWrap === "on"
-                                                ? "bg-zinc-950 text-white border-zinc-950"
-                                                : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50"
+                                                ? "bg-primary text-primary-foreground border-primary"
+                                                : "bg-background text-muted-foreground border-border hover:text-foreground"
                                         }`}
-                                        title="Toggle Word Wrap"
                                     >
                                         Wrap
                                     </button>
 
-                                    {/* Reset template */}
                                     <button
+                                        type="button"
                                         onClick={resetTemplate}
-                                        className="p-2 rounded-xl border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 transition-all shadow-sm active:scale-95 flex items-center justify-center"
+                                        aria-label="Reset code template"
                                         title="Reset Code Template"
+                                        className="p-2 rounded-xl border border-border bg-background text-muted-foreground hover:text-foreground transition-colors"
                                     >
-                                        <RotateCcw className="w-3.5 h-3.5" />
+                                        <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Monaco Editor Container */}
-                            <div className={`overflow-hidden bg-zinc-950 border-b border-zinc-100 ${activeTab === "console" ? "hidden lg:block" : "block"}`}>
+                            {/* Monaco Editor */}
+                            <div
+                                className={`overflow-hidden border-b border-border ${
+                                    activeTab === "console" ? "hidden lg:block" : "block"
+                                }`}
+                            >
                                 <Editor
                                     height={editorSize === "big" ? "560px" : "420px"}
                                     language={language}
                                     value={code}
-                                    theme="vs-dark"
+                                    theme={darkMode ? "vs-dark" : "light"}
                                     onChange={(value) => setCode(value || "")}
                                     options={{
                                         minimap: { enabled: false },
-                                        fontSize: fontSize,
+                                        fontSize,
                                         automaticLayout: true,
                                         scrollBeyondLastLine: false,
                                         padding: { top: 16, bottom: 16 },
                                         fontFamily: "JetBrains Mono, Fira Code, monospace",
-                                        wordWrap: wordWrap,
+                                        wordWrap,
                                         renderLineHighlight: "line",
                                         lineHeight: 22,
                                         cursorBlinking: "smooth",
@@ -599,123 +554,132 @@ export default function CodeEditor() {
                                 />
                             </div>
 
-                            {/* CLI Console Panel */}
-                            <div className={`flex flex-col bg-zinc-950 border-t border-zinc-900 ${activeTab === "editor" ? "hidden lg:flex" : "flex flex-1"}`}>
-                                <div className="h-10 bg-zinc-900/60 px-5 flex items-center justify-between border-b border-zinc-800/80 select-none">
+                            {/* Console */}
+                            <div
+                                className={`flex flex-col bg-[#0D1117] text-slate-100 ${
+                                    activeTab === "editor" ? "hidden lg:flex" : "flex flex-1"
+                                }`}
+                            >
+                                <div className="h-10 bg-white/[0.03] px-5 flex items-center justify-between border-b border-white/10">
                                     <div className="flex items-center gap-2">
-                                        <Terminal className="w-4 h-4 text-indigo-400" />
-                                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Console Output</span>
+                                        <Terminal className="w-4 h-4 text-indigo-400" aria-hidden="true" />
+                                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                            Console Output
+                                        </span>
                                     </div>
-                                    
+
                                     <div className="flex items-center gap-3">
                                         {output && (
                                             <button
+                                                type="button"
                                                 onClick={() => setOutput("")}
-                                                className="text-[10px] font-bold text-zinc-500 hover:text-zinc-300 transition uppercase"
+                                                className="text-[11px] font-bold text-slate-400 hover:text-white transition uppercase"
                                             >
                                                 Clear
                                             </button>
                                         )}
                                         {loading && (
-                                            <div className="w-3 h-3 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <div className="w-3.5 h-3.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="p-5 bg-zinc-950 min-h-[165px] font-mono text-xs flex-1 flex flex-col justify-start">
+                                <div className="p-5 min-h-[160px] font-mono text-xs flex-1 flex flex-col justify-start">
                                     {loading ? (
-                                        <div className="flex flex-col items-center justify-center py-8 text-zinc-500 gap-3 select-none">
-                                            <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                                            <div className="text-[11px] font-semibold text-indigo-400/90">Executing code on compiler sandbox...</div>
+                                        <div className="flex flex-col items-center justify-center py-8 text-slate-400 gap-2.5">
+                                            <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                                            <span className="text-xs text-indigo-300">
+                                                Executing code in sandbox...
+                                            </span>
                                         </div>
                                     ) : output ? (
-                                        <div className="space-y-1 select-text">
-                                            <div className="text-zinc-500 text-[10px] border-b border-zinc-900 pb-1 mb-2 select-none">
-                                                Status: <span className={output.includes("Error") || output.includes("Exception") ? "text-rose-500 font-black" : "text-emerald-500 font-black"}>{output.includes("Error") || output.includes("Exception") ? "FAILED" : "SUCCESS"}</span>
+                                        <div className="space-y-2">
+                                            <div className="text-slate-400 text-[11px] border-b border-white/10 pb-1.5">
+                                                Status:{" "}
+                                                <span
+                                                    className={
+                                                        output.includes("Error") || output.includes("Exception")
+                                                            ? "text-rose-400 font-bold"
+                                                            : "text-emerald-400 font-bold"
+                                                    }
+                                                >
+                                                    {output.includes("Error") || output.includes("Exception")
+                                                        ? "FAILED"
+                                                        : "SUCCESS"}
+                                                </span>
                                             </div>
-                                            <pre className={`whitespace-pre-wrap leading-relaxed p-3 rounded-xl border ${
-                                                output.includes("Error") || output.includes("Exception")
-                                                    ? "text-rose-400 bg-rose-950/20 border-rose-900/40"
-                                                    : "text-emerald-400 bg-emerald-950/10 border-emerald-900/30"
-                                            }`}>
+                                            <pre
+                                                className={`whitespace-pre-wrap leading-relaxed p-3 rounded-xl border ${
+                                                    output.includes("Error") || output.includes("Exception")
+                                                        ? "text-rose-300 bg-rose-950/30 border-rose-900/40"
+                                                        : "text-emerald-300 bg-emerald-950/20 border-emerald-900/40"
+                                                }`}
+                                            >
                                                 {output}
                                             </pre>
                                         </div>
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center py-10 text-zinc-600 text-center gap-1.5 select-none">
-                                            <Terminal className="w-5 h-5 text-zinc-700" />
-                                            <span className="text-[11px]">Terminal is idle. Run your code to display stdout.</span>
+                                        <div className="flex flex-col items-center justify-center py-10 text-slate-500 text-center gap-1.5">
+                                            <Terminal className="w-5 h-5 text-slate-600" aria-hidden="true" />
+                                            <span className="text-xs">
+                                                Terminal is idle. Run your code to inspect output.
+                                            </span>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            {/* Bottom Actions Bar */}
-                            <div className="p-4 bg-zinc-50 border-t border-zinc-100 flex items-center justify-end gap-3 select-none">
+                            {/* Footer Action Bar */}
+                            <div className="p-4 bg-secondary/40 border-t border-border flex items-center justify-end gap-3">
                                 <button
+                                    type="button"
                                     onClick={runCode}
                                     disabled={loading}
-                                    className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black text-white bg-indigo-600 hover:bg-indigo-700 transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md shadow-indigo-100"
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl px-5 min-h-[42px] text-xs font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-60 shadow-sm shadow-indigo-500/20"
                                 >
-                                    <Play className="w-4 h-4 fill-white text-white" />
+                                    <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
                                     Run Code
                                 </button>
 
                                 <button
+                                    type="button"
                                     onClick={handleSubmit}
                                     disabled={submitLoading || loading}
-                                    className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-2.5 text-xs font-black text-black transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 shadow-md hover:brightness-105"
-                                    style={{
-                                        background: theme.colors.lime,
-                                        boxShadow: "0 4px 10px rgba(204,255,0,0.15)",
-                                    }}
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl px-5 min-h-[42px] text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all active:scale-[0.98] disabled:opacity-60 shadow-sm shadow-emerald-500/20"
                                 >
                                     {submitLoading ? (
-                                        <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                                        <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                     ) : (
-                                        <Send className="w-4 h-4" />
+                                        <Send className="w-3.5 h-3.5" aria-hidden="true" />
                                     )}
                                     Submit Solution
                                 </button>
                             </div>
                         </Card>
                     </div>
-
                 </div>
 
-                {/* Footer Pro Tip Panel */}
-                <Card
-                    className="rounded-2xl border"
-                    style={{
-                        background: theme.colors.white,
-                        borderColor: theme.colors.lightGray,
-                        boxShadow: "0 4px 12px rgba(17,17,19,0.03)",
-                    }}
-                >
+                {/* Pro Tip */}
+                <Card className="surface-card rounded-2xl py-0">
                     <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="flex items-start gap-3">
-                            <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 bg-amber-50 border border-amber-200">
-                                <Sparkles className="w-4 h-4 text-amber-500" />
+                            <div className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 bg-amber-500/12 border border-amber-500/25">
+                                <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" aria-hidden="true" />
                             </div>
                             <div>
-                                <div className="text-sm font-bold text-zinc-950">
-                                    Pro Developer Tip
-                                </div>
-                                <div className="text-xs text-zinc-500 mt-0.5 leading-relaxed">
-                                    Write modular functions, verify variable scopes, and run test cases before submitting. Correct indentation helps debugging!
+                                <div className="text-sm font-bold text-foreground">Pro Developer Tip</div>
+                                <div className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                                    Verify variable scopes and test edge cases with "Run Code" before clicking "Submit Solution".
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2 self-start sm:self-center select-none">
-                            <Badge variant="primary">
-                                <SquareCode className="w-3.5 h-3.5 mr-1" />
-                                Advanced Sandbox
-                            </Badge>
-                        </div>
+                        <Badge variant="primary">
+                            <SquareCode className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
+                            Monaco Sandbox
+                        </Badge>
                     </CardContent>
                 </Card>
-
             </div>
         </DashboardLayout>
     );

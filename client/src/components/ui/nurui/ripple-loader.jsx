@@ -1,65 +1,63 @@
-"use client";
 import React from "react";
+
 const RippleLoader = () => {
   const colors = [
-    "#cce4fc", // very light
-    "#99c9fa",
-    "#66afe0",
-    "#3ca2fa", // base color
-    "#1f8de6",
-    "#1073d1",
-    "#095abf",
-    "#0347aa",
-    "#012f82", // darkest
+    "#c7d2fe",
+    "#a5b4fc",
+    "#818cf8",
+    "#6366f1",
+    "#4f46e5",
+    "#4338ca",
+    "#34d399",
+    "#10b981",
+    "#059669",
   ];
-  // Mapping the same animation delays as the original
-  const delays = [
-    0, // d-0
-    100, // d-1
-    200, // d-2
-    100, // d-1
-    200, // d-2
-    200, // d-2
-    300, // d-3
-    300, // d-3
-    400, // d-4
-  ];
+  const delays = [0, 100, 200, 100, 200, 200, 300, 300, 400];
+
   return (
     <>
-      <style jsx>{`
-        @keyframes ripple {
-          0% {
+      <style>{`
+        @keyframes rippleCell {
+          0%, 60%, 100% {
             background-color: transparent;
+            opacity: 0.25;
           }
           30% {
             background-color: var(--cell-color);
+            opacity: 1;
           }
-          60% {
-            background-color: transparent;
-          }
-          100% {
-            background-color: transparent;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ripple-loader-cell {
+            animation: none !important;
+            background-color: var(--cell-color) !important;
+            opacity: 0.75 !important;
           }
         }
       `}</style>
 
-      <div className="flex flex-wrap w-[162px] h-[162px]">
+      <div
+        role="status"
+        aria-label="Loading workspace"
+        className="flex flex-wrap w-[162px] h-[162px]"
+      >
         {colors.map((color, index) => (
           <div
             key={index}
             style={{
               "--cell-color": color,
-              animationName: "ripple",
+              animationName: "rippleCell",
               animationDuration: "1.5s",
               animationTimingFunction: "ease",
               animationIterationCount: "infinite",
               animationDelay: `${delays[index]}ms`,
             }}
-            className="flex-none w-[52px] h-[52px] m-[1px] rounded-md"
+            className="ripple-loader-cell flex-none w-[52px] h-[52px] m-[1px] rounded-md border border-border/30"
           />
         ))}
       </div>
     </>
   );
 };
+
 export default RippleLoader;

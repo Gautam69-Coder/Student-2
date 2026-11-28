@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     BookOpen,
@@ -8,687 +7,923 @@ import {
     ShieldCheck,
     Zap,
     ArrowRight,
-    Github,
-    Trophy,
     Users,
     MessageSquare,
-    ChevronRight,
-    Star,
+    ChevronDown,
     Menu,
-    X
+    X,
+    CheckCircle2,
+    Play,
+    Terminal,
+    FileText,
+    FlaskConical,
+    Layers,
+    Cpu,
+    Check,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/common/SEO';
 import { ThemeToggle } from '@/components/common/theme-toggle';
+import { AnimatedBeam } from '@/components/ui/animated-beam';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
-const FeatureCard = ({ icon: Icon, title, description, delay }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay }}
-        className="glass-card p-8 rounded-3xl group hover:border-indigo-500/50 transition-all duration-500"
-    >
-        <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-500">
-            <Icon className="w-7 h-7 text-indigo-500" />
-        </div>
-        <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">{title}</h3>
-        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-            {description}
-        </p>
-    </motion.div>
-);
+const CODE_DEMOS = {
+    javascript: {
+        label: 'JavaScript',
+        file: 'twoSum.js',
+        code: `function twoSum(nums, target) {
+  const seen = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const need = target - nums[i];
+    if (seen.has(need)) return [seen.get(need), i];
+    seen.set(nums[i], i);
+  }
+}`,
+        output: 'Passed 3/3 test cases · Runtime 4ms · O(n) Space',
+    },
+    python: {
+        label: 'Python',
+        file: 'two_sum.py',
+        code: `def two_sum(nums: list[int], target: int) -> list[int]:
+    seen = {}
+    for idx, val in enumerate(nums):
+        diff = target - val
+        if diff in seen:
+            return [seen[diff], idx]
+        seen[val] = idx`,
+        output: 'Passed 3/3 test cases · Runtime 11ms · O(n) Space',
+    },
+    cpp: {
+        label: 'C++',
+        file: 'two_sum.cpp',
+        code: `vector<int> twoSum(vector<int>& nums, int target) {
+    unordered_map<int, int> seen;
+    for (int i = 0; i < nums.size(); ++i) {
+        int need = target - nums[i];
+        if (seen.count(need)) return {seen[need], i};
+        seen[nums[i]] = i;
+    }
+    return {};
+}`,
+        output: 'Passed 3/3 test cases · Runtime 2ms · O(n) Space',
+    },
+    java: {
+        label: 'Java',
+        file: 'Solution.java',
+        code: `public int[] twoSum(int[] nums, int target) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < nums.length; i++) {
+        int need = target - nums[i];
+        if (map.containsKey(need)) return new int[]{map.get(need), i};
+        map.put(nums[i], i);
+    }
+    return new int[]{};
+}`,
+        output: 'Passed 3/3 test cases · Runtime 3ms · O(n) Space',
+    },
+};
 
-const StatCard = ({ label, value, icon: Icon }) => (
-    <div className="flex flex-col items-center p-6 bg-white/50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/5 backdrop-blur-sm">
-        <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-4">
-            <Icon className="w-6 h-6 text-indigo-500" />
+const FAQS = [
+    {
+        q: 'Is Student Hub completely free for students?',
+        a: 'Yes. Student Hub gives students open access to organized study notes, 50+ preloaded coding challenges in the browser IDE, and community discussions at no cost.',
+    },
+    {
+        q: 'What makes the Coding Practice & Monaco IDE different?',
+        a: 'Every track (JavaScript, Python, C++, Java, and DSA) runs inside an embedded Monaco editor with curated problem descriptions, sample inputs/outputs, instant code checking, and an AI Code Helper when you get stuck.',
+    },
+    {
+        q: 'How do Practicals and Verified Notes work?',
+        a: 'Study notes are organized cleanly by subject section with PDF/file previews and markdown formatting. Verified college email accounts also unlock dedicated lab practical sheets and ready-to-copy practical implementations.',
+    },
+    {
+        q: 'How does the AI Assistant help with coursework and debugging?',
+        a: 'The integrated AI Assistant can analyze your code, suggest time/space optimizations, explain tricky concepts step-by-step, and help refine your study notes.',
+    },
+];
+
+function WorkflowBeamCard() {
+    const containerRef = useRef(null);
+    const notesRef = useRef(null);
+    const labsRef = useRef(null);
+    const codeRef = useRef(null);
+    const hubRef = useRef(null);
+    const masteryRef = useRef(null);
+
+    return (
+        <div className="surface-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between h-full">
+            <div className="space-y-2 mb-6">
+                <Badge variant="outline" className="border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 font-semibold">
+                    <Sparkles className="w-3 h-3 mr-1" aria-hidden="true" />
+                    Unified Study Graph
+                </Badge>
+                <h3 className="text-xl sm:text-2xl font-bold text-foreground">
+                    Everything connects in one workspace
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
+                    No more bouncing between Drive folders, WhatsApp PDFs, and random compilers. Your notes, lab practicals, and coding tracks feed directly into one fast workflow.
+                </p>
+            </div>
+
+            <div
+                ref={containerRef}
+                className="relative flex items-center justify-between gap-3 sm:gap-6 rounded-2xl border border-border bg-secondary/40 dark:bg-background/70 p-5 sm:p-7 overflow-hidden min-h-[210px]"
+            >
+                {/* Left inputs */}
+                <div className="flex flex-col gap-3 z-10">
+                    <div
+                        ref={notesRef}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-card border border-border shadow-xs text-xs font-semibold text-foreground"
+                    >
+                        <FileText className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" aria-hidden="true" />
+                        <span>Study Notes</span>
+                    </div>
+                    <div
+                        ref={labsRef}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-card border border-border shadow-xs text-xs font-semibold text-foreground"
+                    >
+                        <FlaskConical className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
+                        <span>Lab Practicals</span>
+                    </div>
+                    <div
+                        ref={codeRef}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-card border border-border shadow-xs text-xs font-semibold text-foreground"
+                    >
+                        <Code2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" aria-hidden="true" />
+                        <span>Monaco Code</span>
+                    </div>
+                </div>
+
+                {/* Center AI Core */}
+                <div
+                    ref={hubRef}
+                    className="z-10 flex flex-col items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-indigo-500/25 border border-white/20 shrink-0"
+                >
+                    <Cpu className="w-7 h-7 mb-1" aria-hidden="true" />
+                    <span className="text-[11px] font-bold tracking-tight">AI Tutor</span>
+                </div>
+
+                {/* Right Outcome */}
+                <div
+                    ref={masteryRef}
+                    className="z-10 flex flex-col gap-1.5 px-3.5 py-3 rounded-xl bg-card border border-emerald-500/30 shadow-xs shrink-0"
+                >
+                    <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
+                        <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
+                        <span>Exam Ready</span>
+                    </div>
+                    <span className="text-[11px] text-muted-foreground font-mono tabular-nums">
+                        +32% faster prep
+                    </span>
+                </div>
+
+                <AnimatedBeam
+                    containerRef={containerRef}
+                    fromRef={notesRef}
+                    toRef={hubRef}
+                    curvature={-28}
+                    gradientStartColor="#4F46E5"
+                    gradientStopColor="#10B981"
+                    pathColor="currentColor"
+                    pathOpacity={0.14}
+                />
+                <AnimatedBeam
+                    containerRef={containerRef}
+                    fromRef={labsRef}
+                    toRef={hubRef}
+                    curvature={0}
+                    gradientStartColor="#10B981"
+                    gradientStopColor="#4F46E5"
+                    pathColor="currentColor"
+                    pathOpacity={0.14}
+                />
+                <AnimatedBeam
+                    containerRef={containerRef}
+                    fromRef={codeRef}
+                    toRef={hubRef}
+                    curvature={28}
+                    gradientStartColor="#4F46E5"
+                    gradientStopColor="#10B981"
+                    pathColor="currentColor"
+                    pathOpacity={0.14}
+                />
+                <AnimatedBeam
+                    containerRef={containerRef}
+                    fromRef={hubRef}
+                    toRef={masteryRef}
+                    curvature={0}
+                    gradientStartColor="#6366F1"
+                    gradientStopColor="#10B981"
+                    pathColor="currentColor"
+                    pathOpacity={0.18}
+                />
+            </div>
         </div>
-        <span className="text-3xl font-black text-slate-900 dark:text-white mb-1 tracking-tighter">{value}</span>
-        <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">{label}</span>
-    </div>
-);
+    );
+}
 
 export default function LandingPage() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [faqIndex, setFaqIndex] = useState(null);
+    const [activeWorkspaceTab, setActiveWorkspaceTab] = useState('ide');
+    const [activeLang, setActiveLang] = useState('javascript');
+    const [demoTested, setDemoTested] = useState(false);
+    const [faqIndex, setFaqIndex] = useState(0);
+    const [contactSent, setContactSent] = useState(false);
 
-    const faqs = [
-        {
-            q: "Is Student Hub completely free for students?",
-            a: "Yes, Student Hub is designed as an open-access platform for students to save notes, practice coding, and learn with an AI tutor at no cost."
-        },
-        {
-            q: "How does the AI Assistant help with my coursework?",
-            a: "The built-in AI assistant can answer conceptual questions, debug programming code, suggest optimizations, and explain complicated topics with clear step-by-step guides."
-        },
-        {
-            q: "Can I upload my own notes or study materials?",
-            a: "Currently, administrators review and upload resources to maintain verified and high-quality materials. If you have great resources, you can submit them to any admin."
-        },
-        {
-            q: "Does the platform support real-time chat with other students?",
-            a: "Absolutely! Once logged in, you can view online peers and start direct messaging, collaborating, and discussing assignments in real-time."
-        }
-    ];
+    const activeDemo = CODE_DEMOS[activeLang];
 
     const homeSchema = {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Student Hub",
-        "url": "https://student-2.pages.dev/",
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://student-2.pages.dev/blog?q={search_term_string}",
-            "query-input": "required name=search_term_string"
-        }
-    };
-
-    const breadcrumbSchema = {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://student-2.pages.dev/"
-        }]
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Student Hub',
+        url: 'https://student-2.pages.dev/',
     };
 
     return (
-        <div
-            className="min-h-screen relative overflow-hidden"
-            style={{
-                '--background': '201 100% 13%',
-                '--foreground': '0 0% 100%',
-                '--muted-foreground': '240 4% 66%',
-                '--primary': '0 0% 100%',
-                '--primary-foreground': '0 0% 4%',
-                '--secondary': '0 0% 10%',
-                '--accent': '0 0% 10%',
-                '--border': '0 0% 18%',
-                '--input': '0 0% 18%'
-            }}
-        >
+        <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">
             <SEO
                 title="Student Hub | Study Notes, Coding Practice & AI Assistant"
                 description="Save study notes, practice coding tracks, and collaborate with an AI tutor in one unified student workspace."
                 url="/"
-                schema={[homeSchema, breadcrumbSchema]}
+                schema={[homeSchema]}
             />
 
-            {/* Fonts + cinematic background */}
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-            <link
-                href="https://fonts.googleapis.com/css2?family=Instrumental+Serif:wght@400&family=Inter:wght@400;500&display=swap"
-                rel="stylesheet"
-            />
-
-            {/* Fullscreen looping video background */}
-            <div className="fixed inset-0 z-0 bg-[hsl(var(--background))]">
-                <video
-                    className="absolute inset-0 w-full h-full object-cover z-0"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    preload="auto"
-                    src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4"
-                />
-
-                {/* subtle readability fade; no blobs/overlays */}
+            {/* Subtle Background Engineering Grid + Radial Accent */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div className="absolute inset-0 bg-studio-grid opacity-70" />
                 <div
-                    className="absolute inset-0 bg-black/60"
+                    className="absolute inset-x-0 -top-40 h-[520px]"
+                    style={{
+                        background:
+                            'radial-gradient(ellipse 70% 60% at 50% 0%, rgba(79, 70, 229, 0.14), rgba(16, 185, 129, 0.06) 50%, transparent 100%)',
+                    }}
                 />
             </div>
 
-            {/* Glassmorphic Sticky/Floating Navigation */}
-            <header className="sticky top-4 left-0 right-0 z-50 w-[95%] sm:w-[90%] max-w-7xl mx-auto">
-                <nav className="rounded-full bg-slate-950/60 border border-white/10 backdrop-blur-xl px-6 sm:px-8 py-3.5 flex items-center justify-between shadow-2xl transition-all duration-300">
-                    <Link to="/" className="flex items-center gap-3">
+            {/* Sticky Top Navbar */}
+            <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
+                <nav
+                    aria-label="Primary navigation"
+                    className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4"
+                >
+                    <Link to="/" className="flex items-center gap-2.5 shrink-0">
                         <img
                             src="/circle_logo.png"
-                            alt="Student Hub Circle Logo"
-                            className="h-9 w-9 object-contain"
+                            alt="Student Hub Logo"
+                            className="h-8 w-8 object-contain"
                             loading="eager"
                         />
-                        <span
-                            className="text-2xl sm:text-3xl tracking-tight font-medium"
-                            style={{ fontFamily: "'Instrument Serif', serif", color: 'hsl(var(--foreground))' }}
-                        >
-                            Student Hub<sup className="text-xs">®</sup>
+                        <span className="text-lg font-extrabold tracking-tight text-foreground">
+                            Student Hub
                         </span>
                     </Link>
 
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center gap-8 text-slate-300">
-                        <Link to="/" className="text-sm font-medium transition-colors hover:text-white">
-                            Home
-                        </Link>
-                        <a href="#about" className="text-sm font-medium transition-colors hover:text-white">
-                            About
+                    <div className="hidden md:flex items-center gap-7 text-sm font-medium text-muted-foreground">
+                        <a href="#workspace-preview" className="hover:text-foreground transition-colors">
+                            Workspace
                         </a>
-                        <a href="#features" className="text-sm font-medium transition-colors hover:text-white">
+                        <a href="#bento-features" className="hover:text-foreground transition-colors">
                             Features
                         </a>
-                        <a href="#stats" className="text-sm font-medium transition-colors hover:text-white">
-                            Stats
+                        <a href="#tracks" className="hover:text-foreground transition-colors">
+                            Coding Tracks
                         </a>
-                        <a href="#faq" className="text-sm font-medium transition-colors hover:text-white">
+                        <a href="#faq" className="hover:text-foreground transition-colors">
                             FAQ
                         </a>
-                        <a href="#reach-us" className="text-sm font-medium transition-colors hover:text-white">
-                            Reach Us
+                        <a href="#reach-us" className="hover:text-foreground transition-colors">
+                            Contact
                         </a>
                     </div>
 
-                    {/* Desktop CTA & Theme */}
-                    <div className="hidden md:flex items-center gap-4">
-                        <ThemeToggle className="!bg-transparent hover:!bg-white/10 !border-0 text-white rounded-full p-2.5 cursor-pointer" />
-                        <Link
-                            to="/signup"
-                            className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 shadow-lg shadow-indigo-600/20"
-                        >
-                            Begin Journey
+                    <div className="hidden md:flex items-center gap-2.5">
+                        <ThemeToggle />
+                        <Link to="/login">
+                            <Button variant="ghost" size="sm">
+                                Sign In
+                            </Button>
+                        </Link>
+                        <Link to="/signup">
+                            <Button size="sm" className="gap-1.5 shadow-sm shadow-indigo-500/20">
+                                Get Started
+                                <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                            </Button>
                         </Link>
                     </div>
 
-                    {/* Mobile Menu & Theme Buttons */}
-                    <div className="flex md:hidden items-center gap-3">
-                        <ThemeToggle className="!bg-transparent hover:!bg-white/10 !border-0 text-white rounded-full p-2 cursor-pointer" />
+                    {/* Mobile Actions */}
+                    <div className="flex md:hidden items-center gap-2">
+                        <ThemeToggle />
                         <button
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="text-slate-300 hover:text-white focus:outline-none p-1 cursor-pointer"
-                            aria-label="Toggle Menu"
+                            type="button"
+                            onClick={() => setMobileMenuOpen((v) => !v)}
+                            aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                            aria-expanded={mobileMenuOpen}
+                            className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-xl border border-border bg-card text-foreground hover:bg-secondary transition-colors"
                         >
-                            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                            {mobileMenuOpen ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
                         </button>
                     </div>
                 </nav>
 
-                {/* Mobile Navigation Drawer */}
+                {/* Mobile Drawer */}
                 <AnimatePresence>
                     {mobileMenuOpen && (
                         <motion.div
-                            initial={{ opacity: 0, y: -15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -15 }}
-                            transition={{ duration: 0.2 }}
-                            className="absolute top-16 left-0 right-0 mx-auto w-full rounded-3xl bg-slate-950/95 border border-white/10 backdrop-blur-2xl p-6 shadow-2xl flex flex-col gap-4 md:hidden"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                            className="md:hidden border-t border-border bg-card/95 backdrop-blur-xl px-4 py-4 space-y-2 overflow-hidden"
                         >
-                            <Link
-                                to="/"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
-                            >
-                                Home
-                            </Link>
-                            <a
-                                href="#about"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
-                            >
-                                About
-                            </a>
-                            <a
-                                href="#features"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
-                            >
-                                Features
-                            </a>
-                            <a
-                                href="#stats"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
-                            >
-                                Stats
-                            </a>
-                            <a
-                                href="#faq"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
-                            >
-                                FAQ
-                            </a>
-                            <a
-                                href="#reach-us"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-lg font-medium text-slate-300 hover:text-white py-2 border-b border-white/5"
-                            >
-                                Reach Us
-                            </a>
-                            <Link
-                                to="/signup"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-full py-3 text-center text-base font-semibold mt-4 shadow-lg shadow-indigo-600/20"
-                            >
-                                Begin Journey
-                            </Link>
+                            {[
+                                { label: 'Workspace Preview', href: '#workspace-preview' },
+                                { label: 'Features', href: '#bento-features' },
+                                { label: 'Coding Tracks', href: '#tracks' },
+                                { label: 'FAQ', href: '#faq' },
+                                { label: 'Contact', href: '#reach-us' },
+                            ].map((item) => (
+                                <a
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="flex items-center min-h-[44px] px-3 rounded-xl text-sm font-semibold text-foreground hover:bg-secondary transition-colors"
+                                >
+                                    {item.label}
+                                </a>
+                            ))}
+                            <div className="grid grid-cols-2 gap-2.5 pt-2">
+                                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                                    <Button variant="outline" className="w-full">
+                                        Sign In
+                                    </Button>
+                                </Link>
+                                <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                                    <Button className="w-full">Get Started</Button>
+                                </Link>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </header>
 
-            {/* Hero Section */}
-            <section
-                className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-40 pb-28 md:py-[120px]"
-                id="hero"
-            >
-                
-                
-                <h1
-                    className="text-5xl sm:text-7xl md:text-8xl leading-[0.95] tracking-[-2.46px] max-w-7xl font-normal"
-                    style={{ fontFamily: "'Instrument Serif', serif", color: 'hsl(var(--foreground))' }}
-                >
-                    Conquer your studies with clarity.
-                </h1>
-
-                <p
-                    className="text-muted-foreground text-base sm:text-lg max-w-2xl mt-8 leading-relaxed"
-                    style={{ color: 'hsl(var(--muted-foreground))' }}
-                >
-                    Tired of scattered notes and no guidance when stuck? Student Hub brings all your study notes, coding challenges, AI assistance, and peers together into one powerful, distraction-free platform.
-                </p>
-
-                <Link
-                    to="/signup"
-                    className="liquid-glass rounded-full px-14 py-5 text-base text-foreground mt-12 hover:scale-[1.03] cursor-pointer shadow-[0_0_40px_rgba(99,102,241,0.4)]"
-                    style={{ color: 'hsl(var(--foreground))' }}
-                >
-                    Begin Journey
-                </Link>
-            </section>
-
-            {/* Content Sections */}
-            <main className="relative z-10 pb-10">
-                {/* About / Core Vision Section */}
-                <section id="about" className="px-6 py-20 max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <main className="relative z-10">
+                {/* Product-Led Hero */}
+                <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-16 sm:pt-20 sm:pb-24">
+                    <div className="max-w-3xl mx-auto text-center space-y-6">
                         <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                            className="space-y-6 text-left"
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.35 }}
+                            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border bg-card shadow-xs text-xs font-semibold text-foreground"
                         >
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
-                                <Sparkles className="w-3.5 h-3.5" /> Our Mission
-                            </div>
-                            <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
-                                Simplifying academic collaboration.
-                            </h2>
-                            <p className="text-slate-350 leading-relaxed text-lg">
-                                Student Hub was born out of a simple realization: students waste too much time searching for disorganized notes, searching for past question papers, and struggling alone with complex coding challenges.
-                            </p>
-                            <p className="text-slate-400 leading-relaxed text-base">
-                                We built a centralized, distraction-free environment that combines premium study resources, real-time peer collaboration, and an intelligent AI assistant trained to help you code and learn.
-                            </p>
-                            <div className="pt-4 flex flex-wrap gap-4">
-                                <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-4">
-                                    <Users className="w-8 h-8 text-indigo-400" />
-                                    <div>
-                                        <div className="font-bold text-white">Peer Network</div>
-                                        <div className="text-xs text-slate-400">Learn together in real-time</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-4">
-                                    <ShieldCheck className="w-8 h-8 text-indigo-400" />
-                                    <div>
-                                        <div className="font-bold text-white">Verified Content</div>
-                                        <div className="text-xs text-slate-400">Checked by administrators</div>
-                                    </div>
-                                </div>
-                            </div>
+                            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+                            <span>Notes · Lab Practicals · Monaco IDE · AI Assistant</span>
                         </motion.div>
 
-                        <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                            className="relative lg:ml-10 text-left"
+                        <motion.h1
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.05 }}
+                            className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] text-foreground"
                         >
-                            <div className="absolute inset-0 bg-indigo-500/10 rounded-3xl blur-3xl -z-10" />
-                            <div className="glass-card p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-xl" />
-                                <h3 className="text-2xl font-bold text-white mb-4">Why Student Hub?</h3>
-                                <ul className="space-y-4">
+                            Study notes, code practice, and{' '}
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-indigo-500 to-emerald-500 dark:from-indigo-400 dark:via-indigo-300 dark:to-emerald-400">
+                                AI clarity
+                            </span>{' '}
+                            in one workspace.
+                        </motion.h1>
+
+                        <motion.p
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.1 }}
+                            className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto"
+                        >
+                            Stop juggling Drive folders, scattered practical PDFs, and disconnected tabs. Organize coursework, solve 50+ coding challenges in a built-in Monaco editor, and get instant AI explanations.
+                        </motion.p>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.15 }}
+                            className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2"
+                        >
+                            <Link to="/signup" className="w-full sm:w-auto">
+                                <Button size="lg" className="w-full sm:w-auto px-7 shadow-md shadow-indigo-500/20">
+                                    Start Studying Free
+                                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                                </Button>
+                            </Link>
+                            <a href="#workspace-preview" className="w-full sm:w-auto">
+                                <Button variant="outline" size="lg" className="w-full sm:w-auto px-7">
+                                    <Play className="w-4 h-4 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+                                    Try Live Preview
+                                </Button>
+                            </a>
+                        </motion.div>
+                    </div>
+
+                    {/* Interactive Product-Led Hero Workbench */}
+                    <motion.div
+                        id="workspace-preview"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.45, delay: 0.2 }}
+                        className="mt-12 sm:mt-16 rounded-3xl border border-border bg-card shadow-xl shadow-slate-900/5 dark:shadow-black/40 overflow-hidden"
+                    >
+                        {/* Window Top Bar + Interactive Workspace Switcher */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-b border-border bg-secondary/40">
+                            <div className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full bg-rose-400/80" aria-hidden="true" />
+                                <span className="w-3 h-3 rounded-full bg-amber-400/80" aria-hidden="true" />
+                                <span className="w-3 h-3 rounded-full bg-emerald-400/80" aria-hidden="true" />
+                                <span className="ml-2 text-xs font-mono text-muted-foreground hidden sm:inline">
+                                    student-hub / workspace
+                                </span>
+                            </div>
+
+                            <div className="flex items-center gap-1 p-1 rounded-xl bg-background border border-border overflow-x-auto">
+                                {[
+                                    { id: 'ide', label: 'Monaco Coding IDE', icon: Code2 },
+                                    { id: 'notes', label: 'Notes & Practicals', icon: BookOpen },
+                                    { id: 'ai', label: 'AI Code & Study Helper', icon: Sparkles },
+                                ].map((tab) => {
+                                    const Icon = tab.icon;
+                                    const active = activeWorkspaceTab === tab.id;
+                                    return (
+                                        <button
+                                            key={tab.id}
+                                            type="button"
+                                            onClick={() => setActiveWorkspaceTab(tab.id)}
+                                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                                                active
+                                                    ? 'bg-primary text-primary-foreground shadow-xs'
+                                                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                                            }`}
+                                        >
+                                            <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                                            {tab.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Preview Content */}
+                        <div className="p-4 sm:p-6">
+                            {activeWorkspaceTab === 'ide' && (
+                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                                    {/* Left Problem Brief */}
+                                    <div className="lg:col-span-5 rounded-2xl border border-border bg-background p-5 flex flex-col justify-between space-y-4">
+                                        <div className="space-y-3">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <Badge variant="success">DSA · Medium</Badge>
+                                                <span className="text-xs font-mono text-muted-foreground tabular-nums">
+                                                    Problem #04 / 50
+                                                </span>
+                                            </div>
+                                            <h2 className="text-lg font-bold text-foreground">
+                                                1. Two Sum (Hash Map Optimization)
+                                            </h2>
+                                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                                Given an array of integers <code className="font-mono text-xs px-1.5 py-0.5 rounded bg-secondary text-foreground">nums</code> and an integer <code className="font-mono text-xs px-1.5 py-0.5 rounded bg-secondary text-foreground">target</code>, return indices of the two numbers such that they add up to target.
+                                            </p>
+                                            <div className="rounded-xl border border-border bg-secondary/40 p-3 font-mono text-xs space-y-1">
+                                                <div className="text-muted-foreground">
+                                                    Input: <span className="text-foreground">nums = [2, 7, 11, 15], target = 9</span>
+                                                </div>
+                                                <div className="text-muted-foreground">
+                                                    Output: <span className="text-emerald-600 dark:text-emerald-400 font-semibold">[0, 1]</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center justify-between pt-3 border-t border-border text-xs text-muted-foreground">
+                                            <span className="flex items-center gap-1.5">
+                                                <Sparkles className="w-3.5 h-3.5 text-indigo-500" aria-hidden="true" />
+                                                AI Hint Ready
+                                            </span>
+                                            <span className="font-mono">Time: O(n) · Space: O(n)</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Right Interactive Editor */}
+                                    <div className="lg:col-span-7 rounded-2xl border border-border bg-[#0D1117] text-slate-100 overflow-hidden flex flex-col">
+                                        <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 border-b border-white/10 bg-white/[0.03]">
+                                            <div className="flex items-center gap-1.5">
+                                                {Object.entries(CODE_DEMOS).map(([key, item]) => (
+                                                    <button
+                                                        key={key}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setActiveLang(key);
+                                                            setDemoTested(false);
+                                                        }}
+                                                        className={`px-2.5 py-1 rounded-md text-xs font-mono transition-colors ${
+                                                            activeLang === key
+                                                                ? 'bg-indigo-600 text-white font-semibold'
+                                                                : 'text-slate-400 hover:text-white hover:bg-white/10'
+                                                        }`}
+                                                    >
+                                                        {item.label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setDemoTested(true)}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-all active:scale-[0.98]"
+                                            >
+                                                <Play className="w-3 h-3" aria-hidden="true" />
+                                                Run Check
+                                            </button>
+                                        </div>
+                                        <pre className="p-4 sm:p-5 text-xs sm:text-sm font-mono leading-relaxed overflow-x-auto text-slate-200 flex-1">
+                                            <code>{activeDemo.code}</code>
+                                        </pre>
+                                        <div className="px-4 py-3 border-t border-white/10 bg-white/[0.02] flex items-center justify-between gap-3 text-xs font-mono">
+                                            <div className="flex items-center gap-2">
+                                                <Terminal className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
+                                                <span className={demoTested ? 'text-emerald-400 font-semibold' : 'text-slate-400'}>
+                                                    {demoTested
+                                                        ? `✓ ${activeDemo.output}`
+                                                        : `Ready: ${activeDemo.file} — click "Run Check" to test`}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeWorkspaceTab === 'notes' && (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     {[
-                                        { title: "One-Stop Portal", desc: "No more switching between Drive links and chat groups." },
-                                        { title: "AI-Powered Help", desc: "Get debugging assistance and concept summaries instantly." },
-                                        { title: "Coding Practice Tracks", desc: "View multi-language coding tracks with clean interactive layouts." },
-                                        { title: "Active Community", desc: "Discuss topics, share blogs, and send direct messages." }
-                                    ].map((item, idx) => (
-                                        <li key={idx} className="flex gap-3 items-start">
-                                            <div className="w-6 h-6 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-semibold text-xs mt-0.5 shrink-0">
-                                                {idx + 1}
+                                        {
+                                            section: 'Operating Systems',
+                                            title: 'CPU Scheduling & Deadlock Avoidance Notes',
+                                            meta: 'PDF + Summary · Verified',
+                                            tag: 'Notes',
+                                        },
+                                        {
+                                            section: 'DBMS Lab',
+                                            title: 'Practical 05: SQL Joins, Views & Triggers',
+                                            meta: 'Ready-to-run Code · Output',
+                                            tag: 'Practical',
+                                        },
+                                        {
+                                            section: 'Data Structures',
+                                            title: 'Binary Trees, AVL Rotations & Traversals',
+                                            meta: 'Markdown + C++ Code',
+                                            tag: 'Notes',
+                                        },
+                                    ].map((note, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="rounded-2xl border border-border bg-background p-5 flex flex-col justify-between gap-4"
+                                        >
+                                            <div className="space-y-2.5">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <Badge variant="outline" className="text-[11px]">
+                                                        {note.section}
+                                                    </Badge>
+                                                    <Badge variant={note.tag === 'Practical' ? 'success' : 'secondary'} className="text-[11px]">
+                                                        {note.tag}
+                                                    </Badge>
+                                                </div>
+                                                <h3 className="font-bold text-sm text-foreground leading-snug">
+                                                    {note.title}
+                                                </h3>
                                             </div>
-                                            <div>
-                                                <h4 className="font-bold text-white text-sm">{item.title}</h4>
-                                                <p className="text-slate-400 text-xs mt-0.5">{item.desc}</p>
+                                            <div className="flex items-center justify-between pt-3 border-t border-border text-xs text-muted-foreground">
+                                                <span>{note.meta}</span>
+                                                <span className="text-primary font-semibold">Preview →</span>
                                             </div>
-                                        </li>
+                                        </div>
                                     ))}
-                                </ul>
-                            </div>
-                        </motion.div>
+                                </div>
+                            )}
+
+                            {activeWorkspaceTab === 'ai' && (
+                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                                    <div className="lg:col-span-5 rounded-2xl border border-border bg-background p-5 space-y-3">
+                                        <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                            Active Context Attached
+                                        </div>
+                                        <div className="space-y-2">
+                                            {[
+                                                'Note: Dynamic Programming Patterns.pdf',
+                                                'Code: twoSum.js (Current Editor Buffer)',
+                                            ].map((ctx) => (
+                                                <div
+                                                    key={ctx}
+                                                    className="flex items-center justify-between p-3 rounded-xl border border-indigo-500/25 bg-indigo-500/5 text-xs font-semibold text-foreground"
+                                                >
+                                                    <span className="truncate">{ctx}</span>
+                                                    <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="lg:col-span-7 rounded-2xl border border-border bg-background p-5 space-y-3">
+                                        <div className="flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                                            <Sparkles className="w-4 h-4" aria-hidden="true" />
+                                            AI Study & Code Helper Response
+                                        </div>
+                                        <p className="text-sm text-foreground leading-relaxed">
+                                            Your nested loop solution works in <span className="font-mono font-semibold text-amber-600 dark:text-amber-400">O(n²)</span> time. Using a <span className="font-mono font-semibold text-emerald-600 dark:text-emerald-400">HashMap</span> reduces lookup to <span className="font-mono font-semibold">O(1)</span> average time, bringing total complexity down to <span className="font-mono font-semibold text-emerald-600 dark:text-emerald-400">O(n)</span>.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                </section>
+
+                {/* Metrics Strip */}
+                <section className="border-y border-border bg-card/60">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            { value: '50+', label: 'Coding Challenges', icon: Code2 },
+                            { value: '5 Tracks', label: 'JS · Python · C++ · Java · DSA', icon: Layers },
+                            { value: '24/7', label: 'AI Code & Note Helper', icon: Sparkles },
+                            { value: '100%', label: 'Browser Monaco IDE', icon: Zap },
+                        ].map((stat, idx) => {
+                            const Icon = stat.icon;
+                            return (
+                                <div key={idx} className="flex items-center gap-3.5">
+                                    <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                                        <Icon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+                                    </div>
+                                    <div>
+                                        <div className="text-xl sm:text-2xl font-extrabold tracking-tight tabular-nums text-foreground">
+                                            {stat.value}
+                                        </div>
+                                        <div className="text-xs font-medium text-muted-foreground">{stat.label}</div>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </section>
 
-                {/* Features Section */}
-                <section id="features" className="px-6 py-20 border-t border-white/5" aria-label="Notes and resources">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl md:text-5xl font-black text-slate-100 dark:text-white mb-6">
-                                Notes &amp; IT Resources
-                            </h2>
-                            <p className="text-slate-300 dark:text-slate-300/90 max-w-2xl mx-auto text-lg">
-                                Powerful tools designed to simplify your journey with student notes and resources.
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
-                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
-                                    <Code2 className="w-7 h-7 text-indigo-500" />
-                                </div>
-                                <h3 className="text-xl font-bold mb-3 text-slate-100">Coding Practice Tracks</h3>
-                                <p className="text-slate-300 leading-relaxed">
-                                    Access preloaded coding practice tracks with a built-in Monaco editor and multi-language support.
-                                </p>
-                            </div>
-
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
-                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
-                                    <Sparkles className="w-7 h-7 text-indigo-500" />
-                                </div>
-                                <h3 className="text-xl font-bold mb-3 text-slate-100">AI Assistant</h3>
-                                <p className="text-slate-300 leading-relaxed">
-                                    Stuck on a problem? Our integrated AI assistant helps you understand complex concepts instantly.
-                                </p>
-                            </div>
-
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
-                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
-                                    <Zap className="w-7 h-7 text-indigo-500" />
-                                </div>
-                                <h3 className="text-xl font-bold mb-3 text-slate-100">Live Code Compiler</h3>
-                                <p className="text-slate-300 leading-relaxed">
-                                    Write, run, and test code directly in your browser with our integrated Monaco-powered editor.
-                                </p>
-                            </div>
-
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
-                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
-                                    <ShieldCheck className="w-7 h-7 text-indigo-500" />
-                                </div>
-                                <h3 className="text-xl font-bold mb-3 text-slate-100">Secure Dashboard</h3>
-                                <p className="text-slate-300 leading-relaxed">
-                                    Personalized study experience with progress tracking and secure user authentication.
-                                </p>
-                            </div>
-
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
-                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
-                                    <MessageSquare className="w-7 h-7 text-indigo-500" />
-                                </div>
-                                <h3 className="text-xl font-bold mb-3 text-slate-100">Expert Support</h3>
-                                <p className="text-slate-300 leading-relaxed">
-                                    Direct communication channels with administrators for feedback and technical support.
-                                </p>
-                            </div>
-
-                            <div className="glass-card p-8 rounded-3xl group transition-all duration-500 text-left">
-                                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6">
-                                    <BookOpen className="w-7 h-7 text-indigo-500" />
-                                </div>
-                                <h3 className="text-xl font-bold mb-3 text-slate-100">Study Resources</h3>
-                                <p className="text-slate-300 leading-relaxed">
-                                    Learn with organized materials, notes, and guided resources—built for deep study and faster revision.
-                                </p>
-                            </div>
-                        </div>
+                {/* Bento Grid Feature Showcase */}
+                <section id="bento-features" className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
+                    <div className="max-w-2xl mb-12 space-y-3">
+                        <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+                            Built for Real Academic Workflows
+                        </Badge>
+                        <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground">
+                            Every tool a technical student uses daily, thoughtfully unified.
+                        </h2>
+                        <p className="text-muted-foreground text-base leading-relaxed">
+                            Designed to eliminate friction between reading lecture notes, completing lab practicals, practicing DSA, and getting peer help.
+                        </p>
                     </div>
-                </section>
 
-                {/* Stats / Social Proof Section */}
-                <section id="stats" className="px-6 py-20 border-t border-white/5 bg-slate-950/20">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-extrabold text-white">
-                                Empowering Academic Success
-                            </h2>
-                            <p className="text-slate-400 mt-3 max-w-xl mx-auto text-base sm:text-lg">
-                                Our stats speak for themselves. We provide students with the ultimate ecosystem for deep study.
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+                        {/* Large Bento 1: Animated Beam */}
+                        <div className="md:col-span-7">
+                            <WorkflowBeamCard />
+                        </div>
+
+                        {/* Bento 2: Language Tracks Progress */}
+                        <div id="tracks" className="md:col-span-5 surface-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+                            <div className="space-y-2 mb-6">
+                                <Badge variant="secondary">5 Structured Tracks</Badge>
+                                <h3 className="text-xl font-bold text-foreground">
+                                    Preloaded Coding Tracks
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Track progress per language from Easy fundamentals to Hard interview prep.
+                                </p>
+                            </div>
+                            <div className="space-y-3.5">
+                                {[
+                                    { name: 'JavaScript', done: 8, total: 10, pct: 80 },
+                                    { name: 'Python', done: 6, total: 10, pct: 60 },
+                                    { name: 'C++ & STL', done: 7, total: 10, pct: 70 },
+                                    { name: 'Java Core', done: 5, total: 10, pct: 50 },
+                                    { name: 'DSA Foundations', done: 9, total: 10, pct: 90 },
+                                ].map((t) => (
+                                    <div key={t.name} className="space-y-1.5">
+                                        <div className="flex items-center justify-between text-xs font-semibold">
+                                            <span className="text-foreground">{t.name}</span>
+                                            <span className="font-mono tabular-nums text-muted-foreground">
+                                                {t.done}/{t.total}
+                                            </span>
+                                        </div>
+                                        <Progress value={t.pct} className="h-2" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Bento 3 */}
+                        <div className="md:col-span-4 surface-card rounded-3xl p-6 space-y-4">
+                            <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                                <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+                            </div>
+                            <h3 className="text-lg font-bold text-foreground">Organized Notes Library</h3>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                Browse clean subject sections, preview PDFs and markdown code notes inline, and keep personal + shared materials tidy.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4 }}
-                            >
-                                <StatCard label="Study Materials" value="5,000+" icon={BookOpen} />
-                            </motion.div>
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: 0.1 }}
-                            >
-                                <StatCard label="AI Answers" value="15,000+" icon={Sparkles} />
-                            </motion.div>
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: 0.2 }}
-                            >
-                                <StatCard label="Active Students" value="1,200+" icon={Users} />
-                            </motion.div>
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: 0.3 }}
-                            >
-                                <StatCard label="Exams Covered" value="250+" icon={Trophy} />
-                            </motion.div>
+                        {/* Bento 4 */}
+                        <div className="md:col-span-4 surface-card rounded-3xl p-6 space-y-4">
+                            <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                                <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+                            </div>
+                            <h3 className="text-lg font-bold text-foreground">Verified Practicals Vault</h3>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                College-verified students unlock structured practical sheets with clean syntax highlighting and one-click copy.
+                            </p>
+                        </div>
+
+                        {/* Bento 5 */}
+                        <div className="md:col-span-4 surface-card rounded-3xl p-6 space-y-4">
+                            <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                                <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+                            </div>
+                            <h3 className="text-lg font-bold text-foreground">Real-Time Community</h3>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                Ask questions, share solutions, react to peer posts, and receive live Socket.io updates across your cohort.
+                            </p>
                         </div>
                     </div>
                 </section>
 
                 {/* FAQ Section */}
-                <section id="faq" className="px-6 py-20 border-t border-white/5">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl md:text-4xl font-extrabold text-white">
-                                Frequently Asked Questions
-                            </h2>
-                            <p className="text-slate-400 mt-3 text-base sm:text-lg">
-                                Got questions? We have answers. If you need further help, feel free to reach us.
-                            </p>
-                        </div>
+                <section id="faq" className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+                    <div className="text-center mb-10 space-y-2">
+                        <h2 className="text-3xl font-extrabold text-foreground">Frequently Asked Questions</h2>
+                        <p className="text-sm sm:text-base text-muted-foreground">
+                            Quick answers about Student Hub features, coding tracks, and access.
+                        </p>
+                    </div>
 
-                        <div className="space-y-4 text-left">
-                            {faqs.map((faq, idx) => (
-                                <div
-                                    key={idx}
-                                    className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:bg-white/[0.08]"
-                                >
+                    <div className="space-y-3">
+                        {FAQS.map((faq, idx) => {
+                            const isOpen = faqIndex === idx;
+                            return (
+                                <div key={idx} className="surface-card rounded-2xl overflow-hidden">
                                     <button
-                                        onClick={() => setFaqIndex(faqIndex === idx ? null : idx)}
-                                        className="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none cursor-pointer"
+                                        type="button"
+                                        aria-expanded={isOpen}
+                                        onClick={() => setFaqIndex(isOpen ? null : idx)}
+                                        className="w-full px-6 py-4 text-left flex items-center justify-between gap-4 min-h-[56px] hover:bg-secondary/40 transition-colors"
                                     >
-                                        <span className="font-semibold text-white md:text-lg">{faq.q}</span>
-                                        <ChevronRight
-                                            className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${
-                                                faqIndex === idx ? "rotate-90 text-indigo-400" : ""
+                                        <span className="font-semibold text-sm sm:text-base text-foreground">{faq.q}</span>
+                                        <ChevronDown
+                                            className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200 ${
+                                                isOpen ? 'rotate-180 text-primary' : ''
                                             }`}
+                                            aria-hidden="true"
                                         />
                                     </button>
                                     <AnimatePresence initial={false}>
-                                        {faqIndex === idx && (
+                                        {isOpen && (
                                             <motion.div
                                                 initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
                                                 exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.25 }}
+                                                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                                                className="overflow-hidden"
                                             >
-                                                <div className="px-6 pb-5 text-slate-300 border-t border-white/5 pt-3 leading-relaxed text-sm md:text-base">
+                                                <div className="px-6 pb-5 pt-2 text-sm text-muted-foreground border-t border-border leading-relaxed">
                                                     {faq.a}
                                                 </div>
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
                                 </div>
-                            ))}
-                        </div>
+                            );
+                        })}
                     </div>
                 </section>
 
-                {/* Reach Us / Contact Form Section */}
-                <section id="reach-us" className="px-6 py-20 border-t border-white/5 bg-slate-950/20">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                            <div className="text-left">
-                                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-                                    Get in Touch
-                                </h2>
-                                <p className="text-slate-300 leading-relaxed mb-6 text-base">
-                                    Have a question about Student Hub, feedback on notes, or need technical help? Send us a message and our administration team will get back to you shortly.
-                                </p>
-                                <div className="space-y-4 text-sm text-slate-400">
-                                    <div className="flex items-center gap-3">
-                                        <MessageSquare className="w-5 h-5 text-indigo-400" />
-                                        <span>support@studenthub.edu</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <Users className="w-5 h-5 text-indigo-400" />
-                                        <span>Active admin office: Room 304, IT Block</span>
-                                    </div>
-                                </div>
+                {/* Reach Us / Closing CTA */}
+                <section id="reach-us" className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+                    <div className="surface-card rounded-3xl p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                        <div className="space-y-5">
+                            <Badge variant="outline" className="border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                                Ready When You Are
+                            </Badge>
+                            <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground leading-tight">
+                                Bring calm structure to every semester.
+                            </h2>
+                            <p className="text-muted-foreground leading-relaxed">
+                                Create your Student Hub account in seconds or reach out to our team if you want to contribute study notes or report feedback.
+                            </p>
+                            <div className="flex flex-wrap gap-3 pt-1">
+                                <Link to="/signup">
+                                    <Button size="lg">
+                                        Create Free Account
+                                        <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                                    </Button>
+                                </Link>
+                                <Link to="/login">
+                                    <Button variant="outline" size="lg">
+                                        Sign In
+                                    </Button>
+                                </Link>
                             </div>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
+                                <MessageSquare className="w-4 h-4 text-indigo-500" aria-hidden="true" />
+                                <span>support@studenthub.edu</span>
+                            </div>
+                        </div>
 
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5 }}
-                                className="glass-card p-8 rounded-3xl border border-white/10 relative overflow-hidden text-left"
-                            >
-                                <form onSubmit={(e) => { e.preventDefault(); alert('Message sent successfully!'); e.target.reset(); }} className="space-y-4">
+                        <div className="rounded-2xl border border-border bg-background p-6">
+                            {contactSent ? (
+                                <div className="py-10 text-center space-y-3">
+                                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
+                                        <CheckCircle2 className="w-6 h-6" aria-hidden="true" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-foreground">Message received</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Thanks for reaching out! Our team will respond shortly.
+                                    </p>
+                                    <Button variant="outline" size="sm" onClick={() => setContactSent(false)}>
+                                        Send another message
+                                    </Button>
+                                </div>
+                            ) : (
+                                <form
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        setContactSent(true);
+                                        e.target.reset();
+                                    }}
+                                    className="space-y-4"
+                                >
+                                    <h3 className="text-lg font-bold text-foreground">Send us a quick note</h3>
                                     <div>
-                                        <label htmlFor="contact-name" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Name</label>
+                                        <label htmlFor="contact-name" className="block text-xs font-semibold text-foreground mb-1.5">
+                                            Name
+                                        </label>
                                         <input
                                             id="contact-name"
                                             type="text"
                                             required
-                                            placeholder="Your name"
-                                            className="w-full bg-white/5 border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none transition-all duration-300 text-sm"
+                                            placeholder="Your full name"
+                                            className="w-full min-h-[44px] rounded-xl border border-input bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="contact-email" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Email Address</label>
+                                        <label htmlFor="contact-email" className="block text-xs font-semibold text-foreground mb-1.5">
+                                            Email Address
+                                        </label>
                                         <input
                                             id="contact-email"
                                             type="email"
                                             required
-                                            placeholder="name@email.com"
-                                            className="w-full bg-white/5 border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none transition-all duration-300 text-sm"
+                                            placeholder="student@university.edu"
+                                            className="w-full min-h-[44px] rounded-xl border border-input bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="contact-message" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Message</label>
+                                        <label htmlFor="contact-message" className="block text-xs font-semibold text-foreground mb-1.5">
+                                            Message
+                                        </label>
                                         <textarea
                                             id="contact-message"
-                                            rows="4"
+                                            rows="3"
                                             required
                                             placeholder="How can we help you?"
-                                            className="w-full bg-white/5 border border-white/10 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none transition-all duration-300 text-sm resize-none"
+                                            className="w-full rounded-xl border border-input bg-card p-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
                                         />
                                     </div>
-                                    <button
-                                        type="submit"
-                                        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3 font-semibold text-sm transition-all duration-300 shadow-lg shadow-indigo-600/20 cursor-pointer text-center"
-                                    >
+                                    <Button type="submit" className="w-full">
                                         Send Message
-                                    </button>
+                                    </Button>
                                 </form>
-                            </motion.div>
+                            )}
                         </div>
                     </div>
                 </section>
             </main>
 
-            {/* Footer */}
-            <footer
-                className="relative z-10 border-t"
-                style={{ borderColor: 'hsl(var(--border))' }}
-            >
-                <div
-                    className="max-w-7xl mx-auto px-8 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8"
-                >
-                    <div className="flex items-center gap-3">
-                        <img
-                            src="/circle_logo.png"
-                            alt="Student Hub Circle Logo"
-                            className="h-10 w-10 object-contain"
-                            loading="lazy"
-                        />
-                        <div>
-                            <div
-                                className="text-lg"
-                                style={{ fontFamily: "'Instrument Serif', serif", color: 'hsl(var(--foreground))' }}
-                            >
-                                Student Hub
-                            </div>
-                            <div className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                                Student Notes Management System
-                            </div>
-                        </div>
+            <footer className="relative z-10 border-t border-border bg-card/60">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-2.5">
+                        <img src="/circle_logo.png" alt="Student Hub" className="h-7 w-7 object-contain" loading="lazy" />
+                        <span className="font-bold text-sm text-foreground">Student Hub</span>
+                        <span className="text-xs text-muted-foreground hidden sm:inline">· Study Notes, Labs & Coding IDE</span>
                     </div>
-
-                    <div
-                        className="flex flex-wrap gap-x-8 gap-y-3 text-sm"
-                        style={{ color: 'hsl(var(--muted-foreground))' }}
-                    >
-                        <a
-                            className="hover:text-[hsl(var(--foreground))] transition-colors"
-                            href="#"
-                        >
-                            Home
-                        </a>
-                        <a
-                            className="hover:text-[hsl(var(--foreground))] transition-colors"
-                            href="#about"
-                        >
-                            About
-                        </a>
-                        <a
-                            className="hover:text-[hsl(var(--foreground))] transition-colors"
-                            href="#features"
-                        >
-                            Features
-                        </a>
-                        <a
-                            className="hover:text-[hsl(var(--foreground))] transition-colors"
-                            href="#reach-us"
-                        >
-                            Reach Us
-                        </a>
+                    <div className="flex items-center gap-6 text-xs font-medium text-muted-foreground">
+                        <a href="#workspace-preview" className="hover:text-foreground transition-colors">Workspace</a>
+                        <a href="#bento-features" className="hover:text-foreground transition-colors">Features</a>
+                        <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
+                        <Link to="/login" className="hover:text-foreground transition-colors">Sign In</Link>
                     </div>
-
-                    <div className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                        © {new Date().getFullYear()} Student Hub. All rights reserved.
+                    <div className="text-xs text-muted-foreground">
+                        © {new Date().getFullYear()} Student Hub
                     </div>
                 </div>
             </footer>
         </div>
     );
 }
-

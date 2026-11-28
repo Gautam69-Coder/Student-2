@@ -1,63 +1,36 @@
 import React, { useState, useMemo, useCallback } from "react";
-import {
-    FileText,
-    Download,
-    Eye,
-    Trash2,
-    Check,
-    Code,
-    Layers,
-    Sparkles,
-    Filter,
-    Upload,
-} from "lucide-react";
+import { FileText, Layers, Sparkles, Filter, Upload } from "lucide-react";
 import { deleteNote, makeNotePublic } from "@/Api/api";
-import RippleLoader from "@/components/ui/nurui/ripple-loader";
 import AddSections from "./add-sections";
-import { theme } from "@/lib/theme";
 import { NotePreviewModal } from "./note-preview-modal";
 import { NoteCard } from "./note-card";
 import { downloadFile } from "@/Utils/download";
 
 export function NoteCardSkeleton() {
     return (
-        <div
-            className="rounded-2xl overflow-hidden border p-5 flex flex-col h-[280px] justify-between animate-pulse"
-            style={{
-                background: theme.colors.white,
-                borderColor: theme.colors.lightGray,
-                boxShadow: "0 10px 0 rgba(17,17,19,0.05)",
-            }}
-        >
+        <div className="rounded-2xl overflow-hidden border border-border bg-card p-5 flex flex-col h-[280px] justify-between animate-pulse">
             <div>
-                {/* Top row: Icon + Title */}
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-xl bg-slate-200/70 shrink-0" />
-                    <div className="h-4 bg-slate-200/70 rounded w-2/3" />
+                    <div className="h-10 w-10 rounded-xl bg-muted shrink-0" />
+                    <div className="h-4 bg-muted rounded w-2/3" />
                 </div>
-
-                {/* Middle row: Date / Badge */}
                 <div className="flex gap-2 mb-4">
-                    <div className="h-3 bg-slate-200/70 rounded w-1/4" />
-                    <div className="h-3 bg-slate-200/70 rounded w-1/6" />
+                    <div className="h-3 bg-muted rounded w-1/4" />
+                    <div className="h-3 bg-muted rounded w-1/6" />
                 </div>
-
-                {/* Main content: file or code box */}
                 <div className="mb-4">
-                    <div className="h-20 bg-slate-200/50 rounded-2xl w-full" />
+                    <div className="h-20 bg-muted/70 rounded-2xl w-full" />
                 </div>
             </div>
-
-            {/* Bottom row: Button placeholders */}
             <div className="flex gap-2 mt-auto">
-                <div className="h-9 bg-slate-200/70 rounded-xl flex-1" />
-                <div className="h-9 bg-slate-200/70 rounded-xl flex-1" />
+                <div className="h-10 bg-muted rounded-xl flex-1" />
+                <div className="h-10 bg-muted rounded-xl flex-1" />
             </div>
         </div>
     );
 }
 
-export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onUpdate }) {
+export function NotesSection({ notes = [], user, loading, onRefresh, onShare, onUpdate }) {
     const [selectedNote, setSelectedNote] = useState(null);
     const [copying, setCopying] = useState(null);
     const [activeSection, setActiveSection] = useState("All");
@@ -78,19 +51,12 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
         );
     }, [groupedNotes, activeSection]);
 
-    const totalFiles = useMemo(
-        () => notes.filter((note) => note.fileType !== "NAN").length,
-        [notes]
-    );
-
-    const totalCodeNotes = useMemo(
-        () => notes.filter((note) => note.fileType === "NAN").length,
-        [notes]
-    );
+    const totalFiles = useMemo(() => notes.filter((note) => note.fileType !== "NAN").length, [notes]);
+    const totalCodeNotes = useMemo(() => notes.filter((note) => note.fileType === "NAN").length, [notes]);
 
     const handleDelete = useCallback(
         async (id) => {
-            if (!window.confirm("Are you sure?")) return;
+            if (!window.confirm("Are you sure you want to delete this note?")) return;
             try {
                 await deleteNote(id);
                 onRefresh?.();
@@ -100,14 +66,6 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
         },
         [onRefresh]
     );
-
-    // const handleUpdate = useCallback(
-    //     async (id) => {
-    //         console.log("NOte id : ", id)
-    //     }
-    // )
-
-
 
     const handleCopy = useCallback((id, content) => {
         navigator.clipboard.writeText(content);
@@ -131,150 +89,101 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
         [onRefresh]
     );
 
-    const handleSelect = useCallback((note) => {
-        setSelectedNote(note);
-    }, []);
-
-    const handleShowCode = useCallback((note) => {
-        setSelectedNote(note);
-    }, []);
+    const handleSelect = useCallback((note) => setSelectedNote(note), []);
+    const handleShowCode = useCallback((note) => setSelectedNote(note), []);
 
     return (
         <div className="space-y-6">
             {/* Header Card */}
-            <div
-                className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border"
-                style={{
-                    background: theme.colors.white,
-                    borderColor: theme.colors.lightGray,
-                }}
-            >
+            <div className="surface-card rounded-3xl p-6 sm:p-8">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                     <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2 mb-3">
-                            <span
-                                className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-black uppercase tracking-wider"
-                                style={{
-                                    background: theme.colors.limeDim,
-                                    color: theme.colors.dark,
-                                    borderColor: theme.colors.limeDim,
-                                }}
-                            >
-                                <Sparkles className="w-3.5 h-3.5" />
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/25 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 px-3 py-1 text-xs font-bold uppercase tracking-wider">
+                                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
                                 Study Hub
                             </span>
-                            <span
-                                className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
-                                style={{
-                                    background: theme.colors.white,
-                                    color: theme.colors.darkGray,
-                                    borderColor: theme.colors.lightGray,
-                                }}
-                            >
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background text-muted-foreground px-3 py-1 text-xs font-semibold">
                                 Organized by Sections
                             </span>
                         </div>
 
-                        <h1
-                            className="text-2xl sm:text-4xl font-black tracking-tight"
-                            style={{ color: theme.colors.dark }}
-                        >
+                        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground">
                             Your Notes & Code Library
                         </h1>
-
-                        <p
-                            className="mt-2 text-sm sm:text-base max-w-2xl"
-                            style={{ color: theme.colors.darkGray }}
-                        >
-                            Access your uploaded documents, files, and code snippets in one centralized dashboard.
+                        <p className="mt-2 text-sm sm:text-base max-w-2xl text-muted-foreground">
+                            Access uploaded documents, PDFs, and code snippets with instant AI review in one centralized workspace.
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2.5 shrink-0">
                         <button
+                            type="button"
                             onClick={() => setShowAddSection(true)}
-                            className="px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors hover:bg-slate-50 flex items-center justify-center gap-2"
-                            style={{
-                                background: theme.colors.white,
-                                borderColor: theme.colors.lightGray,
-                                color: theme.colors.dark,
-                            }}
+                            className="px-4 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold border border-border bg-background text-foreground hover:bg-secondary transition-colors flex items-center justify-center gap-2"
                         >
-                            <Layers className="w-4 h-4" />
+                            <Layers className="w-4 h-4 text-primary" aria-hidden="true" />
                             Manage Sections
                         </button>
                         {onShare && (
                             <button
+                                type="button"
                                 onClick={onShare}
-                                className="px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 flex items-center justify-center gap-2"
+                                className="px-4 min-h-[42px] rounded-xl text-xs sm:text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition-all active:scale-[0.98] shadow-sm shadow-indigo-500/20 flex items-center justify-center gap-2"
                             >
-                                <Upload size={16} />
+                                <Upload size={16} aria-hidden="true" />
                                 <span>Upload Note</span>
                             </button>
                         )}
                     </div>
                 </div>
 
-                {/* Quick Stats Banner */}
-                <div
-                    className="mt-6 pt-6 border-t grid grid-cols-2 sm:grid-cols-4 gap-4"
-                    style={{ borderColor: theme.colors.lightGray }}
-                >
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Notes</p>
-                        {loading ? (
-                            <div className="h-6 bg-slate-200/70 rounded w-12 mt-1.5 animate-pulse" />
-                        ) : (
-                            <p className="text-xl font-black text-slate-900 mt-0.5">{notes.length}</p>
-                        )}
-                    </div>
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sections</p>
-                        {loading ? (
-                            <div className="h-6 bg-slate-200/70 rounded w-12 mt-1.5 animate-pulse" />
-                        ) : (
-                            <p className="text-xl font-black text-slate-900 mt-0.5">{sections.length - 1}</p>
-                        )}
-                    </div>
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Files / Documents</p>
-                        {loading ? (
-                            <div className="h-6 bg-slate-200/70 rounded w-12 mt-1.5 animate-pulse" />
-                        ) : (
-                            <p className="text-xl font-black text-slate-900 mt-0.5">{totalFiles}</p>
-                        )}
-                    </div>
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Code Snippets</p>
-                        {loading ? (
-                            <div className="h-6 bg-slate-200/70 rounded w-12 mt-1.5 animate-pulse" />
-                        ) : (
-                            <p className="text-xl font-black text-slate-900 mt-0.5">{totalCodeNotes}</p>
-                        )}
-                    </div>
+                {/* Stats Strip */}
+                <div className="mt-6 pt-6 border-t border-border grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {[
+                        { label: "Total Notes", val: notes.length },
+                        { label: "Sections", val: Math.max(0, sections.length - 1) },
+                        { label: "Files / Documents", val: totalFiles },
+                        { label: "Code Snippets", val: totalCodeNotes },
+                    ].map((s) => (
+                        <div key={s.label}>
+                            <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                                {s.label}
+                            </p>
+                            {loading ? (
+                                <div className="h-6 bg-muted rounded w-12 mt-1.5 animate-pulse" />
+                            ) : (
+                                <p className="text-xl font-extrabold text-foreground mt-0.5 tabular-nums">
+                                    {s.val}
+                                </p>
+                            )}
+                        </div>
+                    ))}
                 </div>
             </div>
 
             {/* Section Filter Tabs */}
             {loading ? (
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                    <Filter className="w-4 h-4 text-slate-400 shrink-0 ml-1 mr-1" />
-                    <div className="h-9 bg-slate-200/70 rounded-xl w-16 animate-pulse" />
-                    <div className="h-9 bg-slate-200/70 rounded-xl w-24 animate-pulse" />
-                    <div className="h-9 bg-slate-200/70 rounded-xl w-20 animate-pulse" />
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar">
+                    <Filter className="w-4 h-4 text-muted-foreground shrink-0 ml-1 mr-1" aria-hidden="true" />
+                    <div className="h-9 bg-muted rounded-xl w-16 animate-pulse" />
+                    <div className="h-9 bg-muted rounded-xl w-24 animate-pulse" />
+                    <div className="h-9 bg-muted rounded-xl w-20 animate-pulse" />
                 </div>
             ) : (
                 sections.length > 2 && (
-                    <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                        <Filter className="w-4 h-4 text-slate-400 shrink-0 ml-1 mr-1" />
+                    <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar">
+                        <Filter className="w-4 h-4 text-muted-foreground shrink-0 ml-1 mr-1" aria-hidden="true" />
                         {sections.map((sec) => (
                             <button
                                 key={sec}
+                                type="button"
                                 onClick={() => setActiveSection(sec)}
-                                className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border ${activeSection === sec
-                                    ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
-                                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-                                    }`}
+                                className={`px-4 min-h-[38px] rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+                                    activeSection === sec
+                                        ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                                        : "bg-card text-muted-foreground border-border hover:text-foreground hover:bg-secondary"
+                                }`}
                             >
                                 {sec}
                             </button>
@@ -283,13 +192,13 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
                 )
             )}
 
-            {/* Main Content Area */}
+            {/* Main Content */}
             {loading ? (
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                        <div className="h-5 bg-slate-200/70 rounded w-28 animate-pulse" />
-                        <div className="h-5 bg-slate-200/70 rounded-full w-8 animate-pulse" />
-                        <div className="h-[1px] flex-1 bg-slate-200/60" />
+                        <div className="h-5 bg-muted rounded w-28 animate-pulse" />
+                        <div className="h-5 bg-muted rounded-full w-8 animate-pulse" />
+                        <div className="h-px flex-1 bg-border" />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -299,23 +208,25 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
                     </div>
                 </div>
             ) : filteredGroups.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-3xl border border-slate-200">
-                    <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                    <p className="text-lg font-bold text-slate-700">No notes found</p>
-                    <p className="text-sm text-slate-400 mt-1">Upload files or code snippets to get started.</p>
+                <div className="text-center py-20 surface-card rounded-3xl">
+                    <FileText className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" aria-hidden="true" />
+                    <p className="text-lg font-bold text-foreground">No notes found</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Upload files or code snippets to build your study library.
+                    </p>
                 </div>
             ) : (
                 <div className="space-y-8">
                     {filteredGroups.map(([sectionName, sectionNotes]) => (
                         <div key={sectionName} className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <h2 className="text-lg font-bold text-slate-800 tracking-tight">
+                                <h2 className="text-lg font-bold text-foreground tracking-tight">
                                     {sectionName}
                                 </h2>
-                                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+                                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-secondary text-muted-foreground border border-border tabular-nums">
                                     {sectionNotes.length}
                                 </span>
-                                <div className="h-[1px] flex-1 bg-slate-200" />
+                                <div className="h-px flex-1 bg-border" />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -343,9 +254,7 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
             {showAddSection && (
                 <AddSections
                     isOpen={showAddSection}
-                    onClose={() => {
-                        setShowAddSection(false);
-                    }}
+                    onClose={() => setShowAddSection(false)}
                 />
             )}
 
@@ -355,7 +264,6 @@ export function NotesSection({ notes = [], user, loading, onRefresh, onShare,onU
                 onDownload={handleDownload}
                 onRefresh={onRefresh}
             />
-
         </div>
     );
 }

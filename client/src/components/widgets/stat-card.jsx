@@ -1,90 +1,53 @@
 import React from "react";
-import { theme } from "@/lib/theme";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DotLoader } from "@/Utils/loaders";
 
 export function TrendBadge({ text, variant = "success" }) {
-    const variants = {
-        success: {
-            bg: `rgba(204,255,0,0.18)`,
-            text: theme.colors.dark,
-            border: `rgba(204,255,0,0.35)`,
-        },
-        danger: {
-            bg: "rgba(239,68,68,0.18)",
-            text: theme.colors.dark,
-            border: "rgba(239,68,68,0.35)",
-        },
-    };
-
-    const style = variants[variant];
+    const cls =
+        variant === "danger"
+            ? "bg-destructive/10 text-destructive border-destructive/25"
+            : "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border-emerald-500/25";
 
     return (
         <span
-            style={{
-                // display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "4px 10px",
-                borderRadius: 999,
-                backgroundColor: style.bg,
-                color: style.text,
-                border: `1px solid ${style.border}`,
-                fontWeight: 700,
-                fontSize: 12,
-            }}
-            className="sm:block hidden sm:inline-flex"
+            className={`hidden sm:inline-flex items-center justify-center px-2.5 py-1 rounded-full border text-xs font-bold tabular-nums ${cls}`}
         >
             {text}
         </span>
     );
 }
 
-export function DashStatCard({ icon: Icon, title, value, trend, variant = "primary" }) {
+export function DashStatCard({ icon: Icon, title, value }) {
     return (
-      <Card
-        className="rounded-2xl h-full transition-all hover:shadow-md border border-slate-200 bg-white"
-      >
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div
-              className="p-2.5 rounded-xl shrink-0 bg-indigo-50 text-indigo-600 border border-indigo-100/80"
-            >
-              <Icon size={18} className="text-indigo-600" />
-            </div>
-          </div>
+        <Card className="rounded-2xl h-full surface-card py-5 gap-3">
+            <CardHeader className="px-5 pb-0">
+                <div className="flex items-start justify-between">
+                    <div className="p-2.5 rounded-xl shrink-0 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                        <Icon size={18} aria-hidden="true" />
+                    </div>
+                </div>
+                <CardTitle className="mt-3 text-xs sm:text-sm font-semibold text-muted-foreground">
+                    {title}
+                </CardTitle>
+            </CardHeader>
 
-          <CardTitle
-            className="mt-3 text-xs sm:text-sm font-semibold leading-tight text-slate-500"
-          >
-            {title}
-          </CardTitle>
-        </CardHeader>
-
-        <CardContent className="pt-0">
-          <div
-            className="text-xl sm:text-2xl lg:text-3xl font-extrabold break-words text-slate-900"
-          > 
-            {value === null || value === '' || value === 0 ? <DotLoader size={"20"} color={"#4f39f6"} /> : value }
-          </div>
-        </CardContent>
-      </Card>
+            <CardContent className="px-5 pt-0">
+                <div className="text-2xl lg:text-3xl font-extrabold tabular-nums text-foreground">
+                    {value === null || value === "" || value === 0 ? (
+                        <DotLoader size="20" color="#4F46E5" />
+                    ) : (
+                        value
+                    )}
+                </div>
+            </CardContent>
+        </Card>
     );
 }
 
-export function Pill({ children, style = {} }) {
+export function Pill({ children, className = "" }) {
     return (
         <span
-            style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "4px 10px",
-                borderRadius: 999,
-                fontWeight: 800,
-                border: `1px solid ${theme.colors.lightGray}`,
-                ...style,
-            }}
+            className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full font-bold text-xs border border-border bg-secondary text-foreground ${className}`}
         >
             {children}
         </span>

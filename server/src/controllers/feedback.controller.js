@@ -17,6 +17,11 @@ export const submitFeedback = asyncHandler(async (req, res) => {
     res.status(201).json(new ApiResponse(201, feedback, "Feedback submitted successfully"));
 });
 
+export const getMyFeedback = asyncHandler(async (req, res) => {
+    const feedbacks = await Feedback.find({ userId: req.user.id }).sort({ createdAt: -1 });
+    res.status(200).json(new ApiResponse(200, feedbacks, "Success"));
+});
+
 export const getFeedback = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!['admin', 'superadmin'].includes(user.role)) {

@@ -8,13 +8,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Hub | Study Notes, Coding Practice & AI Assistant</title>
 
+  <!-- Prevent theme flash on load -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('studenthub_theme');
+        var root = document.documentElement;
+        if (saved === 'dark') {
+          root.classList.add('dark');
+          root.style.colorScheme = 'dark';
+        } else {
+          root.classList.remove('dark');
+          root.style.colorScheme = 'light';
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- SEO Meta Tags -->
   <meta name="description"
     content="Save study notes, practice coding tracks, and collaborate with an AI tutor in one unified student workspace." />
   <meta name="keywords"
     content="Student Hub, study notes, notes manager, coding practice, AI academic assistant, student community, peer chat" />
   <meta name="author" content="Student Hub" />
-  <meta name="theme-color" content="#2563eb" />
+  <meta name="theme-color" content="#4f46e5" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
@@ -34,11 +51,11 @@
   <meta name="twitter:image" content="/circle_logo.png" />
   <meta name="twitter:image:alt" content="Student Hub logo" />
 
-  <!-- Premium Fonts -->
+  <!-- Fonts: Plus Jakarta Sans (Display), Inter (UI), JetBrains Mono (Code/Metrics) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
     rel="stylesheet">
 </head>
 

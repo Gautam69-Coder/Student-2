@@ -40,7 +40,7 @@ export function NotificationPanel({ isOpen, onClose }) {
       time: "10:15 AM",
       isRead: true,
       type: "system",
-      link: "/dashboard/chatbot",
+      link: "/dashboard/coding-practice",
     },
   ];
 

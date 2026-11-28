@@ -3,7 +3,6 @@ import { Heart, MessageSquare, Users, Send, Loader2, Info, Share2, Search, Check
 import { fetchCommunityPosts, createCommunityPost, toggleCommunityLike, getMe } from "@/Api/api";
 import { SEO } from "@/components/common/SEO";
 import { DashboardLayout } from "@/components/layout/layout";
-import { theme } from "@/lib/theme";
 import { formatTimeAgo } from "@/Utils/date";
 import { copyToClipboard } from "@/Utils/clipboard";
 
@@ -81,7 +80,7 @@ export function Community() {
                 )
             );
         } catch {
-            // Non-blocking – ignore like failures silently
+            // Non-blocking
         }
     };
 
@@ -95,44 +94,45 @@ export function Community() {
     };
 
     const getAvatarColors = (username) => {
-        if (!username) return { bg: "from-slate-400 to-slate-500", text: "text-white" };
+        if (!username) return "from-slate-500 to-slate-600";
         const hash = username.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const gradients = [
-            "from-rose-500 to-pink-500",
-            "from-indigo-500 to-purple-500",
-            "from-blue-500 to-cyan-500",
+            "from-indigo-500 to-violet-500",
             "from-emerald-500 to-teal-500",
-            "from-amber-500 to-orange-500",
-            "from-violet-500 to-fuchsia-500",
             "from-sky-500 to-indigo-600",
+            "from-amber-500 to-orange-500",
+            "from-rose-500 to-pink-500",
         ];
-        return { bg: gradients[hash % gradients.length], text: "text-white" };
+        return gradients[hash % gradients.length];
     };
 
     const filteredAndEnrichedPosts = useMemo(() => {
         let list = posts;
 
-        // Active Tab Filter
         if (activeTab === "mine" && currentUsername) {
-            list = list.filter(p => p.username?.toLowerCase() === currentUsername.toLowerCase());
+            list = list.filter((p) => p.username?.toLowerCase() === currentUsername.toLowerCase());
         } else if (activeTab === "liked" && currentUserId) {
-            list = list.filter(p => (p.likedBy || []).some(id => id === currentUserId || id?._id === currentUserId));
+            list = list.filter((p) =>
+                (p.likedBy || []).some((id) => id === currentUserId || id?._id === currentUserId)
+            );
         }
 
-        // Search Filter
         if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase();
-            list = list.filter(p => 
-                p.title?.toLowerCase().includes(query) ||
-                p.content?.toLowerCase().includes(query) ||
-                p.username?.toLowerCase().includes(query)
+            list = list.filter(
+                (p) =>
+                    p.title?.toLowerCase().includes(query) ||
+                    p.content?.toLowerCase().includes(query) ||
+                    p.username?.toLowerCase().includes(query)
             );
         }
 
         return list.map((p) => ({
             ...p,
             likesCount: typeof p.likesCount === "number" ? p.likesCount : (p.likedBy || []).length,
-            isLiked: currentUserId ? (p.likedBy || []).some((id) => id === currentUserId || id?._id === currentUserId) : false,
+            isLiked: currentUserId
+                ? (p.likedBy || []).some((id) => id === currentUserId || id?._id === currentUserId)
+                : false,
         }));
     }, [posts, activeTab, searchQuery, currentUserId, currentUsername]);
 
@@ -140,57 +140,53 @@ export function Community() {
         <DashboardLayout>
             <SEO
                 title="Student Community — Ask & Share | Student Hub"
-                description="Join the Mumbai IT student community. Ask questions about notes, share MERN stack tips, and connect with other students in India."
+                description="Join the student community. Ask questions about notes, share tips, and connect with peers."
                 url="/dashboard/community"
             />
-            <div className="space-y-6 max-w-7xl mx-auto">
-                {/* Modern Banner/Header */}
-                <div
-                    className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border border-slate-200 bg-white"
-                >
-                    {/* Decorative subtle background shape */}
-                    <div className="absolute top-0 right-0 -mt-8 -mr-8 w-60 h-60 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-full blur-3xl opacity-60 pointer-events-none" />
-
-                    <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="flex h-2 w-2 rounded-full bg-indigo-600" />
-                                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Student Space</span>
-                            </div>
-                            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                                Share, Ask & Help <Sparkles size={20} className="text-indigo-500 animate-pulse" />
-                            </h1>
-                            <p className="text-slate-500 text-sm mt-2 max-w-xl">
-                                Welcome to the hub! Post quick questions about coursework, share helpful notes, and interact with peers. Let's grow together.
-                            </p>
-                        </div>
+            <div className="space-y-6">
+                {/* Header */}
+                <div className="surface-card rounded-3xl p-6 sm:p-8">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="flex h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                            Student Space
+                        </span>
                     </div>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
+                        Share, Ask & Help
+                        <Sparkles size={20} className="text-primary" aria-hidden="true" />
+                    </h1>
+                    <p className="text-muted-foreground text-sm mt-2 max-w-2xl leading-relaxed">
+                        Post questions about coursework, share helpful notes, and collaborate with peers across your cohort.
+                    </p>
                 </div>
 
-                {/* Main Two-Column Layout */}
+                {/* Two-Column Feed */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    {/* Left Column: Feed & Creation */}
                     <div className="lg:col-span-8 space-y-6">
-                        {/* Composer Form */}
-                        <form
-                            onSubmit={handleCreate}
-                            className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-4 hover:shadow-sm transition-all duration-300"
-                        >
+                        {/* Composer */}
+                        <form onSubmit={handleCreate} className="surface-card rounded-3xl p-5 sm:p-6 space-y-4">
                             <div className="flex items-center gap-3">
                                 {currentUsername ? (
-                                    <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${getAvatarColors(currentUsername).bg} flex items-center justify-center font-bold text-sm text-white shadow-sm shrink-0`}>
+                                    <div
+                                        className={`w-10 h-10 rounded-full bg-gradient-to-br ${getAvatarColors(
+                                            currentUsername
+                                        )} flex items-center justify-center font-bold text-sm text-white shrink-0`}
+                                    >
                                         {currentUsername.charAt(0).toUpperCase()}
                                     </div>
                                 ) : (
-                                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 shrink-0 border border-slate-200">
-                                        <Users size={18} />
+                                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-muted-foreground shrink-0 border border-border">
+                                        <Users size={18} aria-hidden="true" />
                                     </div>
                                 )}
                                 <div>
-                                    <h3 className="font-bold text-sm text-slate-800">
+                                    <h2 className="font-bold text-sm text-foreground">
                                         {currentUsername ? `@${currentUsername}` : "Start a discussion"}
-                                    </h3>
-                                    <p className="text-xs text-slate-400">Share doubts, notes updates, or tips</p>
+                                    </h2>
+                                    <p className="text-xs text-muted-foreground">
+                                        Share doubts, notes updates, or tips
+                                    </p>
                                 </div>
                             </div>
 
@@ -199,43 +195,45 @@ export function Community() {
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     maxLength={120}
-                                    placeholder="Topic/Title (optional)"
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm font-semibold placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all text-slate-800"
+                                    aria-label="Discussion topic"
+                                    placeholder="Topic / Title (optional)"
+                                    className="w-full min-h-[44px] px-4 rounded-xl border border-input bg-background text-sm font-semibold text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
                                 />
                                 <textarea
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
                                     maxLength={2000}
                                     rows={3}
-                                    placeholder="Write details about your doubt, MERN tips, or college updates..."
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-sm placeholder-slate-400 resize-none focus:outline-none focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all text-slate-800 leading-relaxed"
+                                    aria-label="Discussion content"
+                                    placeholder="Write details about your doubt, coding tips, or exam updates..."
+                                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring transition-colors leading-relaxed"
                                 />
                             </div>
 
                             {error && (
-                                <p className="text-xs text-red-500 font-medium bg-red-50 border border-red-100 p-2.5 rounded-xl flex items-center gap-2">
-                                    <Info size={14} />
+                                <p className="text-xs text-destructive font-semibold bg-destructive/10 border border-destructive/25 p-3 rounded-xl flex items-center gap-2">
+                                    <Info size={14} aria-hidden="true" />
                                     {error}
                                 </p>
                             )}
 
-                            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                                <span className="text-[11px] font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                                    {content.length}/2000 characters
+                            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-border">
+                                <span className="text-[11px] font-bold font-mono text-muted-foreground bg-secondary px-3 py-1 rounded-full border border-border tabular-nums">
+                                    {content.length}/2000 chars
                                 </span>
                                 <button
                                     type="submit"
                                     disabled={creating}
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-md shadow-indigo-100 hover:shadow-indigo-200 disabled:opacity-50"
+                                    className="inline-flex items-center gap-2 px-5 min-h-[42px] rounded-xl text-xs font-bold text-primary-foreground bg-primary hover:bg-primary/90 active:scale-[0.98] transition-all shadow-sm shadow-indigo-500/20 disabled:opacity-50"
                                 >
                                     {creating ? (
                                         <>
-                                            <Loader2 size={15} className="animate-spin" />
+                                            <Loader2 size={14} className="animate-spin" aria-hidden="true" />
                                             Posting...
                                         </>
                                     ) : (
                                         <>
-                                            <Send size={14} />
+                                            <Send size={14} aria-hidden="true" />
                                             Share with community
                                         </>
                                     )}
@@ -243,54 +241,48 @@ export function Community() {
                             </div>
                         </form>
 
-                        {/* Interactive Filter Control Bar */}
-                        <div className="bg-white p-2.5 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200/40">
-                                <button
-                                    onClick={() => setActiveTab("all")}
-                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                                        activeTab === "all"
-                                            ? "bg-white text-indigo-600 shadow-sm"
-                                            : "text-slate-500 hover:text-slate-800"
-                                    }`}
-                                >
-                                    All Feed
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab("mine")}
-                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                                        activeTab === "mine"
-                                            ? "bg-white text-indigo-600 shadow-sm"
-                                            : "text-slate-500 hover:text-slate-800"
-                                    }`}
-                                >
-                                    My Posts
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab("liked")}
-                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                                        activeTab === "liked"
-                                            ? "bg-white text-indigo-600 shadow-sm"
-                                            : "text-slate-500 hover:text-slate-800"
-                                    }`}
-                                >
-                                    Liked
-                                </button>
+                        {/* Filter Bar */}
+                        <div className="surface-card p-2.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="flex items-center gap-1 bg-secondary p-1 rounded-xl border border-border">
+                                {[
+                                    { id: "all", label: "All Feed" },
+                                    { id: "mine", label: "My Posts" },
+                                    { id: "liked", label: "Liked" },
+                                ].map((t) => (
+                                    <button
+                                        key={t.id}
+                                        type="button"
+                                        onClick={() => setActiveTab(t.id)}
+                                        className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                                            activeTab === t.id
+                                                ? "bg-card text-primary shadow-xs"
+                                                : "text-muted-foreground hover:text-foreground"
+                                        }`}
+                                    >
+                                        {t.label}
+                                    </button>
+                                ))}
                             </div>
 
                             <div className="relative flex-1 sm:max-w-xs">
-                                <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <Search
+                                    size={14}
+                                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                                    aria-hidden="true"
+                                />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
+                                    aria-label="Search posts"
                                     placeholder="Search posts or authors..."
-                                    className="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-indigo-500 focus:bg-white transition-all text-slate-700 font-medium"
+                                    className="w-full min-h-[38px] pl-9 pr-14 rounded-xl bg-background border border-input text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                 />
                                 {searchQuery && (
                                     <button
+                                        type="button"
                                         onClick={() => setSearchQuery("")}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-slate-200 hover:bg-slate-300 text-slate-600 px-1.5 py-0.5 rounded font-bold transition-colors"
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] bg-secondary hover:bg-muted text-foreground px-2 py-0.5 rounded-md font-bold"
                                     >
                                         Clear
                                     </button>
@@ -298,97 +290,95 @@ export function Community() {
                             </div>
                         </div>
 
-                        {/* Feed List */}
+                        {/* Posts */}
                         <div className="space-y-4">
                             {loading ? (
-                                <div className="rounded-2xl p-8 bg-white border border-slate-200 flex items-center justify-center">
-                                    <div className="flex items-center gap-3 text-slate-500">
-                                        <Loader2 size={20} className="animate-spin text-indigo-600" />
-                                        <span className="text-sm font-semibold">Loading community posts...</span>
-                                    </div>
+                                <div className="surface-card rounded-2xl p-10 flex items-center justify-center gap-3 text-muted-foreground">
+                                    <Loader2 size={18} className="animate-spin text-primary" aria-hidden="true" />
+                                    <span className="text-sm font-semibold">Loading community posts...</span>
                                 </div>
                             ) : filteredAndEnrichedPosts.length === 0 ? (
-                                <div className="rounded-2xl p-10 bg-white border border-slate-200 text-center space-y-2">
-                                    <div className="w-12 h-12 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center mx-auto text-slate-400">
-                                        <MessageSquare size={20} />
+                                <div className="surface-card rounded-2xl p-12 text-center space-y-2">
+                                    <div className="w-12 h-12 rounded-2xl bg-secondary border border-border flex items-center justify-center mx-auto text-muted-foreground">
+                                        <MessageSquare size={20} aria-hidden="true" />
                                     </div>
-                                    <p className="text-sm font-bold text-slate-800">No posts found</p>
-                                    <p className="text-xs text-slate-400 max-w-xs mx-auto">
-                                        {searchQuery ? "No matches for your search. Try different keywords!" : "Be the first to start a discussion!"}
+                                    <p className="text-sm font-bold text-foreground">No posts found</p>
+                                    <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+                                        {searchQuery
+                                            ? "No matches for your search. Try different keywords!"
+                                            : "Be the first to start a discussion!"}
                                     </p>
                                 </div>
                             ) : (
                                 filteredAndEnrichedPosts.map((post) => (
-                                    <article
-                                        key={post._id}
-                                        className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-sm transition-all duration-300"
-                                    >
-                                        {/* Author Header */}
+                                    <article key={post._id} className="surface-card rounded-2xl p-5 space-y-4">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${getAvatarColors(post.username).bg} flex items-center justify-center font-bold text-xs text-white shadow-xs shrink-0`}>
+                                                <div
+                                                    className={`w-9 h-9 rounded-full bg-gradient-to-br ${getAvatarColors(
+                                                        post.username
+                                                    )} flex items-center justify-center font-bold text-xs text-white shrink-0`}
+                                                >
                                                     {post.username?.charAt(0)?.toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-extrabold text-slate-800">
+                                                    <p className="text-sm font-bold text-foreground">
                                                         @{post.username?.toLowerCase()}
                                                     </p>
-                                                    <p className="text-[10px] text-slate-400 mt-0.5 font-semibold">
+                                                    <p className="text-[11px] text-muted-foreground tabular-nums">
                                                         {formatTimeAgo(post.createdAt)}
                                                     </p>
                                                 </div>
                                             </div>
                                             {post.username?.toLowerCase() === currentUsername?.toLowerCase() && (
-                                                <span className="text-[9px] font-extrabold bg-indigo-50 border border-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full uppercase">
+                                                <span className="text-[10px] font-bold bg-indigo-500/12 border border-indigo-500/25 text-indigo-700 dark:text-indigo-300 px-2.5 py-0.5 rounded-full uppercase">
                                                     You
                                                 </span>
                                             )}
                                         </div>
 
-                                        {/* Content */}
-                                        <div className="mt-4">
+                                        <div>
                                             {post.title && (
-                                                <h2 className="text-base font-extrabold text-slate-900 tracking-tight leading-snug">
+                                                <h3 className="text-base font-bold text-foreground leading-snug">
                                                     {post.title}
-                                                </h2>
+                                                </h3>
                                             )}
-                                            <p className="mt-2 text-sm text-slate-600 leading-relaxed whitespace-pre-wrap break-words">
+                                            <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap break-words">
                                                 {post.content}
                                             </p>
                                         </div>
 
-                                        {/* Footer Actions */}
-                                        <div className="flex items-center gap-2 mt-5 pt-4 border-t border-slate-100">
+                                        <div className="flex items-center gap-2 pt-3 border-t border-border">
                                             <button
                                                 type="button"
                                                 onClick={() => handleLike(post._id)}
-                                                className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all active:scale-95 cursor-pointer ${
+                                                className={`inline-flex items-center gap-2 px-3.5 min-h-[36px] rounded-full text-xs font-bold border transition-all active:scale-95 tabular-nums ${
                                                     post.isLiked
-                                                        ? "bg-rose-50 text-rose-600 border-rose-200 shadow-xs"
-                                                        : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
+                                                        ? "bg-rose-500/12 text-rose-600 dark:text-rose-400 border-rose-500/30"
+                                                        : "bg-background text-muted-foreground border-border hover:text-foreground hover:bg-secondary"
                                                 }`}
                                             >
-                                                <Heart size={13} className={post.isLiked ? "fill-current text-rose-500 animate-pulse" : ""} />
+                                                <Heart size={13} className={post.isLiked ? "fill-current" : ""} aria-hidden="true" />
                                                 <span>{post.likesCount || 0}</span>
                                             </button>
 
                                             <button
                                                 type="button"
                                                 onClick={() => handleShare(post)}
-                                                className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border cursor-pointer transition-all active:scale-95 ml-auto ${
+                                                className={`inline-flex items-center gap-2 px-3.5 min-h-[36px] rounded-full text-xs font-bold border transition-all active:scale-95 ml-auto ${
                                                     copiedPostId === post._id
-                                                        ? "bg-emerald-50 text-emerald-600 border-emerald-200"
-                                                        : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
+                                                        ? "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+                                                        : "bg-background text-muted-foreground border-border hover:text-foreground hover:bg-secondary"
                                                 }`}
                                             >
                                                 {copiedPostId === post._id ? (
                                                     <>
-                                                        <Check size={13} />
+                                                        <Check size={13} aria-hidden="true" />
                                                         <span>Copied</span>
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <Share2 size={13} />
+                                                        <Share2 size={13} aria-hidden="true" />
                                                         <span>Share</span>
                                                     </>
                                                 )}
@@ -400,39 +390,48 @@ export function Community() {
                         </div>
                     </div>
 
-                    {/* Right Column: Sidebar */}
+                    {/* Right Sidebar */}
                     <div className="lg:col-span-4 space-y-6">
-                        {/* Guidelines Card */}
-                        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
-                            <div className="flex items-center gap-2.5 text-slate-800 font-extrabold text-sm pb-3 border-b border-slate-100">
-                                <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 shrink-0">
-                                    <Users size={16} />
+                        <div className="surface-card rounded-2xl p-5 space-y-4">
+                            <div className="flex items-center gap-2.5 text-foreground font-bold text-sm pb-3 border-b border-border">
+                                <div className="p-2 rounded-xl bg-indigo-500/10 text-primary shrink-0">
+                                    <Users size={16} aria-hidden="true" />
                                 </div>
                                 <span>About The Community</span>
                             </div>
-                            <p className="text-xs text-slate-500 leading-relaxed">
-                                This space is dedicated to Mumbai IT students. Ask queries about practical sheets, lecture notes, coding practice problems, or coordinate study groups!
+                            <p className="text-xs text-muted-foreground leading-relaxed">
+                                Ask questions about practical sheets, lecture notes, coding tracks, or coordinate study groups with fellow students.
                             </p>
-                            <div className="bg-amber-50/50 border border-amber-200/50 rounded-xl p-3.5 text-amber-800 text-[11px] leading-relaxed flex gap-2">
-                                <Info size={16} className="shrink-0 text-amber-600 mt-0.5" />
-                                <span>Please keep conversations academic, supportive, and clean. Admins actively moderate all reports.</span>
+                            <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl p-3.5 text-amber-800 dark:text-amber-200 text-xs leading-relaxed flex gap-2">
+                                <Info size={15} className="shrink-0 mt-0.5" aria-hidden="true" />
+                                <span>Keep discussions helpful, respectful, and focused on learning.</span>
                             </div>
                         </div>
 
-                        {/* Tech Stacks / Tags Card */}
-                        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
-                            <div className="flex items-center gap-2.5 text-slate-800 font-extrabold text-sm pb-3 border-b border-slate-100">
-                                <div className="p-2 rounded-lg bg-purple-50 text-purple-600 shrink-0">
-                                    <Code2 size={16} />
+                        <div className="surface-card rounded-2xl p-5 space-y-4">
+                            <div className="flex items-center gap-2.5 text-foreground font-bold text-sm pb-3 border-b border-border">
+                                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                                    <Code2 size={16} aria-hidden="true" />
                                 </div>
                                 <span>Popular Tags</span>
                             </div>
                             <div className="flex flex-wrap gap-1.5">
-                                {["#MERN", "#React", "#ExpressJS", "#MongoDB", "#NodeJS", "#DataStructures", "#ExamTips", "#MumbaiUniversity", "#VivaQuestions", "#Practicals"].map((tag) => (
+                                {[
+                                    "#MERN",
+                                    "#React",
+                                    "#ExpressJS",
+                                    "#MongoDB",
+                                    "#NodeJS",
+                                    "#DataStructures",
+                                    "#ExamTips",
+                                    "#VivaQuestions",
+                                    "#Practicals",
+                                ].map((tag) => (
                                     <button
                                         key={tag}
+                                        type="button"
                                         onClick={() => setSearchQuery(tag)}
-                                        className="text-[11px] font-bold bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 text-slate-600 hover:text-indigo-600 px-2.5 py-1.5 rounded-lg cursor-pointer transition-all"
+                                        className="text-[11px] font-bold bg-background hover:bg-indigo-500/10 border border-border hover:border-primary/40 text-muted-foreground hover:text-primary px-2.5 py-1.5 rounded-lg transition-colors"
                                     >
                                         {tag}
                                     </button>

@@ -1,364 +1,237 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { improveNote } from "@/Api/api";
-import { updateNoteText } from "@/Api/api";
-import { useState } from "react";
+import { improveNote, updateNoteText } from "@/Api/api";
 import { DotLoader } from "@/Utils/loaders";
-import {
-    X,
-    Sparkles,
-    FileText,
-    Copy,
-    RefreshCw,
-    Save,
-    Send,
-    Wand2,
-    AlignLeft,
-    Zap,
-    Lightbulb,
-    Cpu,
-} from "lucide-react";
-import { theme } from "@/lib/theme";
+import { X, Sparkles, FileText, RefreshCw, Save, Send, Wand2 } from "lucide-react";
 import { customMessage } from "@/Utils/customMessage";
 import { MarkdownContent } from "@/Utils/MarkdownContent";
 
-
 export function ImproveNoteModal({ isOpen = true, onClose, note }) {
-    if (typeof document === "undefined") return null;
     const [aiNote, setAiNote] = useState(null);
     const [input, setInput] = useState("");
-    const [editNote, setEditNote] = useState(note.content);
+    const [editNote, setEditNote] = useState(note?.content || "");
     const [isLoading, setIsLoading] = useState(false);
-    const [isUpdateNote,setIsUpdateNote] = useState(false);
     const [isSaveLoading, setIsSaveLoading] = useState(false);
 
+    if (typeof document === "undefined") return null;
+
     const quick = [
-        "Fix Grammer & Polish",
+        "Fix Grammar & Polish",
         "Summarize Key Points",
         "Optimize and Clean Code",
-        "Add Explanations"
-    ]
+        "Add Explanations",
+    ];
 
     const handleSubmit = async () => {
-
-        if (input === "" || input === null) {
-            return customMessage({
-                type: "error",
-                content: "Prompt is Required",
-            });
+        if (!input || !input.trim()) {
+            return customMessage({ type: "error", content: "Prompt is Required" });
         }
 
         const prompt = "User Note: \n" + editNote.trim() + "\n prompt: \n" + input.trim();
 
         try {
-
             setIsLoading(true);
             const res = await improveNote({ prompt });
             setAiNote(res.data.data);
             setInput("");
+        } catch (e) {
+            console.error(e);
+            customMessage({ type: "error", content: "Failed to generate improvement" });
+        } finally {
             setIsLoading(false);
         }
-        catch (e) {
-            console.error(e)
-        }
-    }
+    };
 
     const handleSaveNote = async () => {
         try {
             setIsSaveLoading(true);
-            console.log("Note id  : ", note);
-            const res = await updateNoteText({ noteId: note._id, code: editNote, isAiNote: true });
-            console.log(res.data.data);
-            setIsSaveLoading(false);
+            await updateNoteText({ noteId: note._id, code: editNote, isAiNote: true });
+            customMessage({ type: "success", content: "Note saved!" });
             onClose();
+        } catch (e) {
+            console.error(e);
+            customMessage({ type: "error", content: "Failed to save note" });
+        } finally {
+            setIsSaveLoading(false);
         }
-        catch (e) {
-            console.error(e)
-        }
-    }
+    };
 
     return ReactDOM.createPortal(
         <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-5 overflow-hidden">
-                    {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 backdrop-blur-sm cursor-pointer"
-                        style={{ background: "rgba(17,17,19,0.25)" }}
+                        className="fixed inset-0 backdrop-blur-sm bg-black/50"
                     />
 
-                    {/* Main Modal Window */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.96, y: 16 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.96, y: 16 }}
                         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative w-full max-w-6xl h-[92vh] max-h-[900px] rounded-2xl flex flex-col overflow-hidden border shadow-2xl z-10"
-                        style={{
-                            background: theme.colors.white,
-                            borderColor: theme.colors.lightGray,
-                            boxShadow: "0 25px 50px -12px rgba(17, 17, 19, 0.25), 0 10px 0 rgba(17,17,19,0.05)",
-                        }}
+                        className="relative w-full max-w-6xl h-[92vh] max-h-[880px] rounded-3xl flex flex-col overflow-hidden border border-border bg-card text-card-foreground shadow-2xl z-10"
                     >
-                        {/* Top Header Bar */}
-                        <div
-                            className="flex items-center justify-between px-5 sm:px-6 py-4 border-b shrink-0 bg-white"
-                            style={{ borderColor: theme.colors.lightGray }}
-                        >
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-border shrink-0 bg-secondary/40">
                             <div className="flex items-center gap-3 min-w-0">
-                                <div
-                                    className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border"
-                                    style={{
-                                        background: theme.colors.limeDim,
-                                        borderColor: theme.colors.lightGray,
-                                        color: theme.colors.dark,
-                                    }}
-                                >
-                                    <Sparkles className="w-5 h-5" style={{ color: theme.colors.dark }} />
+                                <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border border-indigo-500/25 bg-indigo-500/12 text-primary">
+                                    <Sparkles className="w-5 h-5" aria-hidden="true" />
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="flex items-center gap-2">
-                                        <h2 className="text-base sm:text-lg font-bold tracking-tight truncate" style={{ color: theme.colors.dark }}>
-                                            AI Note Review & Improvement
-                                        </h2>
-
-                                    </div>
-                                    <p className="text-xs truncate max-w-[280px] sm:max-w-md font-medium mt-0.5" style={{ color: theme.colors.darkGray }}>
-                                        Comparing original note with AI-enhanced version
+                                    <h2 className="text-base sm:text-lg font-bold tracking-tight truncate text-foreground">
+                                        AI Note Review & Improvement
+                                    </h2>
+                                    <p className="text-xs truncate max-w-[280px] sm:max-w-md text-muted-foreground">
+                                        Compare and refine your study note with AI assistance
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Header Close Button */}
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="p-2 rounded-xl transition-colors border hover:bg-slate-50 cursor-pointer"
-                                style={{
-                                    background: theme.colors.white,
-                                    color: theme.colors.darkGray,
-                                    borderColor: theme.colors.lightGray,
-                                }}
+                                className="p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                                 aria-label="Close modal"
                             >
-                                <X className="w-5 h-5" />
+                                <X className="w-5 h-5" aria-hidden="true" />
                             </button>
                         </div>
 
-                        {/* Main Comparison Section (Left: User Note, Right: AI Update Note) */}
-                        <div
-                            className="flex-1 min-h-0 p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 overflow-hidden"
-                            style={{ background: theme.colors.softGray }}
-                        >
-                            {/* LEFT PANEL: User Note */}
-                            <div
-                                className="flex flex-col h-full rounded-2xl border overflow-hidden shadow-xs"
-                                style={{
-                                    background: theme.colors.white,
-                                    borderColor: theme.colors.lightGray,
-                                }}
-                            >
-                                <div
-                                    className="flex items-center justify-between px-4 py-3 border-b shrink-0 bg-slate-50/70"
-                                    style={{ borderColor: theme.colors.lightGray }}
-                                >
-                                    <div className="flex items-center gap-2 w-full justify-between">
-                                        <div className="flex items-center gap-1">
-                                            <FileText className="w-4 h-4 shrink-0" style={{ color: theme.colors.darkGray }} />
-                                            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: theme.colors.dark }}>
-                                                User Note
-                                            </span>
-                                        </div>
-                                        <div className="text-[11px]  font-bold px-2 rounded-2xl border border-lime-600 tracking-wider text-lime-500">
-                                            Edit
-                                        </div>
+                        {/* Comparison Panels */}
+                        <div className="flex-1 min-h-0 p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-hidden bg-background">
+                            {/* User Note */}
+                            <div className="flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden">
+                                <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary/40 shrink-0">
+                                    <div className="flex items-center gap-2">
+                                        <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+                                        <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+                                            Your Note
+                                        </span>
                                     </div>
-
-
+                                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-primary">
+                                        Editable
+                                    </span>
                                 </div>
 
-                                <div
-                                    className="flex-1  p-4 select-text font-mono text-[13px] leading-relaxed text-slate-800 space-y-2"
-                                    data-lenis-prevent
-                                >
+                                <div className="flex-1 p-4 font-mono text-xs sm:text-sm leading-relaxed text-foreground" data-lenis-prevent>
                                     <textarea
-                                        className="w-full h-full resize-none"
-                                        style={{
-                                            border: "none",
-                                            outline: "none",
-                                            boxShadow: "none",
-                                            appearance: "none",
-                                        }}
+                                        aria-label="Note content editor"
+                                        className="w-full h-full resize-none bg-transparent border-0 outline-none text-foreground"
                                         value={editNote}
-                                        onChange={(e) => {
-                                            setEditNote(e.target.value);
-                                        }}
+                                        onChange={(e) => setEditNote(e.target.value)}
                                     />
                                 </div>
                             </div>
 
-                            {/* RIGHT PANEL: AI Update Note */}
-                            <div
-                                className="flex flex-col h-full rounded-2xl border overflow-hidden shadow-xs relative"
-                                style={{
-                                    background: theme.colors.white,
-                                    borderColor: theme.colors.lightGray,
-                                }}
-                            >
-                                <div
-                                    className="flex items-center justify-between px-4 py-3 border-b shrink-0 bg-slate-50/70"
-                                    style={{ borderColor: theme.colors.lightGray }}
-
-                                >
-
-                                    <div className="flex items-center justify-between w-full ">
-                                        <div className="flex gap-1 items-center">
-                                            <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
-                                            <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">
-                                                AI Update Note
-                                            </span>
-                                        </div>
-                                        <div className="text-[11px]  font-bold px-2 rounded-2xl border border-lime-600 tracking-wider text-lime-500">
-                                            Ready-Only
-                                        </div>
+                            {/* AI Update */}
+                            <div className="flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden">
+                                <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary/40 shrink-0">
+                                    <div className="flex gap-1.5 items-center">
+                                        <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
+                                        <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+                                            AI Improved Output
+                                        </span>
                                     </div>
-
-
+                                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-700 dark:text-emerald-300">
+                                        Read-Only
+                                    </span>
                                 </div>
 
-                                <div
-                                    className="flex-1 overflow-y-auto p-4 select-text space-y-4"
-                                    data-lenis-prevent
-                                >
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4" data-lenis-prevent>
                                     {isLoading ? (
                                         <div className="w-full h-full flex justify-center items-center">
-                                            <DotLoader color="blue" />
+                                            <DotLoader color="#4F46E5" />
                                         </div>
                                     ) : (
-                                        <div className="rounded-xl border p-4 bg-slate-50 space-y-3" style={{ borderColor: theme.colors.lightGray }}>
+                                        <div className="rounded-xl border border-border p-4 bg-background space-y-3">
                                             {aiNote ? (
-                                                < MarkdownContent content={aiNote} role={""} />
-
+                                                <MarkdownContent content={aiNote} role="" />
                                             ) : (
                                                 <>
-                                                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                                                        <Sparkles className="w-4 h-4 text-indigo-600" />
-                                                        AI Improved & Optimized Note
+                                                    <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                                                        <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" />
+                                                        Ready to improve your note
                                                     </h3>
-                                                    <p className="text-xs text-slate-600 leading-relaxed">
-                                                        Modernized syntax using functional array reducers, added comprehensive JSDoc type annotations, and safe input validation.
+                                                    <p className="text-xs text-muted-foreground leading-relaxed">
+                                                        Choose a quick action below or type a custom instruction to polish formatting, explain concepts, or optimize code.
                                                     </p>
                                                 </>
                                             )}
                                         </div>
                                     )}
-
-
                                 </div>
                             </div>
                         </div>
 
-                        {/* Bottom Row Section */}
-                        <div
-                            className="p-4 sm:p-5 border-t sm:flex justify-between gap-4 sm:gap-5  shrink-0 bg-white"
-                            style={{ borderColor: theme.colors.lightGray }}
-                        >
-                            {/* Prompt Section */}
-                            <div className="flex flex-col gap-2 w">
-                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
-                                    <span
-                                        className="text-[11px] font-bold uppercase tracking-wider shrink-0 mr-1"
-                                        style={{ color: theme.colors.darkGray }}
-                                    >
+                        {/* Bottom Prompt & Actions */}
+                        <div className="p-4 sm:p-5 border-t border-border flex flex-col lg:flex-row lg:items-end justify-between gap-4 shrink-0 bg-card">
+                            <div className="flex flex-col gap-2.5 flex-1">
+                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 hide-scrollbar text-xs">
+                                    <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground shrink-0 mr-1">
                                         Quick:
                                     </span>
                                     {quick.map((item, index) => (
                                         <button
                                             type="button"
                                             key={index}
-                                            className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all cursor-pointer hover:bg-slate-50"
-                                            style={{
-                                                background: theme.colors.white,
-                                                borderColor: theme.colors.lightGray,
-                                                color: theme.colors.dark,
-                                            }}
-                                            onClick={() => {
-                                                setInput(quick[index]);
-
-                                            }}
+                                            className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-border bg-background text-foreground hover:bg-secondary transition-colors"
+                                            onClick={() => setInput(item)}
                                         >
-                                            <Wand2 className="w-3 h-3 text-indigo-600" />
+                                            <Wand2 className="w-3 h-3 text-primary" aria-hidden="true" />
                                             <span>{item}</span>
                                         </button>
                                     ))}
-
                                 </div>
 
-                                <div className="relative flex items-center mb-2 sm:mb-0">
+                                <div className="relative flex items-center">
                                     <input
                                         type="text"
-                                        placeholder="Prompt AI (e.g. 'Format as bullet points', 'Fix code performance', 'Explain step-by-step')..."
-                                        className="w-full h-10 px-3.5 pr-11 rounded-xl text-xs sm:text-sm border outline-none transition-colors"
-                                        style={{
-                                            background: theme.colors.softGray,
-                                            borderColor: theme.colors.lightGray,
-                                            color: theme.colors.dark,
-                                        }}
+                                        placeholder="Prompt AI (e.g. 'Format as bullet points', 'Explain step-by-step')..."
+                                        aria-label="Prompt AI for note improvement"
+                                        className="w-full min-h-[44px] px-4 pr-12 rounded-xl text-xs sm:text-sm border border-input bg-background text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring"
                                         value={input}
-                                        onChange={(e) => {
-                                            setInput(e.target.value);
-                                        }}
-
+                                        onChange={(e) => setInput(e.target.value)}
+                                        onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                                     />
                                     <button
                                         type="button"
-                                        className="absolute right-1.5 p-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-all cursor-pointer active:scale-90 shadow-xs"
+                                        className="absolute right-1.5 p-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground transition-all active:scale-95"
                                         title="Send prompt to AI"
-                                        onClick={() => {
-                                            handleSubmit();
-                                        }}
+                                        aria-label="Send prompt to AI"
+                                        onClick={handleSubmit}
                                     >
-                                        <Send className="w-3.5 h-3.5" />
+                                        <Send className="w-3.5 h-3.5" aria-hidden="true" />
                                     </button>
                                 </div>
                             </div>
-                            {/* Action Buttons */}
-                            <div className="flex items-center justify-end gap-3 self-end pt-1 sm:pt-0">
+
+                            <div className="flex items-center justify-end gap-2.5 shrink-0">
                                 <button
                                     type="button"
-                                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition-all hover:bg-slate-50 active:scale-95 cursor-pointer"
-                                    style={{
-                                        background: theme.colors.white,
-                                        borderColor: theme.colors.lightGray,
-                                        color: theme.colors.dark,
-                                    }}
-                                    onClick={() => {
-                                        setEditNote(aiNote);
-                                    }}
+                                    disabled={!aiNote}
+                                    className="inline-flex items-center justify-center gap-2 px-4 min-h-[44px] rounded-xl text-xs sm:text-sm font-bold border border-border bg-background text-foreground hover:bg-secondary transition-colors disabled:opacity-40"
+                                    onClick={() => aiNote && setEditNote(aiNote)}
                                 >
-                                    <RefreshCw className="w-4 h-4 text-indigo-600" />
-                                    <span>Update Note</span>
+                                    <RefreshCw className="w-4 h-4 text-primary" aria-hidden="true" />
+                                    <span>Apply AI Draft</span>
                                 </button>
 
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        handleSaveNote()
-
-                                    }}
-                                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all shadow-md shadow-indigo-100 cursor-pointer"
-
+                                    onClick={handleSaveNote}
+                                    disabled={isSaveLoading}
+                                    className="inline-flex items-center justify-center gap-2 px-5 min-h-[44px] rounded-xl text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] transition-all disabled:opacity-60"
                                 >
                                     {isSaveLoading ? (
-                                        <DotLoader color="blue" size="20" />
+                                        <DotLoader color="#ffffff" size="20" />
                                     ) : (
                                         <>
-                                            <Save className="w-4 h-4" />
+                                            <Save className="w-4 h-4" aria-hidden="true" />
                                             <span>Save Note</span>
                                         </>
                                     )}

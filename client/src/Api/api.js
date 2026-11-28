@@ -102,6 +102,7 @@ export const deletePractical = (id) => api.delete(`/practicals/${id}`);
 
 // Feedback Services
 export const submitFeedback = (feedbackData) => api.post('/feedback', feedbackData);
+export const fetchMyFeedback = () => api.get('/feedback/mine');
 export const fetchAllFeedback = () => api.get('/feedback');
 export const updateFeedbackStatus = (id, status) => api.patch(`/feedback/${id}`, { status });
 
@@ -121,10 +122,6 @@ export const fetchCommunityPosts = (page = 1, limit = 20) => api.get('/community
 export const createCommunityPost = (data) => api.post('/community', data);
 export const toggleCommunityLike = (id) => api.post(`/community/${id}/like`);
 
-// Tracking Api
-export const sendTrackerHome = (section) => api.post('/hometracking', { section: section })
-export const getTrackerData = () => api.get('/trackingData')
-
 // Coding Practice Tracks
 export const fetchCodingPractices = () => api.get('/coding-practices');
 export const updateProblemStatus = (data) => api.put('/coding-practices/update-problem-status', { data });
@@ -142,8 +139,6 @@ export const fetchDashboardStats = () => api.get('/stats/dashboard')
 //AI Assistant
 export const aiAssistant = (data) => api.post('/aiassistant', { message: data })
 export const aiCodeHelper = (context) => api.post('/aicodehelper', { context })
-export const aiChatBot = (data) => api.post('/aichatbot', { message: data })
-export const aiChatBotDeleteConversation = (data) => api.post('/aichatbot/delete', { deleteId: data })
 
 
 //AI code Checker 

@@ -1,25 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { fetchAllFeedback, updateFeedbackStatus } from '@/Api/api';
+import React, { useState, useEffect } from "react";
+import { fetchAllFeedback, updateFeedbackStatus } from "@/Api/api";
 import {
-    MessageSquare, CheckCircle, Clock, AlertCircle,
-    Filter, Search, User, Calendar, Tag,
-    ArrowUpRight
-} from 'lucide-react';
-import { useTitle } from '@/hooks/useTitle';
+    MessageSquare,
+    CheckCircle,
+    Clock,
+    AlertCircle,
+    Filter,
+    Search,
+    User,
+    Calendar,
+    Tag,
+    ArrowUpRight,
+} from "lucide-react";
+import { useTitle } from "@/hooks/useTitle";
 
 export const ManageFeedback = () => {
     useTitle("Manage Feedback");
     const [feedbacks, setFeedbacks] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('All');
-    const [searchQuery, setSearchQuery] = useState('');
+    const [filter, setFilter] = useState("All");
+    const [searchQuery, setSearchQuery] = useState("");
 
     const loadFeedback = async () => {
         try {
             const res = await fetchAllFeedback();
-            setFeedbacks(res.data.data);
+            setFeedbacks(res.data.data || []);
         } catch (err) {
-            console.error('Failed to load feedback', err);
+            console.error("Failed to load feedback", err);
         } finally {
             setLoading(false);
         }
@@ -32,70 +39,86 @@ export const ManageFeedback = () => {
     const handleStatusUpdate = async (id, newStatus) => {
         try {
             await updateFeedbackStatus(id, newStatus);
-            setFeedbacks(feedbacks.map(f => f._id === id ? { ...f, status: newStatus } : f));
+            setFeedbacks(feedbacks.map((f) => (f._id === id ? { ...f, status: newStatus } : f)));
         } catch (err) {
-            console.error('Failed to update status', err);
+            console.error("Failed to update status", err);
         }
     };
 
-    const filteredFeedbacks = feedbacks.filter(f => {
-        const matchesFilter = filter === 'All' || f.status === filter;
-        const matchesSearch = f.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            f.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const filteredFeedbacks = feedbacks.filter((f) => {
+        const matchesFilter = filter === "All" || f.status === filter;
+        const matchesSearch =
+            f.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            f.message?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             f.userId?.username?.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesFilter && matchesSearch;
     });
 
     const getStatusStyle = (status) => {
         switch (status) {
-            case 'Resolved': return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-none shadow-[inset_1px_1px_2px_rgba(16,185,129,0.15)]';
-            case 'Reviewed': return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-none shadow-[inset_1px_1px_2px_rgba(245,158,11,0.15)]';
-            default: return 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-none shadow-[inset_1px_1px_2px_rgba(100,116,139,0.15)]';
+            case "Resolved":
+                return "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border-emerald-500/25";
+            case "Reviewed":
+                return "bg-amber-500/12 text-amber-700 dark:text-amber-300 border-amber-500/25";
+            default:
+                return "bg-secondary text-muted-foreground border-border";
         }
     };
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'Resolved': return <CheckCircle className="w-4 h-4" />;
-            case 'Reviewed': return <ArrowUpRight className="w-4 h-4" />;
-            default: return <Clock className="w-4 h-4" />;
+            case "Resolved":
+                return <CheckCircle className="w-3.5 h-3.5" aria-hidden="true" />;
+            case "Reviewed":
+                return <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />;
+            default:
+                return <Clock className="w-3.5 h-3.5" aria-hidden="true" />;
         }
     };
 
     return (
-        <div className="space-y-8 p-4 select-none animate-in fade-in duration-500">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">User Feedback</h1>
-                    <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-1">Review and manage feedback submitted by students</p>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+                        User Feedback
+                    </h1>
+                    <p className="text-xs text-muted-foreground font-medium mt-1">
+                        Review and resolve feedback submitted by students
+                    </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <div className="px-3.5 py-2 shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#0f121b,inset_-2px_-2px_4px_#272e41] rounded-xl flex items-center gap-2 bg-transparent">
-                        <MessageSquare className="w-4 h-4 text-indigo-500 dark:text-[#CCFF00]" />
-                        <span className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">{feedbacks.length} Total</span>
-                    </div>
+                <div className="surface-card px-4 py-2 rounded-xl flex items-center gap-2 self-start md:self-auto">
+                    <MessageSquare className="w-4 h-4 text-primary" aria-hidden="true" />
+                    <span className="text-xs font-bold text-foreground tabular-nums">
+                        {feedbacks.length} Total
+                    </span>
                 </div>
             </div>
 
-            {/* Controls */}
-            <div className="neo-flat p-4 flex flex-col md:flex-row gap-4 border-none shadow-none">
+            {/* Search & Filter */}
+            <div className="surface-card rounded-2xl p-4 flex flex-col md:flex-row gap-3">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-555" />
+                    <Search
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
+                        aria-hidden="true"
+                    />
                     <input
                         type="text"
                         placeholder="Search feedback content or user..."
+                        aria-label="Search feedback"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 neo-inset focus:outline-none text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className="w-full pl-10 pr-4 min-h-[42px] rounded-xl bg-background border border-input focus:outline-none focus:ring-2 focus:ring-ring text-sm text-foreground placeholder:text-muted-foreground"
                     />
                 </div>
                 <div className="flex items-center gap-2">
-                    <Filter className="w-4 h-4 text-slate-400 dark:text-slate-555" />
+                    <Filter className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                     <select
+                        aria-label="Filter by status"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        className="neo-inset focus:outline-none px-4 py-2.5 text-sm font-bold text-slate-900 dark:text-white cursor-pointer"
+                        className="min-h-[42px] rounded-xl bg-background border border-input focus:outline-none focus:ring-2 focus:ring-ring px-4 text-xs font-bold text-foreground"
                     >
                         <option value="All">All Statuses</option>
                         <option value="Pending">Pending</option>
@@ -106,61 +129,74 @@ export const ManageFeedback = () => {
             </div>
 
             {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                    <div className="w-12 h-12 border-4 border-slate-900/10 dark:border-white/10 border-t-indigo-500 dark:border-t-[#CCFF00] rounded-full animate-spin"></div>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Loading feedback...</p>
+                <div className="flex flex-col items-center justify-center py-20 space-y-3">
+                    <div className="w-9 h-9 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <p className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+                        Loading feedback...
+                    </p>
                 </div>
             ) : filteredFeedbacks.length > 0 ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     {filteredFeedbacks.map((f) => (
-                        <div key={f._id} className="neo-flat hover:translate-y-[-2px] transition-all overflow-hidden flex flex-col group border-none shadow-none">
-                            <div className="p-6 flex-1">
-                                <div className="flex items-start justify-between mb-4">
-                                    <div className={`px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 ${getStatusStyle(f.status)}`}>
+                        <div key={f._id} className="surface-card rounded-2xl overflow-hidden flex flex-col">
+                            <div className="p-6 flex-1 space-y-4">
+                                <div className="flex items-start justify-between gap-2">
+                                    <span
+                                        className={`px-2.5 py-1 rounded-full border text-[11px] font-bold flex items-center gap-1.5 ${getStatusStyle(
+                                            f.status
+                                        )}`}
+                                    >
                                         {getStatusIcon(f.status)}
-                                        {f.status}
-                                    </div>
-                                    <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-wider">
-                                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                                        {f.status || "Pending"}
+                                    </span>
+                                    <span className="flex items-center gap-1.5 text-muted-foreground text-xs font-medium tabular-nums">
+                                        <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                                         {new Date(f.createdAt).toLocaleDateString()}
-                                    </div>
+                                    </span>
                                 </div>
 
-                                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">
-                                    {f.title}
-                                </h3>
-                                <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed mb-6 font-semibold line-clamp-3">
-                                    {f.message}
-                                </p>
+                                <div>
+                                    <h3 className="text-base font-bold text-foreground mb-1.5">{f.title}</h3>
+                                    <p className="text-muted-foreground text-xs leading-relaxed line-clamp-3">
+                                        {f.message}
+                                    </p>
+                                </div>
 
-                                <div className="flex items-center justify-between pt-4 border-t border-slate-200/50 dark:border-slate-800/50">
+                                <div className="flex items-center justify-between pt-4 border-t border-border">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg shadow-[inset_1.5px_1.5px_3px_#c8d0e7,inset_-1.5px_-1.5px_3px_#ffffff] dark:shadow-[inset_1.5px_1.5px_3px_#0f121b,inset_-1.5px_-1.5px_3px_#272e41] bg-transparent flex items-center justify-center">
-                                            <User className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                        <div className="w-8 h-8 rounded-xl bg-secondary border border-border flex items-center justify-center">
+                                            <User className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-black text-slate-900 dark:text-white">{f.userId?.username || 'Unknown User'}</p>
-                                            <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{f.userId?.email}</p>
+                                            <p className="text-xs font-bold text-foreground">
+                                                {f.userId?.username || "Unknown User"}
+                                            </p>
+                                            <p className="text-[11px] text-muted-foreground">{f.userId?.email}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-1.5">
-                                        <Tag className="w-3.5 h-3.5 text-indigo-500 dark:text-[#CCFF00]" />
-                                        <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">{f.category}</span>
+                                        <Tag className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+                                        <span className="text-[11px] font-bold text-primary uppercase">
+                                            {f.category}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="px-6 py-4 border-t border-slate-200/50 dark:border-slate-800/50 flex items-center justify-between bg-slate-100/10 dark:bg-slate-900/10">
-                                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-550 uppercase tracking-wider">Update Status:</span>
-                                <div className="flex items-center gap-2">
-                                    {['Pending', 'Reviewed', 'Resolved'].map((s) => (
+                            <div className="px-6 py-3.5 border-t border-border flex flex-wrap items-center justify-between gap-2 bg-secondary/30">
+                                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                                    Status:
+                                </span>
+                                <div className="flex items-center gap-1.5">
+                                    {["Pending", "Reviewed", "Resolved"].map((s) => (
                                         <button
                                             key={s}
+                                            type="button"
                                             onClick={() => handleStatusUpdate(f._id, s)}
-                                            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                                            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-colors border ${
                                                 f.status === s
-                                                    ? 'shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#0f121b,inset_-2px_-2px_4px_#272e41] text-indigo-600 dark:text-[#CCFF00]'
-                                                    : 'neo-btn text-slate-500 hover:text-slate-600'
+                                                    ? "bg-primary text-primary-foreground border-primary"
+                                                    : "bg-card text-muted-foreground border-border hover:text-foreground"
                                             }`}
                                         >
                                             {s}
@@ -172,18 +208,21 @@ export const ManageFeedback = () => {
                     ))}
                 </div>
             ) : (
-                <div className="rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 p-12 text-center bg-transparent shadow-[inset_3px_3px_6px_#c8d0e7,inset_-3px_-3px_6px_#ffffff] dark:shadow-[inset_3px_3px_6px_#0f121b,inset_-3px_-3px_6px_#272e41]">
-                    <div className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#0f121b,inset_-2px_-2px_4px_#272e41] bg-transparent">
-                        <AlertCircle className="w-8 h-8 text-slate-400" />
+                <div className="surface-card rounded-2xl border-dashed p-12 text-center">
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 bg-secondary border border-border">
+                        <AlertCircle className="w-6 h-6 text-muted-foreground" aria-hidden="true" />
                     </div>
-                    <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider">No feedback found</h3>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mx-auto mt-2 font-bold leading-relaxed">
-                        {searchQuery ? `We couldn't find any results for "${searchQuery}".` : "There's no feedback to review at the moment."}
+                    <h3 className="text-base font-bold text-foreground">No feedback found</h3>
+                    <p className="text-xs text-muted-foreground max-w-xs mx-auto mt-1.5 leading-relaxed">
+                        {searchQuery
+                            ? `We couldn't find any results for "${searchQuery}".`
+                            : "There's no feedback to review at the moment."}
                     </p>
                     {searchQuery && (
                         <button
-                            onClick={() => setSearchQuery('')}
-                            className="mt-6 inline-flex px-4 py-2 neo-btn text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider cursor-pointer active:scale-[0.98]"
+                            type="button"
+                            onClick={() => setSearchQuery("")}
+                            className="mt-4 inline-flex px-4 min-h-[38px] items-center rounded-xl border border-border bg-card text-xs font-bold text-foreground hover:bg-secondary"
                         >
                             Clear search filter
                         </button>
